@@ -18,8 +18,8 @@ const UserAuthOutputPayload = Joi.object().keys({
     username: Joi.string().required(),
     email: Joi.string().email().required(),
     token: Joi.string().allow(null, ''),
-    bio: Joi.string().allow(null, ''),
-    avatar: Joi.string().uri().allow(null, '')
+    role: Joi.string().required(),
+    code_district_city: Joi.string().required().empty('', null).default(null)
 })
 
 // --------------------------------------------------

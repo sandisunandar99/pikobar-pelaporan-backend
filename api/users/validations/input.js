@@ -31,7 +31,9 @@ const RegisterPayload = {
   payload: Joi.object().keys({
       username: Joi.string().required(),
       email: Joi.string().email().required(),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      role: Joi.string().required(),
+      code_district_city: Joi.string().required().allow(null, '').default('null')
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction
@@ -43,8 +45,8 @@ const UpdatePayload = {
       username: Joi.string(),
       email: Joi.string().email(),
       password: Joi.string().allow(''),
-      bio: Joi.string().allow(''),
-      avatar: Joi.string().uri().allow('')
+      role: Joi.string().required(),
+      code_district_city: Joi.string().required().empty('', null).default(null)
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction
