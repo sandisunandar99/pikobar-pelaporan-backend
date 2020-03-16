@@ -12,7 +12,7 @@ const register = (server, options, next) => {
     require('./DistrictCity')
     require('./SubDistrict')
     require('./Village')
-
+    require('./Case')
 
     server.app.db = {
       link: db.db,
@@ -20,7 +20,8 @@ const register = (server, options, next) => {
       Province: db.model('Province'),
       DistrictCity: db.model('Districtcity'),
       SubDistrict: db.model('SubDistrict'),
-      Village: db.model('Village')
+      Village: db.model('Village'),
+      Case: db.model('Case')
     };
 
     return next();

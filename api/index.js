@@ -3,9 +3,9 @@ const register = (server, options, next) => {
   const preResponse = (request, reply) => {
     let response = request.response
     
-    // console.log('RESPONSE :', response);
-    // console.log('RESPONSE_HEADER:', request.headers);
-    // console.log('SERVER:', server.registrations);
+     console.log('RESPONSE :', response);
+     //console.log('RESPONSE_HEADER:', request.headers);
+     //console.log('SERVER:', server.registrations);
 
     if (response.isBoom) {
       const reformated = {}
@@ -26,6 +26,7 @@ const register = (server, options, next) => {
 
   server.register(require('./users'))
   server.register(require('./areas'))
+  server.register(require('./cases'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

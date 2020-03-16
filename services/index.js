@@ -1,7 +1,8 @@
 const register = (server, options, next) => {
   let services = [].concat(
       require('./users'),
-      require('./areas')
+      require('./areas'),
+      require('./cases')
     );
     server.method(services)
     return next()
