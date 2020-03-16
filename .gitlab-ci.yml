@@ -1,0 +1,69 @@
+stages:
+  - versioning
+  - build
+  - deploy_to_staging
+
+versioning:
+  image: alpine:latest
+  stage: versioning
+  before_script:
+    - apk add git
+  script:
+    - export VERSION=$(git describe --tags)
+    - echo $VERSION > version
+    - cat version
+  artifacts:
+    paths:
+      - version
+
+build_images:
+  image: docker:latest
+  stage: build
+  only:
+    - master
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  dependencies: 
+    - versioning
+  before_script:
+    - export VERSION=$(cat ./version)
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo $VERSION
+    - docker build -t survey-backend:$VERSION -f Dockerfile.release .
+    - docker tag survey-backend:$VERSION registry.gitlab.com/jdsteam/crowdsource/survey-backend:$VERSION
+    - docker push registry.gitlab.com/jdsteam/crowdsource/survey-backend:$VERSION
+
+deploy_staging:
+  image: alpine:latest
+  stage: deploy_to_staging
+  only:
+    - master
+  dependencies: 
+    - versioning
+  before_script:
+    - 'which ssh-agent || ( apk update && apk add --no-cache openssh )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - chmod 400 $SSH_PRIVATE_KEY
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - export VERSION=$(cat ./version)
+  script:
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_STAGING} "export VERSION=$VERSION && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd /home/ubuntu/jabarsurvey/survey-backend && git pull && docker-compose -f docker-compose-release.yml down && docker-compose -f docker-compose-release.yml up -d"
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_STAGING} "cd /home/ubuntu/jabarsurvey/survey-backend && ls"
+
+deploy_production:
+    image: docker:stable
+    stage: deploy_to_staging
+    only:
+      - master
+    dependencies: 
+      - versioning
+    before_script:
+      - echo $VERSION
+    script:
+      - echo $VERSION
+    
