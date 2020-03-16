@@ -9,6 +9,7 @@ var UserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true},
   email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
   role: { type: String, lowercase: true, required: [true, "can't be blank"]},
+  code_district_city: { type: Number, default: null},
   hash: String,
   salt: String
 }, {timestamps: true})
@@ -42,6 +43,8 @@ UserSchema.methods.toAuthJSON = function () {
     id: this._id,
     username: this.username,
     email: this.email,
+    role: this.role,
+    code_district_city: this.code_district_city,
     token: this.generateJWT()
   }
 }

@@ -28,9 +28,11 @@ function getUserByUsername (username, callback) {
 function createUser (payload, callback) {
   let user = new User();
   
-  user.email = payload.email;
   user.username = payload.username;
   user.setPassword(payload.password);
+  user.email = payload.email;
+  user.role = payload.role;
+  user.code_district_city = payload.code_district_city;
 
   user.save((err, user) => {
     if (err) return callback(err, null);
