@@ -33,7 +33,7 @@ const RegisterPayload = {
       email: Joi.string().email().required(),
       password: Joi.string().required(),
       role: Joi.string().required(),
-      code_district_city: Joi.string().required().allow(null, '').default('null')
+      code_district_city: Joi.number().required().allow(null, '').default('null')
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction
@@ -46,7 +46,7 @@ const UpdatePayload = {
       email: Joi.string().email(),
       password: Joi.string().allow(''),
       role: Joi.string().required(),
-      code_district_city: Joi.string().required().empty('', null).default(null)
+      code_district_city: Joi.number().required().allow(null, '').default('null')
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction
