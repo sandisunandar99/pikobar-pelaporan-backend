@@ -25,9 +25,6 @@ const register = (server, options, next) => {
   }
 
   server.register(require('./users'))
-  server.register(require('./surveys'))
-  server.register(require('./questions'))
-  server.register(require('./answers'))
   server.register(require('./areas'))
 
   server.ext('onPreResponse', preResponse)

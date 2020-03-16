@@ -8,8 +8,7 @@ var config = require('../config/config')
 var UserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true},
   email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
-  bio: String,
-  avatar: String,
+  role: { type: String, lowercase: true, required: [true, "can't be blank"]},
   hash: String,
   salt: String
 }, {timestamps: true})
@@ -51,15 +50,7 @@ UserSchema.methods.toProfileJSONFor = function (user) {
   return {
     id : this._id,
     username: this.username,
-    bio: this.bio || null,
-    avatar: this.avatar || null
-  }
-}
-
-UserSchema.methods.authorSurvey = function (user) {
-  return {
-    id: this._id,
-    username: this.username
+    role: this.role
   }
 }
 

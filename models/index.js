@@ -8,9 +8,6 @@ const register = (server, options, next) => {
     if (err) console.log(err);
 
     require('./User')
-    require('./Survey')
-    require('./Question')
-    require('./Answer')
     require('./Province')
     require('./DistrictCity')
     require('./SubDistrict')
@@ -20,9 +17,6 @@ const register = (server, options, next) => {
     server.app.db = {
       link: db.db,
       User: db.model('User'),
-      Survey: db.model('Survey'),
-      Question: db.model('Question'),
-      Answer: db.model('Answer'),
       Province: db.model('Province'),
       DistrictCity: db.model('Districtcity'),
       SubDistrict: db.model('SubDistrict'),
