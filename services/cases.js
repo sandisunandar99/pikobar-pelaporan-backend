@@ -17,7 +17,7 @@ function ListCase (query,callback) {
     page: query.page,
     limit: query.limit,
     sort: { createdAt: query.sort },
-    // populate: 'author',
+    populate: 'author',
     leanWithId: true,
     customLabels: myCustomLabels
   };
@@ -55,7 +55,7 @@ function getCaseSummary (callback) {
     .catch(err => callback(err, null))
 }
 
-function createCase (payload, callback) {
+function createCase (payload, author, callback) {
   let item = new Case();
 
   item.id_case = payload.id_case;
@@ -81,6 +81,7 @@ function createCase (payload, callback) {
   item.last_stage  = payload.last_stage;
   item.last_result  = payload.last_result;
   item.last_history  = payload.last_history;
+  item.author = author
 
   item.save((err, item) => {
     if (err) return callback(err, null);

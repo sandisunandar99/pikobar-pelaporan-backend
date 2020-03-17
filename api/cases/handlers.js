@@ -36,7 +36,7 @@ module.exports = (server) => {
          */
         async CreateCase(request, reply){
             let payload = request.payload
-            server.methods.services.cases.create(payload, (err, result) => {
+            server.methods.services.cases.create(payload, request.auth.credentials.user, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result)

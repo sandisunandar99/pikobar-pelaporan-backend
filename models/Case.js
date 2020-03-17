@@ -30,8 +30,8 @@ const CaseSchema = new mongoose.Schema({
     last_status : {type:String},
     last_stage : {type:String},
     last_result : {type:String},
-    last_history : {type:String}
-    // author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+    last_history : {type:String},
+    author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.plugin(mongoosePaginate)
