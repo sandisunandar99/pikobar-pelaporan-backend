@@ -40,21 +40,18 @@ const SurveyParamsValidations = {
 // --------------------------------------------------
 //    Config - Input Validations
 // --------------------------------------------------
-
-const SurveyQueryValidations = {
+const CaseQueryValidations = {
     query: {
-        author: Joi.string().description('Filter berdasarkan pembuat survei'),
-        status: Joi.string().description('Filter berdasarkan status survei'),
-        category: Joi.string().description('Filter berdasarkan kategori survei'),
-        using_for: Joi.string().description('Filter berdasarkan penggunaan survei'),
-        limit: Joi.number().integer().default(10).description('limit result set'),
+        limit: Joi.number().integer().empty('', 10).default(10).description('limit result set'),
         offset: Joi.number().integer().default(0).description('number of record to skip'),
-        page: Joi.number().integer().default(0).description('number of page'),
-        search: Joi.string().allow('', null).empty(['', null]).default('null').description('search data by survey name')
+        page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
+        sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
+        search: Joi.string().empty('', null).default('').description('search data by survey name')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
 }
+
 
 
 const SurveyCreatePayloadValidations = {
@@ -81,7 +78,7 @@ const SurveyDeletePayloadValidations = Object.assign({
 
 module.exports = {
     SurveyParamsValidations,
-    SurveyQueryValidations,
+    CaseQueryValidations,
     SurveyCreatePayloadValidations,
     SurveyUpdatePayloadValidations,
     SurveyDeletePayloadValidations

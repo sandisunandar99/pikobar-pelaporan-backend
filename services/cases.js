@@ -3,12 +3,35 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
-function ListCase (callback) {
-    Case.find().exec().then(item => {
-        let res = item.map(q => q.toJSONFor())
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null))
+function ListCase (query,callback) {
+
+  const myCustomLabels = {
+    totalDocs: 'itemCount',
+    docs: 'itemsList',
+    limit: 'perPage',
+    page: 'currentPage',
+    meta: '_meta'
+  }; 
+
+  const options = {
+    page: query.page,
+    limit: query.limit,
+    sort: { createdAt: query.sort },
+    populate: 'author',
+    leanWithId: true,
+    customLabels: myCustomLabels
+  };
+
+  let query_search = new RegExp(query.search, "i")
+  let result_search = Case.find({ name: query_search })
+
+  Case.paginate(result_search, options).then(function(results){
+      let res = { 
+        cases: results.itemsList.map(cases => cases.toJSONFor()),
+        _meta: results._meta
+      }
+      return callback(null, res)
+  }).catch(err => callback(err, null))
 }
 
 function getCaseById (id_code, callback) {
@@ -58,7 +81,6 @@ function createCase (payload, callback) {
   item.last_stage  = payload.last_stage;
   item.last_result  = payload.last_result;
   item.last_history  = payload.last_history;
-  item.author  = payload.author;
 
   item.save((err, item) => {
     if (err) return callback(err, null);

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const CaseSchema = new mongoose.Schema({
     // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
@@ -30,8 +31,10 @@ const CaseSchema = new mongoose.Schema({
     last_stage : {type:String},
     last_result : {type:String},
     last_history : {type:String},
-    author : {type:String},
-},{ timestamps:true })
+    author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+},{ timestamps:true, usePushEach: true })
+
+CaseSchema.plugin(mongoosePaginate)
 
 CaseSchema.methods.toJSONFor = function () {
     return {

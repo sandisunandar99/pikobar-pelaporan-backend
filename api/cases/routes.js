@@ -1,6 +1,6 @@
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
-    //const inputValidations = require('./validations/input')
+    const inputValidations = require('./validations/input')
     //const outputValidations = require('./validations/output')
 
     const CheckRoleView = require('./route_prerequesites').CheckRoleView(server)
@@ -17,7 +17,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list of all cases',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
+                validate: inputValidations.CaseQueryValidations,
                 // response: outputValidations
                 pre: [
                     CheckRoleView
