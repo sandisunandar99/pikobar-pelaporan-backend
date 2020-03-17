@@ -33,14 +33,13 @@ function createCase (payload, callback) {
   item.address_village_code = payload.address_village_code;
   item.address_subdistrict_code = payload.address_subdistrict_code;
   item.address_district_code = payload.address_district_code;
-  item.address_province_code = payload.address_province_code;
   item.nationality = payload.nationality;
   item.occupation = payload.occupation;
   item.last_status  = payload.last_status;
   item.last_stage  = payload.last_stage;
   item.last_result  = payload.last_result;
-  item.last_change  = payload.last_change;
-  item.id_author  = payload.id_author;
+  item.last_history  = payload.last_history;
+  item.author  = payload.author;
 
   item.save((err, item) => {
     if (err) return callback(err, null);

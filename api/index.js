@@ -27,6 +27,7 @@ const register = (server, options, next) => {
   server.register(require('./users'))
   server.register(require('./areas'))
   server.register(require('./cases'))
+  server.register(require('./histories'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
