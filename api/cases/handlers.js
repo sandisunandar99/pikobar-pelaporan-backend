@@ -63,10 +63,8 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseHistory(request, reply) {
-            return reply({ result: 'case history!' });
-            /*
-            server.methods.services.areas.getVillage(
-                request.params.district_code,
+            server.methods.services.histories.getByCase(
+                request.params.id,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -74,7 +72,6 @@ module.exports = (server) => {
                     ).code(200)
                 }
             )
-            */
         },
         
         /**
