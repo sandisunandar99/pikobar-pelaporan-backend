@@ -41,7 +41,7 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-        
+
         /**
          * GET /api/cases/{id}
          * @param {*} request
@@ -63,10 +63,8 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseHistory(request, reply) {
-            return reply({ result: 'case history!' });
-            /*
-            server.methods.services.areas.getVillage(
-                request.params.district_code,
+            server.methods.services.histories.getByCase(
+                request.params.id,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -74,9 +72,23 @@ module.exports = (server) => {
                     ).code(200)
                 }
             )
-            */
         },
-        
+
+        /**
+         * GET /api/cases/summary
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummary(request, reply) {
+            let id = request.params.id
+            server.methods.services.cases.getSummary((err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item)
+                ).code(200)
+            })
+        },
+
         /**
          * PUT /api/cases/{id}
          * @param {*} request
@@ -92,7 +104,7 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-        
+
         /**
          * DELETE /api/cases/{id}
          * @param {*} request

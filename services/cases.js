@@ -18,9 +18,23 @@ function getCaseById (id_code, callback) {
     .catch(err => callback(err, null))
 }
 
+function getCaseSummary (callback) {
+  var agg = [
+    {$group: {
+      _id: "$last_status",
+      total: {$sum: 1}
+    }}
+  ];
+
+  Case.aggregate(agg).exec().then(item => {
+        return callback(null, item)
+    })
+    .catch(err => callback(err, null))
+}
+
 function createCase (payload, callback) {
   let item = new Case();
-  
+
   item.id_case = payload.id_case;
   item.id_case_national = payload.id_case_national;
   item.id_case_related = payload.id_case_related;
@@ -103,6 +117,10 @@ module.exports = [
     method: getCaseById
   },
   {
+    name: 'services.cases.getSummary',
+    method: getCaseSummary
+  },
+  {
     name: 'services.cases.create',
     method: createCase
   },
@@ -111,4 +129,4 @@ module.exports = [
     method: updateCase
   }
 ];
- 
+
