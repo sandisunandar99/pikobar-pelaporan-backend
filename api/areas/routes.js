@@ -36,6 +36,17 @@ module.exports = (server) =>{
                 // response: outputValidations
             },
             handler: handlers.Village
+        },
+        {
+            method: 'GET',
+            path: '/areas/hospital',
+            config: {
+                description: 'get hospitals in west java',
+                tags: ['api', 'areas'],
+                // validate: inputValidations,
+                // response: outputValidations
+            },
+            handler: handlers.Hospital
         }
     ]
 

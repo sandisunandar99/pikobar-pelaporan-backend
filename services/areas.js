@@ -3,11 +3,12 @@ const mongoose = require('mongoose')
 require('../models/DistrictCity')
 require('../models/SubDistrict')
 require('../models/Village')
+require('../models/Hospital')
 
 const Districtcity = mongoose.model('Districtcity')
 const SubDistrict = mongoose.model('SubDistrict')
 const Village = mongoose.model('Village')
-
+const Hospital = mongoose.model('Hospital')
 
 function getDistrictCity(callback) {  
     Districtcity.find({ kemendagri_provinsi_kode: '32'})
@@ -45,6 +46,19 @@ function getVillage(district_code,callback) {
 }
 
 
+function getHospital(query,callback) {
+    let query_search = new RegExp(query.search, "i")
+    Hospital.find({ name: query_search })
+        .exec()
+        .then(hsp => {
+            let res = hsp.map(q => q.toJSONFor())
+            return callback(null, res)
+        })
+        .catch(err => callback(err, null))   
+             
+}
+
+
 
 module.exports = [
     {
@@ -58,5 +72,9 @@ module.exports = [
     {
         name: 'services.areas.getVillage',
         method: getVillage
+    },
+    {
+        name: 'services.areas.getHospital',
+        method: getHospital
     }
 ]

@@ -3,7 +3,7 @@ const register = (server, options, next) => {
   const preResponse = (request, reply) => {
     let response = request.response
     
-     console.log('RESPONSE :', response);
+    //  console.log('RESPONSE :', response);
      //console.log('RESPONSE_HEADER:', request.headers);
      //console.log('SERVER:', server.registrations);
 
