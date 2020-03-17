@@ -52,6 +52,7 @@ function createCase (payload, callback) {
   item.address_district_name = payload.address_district_name;
   item.address_province_name = payload.address_province_name;
   item.nationality = payload.nationality;
+  item.current_location_address = payload.current_location_address;
   item.occupation = payload.occupation;
   item.last_status  = payload.last_status;
   item.last_stage  = payload.last_stage;

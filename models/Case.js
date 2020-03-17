@@ -22,6 +22,7 @@ const CaseSchema = new mongoose.Schema({
     address_district_name: { type: String, required: [true, "can't be blank"]},
     address_province_code: { type: String, default:32},
     address_province_name: { type: String, required: [true, "can't be blank"]},
+    current_location_address: { type: String, required: [true, "can't be blank"]},
     phone_number: {type:String},
     nationality: {type:String},
     occupation: {type:String},
@@ -38,8 +39,9 @@ CaseSchema.methods.toJSONFor = function () {
         id_case: this.id_case,
         name: this.name,
         age: this.age,
+        nationality: this.nationality,
         gender: this.gender,
-        address_street: this.address_street,
+        current_location_address: this.current_location_address,
         address_district_name: this.address_district_name,
         last_status: this.last_status
     }
