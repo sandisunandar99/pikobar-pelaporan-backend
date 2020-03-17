@@ -8,6 +8,13 @@ pipeline {
     }
 
     stages {
+        
+        stage('hello world'){
+            steps{
+                sh 'echo "hello world"'
+            }
+        }
+
         stage('Run Docker on production') {
             environment {
                 SSH_COMMAND = "ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin master'"     
