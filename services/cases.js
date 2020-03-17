@@ -21,8 +21,9 @@ function getCaseById (id_code, callback) {
 function createCase (payload, callback) {
   let item = new Case();
   
-  item.id = payload.id;
-  item.id_info = payload.id_info;
+  item.id_case = payload.id_case;
+  item.id_case_national = payload.id_case_national;
+  item.id_case_related = payload.id_case_related;
   item.name = payload.name;
   item.birth_date = new Date(Date.parse(payload.birth_date));
   item.age = payload.age;
@@ -35,10 +36,10 @@ function createCase (payload, callback) {
   item.address_province_code = payload.address_province_code;
   item.nationality = payload.nationality;
   item.occupation = payload.occupation;
-  item.cache_status  = payload.cache_status;
-  item.cache_stage  = payload.cache_stage;
-  item.cache_result  = payload.cache_result;
-  item.cache_last_change  = payload.cache_last_change;
+  item.last_status  = payload.last_status;
+  item.last_stage  = payload.last_stage;
+  item.last_result  = payload.last_result;
+  item.last_change  = payload.last_change;
   item.id_author  = payload.id_author;
 
   item.save((err, item) => {
