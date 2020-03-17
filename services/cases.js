@@ -17,7 +17,7 @@ function ListCase (query,callback) {
     page: query.page,
     limit: query.limit,
     sort: { createdAt: query.sort },
-    populate: 'author',
+    // populate: 'author',
     leanWithId: true,
     customLabels: myCustomLabels
   };
