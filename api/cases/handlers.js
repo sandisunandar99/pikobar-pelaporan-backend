@@ -84,7 +84,8 @@ module.exports = (server) => {
          */
         async UpdateCase(request, reply){
             let payload = request.payload
-            server.methods.services.cases.update(payload, (err, result) => {
+            let id = request.params.id
+            server.methods.services.cases.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result)
