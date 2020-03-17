@@ -13,11 +13,15 @@ const CaseSchema = new mongoose.Schema({
     gender : {type:String},
     address_street: {type:String},
     address_village_code: { type: String, required: [true, "can't be blank"]},
+    address_village_name: { type: String, required: [true, "can't be blank"]},
     // kecamatan
     address_subdistrict_code: { type: String, required: [true, "can't be blank"]},
+    address_subdistrict_name: { type: String, required: [true, "can't be blank"]},
     // kab/kota
     address_district_code: { type: String, required: [true, "can't be blank"]},
+    address_district_name: { type: String, required: [true, "can't be blank"]},
     address_province_code: { type: String, default:32},
+    address_province_name: { type: String, required: [true, "can't be blank"]},
     phone_number: {type:String},
     nationality: {type:String},
     occupation: {type:String},
@@ -30,14 +34,14 @@ const CaseSchema = new mongoose.Schema({
 
 CaseSchema.methods.toJSONFor = function () {
     return {
+        _id: this._id,
         id_case: this.id_case,
         name: this.name,
         age: this.age,
         gender: this.gender,
-        address_province_code: this.address_province_code,
-        address_district_code: this.address_district_code,
-        address_subdistrict_code: this.address_subdistrict_code,
-        address_village_code: this.address_village_code
+        address_street: this.address_street,
+        address_district_name: this.address_district_name,
+        last_status: this.last_status
     }
 }
 
