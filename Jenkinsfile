@@ -16,11 +16,10 @@ pipeline {
             steps{
                    sshagent (['']){
                         // ssh block
-                    sh 'ssh -o StrictHostKeyChecking=no $USER_PIKOBAR@$HOST_PIKOBAR "cd /home/ubuntu/app/pikobar-pelaporan-backend && ls -l"'
-
-                  //                                                                      && docker-compose -f docker-compose-production.yml down \
-                  //                                                                   && docker-compose -f docker-compose-production.yml build --no-cache \
-                  //                                                                      && docker-compose -f docker-compose-production.yml up -d"'
+                    sh 'ssh -o StrictHostKeyChecking=no $USER_PIKOBAR@$HOST_PIKOBAR "cd /home/ubuntu/app/pikobar-pelaporan-backend && $SSH_COMMAND \
+                                                                                    && docker-compose -f docker-compose-production.yml down \
+                                                                                    && docker-compose -f docker-compose-production.yml build --no-cache \
+                                                                                    && docker-compose -f docker-compose-production.yml up -d"'
                                                                                         
                     }
                 
