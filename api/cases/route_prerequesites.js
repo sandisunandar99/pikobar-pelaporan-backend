@@ -26,7 +26,7 @@ const CheckRoleCreate = server => {
     return {
         method: (request, reply) => {
 
-            if (request.auth.credentials.user.role === "dinkescity") {
+            if (request.auth.credentials.user.role === "dinkeskota") {
                 return reply()
             } else {
                 return reply({
@@ -46,7 +46,7 @@ const CheckRoleUpdate = server => {
     return {
         method: (request, reply) => {
 
-            if (request.auth.credentials.user.role === "dinkescity") {
+            if (request.auth.credentials.user.role === "dinkeskota") {
                 return reply()
             } else {
                 return reply({
