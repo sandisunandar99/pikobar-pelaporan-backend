@@ -7,8 +7,6 @@ module.exports = (server) => {
       message: true,
       data : user.toAuthJSON() 
     }
-    authUser.data.bio = user.bio || null
-    authUser.data.avatar = user.avatar || null
     return authUser
   }
 

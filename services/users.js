@@ -49,9 +49,6 @@ function updateUser (user, payload, callback) {
     user.email = payload.email;
   }
 
-  user.bio = payload.bio;
-  user.avatar = payload.avatar;
-
   if (payload.password !== '') {
     user.setPassword(payload.password);
   }

@@ -3,16 +3,25 @@ module.exports = (server) =>{
     //const inputValidations = require('./validations/input')
     //const outputValidations = require('./validations/output') 
 
+    const CheckRoleView = require('./route_prerequesites').CheckRoleView(server)
+    const CheckRoleCreate = require('./route_prerequesites').CheckRoleCreate(server)
+    const CheckRoleUpdate = require('./route_prerequesites').CheckRoleUpdate(server)
+
+
     return [
         // Get list case
         {
             method: 'GET',
             path: '/cases',
             config: {
+                auth: 'jwt',
                 description: 'show list of all cases',
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
                 // response: outputValidations
+                pre: [
+                    CheckRoleView
+                ]
             },
             handler: handlers.ListCase
         },
@@ -21,10 +30,14 @@ module.exports = (server) =>{
             method: 'POST',
             path: '/cases',
             config: {
+                auth: 'jwt',
                 description: 'create new cases',
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
                 // response: outputValidations
+                pre: [
+                    CheckRoleCreate
+                ]
             },
             handler: handlers.CreateCase
         },
@@ -33,10 +46,14 @@ module.exports = (server) =>{
             method: 'GET',
             path: '/cases/{id}',
             config: {
+                auth: 'jwt',
                 description: 'show a specific cases details',
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
                 // response: outputValidations
+                pre: [
+                    CheckRoleView
+                ]
             },
             handler: handlers.GetCaseDetail
         },
@@ -45,10 +62,14 @@ module.exports = (server) =>{
             method: 'GET',
             path: '/cases/{id}/history',
             config: {
+                auth: 'jwt',
                 description: 'show a specific cases history',
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
                 // response: outputValidations
+                pre: [
+                    CheckRoleView
+                ]
             },
             handler: handlers.GetCaseHistory
         },
@@ -57,25 +78,29 @@ module.exports = (server) =>{
             method: 'PUT',
             path: '/cases/{id}',
             config: {
+                auth: 'jwt',
                 description: 'show a specific cases details',
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
                 // response: outputValidations
+                pre: [
+                    CheckRoleUpdate
+                ]
             },
             handler: handlers.UpdateCase
         },
-        // Delete case
-        {
-            method: 'DELETE',
-            path: '/cases/{id}',
-            config: {
-                description: 'show a specific cases details',
-                tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
-            },
-            handler: handlers.DeleteCase
-        }
+        // Delete case sepertinya jangan dulu jadi saya komen ya (sandi)
+        // {
+        //     method: 'DELETE',
+        //     path: '/cases/{id}',
+        //     config: {
+        //         description: 'show a specific cases details',
+        //         tags: ['api', 'cases'],
+        //         // validate: inputValidations,
+        //         // response: outputValidations
+        //     },
+        //     handler: handlers.DeleteCase
+        // }
     ]
 
 }
