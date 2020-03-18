@@ -58,13 +58,19 @@ function ListCase (query,callback) {
   const options = {
     page: query.page,
     limit: query.limit,
+    address_district_code: query.address_district_code,
     sort: { createdAt: query.sort },
     leanWithId: true,
     customLabels: myCustomLabels
   };
 
   let query_search = new RegExp(query.search, "i")
-  let result_search = Case.find({ name: query_search })
+
+  if(query.address_district_code){
+    var result_search = Case.find({ address_district_code: query.address_district_code })
+  }else{
+    var result_search = Case.find({ name: query_search })
+  }
 
   Case.paginate(result_search, options).then(function(results){
       let res = { 
