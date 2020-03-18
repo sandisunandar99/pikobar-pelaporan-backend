@@ -99,12 +99,8 @@ function getCaseSummary (callback) {
 }
 
 function createCase (raw_payload, author, callback) {
-  let item = new Case();
-  let payload = clean_input(raw_payload);
-
-  case_fields.forEach(function(field) {
-      item[field] = payload[field];
-  })
+  let payload = clean_input(raw_payload)
+  let item = new Case(Object.assign(payload, { author }))   
 
   item.save((err, item) => {
     if (err) return callback(err, null);
