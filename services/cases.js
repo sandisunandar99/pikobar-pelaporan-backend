@@ -33,12 +33,14 @@ function ListCase (query,callback) {
   }).catch(err => callback(err, null))
 }
 
-function getCaseById (id_code, callback) {
-  Case.findOne({ id: id_code}).exec().then(item => {
-        return callback(null, item.toJSONFor())
-    })
-    .catch(err => callback(err, null))
+function getCaseById (id, callback) {
+  Case.findById(id)
+    // .populate('author')
+    .exec()
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
 }
+
 
 function getCaseSummary (callback) {
   var agg = [
