@@ -46,7 +46,9 @@ CaseSchema.methods.toJSONFor = function () {
         gender: this.gender,
         current_location_address: this.current_location_address,
         address_district_name: this.address_district_name,
-        last_status: this.last_status
+        last_status: this.last_status,
+        last_stage: this.last_stage,
+        last_history: this.last_history
     }
 }
 

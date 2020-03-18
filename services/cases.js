@@ -3,6 +3,48 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
+case_fields = [
+  'id_case',
+  'id_case_national',
+  'id_case_related',
+  'name',
+  'birth_date',
+  'age',
+  'gender',
+  'phone_number',
+  'address_street',
+  'address_village_code',
+  'address_village_name',
+  'address_subdistrict_code',
+  'address_subdistrict_name',
+  'address_district_code',
+  'address_district_name',
+  'address_province_name',
+  'nationality',
+  'current_location_address',
+  'occupation',
+  'last_status',
+  'last_stage',
+  'last_result',
+  'last_history',
+  'author',
+]
+
+function clean_input(payload) {
+    // date cleanup
+    [ 'birth_date'].forEach(function(field) {
+        if (payload.hasOwnProperty(field) && payload[field] != null)
+            payload[field] = new Date(payload[field]).toISOString();
+    });
+    //uppercase clean up
+    [ 'gender'].forEach(function(field) {
+        if (payload.hasOwnProperty(field) && payload[field] != null)
+            payload[field] = payload[field].toUpperCase();
+    });
+
+    return payload;
+}
+
 function ListCase (query,callback) {
 
   const myCustomLabels = {
@@ -33,8 +75,8 @@ function ListCase (query,callback) {
   }).catch(err => callback(err, null))
 }
 
-function getCaseById (id_code, callback) {
-  Case.findOne({ id: id_code}).exec().then(item => {
+function getCaseById (id_case, callback) {
+  Case.findOne({ id_case: id_case}).exec().then(item => {
         return callback(null, item.toJSONFor())
     })
     .catch(err => callback(err, null))
@@ -54,33 +96,13 @@ function getCaseSummary (callback) {
     .catch(err => callback(err, null))
 }
 
-function createCase (payload, author, callback) {
+function createCase (raw_payload, author, callback) {
   let item = new Case();
+  let payload = clean_input(raw_payload);
 
-  item.id_case = payload.id_case;
-  item.id_case_national = payload.id_case_national;
-  item.id_case_related = payload.id_case_related;
-  item.name = payload.name;
-  item.birth_date = new Date(Date.parse(payload.birth_date));
-  item.age = payload.age;
-  item.gender = payload.gender;
-  item.phone_number = payload.phone_number;
-  item.address_street = payload.address_street;
-  item.address_village_code = payload.address_village_code;
-  item.address_village_name = payload.address_village_name;
-  item.address_subdistrict_code = payload.address_subdistrict_code;
-  item.address_subdistrict_name = payload.address_subdistrict_name;
-  item.address_district_code = payload.address_district_code;
-  item.address_district_name = payload.address_district_name;
-  item.address_province_name = payload.address_province_name;
-  item.nationality = payload.nationality;
-  item.current_location_address = payload.current_location_address;
-  item.occupation = payload.occupation;
-  item.last_status  = payload.last_status;
-  item.last_stage  = payload.last_stage;
-  item.last_result  = payload.last_result;
-  item.last_history  = payload.last_history;
-  item.author = author
+  case_fields.forEach(function(field) {
+      item[field] = payload[field];
+  })
 
   item.save((err, item) => {
     if (err) return callback(err, null);
@@ -88,38 +110,20 @@ function createCase (payload, author, callback) {
   });
 }
 
-function updateCase (id, payload, callback) {
+function updateCase (id, raw_payload, callback) {
   //let item = getCaseById(id, callback);
-  Case.findOne({ id: id}).exec().then(item => {
-      if (item.name != payload.name)
-          item.name = payload.name;
+  let payload = clean_input(raw_payload);
 
-      if (item.birth_date != payload.birth_date)
-          item.birth_date = payload.birth_date;
+  Case.findOne({ id_case: id}).exec().then(item => {
 
-      if (item.age != payload.age)
-          item.age = payload.age;
-
-      if (item.gender != payload.gender)
-          item.gender = payload.gender;
-
-      if (item.phone_number != payload.phone_number)
-          item.phone_number = payload.phone_number;
-
-      if (item.address_street != payload.address_street)
-          item.address_street = payload.address_street;
-
-      if (item.address_village_code != payload.address_village_code)
-          item.address_village_code = payload.address_village_code;
-
-      if (item.address_subdistrict_code != payload.address_subdistrict_code)
-          item.address_subdistrict_code = payload.address_subdistrict_code;
-
-      if (item.address_district_code != payload.address_district_code)
-          item.address_district_code = payload.address_district_code;
-
-      if (item.address_province_code != payload.address_province_code)
-          item.address_province_code = payload.address_province_code;
+      case_fields.forEach(function(field) {
+          if (payload.hasOwnProperty(field) && 
+              payload[field] != null && 
+              payload[field] != item[field])
+          {
+            item[field] = payload[field];
+          }
+      })
 
       item.save((err, item) => {
         if (err) return callback(err, null);
