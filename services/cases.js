@@ -90,12 +90,11 @@ function getCaseSummary (callback) {
 function createCase (raw_payload, author, pre, callback) {
 
   let date = new Date().getFullYear().toString()
-  let counter = (pre.count_pasien + 1)
   let id_case = "Covid-"
       id_case += pre.dinkes_code
       id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - counter.toString().length)
-      id_case += counter
+      id_case += "0".repeat(4 - pre.count_pasien.toString().length)
+      id_case += pre.count_pasien
 
   let inset_id_case = Object.assign(raw_payload, {id_case})
   let item = new Case(Object.assign(inset_id_case, {author}))
@@ -130,7 +129,9 @@ function getCountByDistrict(code, callback) {
                 Case.find({ address_district_code: code})
                     .exec()
                     .then(res =>{
-                        let count = res.length
+                      console.log(res.length);
+                      
+                        let count = (res.length + 1)
                         let result = {
                           prov_city_code: code,
                           dinkes_code: dinkes.dinkes_kota_kode,
