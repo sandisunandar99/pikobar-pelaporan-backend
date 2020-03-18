@@ -1,7 +1,7 @@
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
-    //const inputValidations = require('./validations/input')
-    //const outputValidations = require('./validations/output') 
+    const inputValidations = require('./validations/input')
+    //const outputValidations = require('./validations/output')
 
     const CheckRoleView = require('./route_prerequesites').CheckRoleView(server)
     const CheckRoleCreate = require('./route_prerequesites').CheckRoleCreate(server)
@@ -17,7 +17,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list of all cases',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
+                validate: inputValidations.CaseQueryValidations,
                 // response: outputValidations
                 pre: [
                     CheckRoleView
@@ -72,6 +72,18 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetCaseHistory
+        },
+        // Get case's summary of last status
+        {
+            method: 'GET',
+            path: '/cases-summary',
+            config: {
+                description: 'Get cases summary of last status',
+                tags: ['api', 'cases'],
+                // validate: inputValidations,
+                // response: outputValidations
+            },
+            handler: handlers.GetCaseSummary
         },
         // Update case
         {

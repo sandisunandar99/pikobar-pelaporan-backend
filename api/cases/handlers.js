@@ -19,10 +19,12 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async ListCase(request, reply){
-            server.methods.services.cases.list( (err, result) => {
+            let query = request.query
+
+            server.methods.services.cases.list(query, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructCasesResponse(result,request)
                 ).code(200)
             })
         },
@@ -34,14 +36,14 @@ module.exports = (server) => {
          */
         async CreateCase(request, reply){
             let payload = request.payload
-            server.methods.services.cases.create(payload, (err, result) => {
+            server.methods.services.cases.create(payload, request.auth.credentials.user, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result)
                 ).code(200)
             })
         },
-        
+
         /**
          * GET /api/cases/{id}
          * @param {*} request
@@ -63,10 +65,8 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseHistory(request, reply) {
-            return reply({ result: 'case history!' });
-            /*
-            server.methods.services.areas.getVillage(
-                request.params.district_code,
+            server.methods.services.histories.getByCase(
+                request.params.id,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -74,9 +74,23 @@ module.exports = (server) => {
                     ).code(200)
                 }
             )
-            */
         },
-        
+
+        /**
+         * GET /api/cases/summary
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummary(request, reply) {
+            let id = request.params.id
+            server.methods.services.cases.getSummary((err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item)
+                ).code(200)
+            })
+        },
+
         /**
          * PUT /api/cases/{id}
          * @param {*} request
@@ -85,6 +99,7 @@ module.exports = (server) => {
         async UpdateCase(request, reply){
             let payload = request.payload
             let id = request.params.id
+            console.log(id);
             server.methods.services.cases.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
@@ -92,7 +107,7 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-        
+
         /**
          * DELETE /api/cases/{id}
          * @param {*} request

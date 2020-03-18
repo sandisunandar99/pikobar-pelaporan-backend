@@ -3,43 +3,108 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
-function ListCase (callback) {
-    Case.find().exec().then(item => {
-        let res = item.map(q => q.toJSONFor())
-        return callback(null, res)
+case_fields = [
+  'id_case',
+  'id_case_national',
+  'id_case_related',
+  'name',
+  'birth_date',
+  'age',
+  'gender',
+  'phone_number',
+  'address_street',
+  'address_village_code',
+  'address_village_name',
+  'address_subdistrict_code',
+  'address_subdistrict_name',
+  'address_district_code',
+  'address_district_name',
+  'address_province_name',
+  'nationality',
+  'current_location_address',
+  'occupation',
+  'last_status',
+  'last_stage',
+  'last_result',
+  'last_history',
+  'author',
+]
+
+function clean_input(payload) {
+    // date cleanup
+    [ 'birth_date'].forEach(function(field) {
+        if (payload.hasOwnProperty(field) && payload[field] != null)
+            payload[field] = new Date(payload[field]).toISOString();
+    });
+    //uppercase clean up
+    [ 'gender'].forEach(function(field) {
+        if (payload.hasOwnProperty(field) && payload[field] != null)
+            payload[field] = payload[field].toUpperCase();
+    });
+
+    return payload;
+}
+
+function ListCase (query,callback) {
+
+  const myCustomLabels = {
+    totalDocs: 'itemCount',
+    docs: 'itemsList',
+    limit: 'perPage',
+    page: 'currentPage',
+    meta: '_meta'
+  }; 
+
+  const options = {
+    page: query.page,
+    limit: query.limit,
+    sort: { createdAt: query.sort },
+    leanWithId: true,
+    customLabels: myCustomLabels
+  };
+
+  let query_search = new RegExp(query.search, "i")
+  let result_search = Case.find({ name: query_search })
+
+  Case.paginate(result_search, options).then(function(results){
+      let res = { 
+        cases: results.itemsList.map(cases => cases.toJSONFor()),
+        _meta: results._meta
+      }
+      return callback(null, res)
+  }).catch(err => callback(err, null))
+}
+
+function getCaseById (id_case, callback) {
+  Case.findOne({ id_case: id_case})
+    // .populate('author')
+    .exec()
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
+
+function getCaseSummary (callback) {
+  var agg = [
+    {$group: {
+      _id: "$last_status",
+      total: {$sum: 1}
+    }}
+  ];
+
+  Case.aggregate(agg).exec().then(item => {
+        return callback(null, item)
     })
     .catch(err => callback(err, null))
 }
 
-function getCaseById (id_code, callback) {
-  Case.findOne({ id: id_code}).exec().then(item => {
-        return callback(null, item.toJSONFor())
-    })
-    .catch(err => callback(err, null))
-}
-
-function createCase (payload, callback) {
+function createCase (raw_payload, author, callback) {
   let item = new Case();
-  
-  item.id_case = payload.id_case;
-  item.id_case_national = payload.id_case_national;
-  item.id_case_related = payload.id_case_related;
-  item.name = payload.name;
-  item.birth_date = new Date(Date.parse(payload.birth_date));
-  item.age = payload.age;
-  item.gender = payload.gender;
-  item.phone_number = payload.phone_number;
-  item.address_street = payload.address_street;
-  item.address_village_code = payload.address_village_code;
-  item.address_subdistrict_code = payload.address_subdistrict_code;
-  item.address_district_code = payload.address_district_code;
-  item.nationality = payload.nationality;
-  item.occupation = payload.occupation;
-  item.last_status  = payload.last_status;
-  item.last_stage  = payload.last_stage;
-  item.last_result  = payload.last_result;
-  item.last_history  = payload.last_history;
-  item.author  = payload.author;
+  let payload = clean_input(raw_payload);
+
+  case_fields.forEach(function(field) {
+      item[field] = payload[field];
+  })
 
   item.save((err, item) => {
     if (err) return callback(err, null);
@@ -47,46 +112,13 @@ function createCase (payload, callback) {
   });
 }
 
-function updateCase (id, payload, callback) {
-  //let item = getCaseById(id, callback);
-  Case.findOne({ id: id}).exec().then(item => {
-      if (item.name != payload.name)
-          item.name = payload.name;
-
-      if (item.birth_date != payload.birth_date)
-          item.birth_date = payload.birth_date;
-
-      if (item.age != payload.age)
-          item.age = payload.age;
-
-      if (item.gender != payload.gender)
-          item.gender = payload.gender;
-
-      if (item.phone_number != payload.phone_number)
-          item.phone_number = payload.phone_number;
-
-      if (item.address_street != payload.address_street)
-          item.address_street = payload.address_street;
-
-      if (item.address_village_code != payload.address_village_code)
-          item.address_village_code = payload.address_village_code;
-
-      if (item.address_subdistrict_code != payload.address_subdistrict_code)
-          item.address_subdistrict_code = payload.address_subdistrict_code;
-
-      if (item.address_district_code != payload.address_district_code)
-          item.address_district_code = payload.address_district_code;
-
-      if (item.address_province_code != payload.address_province_code)
-          item.address_province_code = payload.address_province_code;
-
-      item.save((err, item) => {
-        if (err) return callback(err, null);
-        return callback(null, item);
-      });
-    })
-    .catch(err => callback(err, null))
-
+function updateCase (id_case, payload, callback) {
+  Case.findOneAndUpdate({ id_case: id_case}, { $set: clean_input(payload) }, { new: true })
+  .then(result => {
+    return callback(null, result);
+  }).catch(err => {
+    return callback(null, err);
+  })
 }
 
 module.exports = [
@@ -99,6 +131,10 @@ module.exports = [
     method: getCaseById
   },
   {
+    name: 'services.cases.getSummary',
+    method: getCaseSummary
+  },
+  {
     name: 'services.cases.create',
     method: createCase
   },
@@ -107,4 +143,4 @@ module.exports = [
     method: updateCase
   }
 ];
- 
+

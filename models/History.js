@@ -38,7 +38,8 @@ HistorySchema.methods.toJSONFor = function () {
         current_location_subdistrict_code : this.current_location_subdistrict_code,
         current_location_village_code : this.current_location_village_code,
         current_location_province_code : this.current_location_province_code,
-        other_note: this.other_note
+        createdAt : this.createdAt,
+        updatedAt : this.updatedAt
     }
 }
 
