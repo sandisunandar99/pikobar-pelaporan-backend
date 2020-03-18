@@ -76,11 +76,13 @@ function ListCase (query,callback) {
 }
 
 function getCaseById (id_case, callback) {
-  Case.findOne({ id_case: id_case}).exec().then(item => {
-        return callback(null, item.toJSONFor())
-    })
-    .catch(err => callback(err, null))
+  Case.findOne({ id_case: id_case})
+    // .populate('author')
+    .exec()
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
 }
+
 
 function getCaseSummary (callback) {
   var agg = [
@@ -110,28 +112,13 @@ function createCase (raw_payload, author, callback) {
   });
 }
 
-function updateCase (id, raw_payload, callback) {
-  //let item = getCaseById(id, callback);
-  let payload = clean_input(raw_payload);
-
-  Case.findOne({ id_case: id}).exec().then(item => {
-
-      case_fields.forEach(function(field) {
-          if (payload.hasOwnProperty(field) && 
-              payload[field] != null && 
-              payload[field] != item[field])
-          {
-            item[field] = payload[field];
-          }
-      })
-
-      item.save((err, item) => {
-        if (err) return callback(err, null);
-        return callback(null, item);
-      });
-    })
-    .catch(err => callback(err, null))
-
+function updateCase (id, payload, callback) {
+  Case.findByIdAndUpdate(id, { $set: clean_input(payload) }, { new: true })
+  .then(result => {
+    return callback(null, result);
+  }).catch(err => {
+    return callback(null, err);
+  })
 }
 
 module.exports = [

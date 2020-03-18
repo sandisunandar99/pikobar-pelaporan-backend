@@ -99,6 +99,7 @@ module.exports = (server) => {
         async UpdateCase(request, reply){
             let payload = request.payload
             let id = request.params.id
+            console.log(id);
             server.methods.services.cases.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
