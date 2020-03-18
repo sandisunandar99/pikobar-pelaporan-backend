@@ -17,7 +17,7 @@ function ListCase (query,callback) {
     limit: 'perPage',
     page: 'currentPage',
     meta: '_meta'
-  }; 
+  };
 
   const options = {
     page: query.page,
@@ -37,7 +37,7 @@ function ListCase (query,callback) {
   }
 
   Case.paginate(result_search, options).then(function(results){
-      let res = { 
+      let res = {
         cases: results.itemsList.map(cases => cases.toJSONFor()),
         _meta: results._meta
       }
@@ -56,20 +56,34 @@ function getCaseById (id, callback) {
 
 
 function getCaseSummary (callback) {
-  var agg = [
+  let agg = [
     {$group: {
       _id: "$last_status",
       total: {$sum: 1}
     }}
   ];
 
+  let result =  {'ODP':0, 'PDP':0, 'POSITIF':0}
+
   Case.aggregate(agg).exec().then(item => {
-        return callback(null, item)
+      item.forEach(function(item){
+        if (item['_id'] == 'ODP') {
+          result.ODP = item['total']
+        }
+        if (item['_id'] == 'PDP') {
+          result.PDP = item['total']
+        }
+        if (item['_id'] == 'POSITIF') {
+          result.POSITIF = item['total']
+        }
+      });
+
+      return callback(null, result)
     })
     .catch(err => callback(err, null))
 }
 
-function createCase (raw_payload, author, pre, callback) { 
+function createCase (raw_payload, author, pre, callback) {
 
   let date = new Date().getFullYear().toString()
   let counter = (pre.count_pasien + 1)
@@ -81,7 +95,7 @@ function createCase (raw_payload, author, pre, callback) {
 
   let inset_id_case = Object.assign(raw_payload, {id_case})
   let item = new Case(Object.assign(inset_id_case, {author}))
-  
+
   item.save().then(x => { // step 1 : create dan save case baru
     let c = {case: x._id}
     let history = new History(Object.assign(raw_payload, c))
@@ -104,11 +118,11 @@ function updateCase (id_case, payload, callback) {
   })
 }
 
-function getCountByDistrict(code, callback) {  
+function getCountByDistrict(code, callback) {
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
-                
+
                 Case.find({ address_district_code: code})
                     .exec()
                     .then(res =>{
@@ -116,12 +130,12 @@ function getCountByDistrict(code, callback) {
                         let result = {
                           prov_city_code: code,
                           dinkes_code: dinkes.dinkes_kota_kode,
-                          count_pasien: count 
+                          count_pasien: count
                         }
                       return callback(null, result)
                     }).catch(err => callback(err, null))
               })
-  
+
 }
 
 
