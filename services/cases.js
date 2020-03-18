@@ -91,45 +91,12 @@ function createCase (payload, author, callback) {
 }
 
 function updateCase (id, payload, callback) {
-  //let item = getCaseById(id, callback);
-  Case.findOne({ id: id}).exec().then(item => {
-      if (item.name != payload.name)
-          item.name = payload.name;
-
-      if (item.birth_date != payload.birth_date)
-          item.birth_date = payload.birth_date;
-
-      if (item.age != payload.age)
-          item.age = payload.age;
-
-      if (item.gender != payload.gender)
-          item.gender = payload.gender;
-
-      if (item.phone_number != payload.phone_number)
-          item.phone_number = payload.phone_number;
-
-      if (item.address_street != payload.address_street)
-          item.address_street = payload.address_street;
-
-      if (item.address_village_code != payload.address_village_code)
-          item.address_village_code = payload.address_village_code;
-
-      if (item.address_subdistrict_code != payload.address_subdistrict_code)
-          item.address_subdistrict_code = payload.address_subdistrict_code;
-
-      if (item.address_district_code != payload.address_district_code)
-          item.address_district_code = payload.address_district_code;
-
-      if (item.address_province_code != payload.address_province_code)
-          item.address_province_code = payload.address_province_code;
-
-      item.save((err, item) => {
-        if (err) return callback(err, null);
-        return callback(null, item);
-      });
-    })
-    .catch(err => callback(err, null))
-
+  Case.findByIdAndUpdate(id, { $set: payload }, { new: true })
+  .then(result => {
+    return callback(null, result);
+  }).catch(err => {
+    return callback(null, err);
+  })
 }
 
 module.exports = [
