@@ -9,50 +9,6 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
-
-
-case_fields = [
-  'id_case',
-  'id_case_national',
-  'id_case_related',
-  'name',
-  'birth_date',
-  'age',
-  'gender',
-  'phone_number',
-  'address_street',
-  'address_village_code',
-  'address_village_name',
-  'address_subdistrict_code',
-  'address_subdistrict_name',
-  'address_district_code',
-  'address_district_name',
-  'address_province_name',
-  'nationality',
-  'current_location_address',
-  'occupation',
-  'last_status',
-  'last_stage',
-  'last_result',
-  'last_history',
-  'author',
-]
-
-// function clean_input(payload) {
-//     // date cleanup
-//     [ 'birth_date'].forEach(function(field) {
-//         if (payload.hasOwnProperty(field) && payload[field] != null)
-//             payload[field] = new Date(payload[field]).toISOString();
-//     });
-//     //uppercase clean up
-//     [ 'gender'].forEach(function(field) {
-//         if (payload.hasOwnProperty(field) && payload[field] != null)
-//             payload[field] = payload[field].toUpperCase();
-//     });
-
-//     return payload;
-// }
-
 function ListCase (query,callback) {
 
   const myCustomLabels = {
