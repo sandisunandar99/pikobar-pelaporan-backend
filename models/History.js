@@ -4,11 +4,11 @@ const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'}, 
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true, required: [true, "can't be blank"]}, // PROSES / SELESAI
-    result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
-    diagnosis : String,
+    final_result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
+    diagnosis : Array,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
-    history_tracing: String,
+    history_tracing: Array,
     // kalau dr luar negri
     return_date : Date, 
     history_notes: String,
@@ -19,7 +19,7 @@ const HistorySchema = new mongoose.Schema({
     current_location_village_code : String,
     current_location_subdistrict_code : String, //kecamatan
     current_location_district_code : String, //kab/kota
-    current_location_province_code : String
+    current_location_province_code : {type: String, default: "32"},
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {

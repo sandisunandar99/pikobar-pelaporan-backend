@@ -65,7 +65,7 @@ const countCaseByDistrict = server =>{
     return {
         method: (request, reply) => {
             server.methods.services.cases.getCountByDistrict(
-                request.auth.credentials.user.code_district_city,
+                request.payload.address_district_code,
                 (err, count) => {
                     if (err) {
                         return reply(replyHelper.constructErrorResponse(err)).takeover()
