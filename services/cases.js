@@ -56,31 +56,35 @@ function getCaseById (id, callback) {
 
 
 function getCaseSummary (callback) {
-  let agg = [
-    {$group: {
-      _id: "$last_status",
-      total: {$sum: 1}
-    }}
-  ];
 
-  let result =  {'ODP':0, 'PDP':0, 'POSITIF':0}
+  Case.find()
+      .populate('last_history')
+      .exec()
+      .then(x =>{
+          let ODP = 0
+          let PDP = 0
+          let POSITIF = 0
 
-  Case.aggregate(agg).exec().then(item => {
-      item.forEach(function(item){
-        if (item['_id'] == 'ODP') {
-          result.ODP = item['total']
-        }
-        if (item['_id'] == 'PDP') {
-          result.PDP = item['total']
-        }
-        if (item['_id'] == 'POSITIF') {
-          result.POSITIF = item['total']
-        }
-      });
 
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
+          x.forEach((val)=>{
+            if (val.last_history.status === 'ODP'){
+              ODP ++
+            } else if (val.last_history.status === 'PDP'){
+              PDP ++
+            } else if (val.last_history.status === 'POSITIF') {
+              POSITIF ++
+            }
+
+          })
+
+          return callback (null, {
+            ODP: ODP,
+            PDP: PDP,
+            POSITIF: POSITIF
+          })
+
+      })
+      .catch(err => callback(err, null))
 }
 
 function createCase (raw_payload, author, pre, callback) {
