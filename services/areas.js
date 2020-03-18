@@ -10,8 +10,8 @@ const SubDistrict = mongoose.model('SubDistrict')
 const Village = mongoose.model('Village')
 const Hospital = mongoose.model('Hospital')
 
-function getDistrictCity(callback) {  
-    Districtcity.find({ kemendagri_provinsi_kode: '32'})
+function getDistrictCity(code,callback) {  
+    Districtcity.find({ kemendagri_kabupaten_kode: code})
         .sort({ kemendagri_kabupaten_kode: 'asc' })
         .exec()
         .then(city => {

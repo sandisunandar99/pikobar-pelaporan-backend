@@ -80,6 +80,7 @@ module.exports = (server) =>{
             method: 'GET',
             path: '/cases-summary',
             config: {
+                auth: 'jwt',
                 description: 'Get cases summary of last status',
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
