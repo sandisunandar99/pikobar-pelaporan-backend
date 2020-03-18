@@ -1,25 +1,25 @@
 const mongoose = require('mongoose')
 
 const HistorySchema = new mongoose.Schema({
-    case : { type: String, required: [true, "can't be blank"]}, 
+    case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'}, 
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true, required: [true, "can't be blank"]}, // PROSES / SELESAI
     result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
-    symptoms : String,
+    diagnosis : String,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
     history_tracing: String,
     // kalau dr luar negri
     return_date : Date, 
-    history_note: String,
+    history_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
     current_location_type: String,  // RS / RUMAH
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
     current_location_address: String, // or Number?
     current_location_village_code : String,
     current_location_subdistrict_code : String, //kecamatan
-    current_location_district_code : { type: String, required: [true, "can't be blank"]}, //kab/kota
-    current_location_province_code : { type: String, required: [true, "can't be blank"]}
+    current_location_district_code : String, //kab/kota
+    current_location_province_code : String
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {

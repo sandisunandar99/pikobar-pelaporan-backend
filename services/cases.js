@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
+require('../models/History')
+const History = mongoose.model('History')
+
+
 case_fields = [
   'id_case',
   'id_case_national',
@@ -30,20 +34,20 @@ case_fields = [
   'author',
 ]
 
-function clean_input(payload) {
-    // date cleanup
-    [ 'birth_date'].forEach(function(field) {
-        if (payload.hasOwnProperty(field) && payload[field] != null)
-            payload[field] = new Date(payload[field]).toISOString();
-    });
-    //uppercase clean up
-    [ 'gender'].forEach(function(field) {
-        if (payload.hasOwnProperty(field) && payload[field] != null)
-            payload[field] = payload[field].toUpperCase();
-    });
+// function clean_input(payload) {
+//     // date cleanup
+//     [ 'birth_date'].forEach(function(field) {
+//         if (payload.hasOwnProperty(field) && payload[field] != null)
+//             payload[field] = new Date(payload[field]).toISOString();
+//     });
+//     //uppercase clean up
+//     [ 'gender'].forEach(function(field) {
+//         if (payload.hasOwnProperty(field) && payload[field] != null)
+//             payload[field] = payload[field].toUpperCase();
+//     });
 
-    return payload;
-}
+//     return payload;
+// }
 
 function ListCase (query,callback) {
 
@@ -104,14 +108,20 @@ function getCaseSummary (callback) {
     .catch(err => callback(err, null))
 }
 
-function createCase (raw_payload, author, callback) {
-  let payload = clean_input(raw_payload)
-  let item = new Case(Object.assign(payload, { author }))   
+function createCase (raw_payload, author, callback) { 
+  let item = new Case(Object.assign(raw_payload, {author}))
 
-  item.save((err, item) => {
-    if (err) return callback(err, null);
-    return callback(null, item);
-  });
+  item.save().then(x => { // step 1 : create dan save case baru
+    let c = {case: x._id}
+    let history = new History(Object.assign(raw_payload, c))
+    history.save().then(last => { // step 2: create dan save historuy baru jangan lupa di ambil object id case
+      let last_history = { last_history: last._id }
+      x = Object.assign(x, last_history)
+      x.save().then(final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
+        return callback(null, final)
+      })
+    })
+   }).catch(err => callback(err, null))
 }
 
 function updateCase (id_case, payload, callback) {

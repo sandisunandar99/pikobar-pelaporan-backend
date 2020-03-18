@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
+var uniqueValidator = require('mongoose-unique-validator')
 
 const CaseSchema = new mongoose.Schema({
     // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
@@ -30,11 +31,13 @@ const CaseSchema = new mongoose.Schema({
     last_status : {type:String},
     last_stage : {type:String},
     last_result : {type:String},
-    last_history : {type:String},
+    last_history : {type: mongoose.Schema.Types.ObjectId, ref: 'History'},
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.plugin(mongoosePaginate)
+CaseSchema.plugin(uniqueValidator, { message: 'ID ini sudah ada di basis data.' })
+
 
 CaseSchema.methods.toJSONFor = function () {
     return {
