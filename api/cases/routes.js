@@ -6,6 +6,7 @@ module.exports = (server) =>{
     const CheckRoleView = require('./route_prerequesites').CheckRoleView(server)
     const CheckRoleCreate = require('./route_prerequesites').CheckRoleCreate(server)
     const CheckRoleUpdate = require('./route_prerequesites').CheckRoleUpdate(server)
+    const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
 
 
     return [
@@ -36,7 +37,8 @@ module.exports = (server) =>{
                 // validate: inputValidations,
                 // response: outputValidations
                 pre: [
-                    CheckRoleCreate
+                    CheckRoleCreate,
+                    countCaseByDistrict
                 ]
             },
             handler: handlers.CreateCase

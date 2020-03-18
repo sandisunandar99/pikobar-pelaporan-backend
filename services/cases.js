@@ -6,6 +6,10 @@ const Case = mongoose.model('Case');
 require('../models/History')
 const History = mongoose.model('History')
 
+require('../models/DistrictCity')
+const DistrictCity = mongoose.model('Districtcity')
+
+
 
 case_fields = [
   'id_case',
@@ -85,9 +89,10 @@ function ListCase (query,callback) {
   }).catch(err => callback(err, null))
 }
 
-function getCaseById (id_case, callback) {
-  Case.findOne({ id_case: id_case})
-    // .populate('author')
+function getCaseById (id, callback) {
+  Case.findOne({_id: id})
+    .populate('author')
+    .populate('last_history')
     .exec()
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null));
@@ -108,9 +113,19 @@ function getCaseSummary (callback) {
     .catch(err => callback(err, null))
 }
 
-function createCase (raw_payload, author, callback) { 
-  let item = new Case(Object.assign(raw_payload, {author}))
+function createCase (raw_payload, author, pre, callback) { 
 
+  let date = new Date().getFullYear().toString()
+  let counter = (pre.count_pasien + 1)
+  let id_case = "Covid-"
+      id_case += pre.dinkes_code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(4 - counter.toString().length)
+      id_case += counter
+
+  let inset_id_case = Object.assign(raw_payload, {id_case})
+  let item = new Case(Object.assign(inset_id_case, {author}))
+  
   item.save().then(x => { // step 1 : create dan save case baru
     let c = {case: x._id}
     let history = new History(Object.assign(raw_payload, c))
@@ -133,6 +148,28 @@ function updateCase (id_case, payload, callback) {
   })
 }
 
+function getCountByDistrict(code, callback) {  
+  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                
+                Case.find({ address_district_code: code})
+                    .exec()
+                    .then(res =>{
+                        let count = res.length
+                        let result = {
+                          prov_city_code: code,
+                          dinkes_code: dinkes.dinkes_kota_kode,
+                          count_pasien: count 
+                        }
+                      return callback(null, result)
+                    }).catch(err => callback(err, null))
+              })
+  
+}
+
+
+
 module.exports = [
   {
     name: 'services.cases.list',
@@ -153,6 +190,10 @@ module.exports = [
   {
     name: 'services.cases.update',
     method: updateCase
+  },
+  {
+    name: 'services.cases.getCountByDistrict',
+    method: getCountByDistrict
   }
 ];
 

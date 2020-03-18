@@ -5,7 +5,8 @@ const DistrictcitySchema = new mongoose.Schema({
     kemendagri_provinsi_kode : String,
     kemendagri_provinsi_nama : String,
     kemendagri_kabupaten_kode: String,
-    kemendagri_kabupaten_nama: String
+    kemendagri_kabupaten_nama: String,
+    dinkes_kota_kode: String
 },{strict: false})
 
 DistrictcitySchema.methods.toJSONFor = function(p) { 

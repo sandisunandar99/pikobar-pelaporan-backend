@@ -6,7 +6,7 @@ const CaseSchema = new mongoose.Schema({
     // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
     id_case : {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], index: true},
     // NIK sumber terkait kontak erat
-    id_case_national : {type:Number},
+    id_case_national : {type:String},
     id_case_related : {type:String},
     name: {type:String},
     // tentatif jika diisi usia, required jika tidak
@@ -24,13 +24,9 @@ const CaseSchema = new mongoose.Schema({
     address_district_name: { type: String, required: [true, "can't be blank"]},
     address_province_code: { type: String, default:32},
     address_province_name: { type: String, default:"Jawa Barat"},
-    current_location_address: { type: String, required: [true, "can't be blank"]},
     phone_number: {type:String},
     nationality: {type:String},
     occupation: {type:String},
-    last_status : {type:String},
-    last_stage : {type:String},
-    last_result : {type:String},
     last_history : {type: mongoose.Schema.Types.ObjectId, ref: 'History'},
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },{ timestamps:true, usePushEach: true })

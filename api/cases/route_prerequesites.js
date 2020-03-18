@@ -61,9 +61,27 @@ const CheckRoleUpdate = server => {
     }
 }
 
+const countCaseByDistrict = server =>{
+    return {
+        method: (request, reply) => {
+            server.methods.services.cases.getCountByDistrict(
+                request.auth.credentials.user.code_district_city,
+                (err, count) => {
+                    if (err) {
+                        return reply(replyHelper.constructErrorResponse(err)).takeover()
+                    }
+                    return reply(count)
+                })
+        },
+        assign: 'count_case'
+    }
+}
+
+
 
 module.exports ={
     CheckRoleView,
     CheckRoleCreate,
-    CheckRoleUpdate
+    CheckRoleUpdate,
+    countCaseByDistrict
 }
