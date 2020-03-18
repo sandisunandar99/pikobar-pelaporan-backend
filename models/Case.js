@@ -22,7 +22,7 @@ const CaseSchema = new mongoose.Schema({
     address_district_code: { type: String, required: [true, "can't be blank"]},
     address_district_name: { type: String, required: [true, "can't be blank"]},
     address_province_code: { type: String, default:32},
-    address_province_name: { type: String, required: [true, "can't be blank"]},
+    address_province_name: { type: String, default:"Jawa Barat"},
     current_location_address: { type: String, required: [true, "can't be blank"]},
     phone_number: {type:String},
     nationality: {type:String},
