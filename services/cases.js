@@ -65,23 +65,27 @@ function getCaseSummary (callback) {
           let PDP = 0
           let POSITIF = 0
 
+         
+
 
           x.forEach((val)=>{
-            if (val.last_history.status === 'ODP'){
-              ODP ++
-            } else if (val.last_history.status === 'PDP'){
-              PDP ++
-            } else if (val.last_history.status === 'POSITIF') {
-              POSITIF ++
+            if (val.last_history !== null) {
+              if (val.last_history.status === 'ODP') {
+                ODP++
+              } else if (val.last_history.status === 'PDP') {
+                PDP++
+              } else if (val.last_history.status === 'POSITIF') {
+                POSITIF++
+              }     
             }
-
           })
 
-          return callback (null, {
-            ODP: ODP,
-            PDP: PDP,
-            POSITIF: POSITIF
-          })
+        return callback(null, {
+          ODP: ODP,
+          PDP: PDP,
+          POSITIF: POSITIF
+        })
+            
 
       })
       .catch(err => callback(err, null))
