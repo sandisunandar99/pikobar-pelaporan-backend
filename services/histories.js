@@ -27,23 +27,8 @@ function getHistoryByCase (id_case, callback) {
 }
 
 function createHistory (payload, callback) {
-  let item = new History();
+  let item = new History(payload);
   
-  item.case = payload.case;
-  item.status = payload.status;
-  item.symptoms = payload.symptoms;
-  item.stage = payload.stage;
-  item.result = payload.result;
-  item.history_trace = payload.history_trace;
-  item.return_date = payload.return_date;
-  item.history_note =payload.history_note;
-  item.current_location_type = payload.current_location_type;
-  item.current_location_village_code = payload.current_location_village_code;
-  item.current_location_district_code = payload.current_location_district_code;
-  item.current_location_subdistrict_code = payload.current_location_subdistrict_code;
-  item.current_location_province_code = payload.current_location_province_code;
-  item.last_changed = payload.last_changed;
-
   item.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
