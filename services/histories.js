@@ -6,7 +6,10 @@ require('../models/Case');
 const Case = mongoose.model('Case');
 
 function ListHistory (callback) {
-    History.find().exec().then(item => {
+    History.find()
+        .sort({ createdAt: 'desc'})
+        .exec()
+        .then(item => {
         let res = item.map(q => q.toJSONFor())
         return callback(null, res)
     })
