@@ -11,7 +11,9 @@ const HistorySchema = new mongoose.Schema({
     history_tracing: Array,
     // kalau dr luar negri
     return_date : Date, 
+    visited_country : String,
     history_notes: String,
+    other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
     current_location_type: String,  // RS / RUMAH
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
@@ -32,7 +34,9 @@ HistorySchema.methods.toJSONFor = function () {
         last_changed : this.last_changed,
         history_tracing: this.history_tracing,
         return_date : this.return_date,
+        visited_country : this.visited_country,
         history_note: this.history_note,
+        other_notes: this.other_notes,
         current_location_type: this.current_location_type,
         current_location_district_code : this.current_location_district_code,
         current_location_subdistrict_code : this.current_location_subdistrict_code,
