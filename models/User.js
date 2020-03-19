@@ -6,6 +6,7 @@ var config = require('../config/config')
 
 
 var UserSchema = new mongoose.Schema({
+  fullname: String,
   username: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true},
   email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
   role: { type: String, lowercase: true, required: [true, "can't be blank"]},
@@ -42,6 +43,7 @@ UserSchema.methods.generateJWT = function () {
 UserSchema.methods.toAuthJSON = function () {
   return {
     id: this._id,
+    fullname: this.fullname,
     username: this.username,
     email: this.email,
     role: this.role,

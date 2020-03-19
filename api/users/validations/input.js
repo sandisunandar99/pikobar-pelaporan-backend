@@ -29,10 +29,12 @@ const LoginPayload = {
 
 const RegisterPayload = {
   payload: Joi.object().keys({
+      fullname: Joi.string().required().allow(null, '').default('null'),
       username: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().required(),
       role: Joi.string().required(),
+      name_district_city: Joi.string().required().allow(null, '').default('null'),
       code_district_city: Joi.number().required().allow(null, '').default('null')
   }),
   options: validateOptions.options,
