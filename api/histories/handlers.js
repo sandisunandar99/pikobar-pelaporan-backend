@@ -34,7 +34,7 @@ module.exports = (server) => {
          */
         async CreateHistory(request, reply){
             let payload = request.payload
-            server.methods.services.histories.create(payload, (err, result) => {
+            server.methods.services.histories.createIfChanged(payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructHistorysResponse(result)
