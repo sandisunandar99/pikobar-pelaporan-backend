@@ -24,7 +24,10 @@ function getHistoryById (id, callback) {
 }
 
 function getHistoryByCase (id_case, callback) {
-  History.find({ case: id_case}).exec().then(item => {
+  History.find({ case: id_case})
+        .sort({ createdAt: 'desc'})
+        .exec()
+        .then(item => {
         let res = item.map(q => q.toJSONFor())
         return callback(null, res)
     })
