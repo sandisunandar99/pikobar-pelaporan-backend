@@ -56,7 +56,13 @@ function getCaseById (id, callback) {
 }
 
 function getCaseSummary (query, callback) {
-  Case.find({ address_district_code: query.address_district_code })
+  let param = {}
+
+  if (query){
+      param = { address_district_code: query.address_district_code }
+  }
+
+  Case.find(param)
       .populate('last_history')
       .exec()
       .then(x =>{
