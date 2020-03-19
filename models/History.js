@@ -38,6 +38,7 @@ HistorySchema.methods.toJSONFor = function () {
         history_note: this.history_note,
         other_notes: this.other_notes,
         current_location_type: this.current_location_type,
+        current_location_address : this.current_location_address,
         current_location_district_code : this.current_location_district_code,
         current_location_subdistrict_code : this.current_location_subdistrict_code,
         current_location_village_code : this.current_location_village_code,
