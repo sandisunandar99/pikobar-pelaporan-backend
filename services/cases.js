@@ -110,8 +110,8 @@ function createCase (raw_payload, author, pre, callback) {
    }).catch(err => callback(err, null))
 }
 
-function updateCase (id_case, payload, callback) {
-  Case.findOneAndUpdate({ id_case: id_case}, { $set: clean_input(payload) }, { new: true })
+function updateCase (id, payload, callback) {
+  Case.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
   .then(result => {
     return callback(null, result);
   }).catch(err => {
