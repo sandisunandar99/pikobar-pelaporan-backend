@@ -72,7 +72,7 @@ function getCaseSummary (query, callback) {
                 PDP++
               } else if (val.last_history.status === 'POSITIF') {
                 POSITIF++
-              }     
+              }
             }
           })
 
@@ -88,7 +88,7 @@ function getCaseSummary (query, callback) {
 function createCase (raw_payload, author, pre, callback) {
 
   let date = new Date().getFullYear().toString()
-  let id_case = "Covid-"
+  let id_case = "COVID-"
       id_case += pre.dinkes_code
       id_case += date.substr(2, 2)
       id_case += "0".repeat(4 - pre.count_pasien.toString().length)
