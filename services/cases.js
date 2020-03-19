@@ -132,11 +132,16 @@ function getCountByDistrict(code, callback) {
               .then(dinkes =>{
 
                 Case.find({ address_district_code: code})
+                    .sort({id_case: -1})
                     .exec()
                     .then(res =>{
                       console.log(res.length);
                       
-                        let count = (res.length + 1)
+                        //let count = (res.length + 1)
+                        let count = 1;
+                        console.log('length', res.length);
+                        if (res.length > 0)
+                          count = (Number(res[0].id_case.substring(12)) + 1);
                         let result = {
                           prov_city_code: code,
                           dinkes_code: dinkes.dinkes_kota_kode,
