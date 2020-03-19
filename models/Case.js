@@ -26,6 +26,7 @@ const CaseSchema = new mongoose.Schema({
     address_province_name: { type: String, default:"Jawa Barat"},
     phone_number: {type:String},
     nationality: {type:String},
+    nationality_name: {type: String},
     occupation: {type:String},
     last_history : {type: mongoose.Schema.Types.ObjectId, ref: 'History'},
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
