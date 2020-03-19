@@ -55,8 +55,8 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function getCaseSummary (callback) {
-  Case.find()
+function getCaseSummary (query, callback) {
+  Case.find({ address_district_code: query.address_district_code })
       .populate('last_history')
       .exec()
       .then(x =>{

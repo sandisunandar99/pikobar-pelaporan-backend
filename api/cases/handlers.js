@@ -86,7 +86,9 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseSummary(request, reply) {
-            server.methods.services.cases.getSummary((err, item) => {
+            server.methods.services.cases.getSummary(
+                request.query,
+                (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(item)
