@@ -101,7 +101,7 @@ module.exports = (server) => {
         if (!user.validPassword(payload.password)) {
           return reply({
             "status":404,
-            "message": 'Kata sandi salah!',
+            "message": 'username atau password salah!',
             "data": null
           }).code(401)
         }
