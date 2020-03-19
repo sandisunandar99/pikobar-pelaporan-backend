@@ -55,9 +55,7 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-
 function getCaseSummary (callback) {
-
   Case.find()
       .populate('last_history')
       .exec()
@@ -65,9 +63,6 @@ function getCaseSummary (callback) {
           let ODP = 0
           let PDP = 0
           let POSITIF = 0
-
-         
-
 
           x.forEach((val)=>{
             if (val.last_history !== null) {
@@ -86,8 +81,6 @@ function getCaseSummary (callback) {
           PDP: PDP,
           POSITIF: POSITIF
         })
-            
-
       })
       .catch(err => callback(err, null))
 }
@@ -130,17 +123,14 @@ function getCountByDistrict(code, callback) {
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
-
                 Case.find({ address_district_code: code})
                     .sort({id_case: -1})
                     .exec()
                     .then(res =>{
                       console.log(res.length);
-                      
-                        //let count = (res.length + 1)
                         let count = 1;
-                        console.log('length', res.length);
                         if (res.length > 0)
+                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
                           count = (Number(res[0].id_case.substring(12)) + 1);
                         let result = {
                           prov_city_code: code,
@@ -150,9 +140,7 @@ function getCountByDistrict(code, callback) {
                       return callback(null, result)
                     }).catch(err => callback(err, null))
               })
-
 }
-
 
 
 module.exports = [
