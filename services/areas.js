@@ -10,8 +10,14 @@ const SubDistrict = mongoose.model('SubDistrict')
 const Village = mongoose.model('Village')
 const Hospital = mongoose.model('Hospital')
 
-function getDistrictCity(code,callback) {  
-    Districtcity.find({ kemendagri_provinsi_kode: "32"})
+function getDistrictCity(request,callback) {
+
+    var params = { kemendagri_provinsi_kode: "32"}
+    if (request.kota_kode) {
+         params = { kemendagri_provinsi_kode: "32", kemendagri_kabupaten_kode: request.kota_kode}
+    }
+
+    Districtcity.find(params)
         .sort({ kemendagri_kabupaten_kode: 'asc' })
         .exec()
         .then(city => {
@@ -30,10 +36,10 @@ function getSubDistrict(city_code,callback) {
             return callback(null, res)
         })
         .catch(err => callback(err, null))
-         
+
 }
 
-function getVillage(district_code,callback) {  
+function getVillage(district_code,callback) {
     Village.find({ kemendagri_kecamatan_kode: district_code })
         .sort({ kemendagri_desa_kode: 'asc' })
         .exec()
@@ -41,8 +47,8 @@ function getVillage(district_code,callback) {
             let res = vill.map(q => q.toJSONFor())
             return callback(null, res)
         })
-        .catch(err => callback(err, null))   
-             
+        .catch(err => callback(err, null))
+
 }
 
 
@@ -54,8 +60,8 @@ function getHospital(query,callback) {
             let res = hsp.map(q => q.toJSONFor())
             return callback(null, res)
         })
-        .catch(err => callback(err, null))   
-             
+        .catch(err => callback(err, null))
+
 }
 
 

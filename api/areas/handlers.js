@@ -20,7 +20,7 @@ module.exports = (server) => {
          */
         async DistrictCity(request, reply){
             server.methods.services.areas.getDistrictCity(
-                request.auth.credentials.user.code_district_city,
+                request.query,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -29,7 +29,7 @@ module.exports = (server) => {
                 }
             )
         },
-        
+
         /**
          * GET /api/surveys/{id}/quetions
          * @param {*} request
@@ -81,7 +81,7 @@ module.exports = (server) => {
                 }
             )
         }
-        
+
 
 
     }//end
