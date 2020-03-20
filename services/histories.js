@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 
 require('../models/History');
-const History = mongoose.model('History');
+require('../models/Hospital')
 require('../models/Case');
+
+const History = mongoose.model('History');
+const Hospital = mongoose.model('Hospital')
 const Case = mongoose.model('Case');
 
 function ListHistory (callback) {
@@ -18,9 +21,9 @@ function ListHistory (callback) {
 
 function getHistoryById (id, callback) {
   History.findById(id).exec().then(item => {
-        return callback(null, item.toJSONFor())
-    })
-    .catch(err => callback(err, null))
+    return callback(null, item.toJSONFor())
+  })
+  .catch(err => callback(err, null))
 }
 
 function getHistoryByCase (id_case, callback) {
@@ -73,19 +76,40 @@ function createHistoryIfChanged (payload, callback) {
           }
       }
       
-      if (changed)
-        // save new history
-        new_history.save((err, item) => {
-          if (err) return callback(err, null);
+      if (changed) {
+        if (new_history.current_location_type.toUpperCase() == 'RS') {
+          Hospital.findOne({name: new_history.current_location_address})
+                  .exec()
+                  .then(found_hospital => {
+                    new_history.current_location_district_code = found_hospital.kemendagri_kabupaten_kode;
+                    new_history.current_location_subdistrict_code = found_hospital.kemendagri_kecamatan_kode;
+                    new_history.current_location_village_code = found_hospital.kemendagri_kelurahan_kode;
 
-          // update case
-          Object.assign(case_obj, {last_history: item._id});
-          case_obj.save((err, updated_case) => {
+                    new_history.save((err, item) => {
+                      if (err) return callback(err, null);
+
+                      // update case
+                      Object.assign(case_obj, {last_history: item._id});
+                      case_obj.save((err, updated_case) => {
+                        if (err) return callback(err, null);
+                        return callback(null, new_history);
+                      });
+                    });
+                  })
+                  .catch(err => callback(err, null))
+        } else  { // if current_location_type != RS
+          new_history.save((err, item) => {
             if (err) return callback(err, null);
-            return callback(null, new_history);
+
+            // update case
+            Object.assign(case_obj, {last_history: item._id});
+            case_obj.save((err, updated_case) => {
+              if (err) return callback(err, null);
+              return callback(null, new_history);
+            });
           });
-        });
-      else
+        } // --- end if current_location_type != RS
+      } else
         // return old history if not changed
         return callback(null, old_history);
     })
