@@ -10,7 +10,7 @@ const CaseSchema = new mongoose.Schema({
     id_case_related : {type:String},
     name: {type:String},
     // tentatif jika diisi usia, required jika tidak
-    birth_date : { type: Date, required: [true, "can't be blank"]},
+    birth_date : { type: Date},
     age : {type:Number},
     gender : {type:String},
     address_street: {type:String},
