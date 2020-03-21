@@ -75,6 +75,24 @@ module.exports = (server) =>{
             },
             handler: handlers.GetCaseHistory
         },
+
+        // Get last history of case
+        {
+            method: 'GET',
+            path: '/cases/{id}/last-history',
+            config: {
+                auth: 'jwt',
+                description: 'show the last history of case',
+                tags: ['api', 'cases'],
+                // validate: inputValidations,
+                // response: outputValidations
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetCaseHistoryLast
+        },
+
         // Get case's summary of last status
         {
             method: 'GET',

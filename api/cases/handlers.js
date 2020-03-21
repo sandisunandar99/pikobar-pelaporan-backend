@@ -37,11 +37,11 @@ module.exports = (server) => {
         async CreateCase(request, reply){
             let payload = request.payload
             server.methods.services.cases.create(
-                payload, 
-                request.auth.credentials.user, 
+                payload,
+                request.auth.credentials.user,
                 request.pre.count_case,
                 (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)      
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result)
                 ).code(200)
@@ -70,6 +70,23 @@ module.exports = (server) => {
          */
         async GetCaseHistory(request, reply) {
             server.methods.services.histories.getByCase(
+                request.params.id,
+                (err, districs) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCasesResponse(districs)
+                    ).code(200)
+                }
+            )
+        },
+
+        /**
+         * GET /api/cases/{id}/last-history
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseHistoryLast(request, reply) {
+            server.methods.services.histories.getLastHistoryByIdCase(
                 request.params.id,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
