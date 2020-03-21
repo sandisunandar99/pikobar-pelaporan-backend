@@ -49,7 +49,7 @@ HistorySchema.methods.toJSONFor = function () {
         history_notes: this.history_notes,
 
         report_source : this.report_source,
-        first_symptomp_date : this.first_symptomp_date,
+        first_symptom_date : this.first_symptom_date,
         other_notes: this.other_notes,
 
         current_location_type: this.current_location_type,
