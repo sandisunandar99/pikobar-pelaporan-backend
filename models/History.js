@@ -9,12 +9,12 @@ const HistorySchema = new mongoose.Schema({
     diagnosis_other : String,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
-    went_abroad : Boolean,
+    is_went_abroad : Boolean,
     visited_country : String,
-    return_date : Date,
-    went_other_city : Boolean,
+    return_date : Date, 
+    is_went_other_city : Boolean,
     visited_city : String,
-    contact_with_positive : Boolean,
+    is_contact_with_positive : Boolean,
     history_notes: String,
 
     report_source : String,
@@ -40,11 +40,12 @@ HistorySchema.methods.toJSONFor = function () {
         stage : this.stage,
         final_result : this.final_result,
 
-        went_abroad : this.went_abroad,
+        is_went_abroad : this.is_went_abroad,
         visited_country : this.visited_country,
         return_date : this.return_date,
+        is_went_other_city : this.is_went_other_city,
         visited_city : this.visited_city,
-        contact_with_positive : this.contact_with_positive,
+        is_contact_with_positive : this.is_contact_with_positive,
         history_notes: this.history_notes,
 
         report_source : this.report_source,
