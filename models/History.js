@@ -1,16 +1,17 @@
 const mongoose = require('mongoose')
 
 const HistorySchema = new mongoose.Schema({
-    case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'}, 
+    case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true, required: [true, "can't be blank"]}, // PROSES / SELESAI
     final_result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
     diagnosis : Array,
+    diagnosis_other : String,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
     went_abroad : Boolean,
     visited_country : String,
-    return_date : Date, 
+    return_date : Date,
     went_other_city : Boolean,
     visited_city : String,
     contact_with_positive : Boolean,
