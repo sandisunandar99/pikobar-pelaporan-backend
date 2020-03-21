@@ -59,6 +59,8 @@ function createHistoryIfChanged (payload, callback) {
       function is_same(a,b) {
         /* Method to compare equality between 2 object. support Date object, 
          * array, and generic object */
+        if (typeof a == 'undefined' || typeof b == 'undefined')
+          return false;
         if (a instanceof Date) 
           return a.getTime() == b.getTime();
         if (Array.isArray(a))
@@ -78,7 +80,7 @@ function createHistoryIfChanged (payload, callback) {
       
       if (changed) {
         if (new_history.current_location_type.toUpperCase() == 'RS') {
-          Hospital.findOne({name: new_history.current_location_address})
+          Hospital.findById(new_history.current_hospital_id)
                   .exec()
                   .then(found_hospital => {
                     new_history.current_location_district_code = found_hospital.kemendagri_kabupaten_kode;

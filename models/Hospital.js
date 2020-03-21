@@ -18,6 +18,7 @@ const HospitalSchema = new mongoose.Schema({
 
 HospitalSchema.methods.toJSONFor = function () {  
     return {
+        _id : this._id,
         name : this.name,
         description: this.description,
         address: this.address,
