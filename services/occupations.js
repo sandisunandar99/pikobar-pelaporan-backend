@@ -19,13 +19,12 @@ function getOccupationList(request,callback) {
         .catch(err => callback(err, null))
 }
 
-function getOccupationDetail(code,callback) {
-    function getCaseById (id, callback) {
-      Occupation.findOne({_id: id})
+function getOccupationDetail(request,callback) {
+    let id = request.params.id
+        Occupation.findOne({_id: id})
         .exec()
         .then(cases => callback (null, cases))
         .catch(err => callback(err, null));
-    }
 }
 
 
