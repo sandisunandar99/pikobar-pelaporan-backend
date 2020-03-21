@@ -7,14 +7,14 @@ function CommentReferenceError (message) {
     this.message = message || 'This comment does not belong to the survey !'
     this.stack = (new Error()).stack
   }
-  
+
   CommentReferenceError.prototype = Object.create(Error.prototype)
   CommentReferenceError.prototype.constructor = CommentReferenceError
-  
+
   // --------------------------------------------------
   //    Helpers
   // --------------------------------------------------
-  
+
   function joiResponseErrorHandler (err) {
     if (err.isJoi) {
       let response ={
@@ -29,10 +29,10 @@ function CommentReferenceError (message) {
 
       return response
     }
-  
+
     return null
   }
-  
+
   function defaultResponseErrorHandler (err) {
     let response ={
       status: 422,
@@ -41,10 +41,10 @@ function CommentReferenceError (message) {
     }
 
     response.message = err.message
-  
+
     return response
   }
-  
+
   function mongooseResponseValidationErrorHandler (err) {
     if (err.name && err.name === 'ValidationError') {
       let response ={
@@ -52,7 +52,7 @@ function CommentReferenceError (message) {
           message:{},
           data: null
       }
-      
+
       var keys = Object.keys(err.errors)
       for (var index in keys) {
         var key = keys[index]
@@ -60,32 +60,31 @@ function CommentReferenceError (message) {
           response.message = key +' '+err.errors[key].value +' '+ err.errors[key].message
         }
       }
-      
+
       return response
     }
-  
+
     return null
   }
-  
+
   const errorHandlers = [joiResponseErrorHandler, mongooseResponseValidationErrorHandler, defaultResponseErrorHandler]
-  
+
   const constructErrorResponse = (err) => {
     var response
     for (var handler in errorHandlers) {
-      
+
       let handlerFn = errorHandlers[handler]
-      
+
       if (typeof (handlerFn) === 'function') {
         response = handlerFn(err)
         if (response !== null) break
       }
     }
-    
+
     return response
   }
-  
+
   module.exports = {
     constructErrorResponse,
     CommentReferenceError
   }
-  
