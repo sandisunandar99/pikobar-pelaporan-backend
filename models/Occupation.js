@@ -8,6 +8,7 @@ const OccupationSchema = new mongoose.Schema({
 
 OccupationSchema.methods.toJSONFor = function () {
     return {
+    	 _id: this._id,
         title : this.title,
         seq: this.seq,
     }
