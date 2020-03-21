@@ -1,8 +1,8 @@
 const register = (server, options, next) => {
-  
+
   const preResponse = (request, reply) => {
     let response = request.response
-    
+
     //  console.log('RESPONSE :', response);
      //console.log('RESPONSE_HEADER:', request.headers);
      //console.log('SERVER:', server.registrations);
@@ -28,6 +28,7 @@ const register = (server, options, next) => {
   server.register(require('./areas'))
   server.register(require('./cases'))
   server.register(require('./histories'))
+  server.register(require('./occupations'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
@@ -44,7 +45,7 @@ const register = (server, options, next) => {
       return reply({status: 'UP'})
     }
   })
-  
+
   return next()
 }
 
