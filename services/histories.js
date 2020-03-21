@@ -37,9 +37,21 @@ function getHistoryByCase (id_case, callback) {
     .catch(err => callback(err, null))
 }
 
+function getLastHistoryByIdCase (id_case, callback) {
+  History.find({ case: id_case})
+        .sort({ createdAt: 'desc'})
+        .limit(1)
+        .exec()
+        .then(item => {
+        let res = item.map(q => q.toJSONFor())
+        return callback(null, res)
+    })
+    .catch(err => callback(err, null))
+}
+
 function createHistory (payload, callback) {
   let item = new History(payload);
-  
+
   item.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
@@ -48,20 +60,20 @@ function createHistory (payload, callback) {
 
 function createHistoryIfChanged (payload, callback) {
   /* Create history only if new history and last_history of the related case
-   * has difference. If the same would just return the old history. If there 
-   * are any difference, would create a new history, then update the related 
+   * has difference. If the same would just return the old history. If there
+   * are any difference, would create a new history, then update the related
    * case's last_history to the newly created history. */
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
       let changed = false, changed_fields=[];
-      
+
       function is_same(a,b) {
-        /* Method to compare equality between 2 object. support Date object, 
+        /* Method to compare equality between 2 object. support Date object,
          * array, and generic object */
         if (typeof a == 'undefined' || typeof b == 'undefined')
           return false;
-        if (a instanceof Date) 
+        if (a instanceof Date)
           return a.getTime() == b.getTime();
         if (Array.isArray(a))
           return JSON.stringify(a) == JSON.stringify(b);
@@ -77,7 +89,7 @@ function createHistoryIfChanged (payload, callback) {
             changed_fields.push(property);
           }
       }
-      
+
       if (changed) {
         if (new_history.current_location_type.toUpperCase() == 'RS') {
           Hospital.findById(new_history.current_hospital_id)
@@ -147,6 +159,12 @@ module.exports = [
     method: getHistoryByCase
   },
   {
+    name: 'services.histories.getLastHistoryByIdCase',
+    method: getLastHistoryByIdCase
+  },
+
+
+  {
     name: 'services.histories.create',
     method: createHistory
   },
@@ -159,4 +177,4 @@ module.exports = [
     method: deleteHistory
   }
 ];
- 
+
