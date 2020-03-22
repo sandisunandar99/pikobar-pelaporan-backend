@@ -16,6 +16,7 @@ const HistorySchema = new mongoose.Schema({
     visited_city : String,
     is_contact_with_positive : Boolean,
     history_notes: String,
+    is_sample_taken : Boolean,
 
     report_source : String,
     first_symptom_date : {type : Date, default: Date(+new Date() + 7*24*60*60*1000)},
@@ -47,6 +48,7 @@ HistorySchema.methods.toJSONFor = function () {
         visited_city : this.visited_city,
         is_contact_with_positive : this.is_contact_with_positive,
         history_notes: this.history_notes,
+        is_sample_taken : this.is_sample_taken,
 
         report_source : this.report_source,
         first_symptom_date : this.first_symptom_date,
