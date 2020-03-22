@@ -11,14 +11,14 @@ const HistorySchema = new mongoose.Schema({
     // riwayat perjalanan/kontak dengan pasien positif
     is_went_abroad : Boolean,
     visited_country : String,
-    return_date : Date, 
+    return_date : Date,
     is_went_other_city : Boolean,
     visited_city : String,
     is_contact_with_positive : Boolean,
     history_notes: String,
 
     report_source : String,
-    first_symptom_date : Date,
+    first_symptom_date : {type : Date, default: Date(+new Date() + 7*24*60*60*1000)},
 
     other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
