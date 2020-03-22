@@ -103,6 +103,8 @@ function createCase (raw_payload, author, pre, callback) {
 
   item.save().then(x => { // step 1 : create dan save case baru
     let c = {case: x._id}
+    if (raw_payload.current_hospital_id == "")
+      raw_payload.current_hospital_id = null;
     let history = new History(Object.assign(raw_payload, c))
     history.save().then(last => { // step 2: create dan save historuy baru jangan lupa di ambil object id case
       let last_history = { last_history: last._id }
