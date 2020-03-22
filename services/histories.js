@@ -91,38 +91,16 @@ function createHistoryIfChanged (payload, callback) {
       }
 
       if (changed) {
-        if (new_history.current_location_type.toUpperCase() == 'RS') {
-          Hospital.findById(new_history.current_hospital_id)
-                  .exec()
-                  .then(found_hospital => {
-                    new_history.current_location_district_code = found_hospital.kemendagri_kabupaten_kode;
-                    new_history.current_location_subdistrict_code = found_hospital.kemendagri_kecamatan_kode;
-                    new_history.current_location_village_code = found_hospital.kemendagri_kelurahan_kode;
+        new_history.save((err, item) => {
+          if (err) return callback(err, null);
 
-                    new_history.save((err, item) => {
-                      if (err) return callback(err, null);
-
-                      // update case
-                      Object.assign(case_obj, {last_history: item._id});
-                      case_obj.save((err, updated_case) => {
-                        if (err) return callback(err, null);
-                        return callback(null, new_history);
-                      });
-                    });
-                  })
-                  .catch(err => callback(err, null))
-        } else  { // if current_location_type != RS
-          new_history.save((err, item) => {
+          // update case
+          Object.assign(case_obj, {last_history: item._id});
+          case_obj.save((err, updated_case) => {
             if (err) return callback(err, null);
-
-            // update case
-            Object.assign(case_obj, {last_history: item._id});
-            case_obj.save((err, updated_case) => {
-              if (err) return callback(err, null);
-              return callback(null, new_history);
-            });
+            return callback(null, new_history);
           });
-        } // --- end if current_location_type != RS
+        });
       } else
         // return old history if not changed
         return callback(null, old_history);
