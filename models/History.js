@@ -19,7 +19,7 @@ const HistorySchema = new mongoose.Schema({
     is_sample_taken : Boolean,
 
     report_source : String,
-    first_symptom_date : {type : Date, default: Date(+new Date() + 7*24*60*60*1000)},
+    first_symptom_date : {type : Date, default: Date.now()},
 
     other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
