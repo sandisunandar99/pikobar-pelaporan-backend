@@ -34,9 +34,7 @@ function ListCase (query,callback) {
   if(query.address_district_code){
     var result_search = Case.find({ address_district_code: query.address_district_code })
   }else{
-    var result_search = Case.find().or([
-      { id_case : query_search}
-    ]).where('delete_status').ne('deleted')
+    var result_search = Case.find({ id_case : query_search}).where('delete_status').ne('deleted')
   }
 
 
