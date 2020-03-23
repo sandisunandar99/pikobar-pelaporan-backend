@@ -4,7 +4,7 @@ services:
       build:
          context: .
          dockerfile: Dockerfile.release
-      container_name: backend-pikobar-production
+      container_name: backend-pikobar-development
       ports: 
          - 3333:3333
       env_file: 
