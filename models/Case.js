@@ -34,7 +34,7 @@ const CaseSchema = new mongoose.Schema({
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.plugin(mongoosePaginate)
-CaseSchema.plugin(uniqueValidator, { message: 'ID ini sudah ada di basis data.' })
+CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
 
 
 CaseSchema.methods.toJSONFor = function () {
