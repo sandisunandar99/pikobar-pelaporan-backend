@@ -21,11 +21,6 @@ pipeline {
 
         stage('Run Docker on Development') {
 
-            input{
-                message "Press Ok to continue to Deploy Develpment ?"
-            
-            }
-
             environment {
                 SSH_COMMAND = "ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin development'"     
             }
