@@ -36,7 +36,7 @@ function ListCase (query,callback) {
   }else{
     var result_search = Case.find().or([
       { id_case : query_search}
-    ])
+    ]).where('delete_status').ne('deleted')
   }
 
 
@@ -156,6 +156,22 @@ function getCountByDistrict(code, callback) {
 }
 
 
+function softDeleteCase(cases,deletedBy, payload, callback) {
+   let date = new Date()
+   let dates = {
+     delete_status: 'deleted',
+     deletedAt: date.toISOString()
+   }
+   let param = Object.assign({deletedBy}, dates)
+
+   cases = Object.assign(cases, param)
+   cases.save((err, item) => {
+     if (err) return callback(err, null)
+     return callback(null, item)
+   })
+} 
+
+
 module.exports = [
   {
     name: 'services.cases.list',
@@ -180,6 +196,10 @@ module.exports = [
   {
     name: 'services.cases.getCountByDistrict',
     method: getCountByDistrict
+  },
+  {
+    name: 'services.cases.softDeleteCase',
+    method: softDeleteCase
   }
 ];
 

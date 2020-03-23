@@ -135,8 +135,17 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async DeleteCase(request, reply){
-            return reply({ result: 'update case!' });
+        async DeleteCase(request, reply) {          
+            server.methods.services.cases.softDeleteCase(
+                request.pre.cases,
+                request.auth.credentials.user,
+                request.payload,
+                (err, item) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                     return reply(
+                         constructCasesResponse(item)
+                     ).code(202)
+                })
         }
 
     }//end

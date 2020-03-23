@@ -6,7 +6,9 @@ module.exports = (server) =>{
     const CheckRoleView = require('./route_prerequesites').CheckRoleView(server)
     const CheckRoleCreate = require('./route_prerequesites').CheckRoleCreate(server)
     const CheckRoleUpdate = require('./route_prerequesites').CheckRoleUpdate(server)
+    const CheckRoleDelete = require('./route_prerequesites').CheckRoleDelete(server)
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
+    const getCasebyId = require('./route_prerequesites').getCasebyId(server)
 
 
     return [
@@ -122,18 +124,22 @@ module.exports = (server) =>{
             },
             handler: handlers.UpdateCase
         },
-        // Delete case sepertinya jangan dulu jadi saya komen ya (sandi)
-        // {
-        //     method: 'DELETE',
-        //     path: '/cases/{id}',
-        //     config: {
-        //         description: 'show a specific cases details',
-        //         tags: ['api', 'cases'],
-        //         // validate: inputValidations,
-        //         // response: outputValidations
-        //     },
-        //     handler: handlers.DeleteCase
-        // }
+        {
+            method: 'DELETE',
+            path: '/cases/{id}',
+            config: {
+                auth: 'jwt',
+                description: 'soft delete by id cases',
+                tags: ['api', 'cases'],
+                // validate: inputValidations,
+                // response: outputValidations
+                pre: [
+                    CheckRoleDelete,
+                    getCasebyId
+                ]
+            },
+            handler: handlers.DeleteCase
+        }
     ]
 
 }

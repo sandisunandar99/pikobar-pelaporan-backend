@@ -30,7 +30,10 @@ const CaseSchema = new mongoose.Schema({
     nationality_name: {type: String},
     occupation: {type:String},
     last_history : {type: mongoose.Schema.Types.ObjectId, ref: 'History'},
-    author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    delete_status: String,
+    deletedAt: Date,
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.plugin(mongoosePaginate)
@@ -49,6 +52,8 @@ CaseSchema.methods.toJSONFor = function () {
         current_location_address: this.last_history.current_location_address,
         address_district_name: this.address_district_name,
         address_district_code: this.address_district_code,
+        delete_status: this.delete_status,
+        deletedAt: this.deletedAt,
         last_history: this.last_history
     }
 }

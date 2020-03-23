@@ -41,11 +41,28 @@ const CheckRoleCreate = server => {
     }
 }
 
-
 const CheckRoleUpdate = server => {
     return {
         method: (request, reply) => {
 
+            if (request.auth.credentials.user.role === "dinkeskota") {
+                return reply()
+            } else {
+                return reply({
+                    status: 403,
+                    message: 'Anda Tidak Mempunyai Akses!',
+                    data: null
+                }).code(403).takeover()
+            }
+
+        },
+        assign: 'roles'
+    }
+}
+
+const CheckRoleDelete = server => {
+    return {
+        method: (request, reply) => {
             if (request.auth.credentials.user.role === "dinkeskota") {
                 return reply()
             } else {
@@ -78,10 +95,25 @@ const countCaseByDistrict = server =>{
 }
 
 
+const getCasebyId = server => {
+    return {
+        method: (request, reply) => {
+             let id = request.params.id
+             server.methods.services.cases.getById(id, (err, item) => {
+                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                 return reply(item)
+             })
+        },
+        assign: 'cases'
+    }
+}
+
 
 module.exports ={
     CheckRoleView,
     CheckRoleCreate,
     CheckRoleUpdate,
-    countCaseByDistrict
+    CheckRoleDelete,
+    countCaseByDistrict,
+    getCasebyId
 }
