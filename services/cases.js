@@ -61,6 +61,7 @@ function getCaseById (id, callback) {
 
 function getCaseSummary (query, callback) {
   Case.find(query)
+      .where('delete_status').ne('deleted')
       .populate('last_history')
       .exec()
       .then(x =>{
@@ -169,6 +170,7 @@ function softDeleteCase(cases,deletedBy, payload, callback) {
      if (err) return callback(err, null)
      return callback(null, item)
    })
+
 } 
 
 
