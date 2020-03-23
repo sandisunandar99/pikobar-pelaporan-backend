@@ -95,8 +95,16 @@ function createHistoryIfChanged (payload, callback) {
           if (err) return callback(err, null);
 
           // update case
-          Object.assign(case_obj, {last_history: item._id});
-          case_obj.save((err, updated_case) => {
+          let update_case = {
+              status: payload.status,
+              stage: payload.stage,
+              final_result: payload.final_result,
+              last_history: item._id
+          }
+          
+          let objcase = Object.assign(case_obj, update_case)
+  
+          objcase.save((err, updated_case) => {
             if (err) return callback(err, null);
             return callback(null, new_history);
           });
