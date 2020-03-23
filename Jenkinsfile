@@ -7,8 +7,12 @@ pipeline {
  
     }
 
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+
     stages {
-        
+
         stage('hello world'){
             steps{
                 sh 'echo "hello world"'
@@ -16,6 +20,12 @@ pipeline {
         }
 
         stage('Run Docker on production') {
+
+            input{
+                message "Press Ok to continue to Deploy ?"
+            
+            }
+
             environment {
                 SSH_COMMAND = "ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin master'"     
             }
