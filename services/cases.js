@@ -29,15 +29,19 @@ function ListCase (query, user, callback) {
     customLabels: myCustomLabels
   };
 
-  let query_search = new RegExp(query.search, "i")
-  
-  
+  var params = new Object();
+
   if(query.address_district_code){
-    var result_search = Case.find({ address_district_code: query.address_district_code }).where('delete_status').ne('deleted')
-  }else{
-    var result_search = Case.find({ id_case : query_search}).where('delete_status').ne('deleted')
+    params.address_district_code = query.address_district_code;
   }
 
+  if(query.search){
+    params.id_case = {$regex:query.search,$options:"i"};
+  }
+
+console.log(params)
+
+  var result_search = Case.find(params).where('delete_status').ne('deleted')
 
   Case.paginate(result_search, options).then(function(results){
       let res = {
