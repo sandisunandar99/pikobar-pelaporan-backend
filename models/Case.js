@@ -66,8 +66,8 @@ CaseSchema.methods.toJSONFor = function () {
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,
-        last_history: this.last_history,
-        author: this.author.JSONCase()
+        author: this.author.JSONCase(),
+        last_history: this.last_history
     }
 }
 

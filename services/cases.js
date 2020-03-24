@@ -22,7 +22,7 @@ function ListCase (query, user, callback) {
   const options = {
     page: query.page,
     limit: query.limit,
-    populate: ('last_history','author'),
+    populate: (['last_history','author']),
     address_district_code: query.address_district_code,
     sort: { createdAt: query.sort },
     leanWithId: true,
