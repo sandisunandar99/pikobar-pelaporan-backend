@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
 
 require('../models/History');
-require('../models/Hospital')
 require('../models/Case');
 
 const History = mongoose.model('History');
-const Hospital = mongoose.model('Hospital')
 const Case = mongoose.model('Case');
 
 function ListHistory (callback) {
