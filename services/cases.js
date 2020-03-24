@@ -90,6 +90,17 @@ function getCaseSummary (query, callback) {
 
 function createCase (raw_payload, author, pre, callback) {
 
+  let verified 
+  if (author.role === "dinkeskota") {
+    verified= {
+      verified_status: 'verified'
+    }
+  }else{
+    verified = {
+      verified_status: 'pending'
+    }
+  }
+
   let date = new Date().getFullYear().toString()
   let id_case = "COVID-"
       id_case += pre.dinkes_code
@@ -97,7 +108,9 @@ function createCase (raw_payload, author, pre, callback) {
       id_case += "0".repeat(4 - pre.count_pasien.toString().length)
       id_case += pre.count_pasien
 
-  let inset_id_case = Object.assign(raw_payload, {id_case})
+  let inset_id_case = Object.assign(raw_payload, verified)
+      inset_id_case = Object.assign(raw_payload, {id_case})
+ 
   let item = new Case(Object.assign(inset_id_case, {author}))
 
   item.save().then(x => { // step 1 : create dan save case baru
