@@ -84,7 +84,7 @@ module.exports = (server) => {
         if (!user) {
           return reply({
             "status":404,
-            "message": 'Pengguna belum terdaftar!',
+            "message": 'username atau password salah!',
             "data": null
           }).code(404)
         }
