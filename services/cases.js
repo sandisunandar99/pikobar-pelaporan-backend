@@ -9,7 +9,7 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
-function ListCase (query,callback) {
+function ListCase (query, user, callback) {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -22,7 +22,7 @@ function ListCase (query,callback) {
   const options = {
     page: query.page,
     limit: query.limit,
-    populate: ('last_history'),
+    populate: ('last_history','author'),
     address_district_code: query.address_district_code,
     sort: { createdAt: query.sort },
     leanWithId: true,
@@ -30,13 +30,13 @@ function ListCase (query,callback) {
   };
 
   let query_search = new RegExp(query.search, "i")
-
+  
+  
   if(query.address_district_code){
     var result_search = Case.find({ address_district_code: query.address_district_code }).where('delete_status').ne('deleted')
   }else{
     var result_search = Case.find({ id_case : query_search}).where('delete_status').ne('deleted')
   }
-
 
 
   Case.paginate(result_search, options).then(function(results){

@@ -57,6 +57,18 @@ UserSchema.methods.toAuthJSON = function () {
   }
 }
 
+
+
+UserSchema.methods.JSONCase = function () {
+  return {
+    fullname: this.fullname,
+    code_district_city: this.code_district_city,
+    name_district_city: this.name_district_city,
+  }
+}
+
+
+
 UserSchema.methods.toProfileJSONFor = function (user) {
   return {
     id : this._id,

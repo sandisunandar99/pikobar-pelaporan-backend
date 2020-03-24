@@ -21,7 +21,10 @@ module.exports = (server) => {
         async ListCase(request, reply){
             let query = request.query
 
-            server.methods.services.cases.list(query, (err, result) => {
+            server.methods.services.cases.list(
+                query, 
+                request.auth.credentials.user,
+                (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result,request)
