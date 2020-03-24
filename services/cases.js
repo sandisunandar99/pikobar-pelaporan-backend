@@ -59,6 +59,7 @@ function getCaseById (id, callback) {
 
 function getCaseSummaryFinal (query, callback) {
   var aggStatus = [
+    { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
       _id: "$final_result",
       total: {$sum: 1}
@@ -67,8 +68,13 @@ function getCaseSummaryFinal (query, callback) {
 
   if (query.address_district_code) {
     var aggStatus = [
-      {$match:{address_district_code: query.address_district_code}},
-      {$group: {
+      { $match: { 
+      $and: [ 
+            { address_district_code: query.address_district_code },  
+            { delete_status: { $ne: 'deleted' }}
+          ]
+      }},
+      { $group: {
         _id: "$final_result",
         total: {$sum: 1}
       }}
@@ -84,13 +90,13 @@ function getCaseSummaryFinal (query, callback) {
   Case.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
         console.log(item)
-        if (item['_id'] == 0) {
+        if (item['_id'] == '0') {
           result.NEGATIF = item['total']
         }
-        if (item['_id'] == 1) {
+        if (item['_id'] == '1') {
           result.SEMBUH = item['total']
         }
-        if (item['_id'] == 2) {
+        if (item['_id'] == '2') {
           result.MENINGGAL = item['total']
         }
       });
@@ -101,6 +107,7 @@ function getCaseSummaryFinal (query, callback) {
 
 function getCaseSummary (query, callback) {
   var aggStatus = [
+    { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
       _id: "$status",
       total: {$sum: 1}
@@ -109,8 +116,13 @@ function getCaseSummary (query, callback) {
 
   if (query.address_district_code) {
     var aggStatus = [
-      {$match:{address_district_code: query.address_district_code}},
-      {$group: {
+      { $match: { 
+      $and: [ 
+            { address_district_code: query.address_district_code },  
+            { delete_status: { $ne: 'deleted' }}
+          ]
+      }},
+      { $group: {
         _id: "$status",
         total: {$sum: 1}
       }}
