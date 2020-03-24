@@ -23,19 +23,10 @@ module.exports = (server) => {
     async updateMe(request, reply) {
       let payload = request.payload
       let user = request.auth.credentials.user
-
-      if (payload.username === user.username) {
-        server.methods.services.users.update(user, payload, (err, updatedUser) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(constructUserResponse(updatedUser))
-        })
-      }else{
-        return reply({
-          status: 403,
-          message: "Tidak diizinkan untuk merubah akun orang lain!",
-          data: null
-        })
-      }
+      server.methods.services.users.update(user, payload, (err, updatedUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        return reply(constructUserResponse(updatedUser))
+      })
     },
     /**
      * POST /api/users
@@ -93,7 +84,7 @@ module.exports = (server) => {
         if (!user) {
           return reply({
             "status":404,
-            "message": 'Pengguna belum terdaftar!',
+            "message": 'username atau password salah!',
             "data": null
           }).code(404)
         }

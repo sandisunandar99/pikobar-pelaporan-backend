@@ -44,11 +44,13 @@ const RegisterPayload = {
 const UpdatePayload = {
   headers: HeadersPayLoad,
   payload: Joi.object().keys({
-      username: Joi.string(),
-      email: Joi.string().email(),
-      password: Joi.string().allow(''),
-      role: Joi.string().required(),
-      code_district_city: Joi.number().required().allow(null, '').default('null')
+        fullname: Joi.string(),
+        username: Joi.string(),
+        email: Joi.string().email(),
+        password: Joi.string().required(),
+        role: Joi.string(),
+        name_district_city: Joi.string(),
+        code_district_city: Joi.number()
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction
