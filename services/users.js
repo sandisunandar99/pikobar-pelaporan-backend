@@ -43,17 +43,18 @@ function createUser (payload, callback) {
 }
 
 function updateUser (user, payload, callback) {
-  if (user.username !== payload.username) {
-    user.username = payload.username;
+  let passwords = user.setPassword(payload.password)
+  let users = {
+    fullname: payload.fullname ? payload.fullname : user.fullname,
+    username: payload.username ? payload.username : user.username,
+    password: passwords,
+    email: payload.email ? payload.email: user.email,
+    role: payload.role ? payload.role: user.role,
+    code_district_city: payload.code_district_city ? payload.code_district_city : user.code_district_city,
+    name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city
   }
-
-  if (user.email !== payload.email) {
-    user.email = payload.email;
-  }
-
-  if (payload.password !== '') {
-    user.setPassword(payload.password);
-  }
+  
+  user = Object.assign(user, users)
 
   user.save((err, user) => {
     if (err) return callback(err, null);
