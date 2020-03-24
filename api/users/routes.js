@@ -20,7 +20,7 @@ module.exports = (server) => {
     // Update user
     {
       method: 'PUT',
-      path: '/users',
+      path: '/users/change-password',
       config: {
         auth: 'jwt',
         validate: inputValidations.UpdatePayload,

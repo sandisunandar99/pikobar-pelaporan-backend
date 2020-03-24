@@ -51,6 +51,8 @@ UserSchema.methods.toAuthJSON = function () {
     role: this.role,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
+    hash: this.hash,
+    salt: this.salt,
     token: this.generateJWT()
   }
 }
