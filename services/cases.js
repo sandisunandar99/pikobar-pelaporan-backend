@@ -57,49 +57,23 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function getCaseSummary (query, callback) {
-  let aggStatus = [
-    {$group: {
-      _id: "$final_result",
-      total: {$sum: 1}
-    }}
-  ];
-
-  let result =  {
-    'ODP':0, 
-    'PDP':0, 
-    'POSITIF':0, 
-    'KONTAKERAT' : 0, 
-    'PROBABEL' : 0
-  }
-
-  Case.aggregate(aggStatus).exec().then(item => {
-      item.forEach(function(item){
-        if (item['_id'] == 'ODP') {
-          result.ODP = item['total']
-        }
-        if (item['_id'] == 'PDP') {
-          result.PDP = item['total']
-        }
-        if (item['_id'] == 'POSITIF') {
-          result.POSITIF = item['total']
-        }
-        if (item['_id'] == 'KONTAKERAT') {
-          result.KONTAKERAT = item['total']
-        }
-      });
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
-}
-
 function getCaseSummaryFinal (query, callback) {
-  let aggStatus = [
+  var aggStatus = [
     {$group: {
       _id: "$final_result",
       total: {$sum: 1}
     }}
   ];
+
+  if (query.address_district_code) {
+    var aggStatus = [
+      {$match:{address_district_code: query.address_district_code}},
+      {$group: {
+        _id: "$final_result",
+        total: {$sum: 1}
+      }}
+    ];
+  }
 
   let result =  {
     'NEGATIF':0, 
@@ -126,12 +100,22 @@ function getCaseSummaryFinal (query, callback) {
 }
 
 function getCaseSummary (query, callback) {
-  let aggStatus = [
+  var aggStatus = [
     {$group: {
       _id: "$status",
       total: {$sum: 1}
     }}
   ];
+
+  if (query.address_district_code) {
+    var aggStatus = [
+      {$match:{address_district_code: query.address_district_code}},
+      {$group: {
+        _id: "$status",
+        total: {$sum: 1}
+      }}
+    ];
+  }
 
   let result =  {
     'ODP':0, 
