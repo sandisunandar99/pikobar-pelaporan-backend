@@ -107,7 +107,7 @@ module.exports = (server) =>{
                 // validate: inputValidations,
                 // response: outputValidations
                 pre: [
-                    CheckRoleUpdate
+                    CheckRoleView
                 ]
             },
             handler: handlers.GetCaseSummary
@@ -124,7 +124,7 @@ module.exports = (server) =>{
                 // validate: inputValidations,
                 // response: outputValidations
                 pre: [
-                    CheckRoleUpdate
+                    CheckRoleView
                 ]
             },
             handler: handlers.GetCaseSummaryFinal
