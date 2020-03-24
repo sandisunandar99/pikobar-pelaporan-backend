@@ -38,6 +38,8 @@ const CaseSchema = new mongoose.Schema({
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    verified_status: String,
+    verified_comment: {type: String, default: null}
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.plugin(mongoosePaginate)
@@ -59,6 +61,8 @@ CaseSchema.methods.toJSONFor = function () {
         address_district_code: this.address_district_code,
         stage: this.stage,
         status: this.status,
+        verified_status: this.verified_status,
+        verified_comment: this.verified_comment,
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,

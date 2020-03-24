@@ -7,6 +7,7 @@ const CheckRoleView = server => {
 
             if (request.auth.credentials.user.role === "superadmin" ||
                 request.auth.credentials.user.role === "dinkesprov" ||
+                request.auth.credentials.user.role === "faskes" ||
                 request.auth.credentials.user.role === "dinkeskota") {
                 return reply()
             } else {
@@ -27,6 +28,7 @@ const CheckRoleCreate = server => {
         method: (request, reply) => {
 
             if (request.auth.credentials.user.role === "superadmin" ||
+                request.auth.credentials.user.role === "faskes" ||
                 request.auth.credentials.user.role === "dinkeskota") {
                 return reply()
             } else {
