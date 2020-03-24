@@ -116,6 +116,24 @@ module.exports = (server) => {
             })
         },
 
+
+        /**
+         * GET /api/cases/summary-final
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummaryFinal(request, reply) {
+            server.methods.services.cases.GetSummaryFinal(
+                request.query,
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item)
+                ).code(200)
+            })
+        },
+
+
         /**
          * PUT /api/cases/{id}
          * @param {*} request

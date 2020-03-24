@@ -58,34 +58,107 @@ function getCaseById (id, callback) {
 }
 
 function getCaseSummary (query, callback) {
-  Case.find(query)
-      .where('delete_status').ne('deleted')
-      .populate('last_history')
-      .exec()
-      .then(x =>{
-          let ODP = 0
-          let PDP = 0
-          let POSITIF = 0
+  let aggStatus = [
+    {$group: {
+      _id: "$final_result",
+      total: {$sum: 1}
+    }}
+  ];
 
-          x.forEach((val)=>{
-            if (val.last_history !== null) {
-              if (val.last_history.status === 'ODP') {
-                ODP++
-              } else if (val.last_history.status === 'PDP') {
-                PDP++
-              } else if (val.last_history.status === 'POSITIF') {
-                POSITIF++
-              }
-            }
-          })
+  let result =  {
+    'ODP':0, 
+    'PDP':0, 
+    'POSITIF':0, 
+    'KONTAKERAT' : 0, 
+    'PROBABEL' : 0
+  }
 
-        return callback(null, {
-          ODP: ODP,
-          PDP: PDP,
-          POSITIF: POSITIF
-        })
-      })
-      .catch(err => callback(err, null))
+  Case.aggregate(aggStatus).exec().then(item => {
+      item.forEach(function(item){
+        if (item['_id'] == 'ODP') {
+          result.ODP = item['total']
+        }
+        if (item['_id'] == 'PDP') {
+          result.PDP = item['total']
+        }
+        if (item['_id'] == 'POSITIF') {
+          result.POSITIF = item['total']
+        }
+        if (item['_id'] == 'KONTAKERAT') {
+          result.KONTAKERAT = item['total']
+        }
+      });
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
+function getCaseSummaryFinal (query, callback) {
+  let aggStatus = [
+    {$group: {
+      _id: "$final_result",
+      total: {$sum: 1}
+    }}
+  ];
+
+  let result =  {
+    'NEGATIF':0, 
+    'SEMBUH':0, 
+    'MENINGGAL':0
+  }
+
+  Case.aggregate(aggStatus).exec().then(item => {
+      item.forEach(function(item){
+        console.log(item)
+        if (item['_id'] == 0) {
+          result.NEGATIF = item['total']
+        }
+        if (item['_id'] == 1) {
+          result.SEMBUH = item['total']
+        }
+        if (item['_id'] == 2) {
+          result.MENINGGAL = item['total']
+        }
+      });
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
+function getCaseSummary (query, callback) {
+  let aggStatus = [
+    {$group: {
+      _id: "$status",
+      total: {$sum: 1}
+    }}
+  ];
+
+  let result =  {
+    'ODP':0, 
+    'PDP':0, 
+    'POSITIF':0, 
+    'KONTAKERAT' : 0, 
+    'PROBABEL' : 0
+  }
+
+  Case.aggregate(aggStatus).exec().then(item => {
+      item.forEach(function(item){
+        if (item['_id'] == 'ODP') {
+          result.ODP = item['total']
+        }
+        if (item['_id'] == 'PDP') {
+          result.PDP = item['total']
+        }
+        if (item['_id'] == 'POSITIF') {
+          result.POSITIF = item['total']
+        }
+        if (item['_id'] == 'KONTAKERAT') {
+          result.KONTAKERAT = item['total']
+        }
+      });
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
 }
 
 function createCase (raw_payload, author, pre, callback) {
@@ -197,6 +270,10 @@ module.exports = [
   {
     name: 'services.cases.getSummary',
     method: getCaseSummary
+  },  
+  {
+    name: 'services.cases.GetSummaryFinal',
+    method: getCaseSummaryFinal
   },
   {
     name: 'services.cases.create',
