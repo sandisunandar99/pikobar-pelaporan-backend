@@ -58,12 +58,22 @@ function getCaseById (id, callback) {
 }
 
 function getCaseSummaryFinal (query, callback) {
-  let aggStatus = [
+  var aggStatus = [
     {$group: {
       _id: "$final_result",
       total: {$sum: 1}
     }}
   ];
+
+  if (query.address_district_code) {
+    var aggStatus = [
+      {$match:{address_district_code: query.address_district_code}},
+      {$group: {
+        _id: "$final_result",
+        total: {$sum: 1}
+      }}
+    ];
+  }
 
   let result =  {
     'NEGATIF':0, 
@@ -90,18 +100,18 @@ function getCaseSummaryFinal (query, callback) {
 }
 
 function getCaseSummary (query, callback) {
-  let aggStatus = [
+  var aggStatus = [
     {$group: {
-      _id: "$final_result",
+      _id: "$status",
       total: {$sum: 1}
     }}
   ];
 
   if (query.address_district_code) {
-    let aggStatus = [
-      {$match:{"address_district_code": query.address_district_code}},
+    var aggStatus = [
+      {$match:{address_district_code: query.address_district_code}},
       {$group: {
-        _id: "$final_result",
+        _id: "$status",
         total: {$sum: 1}
       }}
     ];
