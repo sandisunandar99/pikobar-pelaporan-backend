@@ -3,10 +3,11 @@ module.exports = (server) =>{
     const inputValidations = require('./validations/input')
     //const outputValidations = require('./validations/output')
 
-    const CheckRoleView = require('./route_prerequesites').CheckRoleView(server)
-    const CheckRoleCreate = require('./route_prerequesites').CheckRoleCreate(server)
-    const CheckRoleUpdate = require('./route_prerequesites').CheckRoleUpdate(server)
-    const CheckRoleDelete = require('./route_prerequesites').CheckRoleDelete(server)
+    const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
+    const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
+    const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
+    const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
+    
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
 
