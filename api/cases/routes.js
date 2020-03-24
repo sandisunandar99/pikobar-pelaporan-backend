@@ -106,9 +106,30 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 // validate: inputValidations,
                 // response: outputValidations
+                pre: [
+                    CheckRoleUpdate
+                ]
             },
             handler: handlers.GetCaseSummary
         },
+
+        // Get case's summary of last status
+        {
+            method: 'GET',
+            path: '/cases-summary-final',
+            config: {
+                auth: 'jwt',
+                description: 'Get cases summary of final result',
+                tags: ['api', 'cases'],
+                // validate: inputValidations,
+                // response: outputValidations
+                pre: [
+                    CheckRoleUpdate
+                ]
+            },
+            handler: handlers.GetCaseSummaryFinal
+        },
+
         // Update case
         {
             method: 'PUT',
