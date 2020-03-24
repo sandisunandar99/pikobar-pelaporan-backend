@@ -7,6 +7,7 @@ const CaseSchema = new mongoose.Schema({
     id_case : {type: String, lowercase: true, unique: true, index: true},
     // NIK sumber terkait kontak erat
     id_case_national : {type:String},
+    nik : {type:Number},
     id_case_related : {type:String},
     name: {type:String},
     // tentatif jika diisi usia, required jika tidak
@@ -49,6 +50,7 @@ CaseSchema.methods.toJSONFor = function () {
         id_case: this.id_case,
         name: this.name,
         age: this.age,
+        nik: this.nik,
         nationality: this.nationality,
         nationality_name: this.nationality_name,
         gender: this.gender,
