@@ -39,7 +39,9 @@ function ListCase (query, user, callback) {
     params.id_case = {$regex:query.search,$options:"i"};
   }
 
-console.log(params)
+  if (user.role == 'faskes') {
+    params.author = user._id;
+  }
 
   var result_search = Case.find(params).where('delete_status').ne('deleted')
 
