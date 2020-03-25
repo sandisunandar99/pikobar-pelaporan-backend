@@ -183,7 +183,7 @@ function createCase (raw_payload, author, pre, callback) {
       id_case += "0".repeat(4 - pre.count_pasien.toString().length)
       id_case += pre.count_pasien
 
-  let inset_id_case = Object.assign(raw_payload, verified)
+  let inset_id_case = Object.assign(raw_payload, verified) #TODO: check is verified is not overwritten ?
       inset_id_case = Object.assign(raw_payload, {id_case})
  
   let item = new Case(Object.assign(inset_id_case, {author}))
@@ -220,6 +220,7 @@ function updateCase (id, payload, callback) {
 }
 
 function getCountByDistrict(code, callback) {
+  /* Get last number of current district id case order */
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
