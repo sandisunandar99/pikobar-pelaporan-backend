@@ -4,7 +4,7 @@ var uniqueValidator = require('mongoose-unique-validator')
 
 const CaseSchema = new mongoose.Schema({
     // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
-    id_case : {type: String, lowercase: true, unique: true, index: true},
+    id_case : {type: String, unique: true, index: true},
     // NIK sumber terkait kontak erat
     id_case_national : {type:String},
     nik : {type:Number},
