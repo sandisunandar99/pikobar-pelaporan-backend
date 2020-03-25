@@ -177,7 +177,7 @@ function createCase (raw_payload, author, pre, callback) {
   }
 
   let date = new Date().getFullYear().toString()
-  let id_case = "COVID-"
+  let id_case = "covid-"
       id_case += pre.dinkes_code
       id_case += date.substr(2, 2)
       id_case += "0".repeat(4 - pre.count_pasien.toString().length)
