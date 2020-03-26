@@ -29,7 +29,7 @@ function ListCase (query, user, callback) {
     customLabels: myCustomLabels
   };
 
-  var params = new Object();
+  var params = {}
 
   if(query.address_district_code){
     params.address_district_code = query.address_district_code;
