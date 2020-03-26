@@ -47,6 +47,18 @@ function getSubDistrict(city_code, request, callback) {
     .catch(err => callback(err, null))
 }
 
+function getSubDistrictDetail(kecamatan_kode, callback) {
+  console.log(kecamatan_kode)
+  SubDistrict.find({ kemendagri_kecamatan_kode: kecamatan_kode})
+    .sort({ kemendagri_kecamatan_kode: 'asc' })
+    .exec()
+    .then(distric => {
+        let res = distric.map(q => q.toJSONFor())
+        return callback(null, res)
+    })
+    .catch(err => callback(err, null))
+}
+
 function getVillage(kecamatan_code, request, callback) {
   var params = new Object();
   params.kemendagri_kecamatan_kode = kecamatan_code;
@@ -54,8 +66,19 @@ function getVillage(kecamatan_code, request, callback) {
   if (request.desa_kode) {
     params.kemendagri_desa_kode = request.desa_kode;
   }
-console.log(params)
+
   Village.find(params)
+      .sort({ kemendagri_desa_kode: 'asc' })
+      .exec()
+      .then(vill => {
+          let res = vill.map(q => q.toJSONFor())
+          return callback(null, res)
+      })
+      .catch(err => callback(err, null))
+}
+
+function getVillageDetail(desa_kode, callback) {
+  Village.find({ kemendagri_desa_kode: desa_kode })
       .sort({ kemendagri_desa_kode: 'asc' })
       .exec()
       .then(vill => {
@@ -88,8 +111,16 @@ module.exports = [
     method: getSubDistrict
   },
   {
+    name: 'services.areas.getSubDistrictDetail',
+    method: getSubDistrictDetail
+  },
+  {
     name: 'services.areas.getVillage',
     method: getVillage
+  },  
+  {
+    name: 'services.areas.getVillageDetail',
+    method: getVillageDetail
   },
   {
     name: 'services.areas.getHospital',

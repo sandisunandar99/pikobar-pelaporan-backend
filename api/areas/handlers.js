@@ -48,6 +48,23 @@ module.exports = (server) => {
         },
 
         /**
+         * GET /api/sub-district-detail/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async SubDistrictDetail(request, reply) {
+            server.methods.services.areas.getSubDistrictDetail(
+                request.params.sub_district_code,
+                (err, districs) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructAreasResponse(districs)
+                    ).code(200)
+                }
+            )
+        },
+
+        /**
          * GET /api/surveys/{id}/quetions
          * @param {*} request
          * @param {*} reply
@@ -65,6 +82,22 @@ module.exports = (server) => {
             )
         },
 
+        /**
+         * GET /api/village-detail/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async VillageDetail(request, reply) {
+            server.methods.services.areas.getVillageDetail(
+                request.params.village_code,
+                (err, districs) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructAreasResponse(districs)
+                    ).code(200)
+                }
+            )
+        },
 
         /**
          * GET /api/surveys/{id}/quetions

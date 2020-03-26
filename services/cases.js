@@ -95,7 +95,6 @@ function getCaseSummaryFinal (query, callback) {
 
   Case.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
-        console.log(item)
         if (item['_id'] == '0') {
           result.NEGATIF = item['total']
         }
@@ -228,7 +227,6 @@ function getCountByDistrict(code, callback) {
                     .sort({id_case: -1})
                     .exec()
                     .then(res =>{
-                      console.log(res.length);
                         let count = 1;
                         if (res.length > 0)
                           // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
