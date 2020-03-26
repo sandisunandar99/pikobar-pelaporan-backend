@@ -130,6 +130,23 @@ module.exports = (server) =>{
             handler: handlers.GetCaseSummaryFinal
         },
 
+        // Get case's summary of last status
+        {
+            method: 'GET',
+            path: '/cases-summary-by-district',
+            config: {
+                auth: 'jwt',
+                description: 'Get count summary of all cases by district',
+                tags: ['api', 'cases'],
+                // validate: inputValidations,
+                // response: outputValidations
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetCaseSummaryByDistrict
+        },
+
         // Update case
         {
             method: 'PUT',

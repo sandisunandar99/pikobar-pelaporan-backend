@@ -223,6 +223,43 @@ function updateCase (id, payload, callback) {
   })
 }
 
+function getCountCaseByDistrict(callback) {
+  /*
+  var summary = {};
+  DistrictCity.find().then(district_city => {
+    Case.find({ address_district_code: district_city.kemendagri_kabupaten_kode }).then( res => {
+      summary[district_city.name] = res.length();
+    })
+    .catch(err => callback(err, null));
+  })
+  .catch(err => callback(err, null));
+
+  return callback(null, summary);
+
+  var res = DistrictCity.collection.aggregate([
+    {"$group": { _id: "$address_district_code", count: {$sum:1}}}
+  ])
+  return callback(null, res.toArray());
+  */
+  var aggStatus = [
+    { $match: { delete_status: { $ne: 'deleted' }} },
+    {$group: {
+      _id: "$address_district_code",
+      total: {$sum: 1}
+    }}
+  ];
+
+  let result =  {}
+
+  Case.aggregate(aggStatus).exec().then(item => {
+      item.forEach(function(item){
+        result[item['_id']] = item['total']
+      });
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
 function getCountByDistrict(code, callback) {
   /* Get last number of current district id case order */
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
@@ -281,6 +318,10 @@ module.exports = [
     name: 'services.cases.GetSummaryFinal',
     method: getCaseSummaryFinal
   },
+  {
+    name: 'services.cases.getSummaryByDistrict',
+    method: getCountCaseByDistrict
+  },  
   {
     name: 'services.cases.create',
     method: createCase
