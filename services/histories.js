@@ -82,7 +82,6 @@ function createHistoryIfChanged (payload, callback) {
 
       for (var property in payload) {
           if (new_history[property] != null && !is_same(new_history[property],  old_history[property])) {
-            console.log('changed',property, new_history[property], old_history[property]);
             changed = true;
             changed_fields.push(property);
           }
