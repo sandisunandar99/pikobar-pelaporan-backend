@@ -11,7 +11,6 @@ module.exports = (server) => {
         return jsonAreas
     }
 
-
     return {
         /**
          * GET /api/surveys/{id}/quetions
@@ -38,6 +37,7 @@ module.exports = (server) => {
         async SubDistrict(request, reply) {
             server.methods.services.areas.getSubDistrict(
                 request.params.city_code,
+                request.query,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -55,6 +55,7 @@ module.exports = (server) => {
         async Village(request, reply) {
             server.methods.services.areas.getVillage(
                 request.params.district_code,
+                request.query,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -81,8 +82,6 @@ module.exports = (server) => {
                 }
             )
         }
-
-
 
     }//end
 
