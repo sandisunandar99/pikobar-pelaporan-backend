@@ -1,14 +1,14 @@
 const replyHelper = require('../helpers')
 
 module.exports = (server) => {
-    function constructRdtsResponse(rdt) {
-        let jsonRdts = {
+    function constructRdtResponse(rdt) {
+        let jsonRdt = {
             status: 200,
             message: "Success",
             data: rdt
         }
         // return survey
-        return jsonRdts
+        return jsonRdt
     }
 
 
@@ -27,7 +27,7 @@ module.exports = (server) => {
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructRdtsResponse(result,request)
+                    constructRdtResponse(result,request)
                 ).code(200)
             })
         },
@@ -46,7 +46,7 @@ module.exports = (server) => {
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructRdtsResponse(result)
+                    constructRdtResponse(result)
                 ).code(200)
             })
         },
@@ -61,7 +61,7 @@ module.exports = (server) => {
             server.methods.services.rdt.getById(id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructRdtsResponse(item)
+                    constructRdtResponse(item)
                 ).code(200)
             })
         },
@@ -77,7 +77,7 @@ module.exports = (server) => {
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructRdtsResponse(districs)
+                        constructRdtResponse(districs)
                     ).code(200)
                 }
             )
@@ -94,7 +94,7 @@ module.exports = (server) => {
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructRdtsResponse(districs)
+                        constructRdtResponse(districs)
                     ).code(200)
                 }
             )
@@ -111,7 +111,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructRdtsResponse(item)
+                    constructRdtResponse(item)
                 ).code(200)
             })
         },
@@ -128,7 +128,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructRdtsResponse(item)
+                    constructRdtResponse(item)
                 ).code(200)
             })
         },
@@ -146,7 +146,7 @@ module.exports = (server) => {
             server.methods.services.rdt.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructRdtsResponse(result)
+                    constructRdtResponse(result)
                 ).code(200)
             })
         },
@@ -164,7 +164,7 @@ module.exports = (server) => {
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                      return reply(
-                         constructRdtsResponse(item)
+                         constructRdtResponse(item)
                      ).code(202)
                 })
         }
