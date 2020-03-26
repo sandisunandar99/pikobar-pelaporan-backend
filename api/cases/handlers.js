@@ -116,6 +116,21 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases/summary-by-district
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummaryByDistrict(request, reply) {
+            server.methods.services.cases.getSummaryByDistrict(
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item)
+                ).code(200)
+            })
+        },
+
 
         /**
          * GET /api/cases/summary-final
