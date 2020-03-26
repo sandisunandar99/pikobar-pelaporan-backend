@@ -30,6 +30,18 @@ module.exports = (server) =>{
         },
         {
             method: 'GET',
+            path: '/areas/sub-district-detail/{sub_district_code}',
+            config: {
+                auth: 'jwt',
+                description: 'show sub districs detail',
+                tags: ['api', 'areas'],
+                // validate: inputValidations,
+                // response: outputValidations
+            },
+            handler: handlers.SubDistrictDetail
+        },
+        {
+            method: 'GET',
             path: '/areas/village/{district_code}',
             config: {
                 auth: 'jwt',
@@ -39,6 +51,18 @@ module.exports = (server) =>{
                 // response: outputValidations
             },
             handler: handlers.Village
+        },
+        {
+            method: 'GET',
+            path: '/areas/village-detail/{village_code}',
+            config: {
+                auth: 'jwt',
+                description: 'show villege detail',
+                tags: ['api', 'areas'],
+                // validate: inputValidations,
+                // response: outputValidations
+            },
+            handler: handlers.VillageDetail
         },
         {
             method: 'GET',
