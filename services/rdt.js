@@ -120,8 +120,12 @@ function getRdtSummary (query, callback) {
     .catch(err => callback(err, null))
 }
 
-function createRdt (raw_payload, author, pre, callback) {
-  let item = new History(payload);
+function createRdt (payload, author, pre, callback) {
+  let item = new Rdt(payload);
+  item.created_by = author._id;
+  item.created_by_name = author.fullname;
+  item.updated_by = author._id;
+  item.updated_by_name = author.fullname;
 
   item.save((err, item) => {
     if (err) return callback(err, null);
