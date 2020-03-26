@@ -1,185 +1,170 @@
 const replyHelper = require('../helpers')
 
 module.exports = (server) => {
-    function constructCasesResponse(cases) {
-        let jsonCases = {
+    function constructRdtResponse(rdt) {
+        let jsonRdt = {
             status: 200,
             message: "Success",
-            data: cases
+            data: rdt
         }
         // return survey
-        return jsonCases
+        return jsonRdt
     }
 
 
     return {
         /**
-         * GET /api/cases
+         * GET /api/rdt
          * @param {*} request
          * @param {*} reply
          */
-        async ListCase(request, reply){
+        async ListRdt(request, reply){
             let query = request.query
 
-            server.methods.services.cases.list(
+            server.methods.services.rdt.list(
                 query, 
                 request.auth.credentials.user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result,request)
+                    constructRdtResponse(result,request)
                 ).code(200)
             })
         },
 
         /**
-         * POST /api/cases
+         * POST /api/rdt
          * @param {*} request
          * @param {*} reply
          */
-        async CreateCase(request, reply){
+        async CreateRdt(request, reply){
             let payload = request.payload
-            server.methods.services.cases.create(
+            server.methods.services.rdt.create(
                 payload,
                 request.auth.credentials.user,
-                request.pre.count_case,
+                request.pre.count_rdt,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructRdtResponse(result)
                 ).code(200)
             })
         },
 
         /**
-         * GET /api/cases/{id}
+         * GET /api/rdt/{id}
          * @param {*} request
          * @param {*} reply
          */
-        async GetCaseDetail(request, reply) {
+        async GetRdtDetail(request, reply) {
             let id = request.params.id
-            server.methods.services.cases.getById(id, (err, item) => {
+            server.methods.services.rdt.getById(id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructRdtResponse(item)
                 ).code(200)
             })
         },
 
         /**
-         * GET /api/cases/{id}/history
+         * GET /api/rdt/{id}/history
          * @param {*} request
          * @param {*} reply
          */
-        async GetCaseHistory(request, reply) {
-            server.methods.services.histories.getByCase(
+        async GetRdtHistory(request, reply) {
+            server.methods.services.histories.getByRdt(
                 request.params.id,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructCasesResponse(districs)
+                        constructRdtResponse(districs)
                     ).code(200)
                 }
             )
         },
 
         /**
-         * GET /api/cases/{id}/last-history
+         * GET /api/rdt/{id}/last-history
          * @param {*} request
          * @param {*} reply
          */
-        async GetCaseHistoryLast(request, reply) {
-            server.methods.services.histories.getLastHistoryByIdCase(
+        async GetRdtHistoryLast(request, reply) {
+            server.methods.services.histories.getLastHistoryByIdRdt(
                 request.params.id,
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructCasesResponse(districs)
+                        constructRdtResponse(districs)
                     ).code(200)
                 }
             )
         },
 
         /**
-         * GET /api/cases/summary
+         * GET /api/rdt/summary
          * @param {*} request
          * @param {*} reply
          */
-        async GetCaseSummary(request, reply) {
-            server.methods.services.cases.getSummary(
+        async GetRdtSummary(request, reply) {
+            server.methods.services.rdt.getSummary(
                 request.query,
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
-                ).code(200)
-            })
-        },
-
-        /**
-         * GET /api/cases/summary-by-district
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetCaseSummaryByDistrict(request, reply) {
-            server.methods.services.cases.getSummaryByDistrict(
-                (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item)
+                    constructRdtResponse(item)
                 ).code(200)
             })
         },
 
 
         /**
-         * GET /api/cases/summary-final
+         * GET /api/rdt/summary-final
          * @param {*} request
          * @param {*} reply
          */
-        async GetCaseSummaryFinal(request, reply) {
-            server.methods.services.cases.GetSummaryFinal(
+        async GetRdtSummaryFinal(request, reply) {
+            server.methods.services.rdt.GetSummaryFinal(
                 request.query,
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructRdtResponse(item)
                 ).code(200)
             })
         },
 
 
         /**
-         * PUT /api/cases/{id}
+         * PUT /api/rdt/{id}
          * @param {*} request
          * @param {*} reply
          */
-        async UpdateCase(request, reply){
+        async UpdateRdt(request, reply){
             let payload = request.payload
             let id = request.params.id
 
-            server.methods.services.cases.update(id, payload, (err, result) => {
+            server.methods.services.rdt.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructRdtResponse(result)
                 ).code(200)
             })
         },
 
         /**
-         * DELETE /api/cases/{id}
+         * DELETE /api/rdt/{id}
          * @param {*} request
          * @param {*} reply
          */
-        async DeleteCase(request, reply) {          
-            server.methods.services.cases.softDeleteCase(
-                request.pre.cases,
+        async DeleteRdt(request, reply) {          
+            server.methods.services.rdt.softDeleteRdt(
+                request.pre.rdt,
                 request.auth.credentials.user,
                 request.payload,
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                      return reply(
-                         constructCasesResponse(item)
+                         constructRdtResponse(item)
                      ).code(202)
                 })
         }

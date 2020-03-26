@@ -4,7 +4,8 @@ const register = (server, options, next) => {
       require('./areas'),
       require('./cases'),
       require('./histories'),
-      require('./occupations')
+      require('./occupations'),
+      require('./rdt')
     );
     server.method(services)
     return next()
