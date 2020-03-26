@@ -21,11 +21,6 @@ pipeline {
 
         stage('Run Docker on production') {
 
-            input{
-                message "Press Ok to continue to Deploy Production ?"
-            
-            }
-
             environment {
                 SSH_COMMAND = "ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin master'"     
             }
