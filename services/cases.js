@@ -35,15 +35,20 @@ function ListCase (query, user, callback) {
     params.address_district_code = query.address_district_code;
   }
 
-  if(query.search){
-    params.id_case = {$regex:query.search,$options:"i"};
-  }
-
   if (user.role == 'faskes') {
     params.author = user._id;
   }
 
-  var result_search = Case.find(params).where('delete_status').ne('deleted')
+  if(query.search){
+    var search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+
+    var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
+  } else {
+    var result_search = Case.find(params).where('delete_status').ne('deleted')
+  }
 
   Case.paginate(result_search, options).then(function(results){
       let res = {
