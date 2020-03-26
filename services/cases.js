@@ -244,7 +244,7 @@ function getCountCaseByDistrict(callback) {
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
-      _id: "$address_district_code",
+      _id: "$address_district_name",
       total: {$sum: 1}
     }}
   ];
