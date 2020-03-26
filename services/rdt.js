@@ -127,6 +127,8 @@ function createRdt (payload, author, pre, callback) {
   item.updated_by = author._id;
   item.updated_by_name = author.fullname;
 
+  console.log("author",author);
+
   item.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
