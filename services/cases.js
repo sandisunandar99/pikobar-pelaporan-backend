@@ -53,7 +53,7 @@ function ListCase (query, user, callback) {
   Case.paginate(result_search, options).then(function(results){
     if (user.role == 'dinkeskota') {
       var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-      var resultCaseFilter = resultCase.filter(cs => cs.author._id == user._id)
+      var resultCaseFilter = resultCase
     }else{
       var resultCase = results.itemsList.map(cases => cases.toJSONFor())
       var resultCaseFilter = resultCase
