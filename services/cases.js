@@ -51,8 +51,10 @@ function ListCase (query, user, callback) {
   }
 
   Case.paginate(result_search, options).then(function(results){
+    const resultCase = results.itemsList.map(cases => cases.toJSONFor())
+    const resultCaseFilter = resultCase.filter(cs => cs.address_district_code == user.code_district_city);
       let res = {
-        cases: results.itemsList.map(cases => cases.toJSONFor()),
+        cases: resultCaseFilter,
         _meta: results._meta
       }
       return callback(null, res)
