@@ -134,20 +134,21 @@ function getCaseSummary (query, user, callback) {
   ];
 
   if (query.address_district_code) {
-    // var searching2 = {}
-    // if (user.role == 'dinkeskota') {
-    //   var searching = { author: user._id }
-    //   var searching2 = { address_district_code:query.address_district_code }
-    // }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-    //   var searching = {}
-    // }else{
-    //   var searching = { author:user._id }
-    // }
-    var searching = {address_district_code:query.address_district_code}
+    var searching2 = {}
+    if (user.role == 'dinkeskota') {
+      var searching = { author: user._id }
+      var searching2 = { address_district_code:query.address_district_code }
+    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+      var searching = {}
+    }else{
+      var searching = { author:user._id }
+    }
+    // var searching = {address_district_code:query.address_district_code}
     var aggStatus = [
       { $match: { 
       $and: [  
             searching,
+            searching2,
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
