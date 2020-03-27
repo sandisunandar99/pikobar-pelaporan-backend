@@ -43,12 +43,13 @@ module.exports = (server) => {
                 payload,
                 request.auth.credentials.user,
                 request.pre.count_rdt,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructRdtResponse(result)
-                ).code(200)
-            })
+                  (err, result) => {
+                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                  return reply(
+                      constructRdtResponse(result)
+                  ).code(200)
+                }
+            )
         },
 
         /**
@@ -143,12 +144,17 @@ module.exports = (server) => {
             let payload = request.payload
             let id = request.params.id
 
-            server.methods.services.rdt.update(id, payload, (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructRdtResponse(result)
-                ).code(200)
-            })
+            server.methods.services.rdt.update(
+                id, 
+                payload, 
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result)
+                    ).code(200)
+                }
+            )
         },
 
         /**

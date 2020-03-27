@@ -9,6 +9,9 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+require('../models/Case')
+const Case = mongoose.model('Case')
+
 function ListRdt (query, user, callback) {
 
   const myCustomLabels = {
@@ -128,20 +131,54 @@ function createRdt (payload, author, pre, callback) {
   item.updated_by_name = author.fullname;
   item.code_rdt = pre.count_rdt;
 
-  //console.log("author",author);
-
   item.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
   });
 }
 
-function updateRdt (id, payload, callback) {
+function updateRdt (id, payload, author, callback) {
+  payload['upated_by'] = author._id;
+  payload['upated_by_name'] = author.fullname;
+
+  // update Rdt
   Rdt.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
-  .then(result => {
-    return callback(null, result);
+  .then(rdt_item => {
+    if (rdt_item.id_case.length > 0 && rdt_item.final_result.length > 0) {
+      // find Case
+      Case.findOne({id_case: rdt_item.id_case})
+          .populate('last_history')
+          .exec()
+          .then(case_item => {
+              let new_attr = case_item.last_history.toJSONFor();
+              delete new_attr._id;
+              new_attr['final_result'] = rdt_item.final_result;
+              new_attr['stage'] = 'SELESAI';
+              if (rdt_item.final_result == 'POSITIF')
+                new_attr['status'] = 'POSITIF';
+
+              // create new history
+              new History(new_attr).save((err, new_history) => {
+                if (err) return callback(err, null);
+
+                // update case's history-related attributes
+                case_item.last_history = new_history._id;
+                case_item.status = new_history.status;
+                case_item.stage = new_history.stage;
+                case_item.final_result = new_history.final_result;
+
+                case_item.save((err, res) => {
+                  if (err) return callback(err, null);
+                  return callback(null, rdt_item);
+                });
+              });
+          })
+          .catch(err => callback(err, null));
+    } else {
+      return callback(null, rdt_item);
+    }
   }).catch(err => {
-    return callback(null, err);
+    return callback(err, null);
   })
 }
 
