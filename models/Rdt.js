@@ -7,7 +7,7 @@ const RdtSchema = new mongoose.Schema({
     id_case : {type : String},
     type_target : {type : String},
     nik : {type : String},
-    nama : {type : String},
+    name : {type : String},
     birth_date : {type : String},
     age : {type : String},
     gender : {type : String},
