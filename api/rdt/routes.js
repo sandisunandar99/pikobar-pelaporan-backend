@@ -8,7 +8,7 @@ module.exports = (server) =>{
     const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
     const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
     
-    const countRdtByDistrict = require('./route_prerequesites').countRdtByDistrict(server)
+    const countRdtCode = require('./route_prerequesites').countRdtCode(server)
     const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
 
 
@@ -43,6 +43,9 @@ module.exports = (server) =>{
                 //     CheckRoleCreate,
                 //     countRdtByDistrict
                 // ]
+                pre: [
+                    countRdtCode
+                ]
             },
             handler: handlers.CreateRdt
         },
