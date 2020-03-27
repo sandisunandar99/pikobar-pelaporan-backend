@@ -44,7 +44,7 @@ RdtSchema.methods.toJSONFor = function () {
         id_case : this.id_case,
         type_target : this.type_target,
         nik : this.nik,
-        nama : this.nama,
+        name : this.name,
         birth_date : this.birth_date,
         age : this.age,
         gender : this.gender,
