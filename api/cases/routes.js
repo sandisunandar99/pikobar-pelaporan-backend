@@ -23,7 +23,7 @@ module.exports = (server) =>{
                 description: 'show list of all cases',
                 tags: ['api', 'cases'],
                 validate: inputValidations.CaseQueryValidations,
-                // response: outputValidations.ListCaseOutputValidationsConfig,
+                response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
                     CheckRoleView,
                     checkIfDataNotNull
