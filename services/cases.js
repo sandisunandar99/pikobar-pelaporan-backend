@@ -47,7 +47,11 @@ function ListCase (query, user, callback) {
 
     var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
   } else {
-    var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
+    if (user.role == 'dinkeskota') {
+      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
+    }else{
+      var result_search = Case.find(params).where('delete_status').ne('deleted')
+    }
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -122,7 +126,7 @@ function getCaseSummaryFinal (query, callback) {
     .catch(err => callback(err, null))
 }
 
-function getCaseSummary (query, callback) {
+function getCaseSummary (query, user, callback) {
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -135,7 +139,8 @@ function getCaseSummary (query, callback) {
     var aggStatus = [
       { $match: { 
       $and: [ 
-            { address_district_code: query.address_district_code },  
+            // { address_district_code: query.address_district_code },  
+            { author: user._id },  
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
