@@ -39,8 +39,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new cases',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleCreate,
                     countCaseByDistrict
@@ -56,8 +54,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show a specific cases details',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -72,8 +68,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show a specific cases history',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -89,8 +83,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show the last history of case',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -106,8 +98,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'Get cases summary of last status',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -123,8 +113,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'Get cases summary of final result',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -140,8 +128,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'Get count summary of all cases by district',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -157,8 +143,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show a specific cases details',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleUpdate
                 ]
@@ -172,8 +156,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'soft delete by id cases',
                 tags: ['api', 'cases'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleDelete,
                     getCasebyId
