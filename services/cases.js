@@ -51,8 +51,13 @@ function ListCase (query, user, callback) {
   }
 
   Case.paginate(result_search, options).then(function(results){
-    const resultCase = results.itemsList.map(cases => cases.toJSONFor())
-    const resultCaseFilter = resultCase.filter(cs => cs.author.code_district_city == user.code_district_city);
+    if (user.role == 'dinkeskota') {
+      var resultCase = results.itemsList.map(cases => cases.toJSONFor())
+      var resultCaseFilter = resultCase.filter(cs => cs.author.code_district_city == user.code_district_city)
+    }else{
+      var resultCase = results.itemsList.map(cases => cases.toJSONFor())
+      var resultCaseFilter = resultCase
+    }
       let res = {
         cases: resultCaseFilter,
         _meta: results._meta
