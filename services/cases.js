@@ -47,19 +47,19 @@ function ListCase (query, user, callback) {
 
     var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
   } else {
-    var result_search = Case.find(params).where('delete_status').ne('deleted')
+    var result_search = Case.find({"author":user._id}).where('delete_status').ne('deleted')
   }
 
   Case.paginate(result_search, options).then(function(results){
-    if (user.role == 'dinkeskota') {
-      var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-      var resultCaseFilter = resultCase.filter(cs => cs.author._id === user._id)
-    }else{
-      var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-      var resultCaseFilter = resultCase
-    }
+    // if (user.role == 'dinkeskota') {
+    //   var resultCase = results.itemsList.map(cases => cases.toJSONFor())
+    //   var resultCaseFilter = resultCase.filter(cs => cs.author._id === user._id)
+    // }else{
+    //   var resultCase = results.itemsList.map(cases => cases.toJSONFor())
+    //   var resultCaseFilter = resultCase
+    // }
       let res = {
-        cases: resultCaseFilter,
+        cases: results.itemsList.map(cases => cases.toJSONFor()),
         _meta: results._meta
       }
       return callback(null, res)
