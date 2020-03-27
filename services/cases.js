@@ -48,11 +48,11 @@ function ListCase (query, user, callback) {
     var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
   } else {
     if (user.role == 'dinkeskota') {
-      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
+      var result_search = Case.find(params).where('delete_status').ne('deleted')
     }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
       var result_search = Case.find().where('delete_status').ne('deleted')
     }else{
-      var result_search = Case.find(params).where('delete_status').ne('deleted')
+      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
     }
   }
 
