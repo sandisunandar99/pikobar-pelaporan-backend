@@ -32,7 +32,34 @@ const getCasebyId = server => {
 }
 
 
+const checkIfDataNotNull = server =>{
+     return {
+         method: (request, reply) => {
+            let query = request.query
+            let user = request.auth.credentials.user
+            let fullname = user.fullname
+
+             server.methods.services.cases.list(
+                 query,
+                 user,
+                 (err, result) => {
+                     if (result.cases.length === 0) {
+                         return reply({
+                             status: 404,
+                             message: 'Data untuk '+fullname+' belum ada.',
+                             data: null
+                         }).code(404).takeover()
+                     }else{
+                         return reply()
+                     }
+                 })
+         },
+         assign: 'check_cases'
+     }
+}
+
 module.exports ={
     countCaseByDistrict,
-    getCasebyId
+    getCasebyId,
+    checkIfDataNotNull
 }

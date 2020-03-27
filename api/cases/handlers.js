@@ -46,7 +46,7 @@ module.exports = (server) => {
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructCasesResponse(result,request)
                 ).code(200)
             })
         },
@@ -61,7 +61,7 @@ module.exports = (server) => {
             server.methods.services.cases.getById(id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -77,7 +77,7 @@ module.exports = (server) => {
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructCasesResponse(districs)
+                        constructCasesResponse(districs, request)
                     ).code(200)
                 }
             )
@@ -94,7 +94,7 @@ module.exports = (server) => {
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructCasesResponse(districs)
+                        constructCasesResponse(districs, request)
                     ).code(200)
                 }
             )
@@ -112,7 +112,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -127,7 +127,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -144,7 +144,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -162,7 +162,7 @@ module.exports = (server) => {
             server.methods.services.cases.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructCasesResponse(result, request)
                 ).code(200)
             })
         },
@@ -180,7 +180,7 @@ module.exports = (server) => {
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                      return reply(
-                         constructCasesResponse(item)
+                         constructCasesResponse(item, request)
                      ).code(202)
                 })
         }

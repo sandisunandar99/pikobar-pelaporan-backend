@@ -1,7 +1,7 @@
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const inputValidations = require('./validations/input')
-    //const outputValidations = require('./validations/output')
+    const outputValidations = require('./validations/output')
 
     const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
@@ -9,6 +9,7 @@ module.exports = (server) =>{
     const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
     
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
+    const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
 
 
@@ -22,9 +23,10 @@ module.exports = (server) =>{
                 description: 'show list of all cases',
                 tags: ['api', 'cases'],
                 validate: inputValidations.CaseQueryValidations,
-                // response: outputValidations
+                response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
-                    CheckRoleView
+                    CheckRoleView,
+                    checkIfDataNotNull
                 ]
             },
             handler: handlers.ListCase
