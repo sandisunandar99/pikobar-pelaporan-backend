@@ -126,8 +126,9 @@ function createRdt (payload, author, pre, callback) {
   item.created_by_name = author.fullname;
   item.updated_by = author._id;
   item.updated_by_name = author.fullname;
+  item.code_rdt = pre.count_rdt;
 
-  console.log("author",author);
+  //console.log("author",author);
 
   item.save((err, item) => {
     if (err) return callback(err, null);
@@ -144,27 +145,21 @@ function updateRdt (id, payload, callback) {
   })
 }
 
-function getCountByDistrict(code, callback) {
-  /* Get last number of current district id rdt order */
-  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-              .exec()
-              .then(dinkes =>{
-                Rdt.find({ address_district_code: code})
-                    .sort({code_rdt: -1})
-                    .exec()
-                    .then(res =>{
-                        let count = 1;
-                        if (res.length > 0)
-                          // ambil 4 karakter terakhir yg merupakan nomor urut dari code_rdt
-                          count = (Number(res[0].code_rdt.substring(12)) + 1);
-                        let result = {
-                          prov_city_code: code,
-                          dinkes_code: dinkes.dinkes_kota_kode,
-                          count_pasien: count
-                        }
-                      return callback(null, result)
-                    }).catch(err => callback(err, null))
-              })
+function getCountRdtCode(callback) {
+  /* Get last number of rdt_code */
+  Rdt.find({})
+      .sort({code_rdt: -1})
+      .exec()
+      .then(res =>{
+          let count = 1;
+          if (res.length > 0)
+            // ambil 4 karakter terakhir yg merupakan nomor urut dari id_rdt
+            count = (Number(res[0].code_rdt) + 1);
+          let result = {
+            count_rdt: count
+          }
+        return callback(null, result)
+      }).catch(err => callback(err, null))
 }
 
 
@@ -206,8 +201,8 @@ module.exports = [
     method: softDeleteRdt
   },
   {
-    name: 'services.rdt.getCountByDistrict',
-    method: getCountByDistrict
+    name: 'services.rdt.getCountRdtCode',
+    method: getCountRdtCode
   },
   {
     name: 'services.rdt.getSummary',

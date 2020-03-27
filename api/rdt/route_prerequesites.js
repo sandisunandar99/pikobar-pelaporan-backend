@@ -1,11 +1,10 @@
 const replyHelper = require('../helpers')
 
 
-const countRdtByDistrict = server =>{
+const countRdtCode = server =>{
     return {
         method: (request, reply) => {
-            server.methods.services.rdt.getCountByDistrict(
-                request.payload.address_district_code,
+            server.methods.services.rdt.getCountRdtCode(
                 (err, count) => {
                     if (err) {
                         return reply(replyHelper.constructErrorResponse(err)).takeover()
@@ -33,6 +32,6 @@ const getRdtbyId = server => {
 
 
 module.exports ={
-    countRdtByDistrict,
+    countRdtCode,
     getRdtbyId
 }
