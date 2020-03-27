@@ -45,7 +45,13 @@ function ListCase (query, user, callback) {
       { name: new RegExp(query.search, "i") },
     ];
 
-    var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
+    if (user.role == 'dinkeskota') {
+      var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
+    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+      var result_search = Case.find().or(search_params).where('delete_status').ne('deleted')
+    }else{
+      var result_search = Case.find({'author':user._id}).or(search_params).where('delete_status').ne('deleted')
+    }
   } else {
     if (user.role == 'dinkeskota') {
       var result_search = Case.find(params).where('delete_status').ne('deleted')
@@ -57,13 +63,6 @@ function ListCase (query, user, callback) {
   }
 
   Case.paginate(result_search, options).then(function(results){
-    // if (user.role == 'dinkeskota') {
-    //   var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-    //   var resultCaseFilter = resultCase.filter(cs => cs.author.code_district_city == user.code_district_city)
-    // }else{
-    //   var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-    //   var resultCaseFilter = resultCase
-    // }
       let res = {
         cases: results.itemsList.map(cases => cases.toJSONFor()),
         _meta: results._meta
@@ -140,8 +139,7 @@ function getCaseSummary (query, user, callback) {
   if (query.address_district_code) {
     var aggStatus = [
       { $match: { 
-      $and: [ 
-            // { address_district_code: query.address_district_code },  
+      $and: [  
             { author: user._id },  
             { delete_status: { $ne: 'deleted' }}
           ]
