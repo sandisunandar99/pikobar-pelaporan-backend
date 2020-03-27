@@ -41,13 +41,13 @@ function ListRdt (query, user, callback) {
 
   if(query.search){
     var search_params = [
-      { id_rdt : new RegExp(query.search,"i") },
+      { code_rdt : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
 
-    var result_search = Rdt.find(params).or(search_params).where('delete_status').ne('deleted')
+    var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
   } else {
-    var result_search = Rdt.find(params).where('delete_status').ne('deleted')
+    var result_search = Rdt.find(params).where('status').ne('deleted')
   }
 
   Rdt.paginate(result_search, options).then(function(results){
@@ -70,7 +70,7 @@ function getRdtById (id, callback) {
 
 function getRdtSummary (query, callback) {
   var aggStatus = [
-    { $match: { delete_status: { $ne: 'deleted' }} },
+    { $match: { status: { $ne: 'deleted' }} },
     {$group: {
       _id: "$status",
       total: {$sum: 1}
@@ -79,10 +79,10 @@ function getRdtSummary (query, callback) {
 
   if (query.address_district_code) {
     var aggStatus = [
-      { $match: { 
-      $and: [ 
-            { address_district_code: query.address_district_code },  
-            { delete_status: { $ne: 'deleted' }}
+      { $match: {
+      $and: [
+            { address_district_code: query.address_district_code },
+            { status: { $ne: 'deleted' }}
           ]
       }},
       { $group: {
@@ -93,10 +93,10 @@ function getRdtSummary (query, callback) {
   }
 
   let result =  {
-    'ODP':0, 
-    'PDP':0, 
-    'POSITIF':0, 
-    'KONTAKERAT' : 0, 
+    'ODP':0,
+    'PDP':0,
+    'POSITIF':0,
+    'KONTAKERAT' : 0,
     'PROBABEL' : 0
   }
 
@@ -150,13 +150,13 @@ function getCountByDistrict(code, callback) {
               .exec()
               .then(dinkes =>{
                 Rdt.find({ address_district_code: code})
-                    .sort({id_rdt: -1})
+                    .sort({code_rdt: -1})
                     .exec()
                     .then(res =>{
                         let count = 1;
                         if (res.length > 0)
-                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_rdt
-                          count = (Number(res[0].id_rdt.substring(12)) + 1);
+                          // ambil 4 karakter terakhir yg merupakan nomor urut dari code_rdt
+                          count = (Number(res[0].code_rdt.substring(12)) + 1);
                         let result = {
                           prov_city_code: code,
                           dinkes_code: dinkes.dinkes_kota_kode,
@@ -171,7 +171,7 @@ function getCountByDistrict(code, callback) {
 function softDeleteRdt(rdt,deletedBy, payload, callback) {
    let date = new Date()
    let dates = {
-     delete_status: 'deleted',
+     status: 'deleted',
      deletedAt: date.toISOString()
    }
    let param = Object.assign({deletedBy}, dates)
@@ -181,8 +181,7 @@ function softDeleteRdt(rdt,deletedBy, payload, callback) {
      if (err) return callback(err, null)
      return callback(null, item)
    })
-
-} 
+}
 
 
 module.exports = [
@@ -214,6 +213,6 @@ module.exports = [
     name: 'services.rdt.getSummary',
     method: getRdtSummary
   },
-  
+
 ];
 
