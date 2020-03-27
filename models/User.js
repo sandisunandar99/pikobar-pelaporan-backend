@@ -61,6 +61,7 @@ UserSchema.methods.toAuthJSON = function () {
 
 UserSchema.methods.JSONCase = function () {
   return {
+    _id: this._id,
     fullname: this.fullname,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
