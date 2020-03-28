@@ -142,44 +142,19 @@ function updateRdt (id, payload, author, callback) {
   payload['upated_by_name'] = author.fullname;
 
   // update Rdt
-  Rdt.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
-  .then(rdt_item => {
-    if (rdt_item.id_case.length > 0 && rdt_item.final_result.length > 0) {
-      // find Case
-      Case.findOne({id_case: rdt_item.id_case})
-          .populate('last_history')
-          .exec()
-          .then(case_item => {
-              let new_attr = case_item.last_history.toJSONFor();
-              delete new_attr._id;
-              new_attr['final_result'] = rdt_item.final_result;
-              new_attr['stage'] = 'SELESAI';
-              if (rdt_item.final_result == 'POSITIF')
-                new_attr['status'] = 'POSITIF';
-
-              // create new history
-              new History(new_attr).save((err, new_history) => {
-                if (err) return callback(err, null);
-
-                // update case's history-related attributes
-                case_item.last_history = new_history._id;
-                case_item.status = new_history.status;
-                case_item.stage = new_history.stage;
-                case_item.final_result = new_history.final_result;
-
-                case_item.save((err, res) => {
-                  if (err) return callback(err, null);
-                  return callback(null, rdt_item);
-                });
-              });
-          })
-          .catch(err => callback(err, null));
+  Rdt.findOne({ _id: id}).then(rdt_item => {
+    if (rdt_item.final_result.length > 0) {
+        var err = { 'message': "this Rdt entry already contain result, it cannot be edited or deleted"};
+        return callback(err, null);
     } else {
-      return callback(null, rdt_item);
+      Object.assign(rdt_item, payload);
+
+      rdt_item.save((err, res) => {
+        if (err) return callback(err, null);
+        return callback(null, rdt_item);
+      });
     }
-  }).catch(err => {
-    return callback(err, null);
-  })
+  }).catch(err => callback(err, null))
 }
 
 function getCountRdtCode(callback) {
@@ -201,18 +176,23 @@ function getCountRdtCode(callback) {
 
 
 function softDeleteRdt(rdt,deletedBy, payload, callback) {
-   let date = new Date()
-   let dates = {
-     status: 'deleted',
-     deletedAt: date.toISOString()
-   }
-   let param = Object.assign({deletedBy}, dates)
+  if (rdt.final_result.length > 0) {
+      var err = { 'message': "this Rdt entry already contain result, it cannot be edited or deleted"};
+      return callback(err, null);
+  } else {
+     let date = new Date()
+     let dates = {
+       status: 'deleted',
+       deletedAt: date.toISOString()
+     }
+     let param = Object.assign({deletedBy}, dates)
 
-   rdt = Object.assign(rdt, param)
-   rdt.save((err, item) => {
-     if (err) return callback(err, null)
-     return callback(null, item)
-   })
+     rdt = Object.assign(rdt, param)
+     rdt.save((err, item) => {
+       if (err) return callback(err, null)
+       return callback(null, item)
+     })
+  }
 }
 
 
