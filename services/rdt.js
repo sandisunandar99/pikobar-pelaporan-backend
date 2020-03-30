@@ -152,7 +152,8 @@ function createRdt (payload, author, pre, callback) {
   }
 
   let rdt = new Rdt(Object.assign(code, payload))
-  
+  rdt = Object.assign(rdt,{author})
+
   rdt.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
