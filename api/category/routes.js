@@ -8,13 +8,26 @@ module.exports = (server) =>{
             path: '/category-target',
             config: {
                 auth: 'jwt',
-                description: 'show category',
-                tags: ['api', 'category'],
+                description: 'show target by category',
+                tags: ['api', 'category-target'],
                 pre: [
                     CheckRoleView
                 ]
             },
-            handler: handlers.getListCategory
+            handler: handlers.getListTarget
+        },
+        {
+            method: 'GET',
+            path: '/category-target/{id}',
+            config: {
+                auth: 'jwt',
+                description: 'show target by category',
+                tags: ['api', 'category-target'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.getListTargetByCategory
         }
     ]
 

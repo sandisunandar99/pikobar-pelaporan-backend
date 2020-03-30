@@ -5,14 +5,6 @@ const CategorySchema = new mongoose.Schema({
     targets: {type: String,required: [true, "can't be blank"]}
 })
 
-
-CategorySchema.methods.toJSONForCategory = function () { 
-    return {
-        id : this._id,
-        category_name : this.category_name
-    }
-}
-
 CategorySchema.methods.toJSONForTarget = function () { 
     return {
         targets : this.targets
