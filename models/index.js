@@ -8,7 +8,7 @@ const register = (server, options, next) => {
     if (err) console.log(err);
 
     require('./User')
-    // require('./Province')
+    require('./Category')
     require('./DistrictCity')
     require('./SubDistrict')
     require('./Village')
