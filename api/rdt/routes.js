@@ -10,6 +10,7 @@ module.exports = (server) =>{
     
     const countRdtCode = require('./route_prerequesites').countRdtCode(server)
     const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
+    const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
 
 
     return [
@@ -50,7 +51,8 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleCreate,
-                    countRdtCode
+                    countRdtCode,
+                    getCodeDinkes
                 ]
             },
             handler: handlers.CreateRdt
@@ -76,7 +78,7 @@ module.exports = (server) =>{
             path: '/rdt/{id}',
             config: {
                 auth: 'jwt',
-                description: 'show a specific rdt details',
+                description: 'update rdt',
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleUpdate

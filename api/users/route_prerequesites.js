@@ -9,7 +9,7 @@ const CheckRoleView = server => {
                 request.auth.credentials.user.role === "dinkesprov" ||
                 request.auth.credentials.user.role === "faskes" ||
                 request.auth.credentials.user.role === "dinkeskota") {
-                return reply()
+                return reply(request.auth.credentials.user.role)
             } else {
                 return reply({
                     status: 403,
@@ -30,7 +30,7 @@ const CheckRoleCreate = server => {
             if (request.auth.credentials.user.role === "superadmin" ||
                 request.auth.credentials.user.role === "faskes" ||
                 request.auth.credentials.user.role === "dinkeskota") {
-                return reply()
+                return reply(request.auth.credentials.user.role)
             } else {
                 return reply({
                     status: 403,
@@ -50,7 +50,7 @@ const CheckRoleUpdate = server => {
 
             if (request.auth.credentials.user.role === "superadmin" ||
                 request.auth.credentials.user.role === "dinkeskota") {
-                return reply()
+                return reply(request.auth.credentials.user.role)
             } else {
                 return reply({
                     status: 403,
@@ -69,7 +69,7 @@ const CheckRoleDelete = server => {
         method: (request, reply) => {
             if (request.auth.credentials.user.role === "superadmin" ||
                 request.auth.credentials.user.role === "dinkeskota") {
-                return reply()
+                return reply(request.auth.credentials.user.role)
             } else {
                 return reply({
                     status: 403,

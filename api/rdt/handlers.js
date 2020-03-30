@@ -42,7 +42,7 @@ module.exports = (server) => {
             server.methods.services.rdt.create(
                 payload,
                 request.auth.credentials.user,
-                request.pre.count_rdt,
+                request.pre,
                   (err, result) => {
                   if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                   return reply(

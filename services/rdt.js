@@ -124,14 +124,36 @@ function getRdtSummary (query, callback) {
 }
 
 function createRdt (payload, author, pre, callback) {
-  let item = new Rdt(payload);
-  item.created_by = author._id;
-  item.created_by_name = author.fullname;
-  item.updated_by = author._id;
-  item.updated_by_name = author.fullname;
-  item.code_rdt = pre.count_rdt;
+  // "code_test": "PST-100012000001"
+  // "code_tool_tester": "RDT-10012000001",
+  // "code_tool_tester": "PCR-10012000001",  
 
-  item.save((err, item) => {
+  let date = new Date().getFullYear().toString()
+  let code_test = "PTS-"
+      code_test += pre.code_dinkes.code
+      code_test += date.substr(2, 2)
+      code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
+      code_test += pre.count_rdt.count
+
+  let code_tool_tester
+  if (payload.tool_tester === "PCR") {
+    code_tool_tester = "PCR-"
+  }else{
+    code_tool_tester = "RDT-"
+  }
+  code_tool_tester += pre.code_dinkes.code
+  code_tool_tester += date.substr(2, 2)
+  code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
+  code_tool_tester += pre.count_rdt.count
+  
+  let code = {
+    code_test: code_test,
+    code_tool_tester: code_tool_tester
+  }
+
+  let rdt = new Rdt(Object.assign(code, payload))
+  
+  rdt.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
   });
@@ -157,23 +179,34 @@ function updateRdt (id, payload, author, callback) {
   }).catch(err => callback(err, null))
 }
 
-function getCountRdtCode(callback) {
-  /* Get last number of rdt_code */
-  Rdt.find({})
-      .sort({code_rdt: -1})
-      .exec()
-      .then(res =>{
-          let count = 1;
-          if (res.length > 0)
-            // ambil 4 karakter terakhir yg merupakan nomor urut dari id_rdt
-            count = (Number(res[0].code_rdt) + 1);
-          let result = {
-            count_rdt: count
-          }
-        return callback(null, result)
-      }).catch(err => callback(err, null))
-}
+function getCountRdtCode(code,callback) {
 
+    DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                    Rdt.find({ address_district_code: code})
+                      .sort({code_test: -1})
+                      .exec()
+                      .then(res =>{
+
+                          let count = 1;
+                          if (res.length > 0){
+                            // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
+                            let str = res[0].code_test
+                            count = (Number(str.substring(10)) + 1)
+                          }
+                            
+                          let result = {
+                            prov_city_code: code,
+                            dinkes_code: dinkes.dinkes_kota_kode,
+                            count: count
+                          }
+                        return callback(null, result)
+                      }).catch(err => callback(err, null))
+              })
+
+
+}
 
 function softDeleteRdt(rdt,deletedBy, payload, callback) {
   if (rdt.final_result.length > 0) {
@@ -193,6 +226,18 @@ function softDeleteRdt(rdt,deletedBy, payload, callback) {
        return callback(null, item)
      })
   }
+}
+
+function getCodeDinkes(code, callback) {
+  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                 let result = {
+                   prov_city_code: code,
+                   code: dinkes.dinkes_kota_kode,
+                 }
+                 return callback(null, result)
+              })
 }
 
 
@@ -224,6 +269,10 @@ module.exports = [
   {
     name: 'services.rdt.getSummary',
     method: getRdtSummary
+  },
+  {
+    name: 'services.rdt.getCodeDinkes',
+    method: getCodeDinkes
   },
 
 ];
