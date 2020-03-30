@@ -25,40 +25,58 @@ function ListRdt (query, user, callback) {
   const options = {
     page: query.page,
     limit: query.limit,
-    populate: (['last_history','author']),
+    populate: ( 'author'),
     address_district_code: query.address_district_code,
-    sort: { createdAt: query.sort },
+    sort: {
+      createdAt: query.sort
+    },
     leanWithId: true,
     customLabels: myCustomLabels
   };
 
   var params = new Object();
 
-  if(query.address_district_code){
+  if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
-  }
-
-  if (user.role == 'faskes') {
     params.author = user._id;
   }
 
-  if(query.search){
-    var search_params = [
-      { code_rdt : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
+  if (query.search) {
+    var search_params = [{
+        code_test: new RegExp(query.search, "i")
+      },
+      {
+        name: new RegExp(query.search, "i")
+      },
     ];
 
-    var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
+    if (user.role == 'dinkeskota') {
+      var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
+    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
+      var result_search = Rdt.find().or(search_params).where('status').ne('deleted')
+    } else {
+      var result_search = Rdt.find({
+        'author': user._id
+      }).or(search_params).where('status').ne('deleted')
+    }
   } else {
-    var result_search = Rdt.find(params).where('status').ne('deleted')
+    if (user.role == 'dinkeskota') {
+      var result_search = Rdt.find(params).where('status').ne('deleted')
+    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
+      var result_search = Rdt.find().where('status').ne('deleted')
+    } else {
+      var result_search = Rdt.find({
+        'author': user._id
+      }).where('status').ne('deleted')
+    }
   }
 
-  Rdt.paginate(result_search, options).then(function(results){
-      let res = {
-        rdt: results.itemsList.map(rdt => rdt.toJSONFor()),
-        _meta: results._meta
-      }
-      return callback(null, res)
+  Rdt.paginate(result_search, options).then(function (results) {
+    let res = {
+      rdt: results.itemsList.map(rdt => rdt.toJSONFor()),
+      _meta: results._meta
+    }
+    return callback(null, res)
   }).catch(err => callback(err, null))
 }
 
