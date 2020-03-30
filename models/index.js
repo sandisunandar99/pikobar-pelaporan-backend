@@ -19,7 +19,7 @@ const register = (server, options, next) => {
     server.app.db = {
       link: db.db,
       User: db.model('User'),
-      // Province: db.model('Province'),
+      Category: db.model('Category'),
       DistrictCity: db.model('Districtcity'),
       SubDistrict: db.model('SubDistrict'),
       Village: db.model('Village'),
