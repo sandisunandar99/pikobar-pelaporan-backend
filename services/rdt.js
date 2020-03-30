@@ -85,7 +85,9 @@ function getRdtById (id, callback) {
     .populate('author')
     .populate('last_history')
     .exec()
-    .then(rdt => callback (null, rdt))
+    .then(rdt => {
+        return callback(null, rdt.toJSONFor())
+    })
     .catch(err => callback(err, null));
 }
 
