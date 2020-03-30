@@ -30,6 +30,7 @@ const register = (server, options, next) => {
   server.register(require('./histories'))
   server.register(require('./occupations'))
   server.register(require('./rdt'))
+  server.register(require('./category'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

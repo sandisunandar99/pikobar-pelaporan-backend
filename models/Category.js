@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 
 const CategorySchema = new mongoose.Schema({
-    id: String,
-    category_name: String,
-    targets: String
+    category_name: {type: String,required: [true, "can't be blank"]},
+    targets: {type: String,required: [true, "can't be blank"]}
 })
 
 
