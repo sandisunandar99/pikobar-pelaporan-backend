@@ -98,7 +98,6 @@ module.exports = (server) => {
             server.methods.services.rdt.softDeleteRdt(
                 request.pre.rdt,
                 request.auth.credentials.user,
-                request.payload,
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                      return reply(

@@ -83,10 +83,9 @@ function ListRdt (query, user, callback) {
 function getRdtById (id, callback) {
   Rdt.findOne({_id: id})
     .populate('author')
-    .populate('last_history')
     .exec()
     .then(rdt => {
-        return callback(null, rdt.toJSONFor())
+        return callback(null, rdt)
     })
     .catch(err => callback(err, null));
 }
@@ -181,22 +180,14 @@ function createRdt (payload, author, pre, callback) {
 }
 
 function updateRdt (id, payload, author, callback) {
-  payload['upated_by'] = author._id;
-  payload['upated_by_name'] = author.fullname;
-
   // update Rdt
   Rdt.findOne({ _id: id}).then(rdt_item => {
-    if (rdt_item.final_result.length > 0) {
-        var err = { 'message': "this Rdt entry already contain result, it cannot be edited or deleted"};
-        return callback(err, null);
-    } else {
-      Object.assign(rdt_item, payload);
+     rdt_item = Object.assign(rdt_item, payload);
 
-      rdt_item.save((err, res) => {
-        if (err) return callback(err, null);
-        return callback(null, rdt_item);
-      });
-    }
+     rdt_item.save((err, res) => {
+       if (err) return callback(err, null);
+       return callback(null, rdt_item);
+     });
   }).catch(err => callback(err, null))
 }
 
@@ -229,24 +220,22 @@ function getCountRdtCode(code,callback) {
 
 }
 
-function softDeleteRdt(rdt,deletedBy, payload, callback) {
-  if (rdt.final_result.length > 0) {
-      var err = { 'message': "this Rdt entry already contain result, it cannot be edited or deleted"};
-      return callback(err, null);
-  } else {
-     let date = new Date()
-     let dates = {
-       status: 'deleted',
-       deletedAt: date.toISOString()
-     }
-     let param = Object.assign({deletedBy}, dates)
+function softDeleteRdt(rdt, deletedBy, callback) {
+    let date = new Date()
+    let dates = {
+        status: 'deleted',
+        deletedAt: date.toISOString()
+      }
+    let param = Object.assign({deletedBy}, dates)
 
-     rdt = Object.assign(rdt, param)
-     rdt.save((err, item) => {
-       if (err) return callback(err, null)
-       return callback(null, item)
-     })
-  }
+    rdt = Object.assign(rdt, param)
+
+    rdt.save((err, item) => {
+      if (err) return callback(err, null)
+      return callback(null, item)
+    })
+
+
 }
 
 function getCodeDinkes(code, callback) {

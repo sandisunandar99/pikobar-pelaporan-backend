@@ -46,8 +46,12 @@ const RdtSchema = new mongoose.Schema({
 
     test_method: String,
     
+    author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    
     status : {type : String},
-    author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    deletedAt: Date,
+    deletedBy:{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    
 },{ timestamps:true, usePushEach: true })
 
 RdtSchema.plugin(mongoosePaginate)
