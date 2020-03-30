@@ -7,6 +7,7 @@ const CategorySchema = new mongoose.Schema({
 
 CategorySchema.methods.toJSONForTarget = function () { 
     return {
+        category: this.category_name,
         targets : this.targets
     }
 }

@@ -105,7 +105,28 @@ module.exports = (server) => {
                          constructRdtResponse(item)
                      ).code(202)
                 })
+        },
+
+
+        /**
+         * DELETE /api/rdt/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetListIdCase(request, reply) {
+              let query = request.query
+
+              server.methods.services.cases.FormSelectIdCase(
+                  query,
+                  request.auth.credentials.user,
+                  (err, result) => {
+                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                      return reply(
+                          constructRdtResponse(result, request)
+                      ).code(200)
+                  })
         }
+
 
     }//end
 

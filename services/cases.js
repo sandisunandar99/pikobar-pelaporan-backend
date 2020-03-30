@@ -68,6 +68,29 @@ function ListCase (query, user, callback) {
   }).catch(err => callback(err, null))
 }
 
+function FormSelectIdCase(query, user, callback) {
+
+   var params = new Object();
+
+   if (query.address_district_code) {
+     params.address_district_code = query.address_district_code;
+     params.author = user._id;
+   }
+
+     Case.find(params)
+          .and({status:'ODP'})
+          .where('delete_status')
+          .ne('deleted')
+          .exec()
+          .then(x => {
+            let res = x.map(res => res.JSONFormCase())
+            return callback(null , res)
+            
+          })
+          .catch(err => callback(err ,null))
+
+}
+
 function getCaseById (id, callback) {
   Case.findOne({_id: id})
     .populate('author')
@@ -353,6 +376,10 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
+  },
+  {
+    name: 'services.cases.FormSelectIdCase',
+    method: FormSelectIdCase
   }
 ];
 

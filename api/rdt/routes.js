@@ -13,6 +13,17 @@ module.exports = (server) =>{
 
 
     return [
+        // Get list case for form
+        {
+            method: 'GET',
+            path: '/rdt/list-idcase',
+            config: {
+                auth: 'jwt',
+                description: 'show list id_case for form',
+                tags: ['api', 'rdt'],
+            },
+            handler: handlers.GetListIdCase
+        },
         // Get list rdt
         {
             method: 'GET',

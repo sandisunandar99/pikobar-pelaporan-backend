@@ -71,4 +71,13 @@ CaseSchema.methods.toJSONFor = function () {
     }
 }
 
+
+CaseSchema.methods.JSONFormCase = function () {
+    return {
+        display: this.id_case+'/'+this.name,
+        id_case: this.id_case
+    }
+}
+
+
 module.exports = mongoose.model('Case', CaseSchema)
