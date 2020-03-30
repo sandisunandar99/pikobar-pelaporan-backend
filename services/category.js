@@ -21,14 +21,29 @@ function listTargetByCategory (category_name,callback) {
     .catch(err => callback(err, null));
 }
 
+function createCategory(request, callback){
+  const category = new Category(request.payload);
+  category.save()
+  .then(result => {
+    console.log(result);
+    
+    return callback(null, result)
+  })
+  .catch(err => callback(err, null));
+}
+
 module.exports = [
   {
     name: 'services.category.list',
     method: listTarget
   },
   {
-    name: 'services.category.listbytarget',
+    name: 'services.category.listTargetByCategory',
     method: listTargetByCategory
+  },
+  {
+    name: 'services.category.create',
+    method: createCategory
   },
 ];
 

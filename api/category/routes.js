@@ -4,6 +4,16 @@ module.exports = (server) =>{
 
     return [
         {
+            method: 'POST',
+            path: '/category-target',
+            config: {
+                auth: 'jwt',
+                description: 'create category',
+                tags: ['api', 'category-target']
+            },
+            handler: handlers.createCategory
+        },
+        {
             method: 'GET',
             path: '/category-target',
             config: {

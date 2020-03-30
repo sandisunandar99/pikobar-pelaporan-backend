@@ -16,18 +16,26 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async getListTarget(reply){
-            server.methods.services.category.listTarget((err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCategoryResponse(result)
-                    ).code(200)
+        async createCategory(request,reply){
+            server.methods.services.category.create(request,(err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCategoryResponse(result,request)
+                ).code(200)
+                }
+            )
+        },
+        async getListTarget(request,reply){
+            server.methods.services.category.list((err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCategoryResponse(result,request)
+                ).code(200)
                 }
             )
         },
         async getListTargetByCategory(request,reply){
-            let id = request.params.id
-            server.methods.services.category.listTargetByCategory(id,(err, result) => {
+            server.methods.services.category.listTargetByCategory(request.params.id,(err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
                         constructCategoryResponse(result)
