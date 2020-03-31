@@ -32,6 +32,7 @@ const RdtSchema = new mongoose.Schema({
     tool_tester: String,
     code_tool_tester: String, // code alat pas tes ex: (RDT / TCR)
     
+    test_location_type: String,
     test_location: String,
     test_other_location: String,
     test_address_district_code : {type : String},
