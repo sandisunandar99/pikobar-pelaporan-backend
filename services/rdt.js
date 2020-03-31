@@ -186,7 +186,7 @@ function updateRdt (id, payload, author, callback) {
 }
 
 function getCountRdtCode(code,callback) {
-
+  console.log(code);
     DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
@@ -233,6 +233,8 @@ function softDeleteRdt(rdt, deletedBy, callback) {
 }
 
 function getCodeDinkes(code, callback) {
+  console.log(code);
+  
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
