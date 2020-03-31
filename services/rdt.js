@@ -3,14 +3,8 @@ const mongoose = require('mongoose');
 require('../models/Rdt');
 const Rdt = mongoose.model('Rdt');
 
-require('../models/History')
-const History = mongoose.model('History')
-
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
-
-require('../models/Case')
-const Case = mongoose.model('Case')
 
 function ListRdt (query, user, callback) {
 
