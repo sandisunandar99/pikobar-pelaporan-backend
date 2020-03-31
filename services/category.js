@@ -24,11 +24,7 @@ function listTargetByCategory (category_name,callback) {
 function createCategory(request, callback){
   const category = new Category(request.payload);
   category.save()
-  .then(result => {
-    console.log(result);
-    
-    return callback(null, result)
-  })
+  .then(result => { return callback(null, result)})
   .catch(err => callback(err, null));
 }
 
