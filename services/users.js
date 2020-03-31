@@ -53,7 +53,6 @@ function createUserMultiple (payload, callback) {
   const payloadMultiple = payload.map(pay => {
     pay.username = pay.fullname.toLowerCase().replace(/\s+/g, '').replace(/[^a-zA-Z ]/g, "");
     pay.email = `${pay.username}@gmail.com`
-    pay.role = 'faskes'
     pay.salt = crypto.randomBytes(16).toString('hex')
     pay.password = setPwd(`${pay.username}890`)
     pay.hash = crypto.pbkdf2Sync(`${pay.username}890`, pay.salt, 10000, 512, 'sha512').toString('hex')
