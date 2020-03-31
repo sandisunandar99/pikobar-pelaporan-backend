@@ -39,7 +39,9 @@ const CaseSchema = new mongoose.Schema({
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verified_status: String,
-    verified_comment: {type: String, default: null}
+    verified_comment: {type: String, default: null},
+    is_test_masif: {type: Boolean, default: false}
+
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.plugin(mongoosePaginate)
