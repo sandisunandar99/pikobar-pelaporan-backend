@@ -73,8 +73,9 @@ CaseSchema.methods.toJSONFor = function () {
 
 
 CaseSchema.methods.JSONFormCase = function () {
+    let covid = this.id_case
     return {
-        display: this.id_case+'/'+this.name,
+        display: covid.toUpperCase()+ '/' + this.name,
         id_case: this.id_case,
         id: this._id
     }
