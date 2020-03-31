@@ -34,7 +34,8 @@ const CaseJSON = Joi.object().keys({
     delete_status: Joi.string().allow('', null),
     deletedAt: Joi.date().allow('', null),
     author: Joi.object(),
-    last_history: Joi.object()
+    last_history: Joi.object(),
+    is_test_masif: Joi.boolean().allow('',null)
 })
 
 
