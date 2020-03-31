@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+var crypto = require('crypto')
 require('../models/User');
 const User = mongoose.model('User');
 
@@ -42,6 +42,31 @@ function createUser (payload, callback) {
   });
 }
 
+function setPwd(password){
+  const salts = crypto.randomBytes(16).toString('hex')
+  const hashing = crypto.pbkdf2Sync(password, salts, 10000, 512, 'sha512').toString('hex')
+  return hashing
+}
+
+function createUserMultiple (payload, callback) {
+
+  const payloadMultiple = payload.map(pay => {
+    pay.username = pay.fullname.toLowerCase().replace(/\s+/g, '').replace(/[^a-zA-Z ]/g, "");
+    pay.email = `${pay.username}@gmail.com`
+    pay.role = 'faskes'
+    pay.salt = crypto.randomBytes(16).toString('hex')
+    pay.password = setPwd(`${pay.username}890`)
+    pay.hash = crypto.pbkdf2Sync(`${pay.username}890`, pay.salt, 10000, 512, 'sha512').toString('hex')
+    return pay
+  })
+
+  User.create(payloadMultiple).then(result => {
+    callback(null,'success')
+  }).catch(err => {
+    callback(null,err)
+  })
+}
+
 function updateUser (user, payload, callback) {
   let passwords = user.setPassword(payload.password)
   let users = {
@@ -80,6 +105,10 @@ module.exports = [
   {
     name: 'services.users.create',
     method: createUser
+  },
+  {
+    name: 'services.users.createUserMultiple',
+    method: createUserMultiple
   },
   {
     name: 'services.users.update',
