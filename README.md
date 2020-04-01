@@ -1,4 +1,4 @@
-# Jabar Survey Backend Pikobar
+# API Pikobar Pelaporan Jabar
 API service for Jabar Pikobar application
 
 ## Core Stack

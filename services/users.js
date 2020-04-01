@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var crypto = require('crypto')
+const crypto = require('crypto')
 require('../models/User');
 const User = mongoose.model('User');
 
@@ -59,7 +59,7 @@ function createUserMultiple (payload, callback) {
     return pay
   })
 
-  User.create(payloadMultiple).then(result => {
+  User.create(payloadMultiple).then(_result => {
     callback(null,'success')
   }).catch(err => {
     callback(null,err)
