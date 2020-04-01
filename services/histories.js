@@ -90,7 +90,8 @@ function createHistoryIfChanged (payload, callback) {
       if (changed) {
         new_history.save((err, item) => {
           if (err) return callback(err, null);
-
+          console.log(item);
+          
           // update case
           let update_case = {
               status: payload.status,
@@ -99,6 +100,7 @@ function createHistoryIfChanged (payload, callback) {
               is_test_masif: payload.is_test_masif,
               last_history: item._id
           }
+          console.log(update_case);
           
           let objcase = Object.assign(case_obj, update_case)
   
