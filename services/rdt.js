@@ -159,13 +159,24 @@ function createRdt (payload, author, pre, callback) {
   code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
   code_tool_tester += pre.count_rdt.count
   
+  let id_case
+  if (payload.final_result === "POSITIF") {
+          id_case = "COVID-"
+          id_case += pre.count_case.dinkes_code
+          id_case += date.substr(2, 2)
+          id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+          id_case += pre.count_case.count_pasien
+  }
+
   let code = {
     code_test: code_test,
-    code_tool_tester: code_tool_tester
+    code_tool_tester: code_tool_tester,
+    id_case: id_case
   }
 
   let rdt = new Rdt(Object.assign(code, payload))
   rdt = Object.assign(rdt,{author})
+
 
   rdt.save((err, item) => {
     if (err) return callback(err, null);
@@ -186,7 +197,6 @@ function updateRdt (id, payload, author, callback) {
 }
 
 function getCountRdtCode(code,callback) {
-  console.log(code);
     DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
@@ -232,9 +242,7 @@ function softDeleteRdt(rdt, deletedBy, callback) {
 
 }
 
-function getCodeDinkes(code, callback) {
-  console.log(code);
-  
+function getCodeDinkes(code, callback) {  
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{

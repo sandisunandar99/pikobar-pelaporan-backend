@@ -11,6 +11,7 @@ module.exports = (server) =>{
     const countRdtCode = require('./route_prerequesites').countRdtCode(server)
     const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
     const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
+    const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
 
 
     return [
@@ -52,7 +53,8 @@ module.exports = (server) =>{
                 pre: [
                     CheckRoleCreate,
                     countRdtCode,
-                    getCodeDinkes
+                    getCodeDinkes,
+                    countCaseByDistrict
                 ]
             },
             handler: handlers.CreateRdt

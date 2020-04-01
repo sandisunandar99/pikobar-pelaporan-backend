@@ -48,7 +48,6 @@ function getSubDistrict(city_code, request, callback) {
 }
 
 function getSubDistrictDetail(kecamatan_kode, callback) {
-  console.log(kecamatan_kode)
   SubDistrict.find({ kemendagri_kecamatan_kode: kecamatan_kode})
     .sort({ kemendagri_kecamatan_nama: 'asc' })
     .exec()

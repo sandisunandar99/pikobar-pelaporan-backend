@@ -17,6 +17,21 @@ const countRdtCode = server =>{
     }
 }
 
+const countCaseByDistrict = server => {
+    return {
+        method: (request, reply) => {
+            server.methods.services.cases.getCountByDistrict(
+                request.payload.address_district_code,
+                (err, count) => {
+                    if (err) {
+                        return reply(replyHelper.constructErrorResponse(err)).takeover()
+                    }
+                    return reply(count)
+                })
+        },
+        assign: 'count_case'
+    }
+}
 
 const getRdtbyId = server => {
     return {
@@ -49,5 +64,6 @@ const getCodeDinkes = server => {
 module.exports ={
     countRdtCode,
     getRdtbyId,
-    getCodeDinkes
+    getCodeDinkes,
+    countCaseByDistrict
 }
