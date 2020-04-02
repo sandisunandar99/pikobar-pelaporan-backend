@@ -61,9 +61,37 @@ const getCodeDinkes = server => {
 }
 
 
+const checkIfDataNotNull = server => {
+    return {
+        method: (request, reply) => {
+            let query = request.query
+            let user = request.auth.credentials.user
+            let fullname = user.fullname
+
+            server.methods.services.rdt.list(
+                query,
+                user,
+                (err, result) => {
+                    if (result.cases.length === 0) {
+                        return reply({
+                            status: 204,
+                            message: 'Data untuk ' + fullname + ' belum ada.',
+                            data: null
+                        }).code(204).takeover()
+                    } else {
+                        return reply()
+                    }
+                })
+        },
+        assign: 'check_rdt'
+    }
+}
+
+
 module.exports ={
     countRdtCode,
     getRdtbyId,
     getCodeDinkes,
-    countCaseByDistrict
+    countCaseByDistrict,
+    checkIfDataNotNull
 }

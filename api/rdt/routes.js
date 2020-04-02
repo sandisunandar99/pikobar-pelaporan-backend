@@ -12,6 +12,7 @@ module.exports = (server) =>{
     const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
     const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
+    const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
 
 
     return [
@@ -37,7 +38,8 @@ module.exports = (server) =>{
                 validate: inputValidations.RdtQueryValidations,
                 // response: outputValidations
                 pre: [
-                    CheckRoleView
+                    CheckRoleView,
+                    checkIfDataNotNull
                 ]
             },
             handler: handlers.ListRdt
