@@ -72,7 +72,7 @@ const checkIfDataNotNull = server => {
                 query,
                 user,
                 (err, result) => {
-                    if (result.cases.length === 0) {
+                    if (result.rdt.length === 0) {
                         return reply({
                             status: 204,
                             message: 'Data untuk ' + fullname + ' belum ada.',
