@@ -45,10 +45,10 @@ const checkIfDataNotNull = server =>{
                  (err, result) => {
                      if (result.cases.length === 0) {
                          return reply({
-                             status: 204,
+                             status: 400,
                              message: 'Data untuk '+fullname+' belum ada.',
                              data: null
-                         }).code(204).takeover()
+                         }).code(400).takeover()
                      }else{
                          return reply()
                      }
