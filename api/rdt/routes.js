@@ -110,12 +110,8 @@ module.exports = (server) =>{
             method: 'GET',
             path: '/rdt/summary-by-cities',
             config: {
-                auth: 'jwt',
                 description: 'Get RDT Test summary by cities',
-                tags: ['api', 'rdt'],
-                pre: [
-                    CheckRoleView
-                ]
+                tags: ['api', 'rdt']
             },
             handler: handlers.GetRdtSummaryByCities
         }
