@@ -22,7 +22,7 @@ module.exports = (server) => {
             let query = request.query
 
             server.methods.services.rdt.list(
-                query, 
+                query,
                 request.auth.credentials.user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
@@ -77,8 +77,8 @@ module.exports = (server) => {
             let id = request.params.id
 
             server.methods.services.rdt.update(
-                id, 
-                payload, 
+                id,
+                payload,
                 request.auth.credentials.user,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
@@ -94,7 +94,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async DeleteRdt(request, reply) {          
+        async DeleteRdt(request, reply) {
             server.methods.services.rdt.softDeleteRdt(
                 request.pre.rdt,
                 request.auth.credentials.user,
@@ -118,6 +118,24 @@ module.exports = (server) => {
               server.methods.services.cases.FormSelectIdCase(
                   query,
                   request.auth.credentials.user,
+                  (err, result) => {
+                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                      return reply(
+                          constructRdtResponse(result, request)
+                      ).code(200)
+                  })
+        },
+
+        /**
+         * GET /api/rdt/summary-by-cities
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetRdtSummaryByCities(request, reply) {
+              let query = request.query
+
+              server.methods.services.rdt.GetRdtSummaryByCities(
+                  query,
                   (err, result) => {
                       if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                       return reply(

@@ -7,7 +7,7 @@ module.exports = (server) =>{
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
     const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
     const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
-    
+
     const countRdtCode = require('./route_prerequesites').countRdtCode(server)
     const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
     const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
@@ -103,7 +103,23 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.DeleteRdt
+        },
+
+        // Get RDT Test summary by cities
+        {
+            method: 'GET',
+            path: '/rdt/summary-by-cities',
+            config: {
+                auth: 'jwt',
+                description: 'Get RDT Test summary by cities',
+                tags: ['api', 'rdt'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetRdtSummaryByCities
         }
+
     ]
 
 }

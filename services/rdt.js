@@ -84,54 +84,17 @@ function getRdtById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function getRdtSummary (query, callback) {
+function GetRdtSummaryByCities (query, callback) {
   var aggStatus = [
-    { $match: { status: { $ne: 'deleted' }} },
+    { $match: { tool_tester: 'RAPID TEST'} },
     {$group: {
-      _id: "$status",
+      _id: "$test_address_district_code",
       total: {$sum: 1}
     }}
   ];
 
-  if (query.address_district_code) {
-    var aggStatus = [
-      { $match: {
-      $and: [
-            { address_district_code: query.address_district_code },
-            { status: { $ne: 'deleted' }}
-          ]
-      }},
-      { $group: {
-        _id: "$status",
-        total: {$sum: 1}
-      }}
-    ];
-  }
-
-  let result =  {
-    'ODP':0,
-    'PDP':0,
-    'POSITIF':0,
-    'KONTAKERAT' : 0,
-    'PROBABEL' : 0
-  }
-
   Rdt.aggregate(aggStatus).exec().then(item => {
-      item.forEach(function(item){
-        if (item['_id'] == 'ODP') {
-          result.ODP = item['total']
-        }
-        if (item['_id'] == 'PDP') {
-          result.PDP = item['total']
-        }
-        if (item['_id'] == 'POSITIF') {
-          result.POSITIF = item['total']
-        }
-        if (item['_id'] == 'KONTAKERAT') {
-          result.KONTAKERAT = item['total']
-        }
-      });
-      return callback(null, result)
+      return callback(null, item)
     })
     .catch(err => callback(err, null))
 }
@@ -139,7 +102,7 @@ function getRdtSummary (query, callback) {
 function createRdt (payload, author, pre, callback) {
   // "code_test": "PST-100012000001"
   // "code_tool_tester": "RDT-10012000001",
-  // "code_tool_tester": "PCR-10012000001",  
+  // "code_tool_tester": "PCR-10012000001",
 
   let date = new Date().getFullYear().toString()
   let code_test = "PTS-"
@@ -158,7 +121,7 @@ function createRdt (payload, author, pre, callback) {
   code_tool_tester += date.substr(2, 2)
   code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
   code_tool_tester += pre.count_rdt.count
-  
+
   let id_case
   if (payload.final_result === "POSITIF") {
           id_case = "COVID-"
@@ -211,7 +174,7 @@ function getCountRdtCode(code,callback) {
                             let str = res[0].code_test
                             count = (Number(str.substring(10)) + 1)
                           }
-                            
+
                           let result = {
                             prov_city_code: code,
                             dinkes_code: dinkes.dinkes_kota_kode,
@@ -242,7 +205,7 @@ function softDeleteRdt(rdt, deletedBy, callback) {
 
 }
 
-function getCodeDinkes(code, callback) {  
+function getCodeDinkes(code, callback) {
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
@@ -281,8 +244,8 @@ module.exports = [
     method: getCountRdtCode
   },
   {
-    name: 'services.rdt.getSummary',
-    method: getRdtSummary
+    name: 'services.rdt.GetRdtSummaryByCities',
+    method: GetRdtSummaryByCities
   },
   {
     name: 'services.rdt.getCodeDinkes',
