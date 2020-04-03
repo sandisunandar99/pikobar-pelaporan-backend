@@ -6,6 +6,32 @@ const Rdt = mongoose.model('Rdt');
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+function listPerRole(user,params,search_params){
+  var result_search = ''
+  if(search_params == null){
+    if (user.role == 'dinkeskota') {
+      result_search = Rdt.find(params).where('status').ne('deleted')
+    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
+      result_search = Rdt.find().where('status').ne('deleted')
+    } else {
+      result_search = Rdt.find({
+        'author': user._id
+      }).where('status').ne('deleted')
+    }
+  }else{
+    if (user.role == 'dinkeskota') {
+      var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
+    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
+      var result_search = Rdt.find().or(search_params).where('status').ne('deleted')
+    } else {
+      var result_search = Rdt.find({
+        'author': user._id
+      }).or(search_params).where('status').ne('deleted')
+    }
+  }
+  return result_search
+}
+
 function ListRdt (query, user, callback) {
 
   const myCustomLabels = {
@@ -22,6 +48,7 @@ function ListRdt (query, user, callback) {
     populate: ( 'author'),
     address_district_code: query.address_district_code,
     sort: {
+      createdAt: query.sort,
       createdAt: query.sort
     },
     leanWithId: true,
@@ -36,33 +63,16 @@ function ListRdt (query, user, callback) {
   }
 
   if (query.search) {
-    var search_params = [{
-        code_test: new RegExp(query.search, "i")
-      },
-      {
-        name: new RegExp(query.search, "i")
-      },
+    var search_params = [
+      { code_test: new RegExp(query.search, "i") },
+      { name: new RegExp(query.search, "i") },
+      { final_result: new RegExp(query.search, "i") },
+      { category: new RegExp(query.search, "i") },
     ];
 
-    if (user.role == 'dinkeskota') {
-      var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
-    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
-      var result_search = Rdt.find().or(search_params).where('status').ne('deleted')
-    } else {
-      var result_search = Rdt.find({
-        'author': user._id
-      }).or(search_params).where('status').ne('deleted')
-    }
+    var result_search = listPerRole(user,params,search_params)
   } else {
-    if (user.role == 'dinkeskota') {
-      var result_search = Rdt.find(params).where('status').ne('deleted')
-    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
-      var result_search = Rdt.find().where('status').ne('deleted')
-    } else {
-      var result_search = Rdt.find({
-        'author': user._id
-      }).where('status').ne('deleted')
-    }
+    var result_search = listPerRole(user,params,null)
   }
 
   Rdt.paginate(result_search, options).then(function (results) {
