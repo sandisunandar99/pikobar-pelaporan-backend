@@ -237,14 +237,21 @@ function softDeleteRdt(rdt, cases,  deletedBy, callback) {
     let dates = {
         status: 'deleted',
         deletedAt: date.toISOString()
-      }
-    let param = Object.assign({deletedBy}, dates)
+    }
 
-    cases = Object.assign(cases, param)
+    let dates_case = {
+      delete_status: 'deleted',
+      deletedAt: date.toISOString()
+    }
+
+    let param_case = Object.assign({deletedBy}, dates_case)
+    cases = Object.assign(cases, param_case)
     cases.save((err, item) => {
       if (err) return callback(err, null)
     })
+    
 
+    let param = Object.assign({deletedBy}, dates)
     rdt = Object.assign(rdt, param)
     rdt.save((err, item) => {
       if (err) return callback(err, null)
