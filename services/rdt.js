@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 require('../models/Rdt');
 const Rdt = mongoose.model('Rdt');
 
+require('../models/Case')
+const Case = mongoose.model('Case');
+
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
@@ -197,6 +201,31 @@ function getCountRdtCode(code,callback) {
 
 }
 
+
+function getCountByDistrict(code, callback) {
+  /* Get last number of current district id case order */
+  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                Case.find({ address_district_code: code})
+                    .sort({id_case: -1})
+                    .exec()
+                    .then(res =>{
+                        let count = 1;
+                        if (res.length > 0)
+                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
+                          count = (Number(res[0].id_case.substring(12)));
+                        let result = {
+                          prov_city_code: code,
+                          dinkes_code: dinkes.dinkes_kota_kode,
+                          count_pasien: count
+                        }
+                      return callback(null, result)
+                    }).catch(err => callback(err, null))
+              })
+}
+
+
 function softDeleteRdt(rdt, deletedBy, callback) {
     let date = new Date()
     let dates = {
@@ -260,6 +289,10 @@ module.exports = [
   {
     name: 'services.rdt.getCodeDinkes',
     method: getCodeDinkes
+  },
+  {
+    name: 'services.rdt.getCountByDistrict',
+    method: getCountByDistrict
   },
 
 ];

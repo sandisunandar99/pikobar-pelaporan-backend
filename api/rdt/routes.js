@@ -12,8 +12,7 @@ module.exports = (server) =>{
     const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
     const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
-    
-    const countCaseByDistrict = require('../cases/route_prerequesites').countCaseByDistrict(server)
+    const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
 
 
     return [

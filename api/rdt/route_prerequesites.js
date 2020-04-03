@@ -20,7 +20,7 @@ const countRdtCode = server =>{
 const countCaseByDistrict = server => {
     return {
         method: (request, reply) => {
-            server.methods.services.cases.getCountByDistrict(
+            server.methods.services.rdt.getCountByDistrict(
                 request.payload.address_district_code,
                 (err, count) => {
                     if (err) {
