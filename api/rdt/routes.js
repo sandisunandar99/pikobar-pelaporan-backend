@@ -13,6 +13,7 @@ module.exports = (server) =>{
     const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
+    const getCasebyIdcase = require('./route_prerequesites').getCasebyIdcase(server)
 
 
     return [
@@ -99,7 +100,8 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleDelete,
-                    getRdtbyId
+                    getRdtbyId,
+                    getCasebyIdcase
                 ]
             },
             handler: handlers.DeleteRdt

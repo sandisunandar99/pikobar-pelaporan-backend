@@ -232,7 +232,7 @@ function getCountByDistrict(code, callback) {
 }
 
 
-function softDeleteRdt(rdt, deletedBy, callback) {
+function softDeleteRdt(rdt, cases,  deletedBy, callback) {
     let date = new Date()
     let dates = {
         status: 'deleted',
@@ -240,14 +240,16 @@ function softDeleteRdt(rdt, deletedBy, callback) {
       }
     let param = Object.assign({deletedBy}, dates)
 
-    rdt = Object.assign(rdt, param)
+    cases = Object.assign(cases, param)
+    cases.save((err, item) => {
+      if (err) return callback(err, null)
+    })
 
+    rdt = Object.assign(rdt, param)
     rdt.save((err, item) => {
       if (err) return callback(err, null)
       return callback(null, item)
     })
-
-
 }
 
 function getCodeDinkes(code, callback) {
@@ -260,6 +262,23 @@ function getCodeDinkes(code, callback) {
                  }
                  return callback(null, result)
               })
+}
+
+
+function getCaseByidcase(idcase,callback) {
+
+  let param = {
+    id_case: idcase,
+    is_test_masif: true
+  }
+
+  Case.findOne(param)
+      .exec()
+      .then(cases => {
+          return callback(null, cases)
+      })
+      .catch(err => callback(err, null))
+
 }
 
 
@@ -299,6 +318,10 @@ module.exports = [
   {
     name: 'services.rdt.getCountByDistrict',
     method: getCountByDistrict
+  },
+  {
+    name: 'services.rdt.getCaseByidcase',
+    method: getCaseByidcase
   },
 
 ];

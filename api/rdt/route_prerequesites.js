@@ -46,6 +46,20 @@ const getRdtbyId = server => {
     }
 }
 
+const getCasebyIdcase = server =>{
+     return {
+         method: (request, reply) => {
+             let idcase = request.pre.rdt.id_case
+             server.methods.services.rdt.getCaseByidcase(idcase, (err, item) => {
+                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                 return reply(item)
+             })
+         },
+         assign: 'cases'
+     }
+}
+
+
 
 const getCodeDinkes = server => {
     return {
@@ -74,10 +88,10 @@ const checkIfDataNotNull = server => {
                 (err, result) => {
                     if (result.rdt.length === 0) {
                         return reply({
-                            status: 400,
+                            status: 200,
                             message: 'Data untuk ' + fullname + ' belum ada.',
                             data: null
-                        }).code(400).takeover()
+                        }).code(200).takeover()
                     } else {
                         return reply()
                     }
@@ -91,6 +105,7 @@ const checkIfDataNotNull = server => {
 module.exports ={
     countRdtCode,
     getRdtbyId,
+    getCasebyIdcase,
     getCodeDinkes,
     countCaseByDistrict,
     checkIfDataNotNull
