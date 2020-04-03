@@ -47,7 +47,7 @@ const ListCaseOutputPayload = Joi.object().keys({
     data: Joi.object().keys({
          cases: Joi.array().items(CaseJSON),
         _meta: Joi.object().description('meta data')
-    })
+    }).allow(null,'')
 })
 
 
