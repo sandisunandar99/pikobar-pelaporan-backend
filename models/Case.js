@@ -77,8 +77,9 @@ CaseSchema.methods.toJSONFor = function () {
 
 CaseSchema.methods.JSONFormCase = function () {
     let covid = this.id_case
+    let nik = this.nik === null ? "-" : this.nik
     return {
-        display: covid.toUpperCase()+ '/' + this.name,
+        display: this.name + '/' + nik+ '/' +this.phone_number,
         id_case: this.id_case,
         id: this._id
     }
