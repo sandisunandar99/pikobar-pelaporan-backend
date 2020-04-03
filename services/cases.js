@@ -100,7 +100,7 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function getCaseSummaryFinal (query, callback) {
+async function getCaseSummaryFinal (query, callback) {
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -124,10 +124,15 @@ function getCaseSummaryFinal (query, callback) {
     ];
   }
 
+  const positif = await Case.find({'status':'POSITIF','stage':0,'address_district_code':query.address_district_cod})
+  .where('delete_status').ne('deleted')
+  .then(res => { return res.length })
+
   let result =  {
     'NEGATIF':0, 
     'SEMBUH':0, 
-    'MENINGGAL':0
+    'MENINGGAL':0,
+    'POSITIF':positif
   }
 
   Case.aggregate(aggStatus).exec().then(item => {
