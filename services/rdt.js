@@ -46,18 +46,23 @@ function ListRdt (query, user, callback) {
     meta: '_meta'
   };
 
+  if(query.sort == 'desc'){
+    var sorts = {_id:"desc"}
+  }else{
+    var sorts = JSON.parse(query.sort)
+  }
   const options = {
     page: query.page,
     limit: query.limit,
     populate: ( 'author'),
     address_district_code: query.address_district_code,
-    sort: {
-      createdAt: query.sort,
-      createdAt: query.sort
-    },
+    sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels
   };
+
+
+  
 
   var params = new Object();
 
@@ -72,6 +77,7 @@ function ListRdt (query, user, callback) {
       { name: new RegExp(query.search, "i") },
       { final_result: new RegExp(query.search, "i") },
       { category: new RegExp(query.search, "i") },
+      { phone_number: new RegExp(query.search, "i") },
     ];
 
     var result_search = listPerRole(user,params,search_params)
