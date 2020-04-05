@@ -139,8 +139,7 @@ function getCaseSummary (query, user, callback) {
     var aggStatus = [
       { $match: { 
       $and: [ 
-            // { address_district_code: query.address_district_code },  
-            { author: user._id },  
+            { address_district_code: query.address_district_code }, 
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
