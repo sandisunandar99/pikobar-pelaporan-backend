@@ -48,10 +48,12 @@ function ListCase (query, user, callback) {
     var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
   } else {
     if (user.role == 'dinkeskota') {
-      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
+      var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
+    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+      var result_search = Case.find().or(search_params).where('delete_status').ne('deleted')
     }else{
-      var result_search = Case.find(params).where('delete_status').ne('deleted')
-    }
+      var result_search = Case.find({'author':user._id}).or(search_params).where('delete_status').ne('deleted')
+    }  
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -136,11 +138,17 @@ function getCaseSummary (query, user, callback) {
   ];
 
   if (query.address_district_code) {
+    if (user.role == 'dinkeskota') {
+      var searching = { author: user._id, address_district_code:query.address_district_code }
+    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+      var searching = {}
+    }else{
+      var searching = { author:user._id }
+    }
     var aggStatus = [
       { $match: { 
       $and: [ 
-            { author: user._id }, 
-            { address_district_code: query.address_district_code }, 
+            searching, 
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
