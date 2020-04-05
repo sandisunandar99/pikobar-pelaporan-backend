@@ -10,6 +10,8 @@ const Case = mongoose.model('Case');
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+const https = require('https')
+
 function listPerRole(user,params,search_params){
   var result_search = ''
   if(search_params == null){
@@ -288,6 +290,61 @@ function getCaseByidcase(idcase,callback) {
 
 }
 
+function FormSelectIdCase(query, user, data_pendaftaran, callback) {
+  
+  var params = new Object();
+
+  if (query.address_district_code) {
+    params.address_district_code = query.address_district_code;
+    params.author = user._id;
+  }
+
+  Case.find(params)
+    .and({
+      status: 'ODP'
+    })
+    .where('delete_status')
+    .ne('deleted')
+    .exec()
+    .then(x => {
+      
+      let res = x.map(res => res.JSONFormCase())
+      let concat = res.concat(data_pendaftaran)
+      return callback(null, concat)
+
+    })
+    .catch(err => callback(err, null))
+}
+
+function getDatafromExternal(address_district_code, callback) {
+
+   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=4n8534p9nckfdsgkj&address_district_code='+address_district_code, (res) => {
+     let data = '';
+     // A chunk of data has been recieved.
+     res.on('data', (chunk) => {
+       data += chunk;
+     });
+
+
+     res.on('end', () => {
+       let jsonData = JSON.parse(data)
+       let outputData = []
+       jsonData.forEach(val => {
+         outputData.push({
+           display: val.name + "/" + val.nik + "/" + val.phone_number,
+           id_case: null,
+           id: null
+         })
+       });
+       return callback(null, outputData)
+     });
+
+   }).on("error", (err) => {
+     console.log("Error: " + err.message);
+   });
+}
+
+
 
 module.exports = [
   {
@@ -330,6 +387,13 @@ module.exports = [
     name: 'services.rdt.getCaseByidcase',
     method: getCaseByidcase
   },
-
+  {
+    name: 'services.rdt.FormSelectIdCase',
+    method: FormSelectIdCase
+  },
+  {
+    name: 'services.rdt.getDatafromExternal',
+    method: getDatafromExternal
+  }
 ];
 

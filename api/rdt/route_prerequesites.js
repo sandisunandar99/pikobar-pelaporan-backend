@@ -59,8 +59,6 @@ const getCasebyIdcase = server =>{
      }
 }
 
-
-
 const getCodeDinkes = server => {
     return {
         method: (request, reply) => {
@@ -101,6 +99,19 @@ const checkIfDataNotNull = server => {
     }
 }
 
+const getDataExternal = server => {
+    return {
+        method: (request, reply) => {
+            server.methods.services.rdt.getDatafromExternal(
+                request.query.address_district_code,
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(item)
+            })
+        },
+        assign: 'data_pendaftaran'
+    }
+}
 
 module.exports ={
     countRdtCode,
@@ -108,5 +119,6 @@ module.exports ={
     getCasebyIdcase,
     getCodeDinkes,
     countCaseByDistrict,
-    checkIfDataNotNull
+    checkIfDataNotNull,
+    getDataExternal
 }

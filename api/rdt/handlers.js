@@ -114,17 +114,17 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetListIdCase(request, reply) {
-              let query = request.query
-
-              server.methods.services.cases.FormSelectIdCase(
-                  query,
-                  request.auth.credentials.user,
-                  (err, result) => {
-                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                      return reply(
-                          constructRdtResponse(result, request)
-                      ).code(200)
-                  })
+            let query = request.query
+            server.methods.services.rdt.FormSelectIdCase(
+                query,
+                request.auth.credentials.user,
+                request.pre.data_pendaftaran,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+            })
         },
 
         /**

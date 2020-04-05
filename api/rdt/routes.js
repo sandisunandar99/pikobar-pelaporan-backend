@@ -14,6 +14,7 @@ module.exports = (server) =>{
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
     const getCasebyIdcase = require('./route_prerequesites').getCasebyIdcase(server)
+    const getDataExternal = require('./route_prerequesites').getDataExternal(server)
 
 
     return [
@@ -25,6 +26,9 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list id_case for form',
                 tags: ['api', 'rdt'],
+                pre: [
+                    getDataExternal
+                ]
             },
             handler: handlers.GetListIdCase
         },
