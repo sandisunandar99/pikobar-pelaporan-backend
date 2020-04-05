@@ -72,7 +72,6 @@ const getCodeDinkes = server => {
     }
 }
 
-
 const checkIfDataNotNull = server => {
     return {
         method: (request, reply) => {
@@ -113,6 +112,36 @@ const getDataExternal = server => {
     }
 }
 
+const searchIdcasefromExternal = server =>{
+    return {
+        method: (request, reply) => {
+            server.methods.services.rdt.seacrhFromExternal(
+                request.query.address_district_code,
+                request.query.search,
+                (err, item) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(item)
+                })
+        },
+        assign: 'search_external'
+    }
+}
+
+const searchIdcasefromInternal = server => {
+    return {
+        method: (request, reply) => {
+            server.methods.services.rdt.seacrhFromInternal(
+                request.query,
+                (err, item) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(item)
+                })
+        },
+        assign: 'search_internal'
+    }
+}
+
+
 module.exports ={
     countRdtCode,
     getRdtbyId,
@@ -120,5 +149,7 @@ module.exports ={
     getCodeDinkes,
     countCaseByDistrict,
     checkIfDataNotNull,
-    getDataExternal
+    getDataExternal,
+    searchIdcasefromInternal,
+    searchIdcasefromExternal
 }

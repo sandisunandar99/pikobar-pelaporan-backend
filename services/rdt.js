@@ -318,7 +318,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
 function getDatafromExternal(address_district_code, callback) {
 
-   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=4n8534p9nckfdsgkj&keyword=mas&address_district_code=' + address_district_code, (res) => {
+   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=4n8534p9nckfdsgkj&keyword=&address_district_code='+address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -328,8 +328,10 @@ function getDatafromExternal(address_district_code, callback) {
 
      res.on('end', () => {
        let jsonData = JSON.parse(data)
+       let result = jsonData.data.content
+       
        let outputData = []
-       jsonData.forEach(val => {
+       result.forEach(val => {
          outputData.push({
            display: val.name + "/" + val.nik + "/" + val.phone_number,
            id_case: null,
@@ -344,6 +346,64 @@ function getDatafromExternal(address_district_code, callback) {
    });
 }
 
+function FormSelectIdCaseDetail(search_internal, search_external, user, callback) {
+    if (search_internal === null || search_internal=== undefined) {
+      return callback(null, search_external)
+    }else{
+      return callback(null, search_internal.JSONSeacrhOutput())
+    }
+}
+
+function seacrhFromExternal(address_district_code, search, callback) {
+
+    https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=4n8534p9nckfdsgkj&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+      let data = '';
+      // A chunk of data has been recieved.
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        let jsonData = JSON.parse(data)
+        let result = jsonData.data.content
+
+        let outputData = {}
+        result.forEach(val => {
+          outputData = val
+        });
+        let concate ={
+          id: null,
+          id_case: null,
+        }
+        let res = Object.assign(outputData, concate)
+        return callback(null, res)
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });
+}
+
+function seacrhFromInternal(query, callback) {
+
+  Case.findOne({address_district_code:query.address_district_code})
+       .and({
+        status: 'ODP'
+      })
+      .where('delete_status')
+      .ne('deleted')
+      .or([
+        {name: query.search},
+        {nik: query.search},
+        {phone_number: query.search}
+      ])
+      .exec()
+      .then(res =>{
+          // let result = res.JSONSeacrhOutput()
+          return callback(null, res)
+      })
+      .catch()
+}
 
 
 module.exports = [
@@ -394,6 +454,18 @@ module.exports = [
   {
     name: 'services.rdt.getDatafromExternal',
     method: getDatafromExternal
-  }
+  },
+  {
+    name: 'services.rdt.FormSelectIdCaseDetail',
+    method: FormSelectIdCaseDetail
+  },
+  {
+    name: 'services.rdt.seacrhFromExternal',
+    method: seacrhFromExternal
+  },
+  {
+    name: 'services.rdt.seacrhFromInternal',
+    method: seacrhFromInternal
+  },
 ];
 

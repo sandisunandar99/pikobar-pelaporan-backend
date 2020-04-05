@@ -127,6 +127,25 @@ module.exports = (server) => {
             })
         },
 
+
+        /**
+         * DELETE /api/rdt/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetListIdCaseDetail(request, reply) {
+            server.methods.services.rdt.FormSelectIdCaseDetail(
+                request.pre.search_internal,
+                request.pre.search_external,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+            })
+        },
+
         /**
          * GET /api/rdt/summary-by-cities
          * @param {*} request

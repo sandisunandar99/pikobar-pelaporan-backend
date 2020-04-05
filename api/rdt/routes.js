@@ -15,6 +15,8 @@ module.exports = (server) =>{
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
     const getCasebyIdcase = require('./route_prerequesites').getCasebyIdcase(server)
     const getDataExternal = require('./route_prerequesites').getDataExternal(server)
+    const searchIdcasefromExternal = require('./route_prerequesites').searchIdcasefromExternal(server)
+    const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
 
 
     return [
@@ -31,6 +33,20 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetListIdCase
+        },
+        {
+            method: 'GET',
+            path: '/rdt/list-idcase-detail',
+            config: {
+                auth: 'jwt',
+                description: 'show list id_case detil',
+                tags: ['api', 'rdt'],
+                pre:[
+                    searchIdcasefromInternal,
+                    searchIdcasefromExternal
+                ]
+            },
+            handler: handlers.GetListIdCaseDetail
         },
         // Get list rdt
         {

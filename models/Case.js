@@ -7,7 +7,7 @@ const CaseSchema = new mongoose.Schema({
     id_case : {type: String, lowercase: true, unique: true, index: true},
     // NIK sumber terkait kontak erat
     id_case_national : {type:String},
-    nik : {type:Number},
+    nik : {type:String},
     id_case_related : {type:String},
     name: {type:String},
     // tentatif jika diisi usia, required jika tidak
@@ -61,6 +61,7 @@ CaseSchema.methods.toJSONFor = function () {
         current_location_address: this.last_history.current_location_address,
         address_district_name: this.address_district_name,
         address_district_code: this.address_district_code,
+        phone_number: this.phone_number,
         stage: this.stage,
         status: this.status,
         verified_status: this.verified_status,
@@ -82,6 +83,36 @@ CaseSchema.methods.JSONFormCase = function () {
         display: this.name + '/'+nik+'/'+this.phone_number,
         id_case: this.id_case,
         id: this._id
+    }
+}
+
+
+CaseSchema.methods.JSONSeacrhOutput = function () {
+    return {
+       id: this._id,
+       id_case: this.id_case,
+       target: null,
+       nik: this.nik,
+       name: this.name,
+       birth_date: this.birth_date,
+       age: this.age,
+       gender: this.gender,
+       address_detail: this.address_street,
+       address_district_code: this.address_district_code,
+       address_district_name: this.address_district_name,
+       address_subdistrict_code: this.address_subdistrict_code,
+       address_subdistrict_name: this.address_subdistrict_name,
+       address_village_code: this.address_village_code,
+       address_village_name: this.address_village_name,
+       phone_number: this.phone_number,
+       category: null,
+       mechanism: null,
+       nationality: this.nationality,
+       nationality_name: this.nationality_name,
+       final_result: this.final_result,
+       test_location_type: null,
+       test_location: null,
+       status: null
     }
 }
 
