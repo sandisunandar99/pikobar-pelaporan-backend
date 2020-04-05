@@ -318,7 +318,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
 function getDatafromExternal(address_district_code, callback) {
 
-   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=4n8534p9nckfdsgkj&address_district_code='+address_district_code, (res) => {
+   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=4n8534p9nckfdsgkj&keyword=mas&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
