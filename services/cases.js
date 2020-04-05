@@ -140,7 +140,7 @@ function getCaseSummary (query, user, callback) {
       { $match: { 
       $and: [ 
             { author: user._id }, 
-            // { address_district_code: query.address_district_code }, 
+            { address_district_code: query.address_district_code }, 
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
