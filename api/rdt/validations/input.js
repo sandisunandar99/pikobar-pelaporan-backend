@@ -47,7 +47,10 @@ const RdtQueryValidations = {
         page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
         sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
         address_district_code: Joi.string().empty('', null).default('').description('search data by survey name'),
-        search: Joi.string().empty('', null).default('').description('search data by survey name')
+        search: Joi.string().empty('', null).default('').description('search data by survey name'),
+        category: Joi.string().empty('', null).default('').description('search data by category'),
+        start_date: Joi.string().empty('', null).default('').description('search data by test date'),
+        end_date: Joi.string().empty('', null).default('').description('search data by test date')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction

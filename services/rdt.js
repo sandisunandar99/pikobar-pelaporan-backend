@@ -6,7 +6,6 @@ const Rdt = mongoose.model('Rdt');
 require('../models/Case')
 const Case = mongoose.model('Case');
 
-
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
@@ -26,11 +25,11 @@ function listPerRole(user,params,search_params){
     }
   }else{
     if (user.role == 'dinkeskota') {
-      var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
+      result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
     } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
-      var result_search = Rdt.find().or(search_params).where('status').ne('deleted')
+      result_search = Rdt.find().or(search_params).where('status').ne('deleted')
     } else {
-      var result_search = Rdt.find({
+      result_search = Rdt.find({
         'author': user._id
       }).or(search_params).where('status').ne('deleted')
     }
@@ -48,11 +47,8 @@ function ListRdt (query, user, callback) {
     meta: '_meta'
   };
 
-  if(query.sort == 'desc'){
-    var sorts = {_id:"desc"}
-  }else{
-    var sorts = JSON.parse(query.sort)
-  }
+  const sorts = (query.sort == 'desc' ? {_id:"desc"} : JSON.parse(query.sort))
+
   const options = {
     page: query.page,
     limit: query.limit,
@@ -63,9 +59,6 @@ function ListRdt (query, user, callback) {
     customLabels: myCustomLabels
   };
 
-
-  
-
   var params = new Object();
 
   if (query.address_district_code) {
@@ -73,12 +66,22 @@ function ListRdt (query, user, callback) {
     params.author = user._id;
   }
 
+  if(query.category){
+    params.category = query.category;
+  }
+
+  if(query.start_date && query.end_date){
+    params.test_date = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00), 
+      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    }
+  }
+
   if (query.search) {
     var search_params = [
       { code_test: new RegExp(query.search, "i") },
       { name: new RegExp(query.search, "i") },
       { final_result: new RegExp(query.search, "i") },
-      { category: new RegExp(query.search, "i") },
       { phone_number: new RegExp(query.search, "i") },
     ];
 
