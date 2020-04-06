@@ -159,7 +159,9 @@ function createRdt (payload, author, pre, callback) {
   let code = {
     code_test: code_test,
     code_tool_tester: code_tool_tester,
-    id_case: id_case
+    id_case: id_case,
+    author_district_code: author.code_district_city,
+    author_district_name: author.name_district_city
   }
 
   let rdt = new Rdt(Object.assign(code, payload))
