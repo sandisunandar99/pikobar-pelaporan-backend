@@ -103,6 +103,7 @@ const getDataExternal = server => {
         method: (request, reply) => {
             server.methods.services.rdt.getDatafromExternal(
                 request.query.address_district_code,
+                request.query.search,
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(item)

@@ -295,7 +295,7 @@ function getCaseByidcase(idcase,callback) {
 
 function FormSelectIdCase(query, user, data_pendaftaran, callback) {
   
-  var params = new Object();
+  let params = new Object();
 
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
@@ -308,20 +308,21 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
     })
     .where('delete_status')
     .ne('deleted')
+    .or([{name: new RegExp(query.search, "i")},
+          {nik: new RegExp(query.search , "i")},
+          {phone_number: new RegExp(query.search , "i")}])
     .exec()
     .then(x => {
-      
       let res = x.map(res => res.JSONFormCase())
       let concat = res.concat(data_pendaftaran)
       return callback(null, concat)
-
     })
     .catch(err => callback(err, null))
 }
 
-function getDatafromExternal(address_district_code, callback) {
+function getDatafromExternal(address_district_code, search, callback) {
   
-   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=xzyOIA23nasmYZsMhDujWVJBXixoxG3Y&keyword=&address_district_code=' + address_district_code, (res) => {
+   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=xzyOIA23nasmYZsMhDujWVJBXixoxG3Y&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
