@@ -61,6 +61,10 @@ function ListRdt (query, user, callback) {
 
   var params = new Object();
 
+  if(query.category){
+    params.category = query.category;
+  }
+
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
     params.author = user._id;
@@ -75,7 +79,12 @@ function ListRdt (query, user, callback) {
 
   if (query.search) {
     var search_params = [
-      JSON.parse(query.search)
+      { final_result: new RegExp(query.search, "i") },
+      { test_address_district_name: new RegExp(query.search, "i") },
+      { test_address_subdistrict_name: new RegExp(query.search, "i") },
+      { test_address_village_name: new RegExp(query.search, "i") },
+      { mechanism: new RegExp(query.search, "i") },
+      { test_method: new RegExp(query.search, "i") },
     ];
     var result_search = listPerRole(user,params,search_params)
   } else {

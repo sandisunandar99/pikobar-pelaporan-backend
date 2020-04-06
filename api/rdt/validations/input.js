@@ -47,7 +47,8 @@ const RdtQueryValidations = {
         page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
         sort: Joi.string().empty('', 'desc').default('').description('sorting by create date'),
         address_district_code: Joi.string().empty('', null).default('').description('search data by survey name'),
-        search: Joi.string().empty('', null).default('').description('search data dynamic'),
+        category: Joi.string().empty('', null).default('').description('search by category'),
+        search: Joi.string().empty('', null).default('').description('search data'),
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
         end_date: Joi.string().empty('', null).default('').description('search data by test date')
     },
