@@ -48,6 +48,8 @@ const RdtSchema = new mongoose.Schema({
     test_method: String,
     
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    author_district_code : { type:String},
+    author_district_name : { type: String},
     
     status : {type : String},
     deletedAt: Date,
