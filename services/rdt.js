@@ -47,7 +47,7 @@ function ListRdt (query, user, callback) {
     meta: '_meta'
   };
 
-  const sorts = (query.sort == 'desc' ? {_id:"desc"} : JSON.parse(query.sort))
+  const sorts = (query.sort ? JSON.parse(query.sort) : {_id:"desc"})
 
   const options = {
     page: query.page,
@@ -66,10 +66,6 @@ function ListRdt (query, user, callback) {
     params.author = user._id;
   }
 
-  if(query.category){
-    params.category = query.category;
-  }
-
   if(query.start_date && query.end_date){
     params.test_date = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00), 
@@ -79,12 +75,8 @@ function ListRdt (query, user, callback) {
 
   if (query.search) {
     var search_params = [
-      { code_test: new RegExp(query.search, "i") },
-      { name: new RegExp(query.search, "i") },
-      { final_result: new RegExp(query.search, "i") },
-      { phone_number: new RegExp(query.search, "i") },
+      JSON.parse(query.search)
     ];
-
     var result_search = listPerRole(user,params,search_params)
   } else {
     var result_search = listPerRole(user,params,null)
