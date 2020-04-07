@@ -154,6 +154,21 @@ module.exports = (server) =>{
             handler: handlers.GetRdtSummaryResultByCities
         },
 
+        // Get RDT used + result (positif, negatif, invalid) summary by cities
+        {
+            method: 'GET',
+            path: '/rdt/summary-result-list-by-cities',
+            config: {
+                auth: 'jwt',
+                description: 'Get RDT result summary list by cities',
+                tags: ['api', 'rdt'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetRdtSummaryResultListByCities
+        },
+
         // Get RDT Test Faskes summary by cities
         {
             method: 'GET',

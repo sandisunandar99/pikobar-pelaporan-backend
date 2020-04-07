@@ -183,6 +183,24 @@ module.exports = (server) => {
         },
 
         /**
+         * GET /api/rdt/summary-result-list-by-cities
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetRdtSummaryResultListByCities(request, reply) {
+              let query = request.query
+
+              server.methods.services.rdt.GetRdtSummaryResultListByCities(
+                  query,
+                  (err, result) => {
+                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                      return reply(
+                          constructRdtResponse(result, request)
+                      ).code(200)
+                  })
+        },
+
+        /**
          * GET /api/rdt/faskes-summary-by-cities
          * @param {*} request
          * @param {*} reply

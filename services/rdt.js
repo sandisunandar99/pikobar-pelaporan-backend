@@ -140,7 +140,6 @@ function GetRdtSummaryByCities (query, callback) {
     .catch(err => callback(err, null))
 }
 
-
 async function GetRdtSummaryResultByCities (query, callback) {
   var aggStatus = [
     { $match: {
@@ -174,6 +173,41 @@ async function GetRdtSummaryResultByCities (query, callback) {
         }
       });
       return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
+async function GetRdtSummaryResultListByCities (query, callback) {
+  var aggStatus = [
+  { "$facet": {
+    "total_used": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", author_district_code : "32.73"}  },
+        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+    ],
+    // positif, negatif, invalid
+    "total_positif": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "POSITIF", author_district_code : "32.73"}  },
+        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+    ],
+    "total_negatif": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "NEGATIF", author_district_code : "32.73"}  },
+        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+    ],
+     "total_invalid": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "INVALID", author_district_code : "32.73"}  },
+        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+    ],
+  }},
+  { "$project": {
+    "total_used_list": "$total_used",
+    "total_positif_list": "$total_positif",
+    "total_negatif_list": "$total_negatif",
+    "total_invalid_list": "$TotalInvalid",
+  }}
+];
+
+  Rdt.aggregate(aggStatus).exec().then(item => {
+      return callback(null, item)
     })
     .catch(err => callback(err, null))
 }
@@ -518,6 +552,10 @@ module.exports = [
   {
     name: 'services.rdt.GetRdtSummaryResultByCities',
     method: GetRdtSummaryResultByCities
+  },
+  {
+    name: 'services.rdt.GetRdtSummaryResultListByCities',
+    method: GetRdtSummaryResultListByCities
   },
   {
     name: 'services.rdt.GetRdtFaskesSummaryByCities',
