@@ -91,10 +91,17 @@ function getCaseSummaryFinal (query, callback) {
   ];
 
   if (query.address_district_code) {
+    if (user.role == 'dinkeskota') {
+      var searching = { author: user._id, address_district_code:query.address_district_code }
+    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+      var searching = {}
+    }else{
+      var searching = { author:user._id }
+    }
     var aggStatus = [
       { $match: { 
       $and: [ 
-            { address_district_code: query.address_district_code },  
+            searching,  
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
