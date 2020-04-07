@@ -132,10 +132,23 @@ module.exports = (server) =>{
             method: 'GET',
             path: '/rdt/summary-by-cities',
             config: {
+                auth: 'jwt',
                 description: 'Get RDT Test summary by cities',
                 tags: ['api', 'rdt']
             },
             handler: handlers.GetRdtSummaryByCities
+        },
+
+        // Get RDT Test Faskes summary by cities
+        {
+            method: 'GET',
+            path: '/rdt/faskes-summary-by-cities',
+            config: {
+                auth: 'jwt',
+                description: 'Get RDT Test summary by cities',
+                tags: ['api', 'rdt']
+            },
+            handler: handlers.GetRdtFaskesSummaryByCities
         }
 
     ]

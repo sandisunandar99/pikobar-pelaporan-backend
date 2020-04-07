@@ -140,6 +140,25 @@ function GetRdtSummaryByCities (query, callback) {
     .catch(err => callback(err, null))
 }
 
+function GetRdtFaskesSummaryByCities (query, callback) {
+  var aggStatus = [
+    { $match: { 
+      tool_tester: 'RAPID TEST',
+      mechanism: 'Faskes',
+      address_district_code: query.district_code,
+    } },
+    {$group: {
+      _id: "$test_location",
+      total: {$sum: 1}
+    }}
+  ];
+
+  Rdt.aggregate(aggStatus).exec().then(item => {
+      return callback(null, item)
+    })
+    .catch(err => callback(err, null))
+}
+
 function createRdt (payload, author, pre, callback) {
   // "code_test": "PST-100012000001"
   // "code_tool_tester": "RDT-10012000001",
@@ -457,6 +476,10 @@ module.exports = [
   {
     name: 'services.rdt.GetRdtSummaryByCities',
     method: GetRdtSummaryByCities
+  },
+  {
+    name: 'services.rdt.GetRdtFaskesSummaryByCities',
+    method: GetRdtFaskesSummaryByCities
   },
   {
     name: 'services.rdt.getCodeDinkes',
