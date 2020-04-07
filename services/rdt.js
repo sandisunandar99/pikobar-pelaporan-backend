@@ -187,22 +187,22 @@ async function GetRdtSummaryResultListByCities (query, callback) {
     // positif, negatif, invalid
     "total_positif": [
         { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "POSITIF", author_district_code : query.city_code}  },
-        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+        { $group : { _id : "$test_location", total_positif: { $sum: 1 } }}
     ],
     "total_negatif": [
         { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "NEGATIF", author_district_code : query.city_code}  },
-        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+        { $group : { _id : "$test_location", total_negatif: { $sum: 1 } }}
     ],
      "total_invalid": [
         { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "INVALID", author_district_code : query.city_code}  },
-        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+        { $group : { _id : "$test_location", total_invalid: { $sum: 1 } }}
     ],
   }},
   { "$project": {
     "total_used_list": "$total_used",
     "total_positif_list": "$total_positif",
     "total_negatif_list": "$total_negatif",
-    "total_invalid_list": "$TotalInvalid",
+    "total_invalid_list": "$total_invalid",
   }}
 ];
 
