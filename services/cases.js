@@ -113,9 +113,9 @@ async function getCaseSummaryFinal (query, user, callback) {
 
   const searchingSembuh = {status:'POSITIF',stage:1}
   const searchingPositif = {status:'POSITIF',stage:1}
-  const sembuh = await Case.find(Object.assign(search,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
+  const sembuh = await Case.find(Object.assign(searching,ingsearchingingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
 
-  const positif = await Case.find(Object.assign(search,searchingPositif)).where('delete_status').ne('deleted')
+  const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted')
   .then(res => { return res.length })
 
   let result =  {
