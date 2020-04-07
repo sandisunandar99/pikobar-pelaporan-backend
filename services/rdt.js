@@ -79,6 +79,8 @@ function ListRdt (query, user, callback) {
 
   if (query.search) {
     var search_params = [
+      { name: new RegExp(query.search, "i") },
+      { code_test: new RegExp(query.search, "i") },
       { final_result: new RegExp(query.search, "i") },
       { test_address_district_name: new RegExp(query.search, "i") },
       { test_address_subdistrict_name: new RegExp(query.search, "i") },
