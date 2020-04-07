@@ -113,7 +113,7 @@ async function getCaseSummaryFinal (query, user, callback) {
     ];
   }
 
-  const positif = await Case.find({'status':'POSITIF','stage':0,'address_district_code':query.address_district_cod})
+  const positif = await Case.find({'status':'POSITIF','stage':0,'address_district_code':query.address_district_code})
   .where('delete_status').ne('deleted')
   .then(res => { return res.length })
 

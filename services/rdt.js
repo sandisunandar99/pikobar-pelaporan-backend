@@ -65,6 +65,22 @@ function ListRdt (query, user, callback) {
     params.category = query.category;
   }
 
+  if(query.final_result){
+    params.final_result = query.final_result;
+  }
+
+  if(query.mechanism){
+    params.mechanism = query.mechanism;
+  }
+
+  if(query.test_method){
+    params.test_method = query.test_method;
+  }
+
+  if(query.test_address_district_code){
+    params.test_address_district_code = query.test_address_district_code;
+  }
+
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
     params.author = user._id;
@@ -82,9 +98,6 @@ function ListRdt (query, user, callback) {
       { name: new RegExp(query.search, "i") },
       { code_test: new RegExp(query.search, "i") },
       { final_result: new RegExp(query.search, "i") },
-      { test_address_district_name: new RegExp(query.search, "i") },
-      { test_address_subdistrict_name: new RegExp(query.search, "i") },
-      { test_address_village_name: new RegExp(query.search, "i") },
       { mechanism: new RegExp(query.search, "i") },
       { test_method: new RegExp(query.search, "i") },
     ];
