@@ -80,16 +80,17 @@ function getCaseById (id, callback) {
 function casePerRoleCount(user,query){
   let searching = ''
   if (user.role == 'dinkeskota') {
-    searching = { author: user._id, address_district_code:query.address_district_code }
+    searching = {author: user._id, address_district_code:query.address_district_code }
   }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
     searching = {}
   }else{
-    searching = { author:user._id }
+    searching = {}
   }
   return searching
 }
 
 async function getCaseSummaryFinal (query, user, callback) {
+  let searching = casePerRoleCount(user,query)
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -101,10 +102,7 @@ async function getCaseSummaryFinal (query, user, callback) {
   if (query.address_district_code) {
     var aggStatus = [
       { $match: { 
-      $and: [ 
-            casePerRoleCount(user,query),  
-            { delete_status: { $ne: 'deleted' }}
-          ]
+      $and: [ searching,{ delete_status: { $ne: 'deleted' }} ]
       }},
       { $group: {
         _id: "$final_result",
@@ -113,13 +111,16 @@ async function getCaseSummaryFinal (query, user, callback) {
     ];
   }
 
-  const positif = await Case.find({'status':'POSITIF','stage':0,'address_district_code':query.address_district_code})
-  .where('delete_status').ne('deleted')
+  searchingSembuh = {status:'POSITIF',stage:1}
+  searchingPositif = {status:'POSITIF',stage:1}
+  const sembuh = await Case.find(Object.assign(search,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
+
+  const positif = await Case.find(Object.assign(search,searchingSembuh)).where('delete_status').ne('deleted')
   .then(res => { return res.length })
 
   let result =  {
     'NEGATIF':0, 
-    'SEMBUH':0, 
+    'SEMBUH':sembuh, 
     'MENINGGAL':0,
     'POSITIF':positif
   }
@@ -128,9 +129,6 @@ async function getCaseSummaryFinal (query, user, callback) {
       item.forEach(function(item){
         if (item['_id'] == '0') {
           result.NEGATIF = item['total']
-        }
-        if (item['_id'] == '1') {
-          result.SEMBUH = item['total']
         }
         if (item['_id'] == '2') {
           result.MENINGGAL = item['total']
