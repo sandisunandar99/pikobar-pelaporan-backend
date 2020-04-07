@@ -181,20 +181,20 @@ async function GetRdtSummaryResultListByCities (query, callback) {
   var aggStatus = [
   { "$facet": {
     "total_used": [
-        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", author_district_code : "32.73"}  },
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", author_district_code : query.city_code}  },
         { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
     ],
     // positif, negatif, invalid
     "total_positif": [
-        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "POSITIF", author_district_code : "32.73"}  },
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "POSITIF", author_district_code : query.city_code}  },
         { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
     ],
     "total_negatif": [
-        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "NEGATIF", author_district_code : "32.73"}  },
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "NEGATIF", author_district_code : query.city_code}  },
         { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
     ],
      "total_invalid": [
-        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "INVALID", author_district_code : "32.73"}  },
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "INVALID", author_district_code : query.city_code}  },
         { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
     ],
   }},
