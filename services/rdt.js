@@ -88,7 +88,7 @@ function ListRdt (query, user, callback) {
 
   if(query.start_date && query.end_date){
     params.test_date = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00), 
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
   }
@@ -140,9 +140,47 @@ function GetRdtSummaryByCities (query, callback) {
     .catch(err => callback(err, null))
 }
 
+
+async function GetRdtSummaryResultByCities (query, callback) {
+  var aggStatus = [
+    { $match: {
+      tool_tester : "RAPID TEST",
+      test_location_type : "RS",
+      author_district_code : query.city_code
+    }
+    },
+    {$group: {
+      _id: "$final_result",
+      total: {$sum: 1}
+    }}
+  ];
+
+  let result =  {
+    'POSITIF':0,
+    'NEGATIF':0,
+    'INVALID':0
+  }
+
+  Rdt.aggregate(aggStatus).exec().then(item => {
+      item.forEach(function(item){
+        if (item['_id'] == 'POSITIF') {
+          result.POSITIF = item['total']
+        }
+        if (item['_id'] == 'NEGATIF') {
+          result.NEGATIF = item['total']
+        }
+        if (item['_id'] == 'INVALID') {
+          result.INVALID = item['total']
+        }
+      });
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
 function GetRdtFaskesSummaryByCities (query, callback) {
   var aggStatus = [
-    { $match: { 
+    { $match: {
       tool_tester: 'RAPID TEST',
       mechanism: 'Faskes',
       address_district_code: query.district_code,
@@ -291,7 +329,7 @@ function softDeleteRdt(rdt, cases,  deletedBy, callback) {
     cases.save((err, item) => {
       if (err) return callback(err, null)
     })
-    
+
 
     let param = Object.assign({deletedBy}, dates)
     rdt = Object.assign(rdt, param)
@@ -331,7 +369,7 @@ function getCaseByidcase(idcase,callback) {
 }
 
 function FormSelectIdCase(query, user, data_pendaftaran, callback) {
-  
+
   let params = new Object();
 
   if (query.address_district_code) {
@@ -358,7 +396,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 }
 
 function getDatafromExternal(address_district_code, search, callback) {
-  
+
    https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=xzyOIA23nasmYZsMhDujWVJBXixoxG3Y&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
@@ -379,7 +417,7 @@ function getDatafromExternal(address_district_code, search, callback) {
            id: null
          })
        });
-       
+
        return callback(null, outputData)
      });
 
@@ -476,6 +514,10 @@ module.exports = [
   {
     name: 'services.rdt.GetRdtSummaryByCities',
     method: GetRdtSummaryByCities
+  },
+  {
+    name: 'services.rdt.GetRdtSummaryResultByCities',
+    method: GetRdtSummaryResultByCities
   },
   {
     name: 'services.rdt.GetRdtFaskesSummaryByCities',
