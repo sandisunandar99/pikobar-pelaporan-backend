@@ -87,7 +87,8 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function getCaseSummaryFinal (query, user, callback) {
+async function getCaseSummaryFinal (query, user, callback) {
+  var searching = {}
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -118,9 +119,14 @@ function getCaseSummaryFinal (query, user, callback) {
     ];
   }
 
+  searching.status = 'POSITIF'
+  searching.stage = 1
+
+  const sembuh = await Case.find(searching).where('delete_status').ne('deleted').then(res => { return res.length })
+
   let result =  {
     'NEGATIF':0, 
-    'SEMBUH':0, 
+    'SEMBUH':sembuh, 
     'MENINGGAL':0
   }
 
@@ -128,9 +134,6 @@ function getCaseSummaryFinal (query, user, callback) {
       item.forEach(function(item){
         if (item['_id'] == '0') {
           result.NEGATIF = item['total']
-        }
-        if (item['_id'] == '1') {
-          result.SEMBUH = item['total']
         }
         if (item['_id'] == '2') {
           result.MENINGGAL = item['total']
