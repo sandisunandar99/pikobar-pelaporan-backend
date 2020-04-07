@@ -141,6 +141,7 @@ module.exports = (server) => {
         async GetCaseSummaryFinal(request, reply) {
             server.methods.services.cases.GetSummaryFinal(
                 request.query,
+                request.auth.credentials.user,
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(

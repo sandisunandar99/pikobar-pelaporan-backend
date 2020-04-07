@@ -77,7 +77,19 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-async function getCaseSummaryFinal (query, callback) {
+function casePerRoleCount(user,query){
+  let searching = ''
+  if (user.role == 'dinkeskota') {
+    searching = { author: user._id, address_district_code:query.address_district_code }
+  }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+    searching = {}
+  }else{
+    searching = { author:user._id }
+  }
+  return searching
+}
+
+async function getCaseSummaryFinal (query, user, callback) {
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -90,7 +102,7 @@ async function getCaseSummaryFinal (query, callback) {
     var aggStatus = [
       { $match: { 
       $and: [ 
-            { address_district_code: query.address_district_code },  
+            casePerRoleCount(user,query),  
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
@@ -139,17 +151,10 @@ function getCaseSummary (query, user, callback) {
   ];
 
   if (query.address_district_code) {
-    if (user.role == 'dinkeskota') {
-      var searching = { author: user._id, address_district_code:query.address_district_code }
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var searching = {}
-    }else{
-      var searching = { author:user._id }
-    }
     var aggStatus = [
       { $match: { 
       $and: [  
-            searching,
+            casePerRoleCount(user,query),
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
