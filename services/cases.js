@@ -137,10 +137,23 @@ function getCaseSummary (query, user, callback) {
   ];
 
   if (query.address_district_code) {
+    let searching
+    if (user.role == 'dinkeskota') {
+      searching = {
+        author: user._id,
+        address_district_code: query.address_district_code
+      }
+    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
+      searching = {}
+    } else {
+      searching = {
+        author: user._id
+      }
+    }
     var aggStatus = [
       { $match: { 
       $and: [  
-            Check.countByRole(user,query),
+            searching,
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
