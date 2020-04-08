@@ -214,8 +214,7 @@ function GetRdtFaskesSummaryByCities (query, callback) {
   var aggStatus = [
     { $match: {
       tool_tester: 'RAPID TEST',
-      mechanism: 'Faskes',
-      address_district_code: query.district_code,
+      author_district_code: query.district_code,
     } },
     {$group: {
       _id: "$test_location",
