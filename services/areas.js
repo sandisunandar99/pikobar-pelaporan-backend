@@ -88,8 +88,17 @@ function getVillageDetail(desa_kode, callback) {
 }
 
 function getHospital(query, callback) {
-  let query_search = new RegExp(query.search, "i")
-  Hospital.find({ name: query_search })
+  var params = new Object();
+
+  if(query.search){
+    params.name = new RegExp(query.search, "i")
+  }
+
+  if(query.city_code){
+    params.kemendagri_kabupaten_kode = query.city_code
+  }
+
+  Hospital.find(params)
       .exec()
       .then(hsp => {
           let res = hsp.map(q => q.toJSONFor())
@@ -116,7 +125,7 @@ module.exports = [
   {
     name: 'services.areas.getVillage',
     method: getVillage
-  },  
+  },
   {
     name: 'services.areas.getVillageDetail',
     method: getVillageDetail
