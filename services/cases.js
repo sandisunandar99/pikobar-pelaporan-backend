@@ -33,16 +33,10 @@ function ListCase (query, user, callback) {
 
   if(query.address_district_code){
     params.address_district_code = query.address_district_code;
-    // if (user.role == 'dinkeskota') {
-    //   params.author = user._id;
-    // }
+    if (user.role == 'dinkeskota') {
+      params.author = user._id;
+    }
   }
-
-  if (user.role == 'dinkeskota') {
-    params.author = user._id;
-  }
-
-  
 
   if(query.search){
     var search_params = [
@@ -101,32 +95,32 @@ async function getCaseSummaryFinal (query, user, callback) {
     }}
   ];
 
+  let searching
   if (query.address_district_code) {
     if (user.role == 'dinkeskota') {
-      var searching = { author: user._id, address_district_code:query.address_district_code }
+      searching = { author: user._id, address_district_code:query.address_district_code }
     }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var searching = {}
+      searching = {}
     }else{
-      var searching = { author:user._id }
+      searching = { author:user._id }
     }
-    var aggStatus = [
-      { $match: { 
-      $and: [ 
-            searching,  
-            { delete_status: { $ne: 'deleted' }}
-          ]
-      }},
-      { $group: {
-        _id: "$final_result",
-        total: {$sum: 1}
-      }}
-    ];
   }
 
-  searching.status = 'POSITIF'
-  searching.stage = 1
+  var aggStatus = [
+    { $match: { 
+    $and: [ 
+          searching,  
+          { delete_status: { $ne: 'deleted' }}
+        ]
+    }},
+    { $group: {
+      _id: "$final_result",
+      total: {$sum: 1}
+    }}
+  ];
 
-  const sembuh = await Case.find(searching).where('delete_status').ne('deleted').then(res => { return res.length })
+  const searchingSembuh = {status:'POSITIF',stage:1}
+  const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
 
   let result =  {
     'NEGATIF':0, 
