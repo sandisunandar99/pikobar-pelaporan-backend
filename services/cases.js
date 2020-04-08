@@ -35,7 +35,7 @@ function ListCase (query, user, callback) {
     params.address_district_code = query.address_district_code;
   }
 
-  if (user.role == 'faskes') {
+  if (user.role == 'faskes' || user.role == 'dinkeskota') {
     params.author = user._id;
   }
 
