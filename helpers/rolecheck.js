@@ -1,5 +1,5 @@
 const countByRole = (user, query) => {
-  let searching
+  let searching = ''
   if (user.role == 'dinkeskota') {
     searching = {
       author: user._id,
