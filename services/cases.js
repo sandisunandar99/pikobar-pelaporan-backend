@@ -98,7 +98,7 @@ async function getCaseSummaryFinal (query, user, callback) {
   let searching, searchingSembuh = {status:'POSITIF',stage:1}
   if (query.address_district_code) {
     if (user.role == 'dinkeskota') {
-      searching = { author: user._id, address_district_code:query.address_district_code }
+      searching = { address_district_code:query.address_district_code }
       searchingSembuh = Object.assign(searching,searchingSembuh)
     }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
       searching = {}
