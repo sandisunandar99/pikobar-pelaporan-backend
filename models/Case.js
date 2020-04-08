@@ -116,5 +116,26 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
     }
 }
 
+CaseSchema.methods.JSONExcellOutput = function () {
+    return {
+       id_case: this.id_case,
+       nik: this.nik,
+       name: this.name,
+       birth_date: this.birth_date,
+       age: this.age,
+       gender: this.gender,
+       address_detail: this.address_street,
+       address_district_code: this.address_district_code,
+       address_district_name: this.address_district_name,
+       address_subdistrict_code: this.address_subdistrict_code,
+       address_subdistrict_name: this.address_subdistrict_name,
+       address_village_code: this.address_village_code,
+       address_village_name: this.address_village_name,
+       nationality: this.nationality,
+       nationality_name: this.nationality_name,
+       phone_number: this.phone_number
+    }
+}
+
 
 module.exports = mongoose.model('Case', CaseSchema)

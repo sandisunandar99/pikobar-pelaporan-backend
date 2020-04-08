@@ -135,6 +135,18 @@ module.exports = (server) =>{
             handler: handlers.GetCaseSummaryByDistrict
         },
 
+        // Export excell case
+        {
+            method: 'GET',
+            path: '/cases-export',
+            config: {
+                auth: 'jwt',
+                description: 'Get count summary of all cases by district',
+                tags: ['api', 'cases']
+            },
+            handler: handlers.ListCaseExport
+        },
+
         // Update case
         {
             method: 'PUT',

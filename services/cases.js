@@ -35,30 +35,19 @@ function ListCase (query, user, callback) {
 
   if(query.address_district_code){
     params.address_district_code = query.address_district_code;
-    params.author = user._id;
+    if(user.role == 'dinkeskota'){
+      params.author = user._id;
+    }
   }
 
   if(query.search){
-    var search_params = [
+    let search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
-
-    if (user.role == 'dinkeskota') {
-      var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var result_search = Case.find().or(search_params).where('delete_status').ne('deleted')
-    }else{
-      var result_search = Case.find({'author':user._id}).or(search_params).where('delete_status').ne('deleted')
-    }
+    var result_search = Check.listByRole(user,params,search_params,Case)
   } else {
-    if (user.role == 'dinkeskota') {
-      var result_search = Case.find(params).where('delete_status').ne('deleted')
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var result_search = Case.find().where('delete_status').ne('deleted')
-    }else{
-      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
-    }
+    var result_search = Check.listByRole(user,params,null,Case)
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -76,6 +65,15 @@ function getCaseById (id, callback) {
     .populate('last_history')
     .exec()
     .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
+function listCaseExport (query, user, callback) {
+  Case.find()
+    .where('status').ne('deleted')
+    .populate('author').populate('last_history')
+    .exec()
+    .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
     .catch(err => callback(err, null));
 }
 
@@ -351,6 +349,10 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
+  },
+  {
+    name: 'services.cases.listCaseExport',
+    method: listCaseExport
   }
 ];
 

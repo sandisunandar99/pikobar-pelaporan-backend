@@ -184,7 +184,25 @@ module.exports = (server) => {
                          constructCasesResponse(item, request)
                      ).code(202)
                 })
-        }
+        },
+        /**
+         * GET /api/cases
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCaseExport(request, reply){
+            let query = request.query
+
+            server.methods.services.cases.listCaseExport(
+                query, 
+                request.auth.credentials.user,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result,request)
+                ).code(200)
+            })
+        },
 
     }//end
 
