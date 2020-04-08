@@ -97,7 +97,7 @@ async function getCaseSummaryFinal (query, user, callback) {
 
   if (query.address_district_code) {
     if (user.role == 'dinkeskota') {
-      var searching = { author: user._id, address_district_code:query.address_district_code }
+      var searching = { address_district_code:query.address_district_code }
     }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
       var searching = {}
     }else{
