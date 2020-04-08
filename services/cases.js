@@ -9,6 +9,8 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+const Check = require('../helpers/rolecheck')
+
 function ListCase (query, user, callback) {
 
   const myCustomLabels = {
@@ -33,6 +35,9 @@ function ListCase (query, user, callback) {
 
   if(query.address_district_code){
     params.address_district_code = query.address_district_code;
+  }
+
+  if(user.role == 'dinkeskota'){
     params.author = user._id;
   }
 
@@ -41,22 +46,9 @@ function ListCase (query, user, callback) {
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
-
-    if (user.role == 'dinkeskota') {
-      var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var result_search = Case.find().or(search_params).where('delete_status').ne('deleted')
-    }else{
-      var result_search = Case.find({'author':user._id}).or(search_params).where('delete_status').ne('deleted')
-    }
+    var result_search = Check.listByRole(user, params, search_params,Case)
   } else {
-    if (user.role == 'dinkeskota') {
-      var result_search = Case.find(params).where('delete_status').ne('deleted')
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var result_search = Case.find().where('delete_status').ne('deleted')
-    }else{
-      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
-    }
+    var result_search = Check.listByRole(user, params, null,Case)
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -77,20 +69,8 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function casePerRoleCount(user,query){
-  let searching = ''
-  if (user.role == 'dinkeskota') {
-    searching = {author: user._id, address_district_code:query.address_district_code }
-  }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-    searching = {}
-  }else{
-    searching = {}
-  }
-  return searching
-}
-
 async function getCaseSummaryFinal (query, user, callback) {
-  let searching = casePerRoleCount(user,query)
+  let searching = Check.countByRole(user,query)
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -140,6 +120,7 @@ async function getCaseSummaryFinal (query, user, callback) {
 }
 
 function getCaseSummary (query, user, callback) {
+  let searching = Check.countByRole(user,query)
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -152,7 +133,7 @@ function getCaseSummary (query, user, callback) {
     var aggStatus = [
       { $match: { 
       $and: [  
-            casePerRoleCount(user,query),
+            searching,
             { delete_status: { $ne: 'deleted' }}
           ]
       }},
