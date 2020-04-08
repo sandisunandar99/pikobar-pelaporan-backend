@@ -87,7 +87,6 @@ function getCaseById (id, callback) {
 }
 
 async function getCaseSummaryFinal (query, user, callback) {
-  var searching = {}
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
