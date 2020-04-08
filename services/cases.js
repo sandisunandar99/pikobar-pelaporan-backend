@@ -33,10 +33,16 @@ function ListCase (query, user, callback) {
 
   if(query.address_district_code){
     params.address_district_code = query.address_district_code;
-    if (user.role == 'dinkeskota') {
-      params.author = user._id;
-    }
+    // if (user.role == 'dinkeskota') {
+    //   params.author = user._id;
+    // }
   }
+
+  if (user.role == 'dinkeskota') {
+    params.author = user._id;
+  }
+
+  
 
   if(query.search){
     var search_params = [
