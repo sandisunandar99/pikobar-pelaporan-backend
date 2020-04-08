@@ -109,17 +109,19 @@ async function getCaseSummaryFinal (query, user, callback) {
     }
   }
 
-  var aggStatus = [
-    { $match: { 
-    $and: [   
-          { searching, delete_status: { $ne: 'deleted' }}
-        ]
-    }},
-    { $group: {
-      _id: "$final_result",
-      total: {$sum: 1}
-    }}
-  ];
+  if(query.address_district_code){
+    var aggStatus = [
+      { $match: { 
+      $and: [   
+            { searching, delete_status: { $ne: 'deleted' }}
+          ]
+      }},
+      { $group: {
+        _id: "$final_result",
+        total: {$sum: 1}
+      }}
+    ];
+  }
 
   const sembuh = await Case.find(searchingSembuh).where('delete_status').ne('deleted').then(res => { return res.length })
 
