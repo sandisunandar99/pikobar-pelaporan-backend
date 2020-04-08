@@ -137,7 +137,7 @@ function getCaseSummary (query, user, callback) {
   ];
 
   if (query.address_district_code) {
-    let searching
+    var searching = ''
     if (user.role == 'dinkeskota') {
       searching = {
         author: user._id,
