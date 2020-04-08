@@ -18,7 +18,9 @@ const countByRole = (user, query) => {
 const listByRole = (user, params, search_params, schema) => {
   let result_search
   if (search_params == null) {
-    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
+    if(user.role == 'dinkeskota'){
+      result_search = schema.find(params).where('status').ne('deleted')
+    }else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
       result_search = schema.find(params).where('status').ne('deleted')
     } else {
       result_search = schema.find({
