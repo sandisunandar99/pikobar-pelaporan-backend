@@ -60,6 +60,15 @@ function ListCase (query, user, callback) {
   }).catch(err => callback(err, null))
 }
 
+function listCaseExport (query, user, callback) {
+  Case.find()
+    .where('status').ne('deleted')
+    .populate('author').populate('last_history')
+    .exec()
+    .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
+    .catch(err => callback(err, null));
+}
+
 function getCaseById (id, callback) {
   Case.findOne({_id: id})
     .populate('author')
@@ -342,6 +351,10 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
+  },
+  {
+    name: 'services.cases.listCaseExport',
+    method: listCaseExport
   }
 ];
 

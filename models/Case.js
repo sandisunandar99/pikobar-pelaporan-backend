@@ -118,22 +118,25 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
 
 CaseSchema.methods.JSONExcellOutput = function () {
     return {
-       id_case: this.id_case,
-       nik: this.nik,
-       name: this.name,
-       birth_date: this.birth_date,
-       age: this.age,
-       gender: this.gender,
-       address_detail: this.address_street,
-       address_district_code: this.address_district_code,
-       address_district_name: this.address_district_name,
-       address_subdistrict_code: this.address_subdistrict_code,
-       address_subdistrict_name: this.address_subdistrict_name,
-       address_village_code: this.address_village_code,
-       address_village_name: this.address_village_name,
-       nationality: this.nationality,
-       nationality_name: this.nationality_name,
-       phone_number: this.phone_number
+       "ID Kasus": this.id_case,
+       "NIK": this.nik,
+       "Nama": this.name,
+       "Tanggal Lahir": this.birth_date,
+       "Usia": this.age,
+       "Jenis Kelamin": this.gender,
+       "Alamat Tempat Tinggal": `${this.address_street} ${this.address_district_name} ${this.address_subdistrict_name} ${this.address_subdistrict_name}`,
+       "Kewarganegaraan": this.nationality,
+       "No. Telp": this.phone_number,
+       "Pekerjaan": this.office_address,
+       "Status": this.status,
+       "Tahapan": this.stage,
+       "Hasil": this.final_result,
+       "Lokasi saat ini": this.last_history.current_location_address,
+       "Tanggal Awal gejala": this.last_history.first_symptom_date,
+       "Gejala": this.last_history.diagnosis.toString(),
+       "Riwayat": this.last_history.final_result,
+       "Tanggal Input": this.createdAt,
+       "Author": this.author.fullname
     }
 }
 

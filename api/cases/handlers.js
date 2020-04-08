@@ -1,5 +1,6 @@
 const replyHelper = require('../helpers')
-
+const json2xls = require('json2xls');
+const fs = require('fs');
 module.exports = (server) => {
     function constructCasesResponse(cases) {
         let jsonCases = {
@@ -198,9 +199,11 @@ module.exports = (server) => {
                 request.auth.credentials.user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(result,request)
-                ).code(200)
+                const jsonXls = json2xls(result);
+                fs.writeFileSync('kasus.xlsx', jsonXls, 'binary');
+                const xlsx = fs.readFileSync('kasus.xlsx')
+                return reply(xlsx)
+                .header('Content-Disposition', 'attachment; filename=kasus.xlsx');
             })
         },
 
