@@ -109,7 +109,7 @@ async function getCaseSummaryFinal (query, user, callback) {
   //   }
   // }
 
-  if(query.address_district_code){
+  if (query.address_district_code) {
     if (user.role == 'dinkeskota') {
       var searching = { author: user._id, address_district_code:query.address_district_code }
     }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
@@ -119,8 +119,9 @@ async function getCaseSummaryFinal (query, user, callback) {
     }
     var aggStatus = [
       { $match: { 
-      $and: [   
-            { searching, delete_status: { $ne: 'deleted' }}
+      $and: [ 
+            searching, 
+            { delete_status: { $ne: 'deleted' }}
           ]
       }},
       { $group: {
