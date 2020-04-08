@@ -107,19 +107,18 @@ async function getCaseSummaryFinal (query, user, callback) {
       searching = { author:user._id }
       searchingSembuh = Object.assign(searching,searchingSembuh)
     }
+    var aggStatus = [
+      { $match: { 
+      $and: [   
+            { searching, delete_status: { $ne: 'deleted' }}
+          ]
+      }},
+      { $group: {
+        _id: "$final_result",
+        total: {$sum: 1}
+      }}
+    ];
   }
-
-  var aggStatus = [
-    { $match: { 
-    $and: [   
-          { searching, delete_status: { $ne: 'deleted' }}
-        ]
-    }},
-    { $group: {
-      _id: "$final_result",
-      total: {$sum: 1}
-    }}
-  ];
 
   const sembuh = await Case.find(searchingSembuh).where('delete_status').ne('deleted').then(res => { return res.length })
 
