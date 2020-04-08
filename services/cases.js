@@ -8,6 +8,7 @@ const History = mongoose.model('History')
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
+const ObjectId = require('mongoose').Types.ObjectId; 
 
 function ListCase (query, user, callback) {
 
