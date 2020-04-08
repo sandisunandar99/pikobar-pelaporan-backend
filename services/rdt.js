@@ -14,20 +14,16 @@ const https = require('https')
 function listPerRole(user,params,search_params){
   var result_search = ''
   if(search_params == null){
-    if (user.role == 'dinkeskota') {
+    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
       result_search = Rdt.find(params).where('status').ne('deleted')
-    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
-      result_search = Rdt.find().where('status').ne('deleted')
     } else {
       result_search = Rdt.find({
         'author': user._id
       }).where('status').ne('deleted')
     }
   }else{
-    if (user.role == 'dinkeskota') {
+    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
       result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
-    } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
-      result_search = Rdt.find().or(search_params).where('status').ne('deleted')
     } else {
       result_search = Rdt.find({
         'author': user._id
