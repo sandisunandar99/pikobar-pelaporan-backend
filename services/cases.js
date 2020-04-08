@@ -95,21 +95,28 @@ async function getCaseSummaryFinal (query, user, callback) {
     }}
   ];
 
-  let searching, searchingSembuh = {status:'POSITIF',stage:1}
-  if (query.address_district_code) {
-    if (user.role == 'dinkeskota') {
-      searching = { author:user._id,address_district_code:query.address_district_code }
-      searchingSembuh = Object.assign(searching,searchingSembuh)
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      searching = {}
-      searchingSembuh = searchingSembuh
-    }else{
-      searching = { author:user._id }
-      searchingSembuh = Object.assign(searching,searchingSembuh)
-    }
-  }
+  // let searching, searchingSembuh = {status:'POSITIF',stage:1}
+  // if (query.address_district_code) {
+  //   if (user.role == 'dinkeskota') {
+  //     searching = { author:user._id,address_district_code:query.address_district_code }
+  //     searchingSembuh = Object.assign(searching,searchingSembuh)
+  //   }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+  //     searching = {}
+  //     searchingSembuh = searchingSembuh
+  //   }else{
+  //     searching = { author:user._id }
+  //     searchingSembuh = Object.assign(searching,searchingSembuh)
+  //   }
+  // }
 
   if(query.address_district_code){
+    if (user.role == 'dinkeskota') {
+      var searching = { author: user._id, address_district_code:query.address_district_code }
+    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
+      var searching = {}
+    }else{
+      var searching = { author:user._id }
+    }
     var aggStatus = [
       { $match: { 
       $and: [   
@@ -123,11 +130,11 @@ async function getCaseSummaryFinal (query, user, callback) {
     ];
   }
 
-  const sembuh = await Case.find(searchingSembuh).where('delete_status').ne('deleted').then(res => { return res.length })
+  // const sembuh = await Case.find(searchingSembuh).where('delete_status').ne('deleted').then(res => { return res.length })
 
   let result =  {
     'NEGATIF':0, 
-    'SEMBUH':sembuh, 
+    'SEMBUH':0, 
     'MENINGGAL':0
   }
 
@@ -135,6 +142,9 @@ async function getCaseSummaryFinal (query, user, callback) {
       item.forEach(function(item){
         if (item['_id'] == '0') {
           result.NEGATIF = item['total']
+        }
+        if (item['_id'] == '1') {
+          result.SEMBUH = item['total']
         }
         if (item['_id'] == '2') {
           result.MENINGGAL = item['total']
