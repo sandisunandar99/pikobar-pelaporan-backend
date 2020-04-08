@@ -9,6 +9,8 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+const Check = require('../helpers/rolecheck')
+
 function ListCase (query, user, callback) {
 
   const myCustomLabels = {
@@ -77,20 +79,8 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function casePerRoleCount(user,query){
-  let searching = ''
-  if (user.role == 'dinkeskota') {
-    searching = {author: user._id, address_district_code:query.address_district_code }
-  }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-    searching = {}
-  }else{
-    searching = {}
-  }
-  return searching
-}
-
 async function getCaseSummaryFinal (query, user, callback) {
-  let searching = casePerRoleCount(user,query)
+  let searching = Check.countByRole(user,query)
   var aggStatus = [
     { $match: { delete_status: { $ne: 'deleted' }} },
     {$group: {
@@ -152,7 +142,7 @@ function getCaseSummary (query, user, callback) {
     var aggStatus = [
       { $match: { 
       $and: [  
-            casePerRoleCount(user,query),
+            Check.countByRole(user,query),
             { delete_status: { $ne: 'deleted' }}
           ]
       }},

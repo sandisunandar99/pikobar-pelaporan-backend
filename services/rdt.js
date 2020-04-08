@@ -83,7 +83,9 @@ function ListRdt (query, user, callback) {
 
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
-    params.author = user._id;
+    if(user.role == 'dinkeskota'){
+      params.author = user._id;
+    }
   }
 
   if(query.start_date && query.end_date){
