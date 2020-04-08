@@ -122,12 +122,10 @@ async function getCaseSummaryFinal (query, user, callback) {
       }}
     ];
   }
-
-  const sembuh = await Case.find(searchingSembuh).where('delete_status').ne('deleted').then(res => { return res.length })
-
+  
   let result =  {
     'NEGATIF':0, 
-    'SEMBUH':sembuh, 
+    'SEMBUH':0, 
     'MENINGGAL':0
   }
 
@@ -135,6 +133,9 @@ async function getCaseSummaryFinal (query, user, callback) {
       item.forEach(function(item){
         if (item['_id'] == '0') {
           result.NEGATIF = item['total']
+        }
+        if (item['_id'] == '1') {
+          result.SEMBUH = item['total']
         }
         if (item['_id'] == '2') {
           result.MENINGGAL = item['total']
