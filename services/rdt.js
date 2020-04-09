@@ -388,13 +388,13 @@ function getCodeDinkes(code, callback) {
 function getCaseByidcase(idcase,callback) {
 
   let param = {
-    id_case: idcase,
+    id_case: idcase.toLowerCase(),
     is_test_masif: true
   }
 
   Case.findOne(param)
       .exec()
-      .then(cases => {
+      .then(cases => { 
           if (cases !== null) {
             return callback(null, cases)
           }else{
