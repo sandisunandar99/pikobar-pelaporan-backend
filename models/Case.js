@@ -117,6 +117,14 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
 }
 
 CaseSchema.methods.JSONExcellOutput = function () {
+    let finals
+    if(this.final_result == '0'){
+        finals = 'NEGATIF'
+    }else if(this.final_result == '1'){
+        finals = 'POSITIF'
+    }else{
+        finals = 'MENINGGAL'
+    }
     return {
        "ID Kasus": this.id_case,
        "NIK": this.nik,
@@ -130,7 +138,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Pekerjaan": this.office_address,
        "Status": this.status,
        "Tahapan": this.stage,
-       "Hasil": this.final_result,
+       "Hasil":finals,
        "Lokasi saat ini": this.last_history.current_location_address,
        "Tanggal Awal gejala": this.last_history.first_symptom_date,
        "Gejala": this.last_history.diagnosis.toString(),
