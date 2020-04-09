@@ -345,25 +345,23 @@ function getCountByDistrict(code, callback) {
 
 function softDeleteRdt(rdt, cases,  deletedBy, callback) {
     let date = new Date()
-    let dates = {
-        status: 'deleted',
-        deletedAt: date.toISOString()
-    }
-
-    let dates_case = {
-      delete_status: 'deleted',
-      deletedAt: date.toISOString()
-    }
-
-    let param_case = Object.assign({deletedBy}, dates_case)
-    
+   
     if (cases !== null) {
+      let dates_case = {
+        delete_status: 'deleted',
+        deletedAt: date.toISOString()
+      }
+      let param_case = Object.assign({deletedBy}, dates_case)
         cases = Object.assign(cases, param_case)
         cases.save((err, item) => {
           if (err) return callback(err, null)
         })
     }
-    
+
+    let dates = {
+      status: 'deleted',
+      deletedAt: date.toISOString()
+    }
     let param = Object.assign({deletedBy}, dates)
     rdt = Object.assign(rdt, param)
     rdt.save((err, item) => {
