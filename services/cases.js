@@ -38,8 +38,22 @@ function ListCase (query, user, callback) {
     params.address_district_code = query.address_district_code;
   }
 
+  if(query.start_date && query.end_date){
+    params.createdAt = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    }
+  }
+
   if(user.role == 'dinkeskota'){
     params.author = new ObjectId(user._id);
+  }
+
+  if(query.status){
+    params.status = query.status;
+  }
+  if(query.stage){
+    params.stage = query.stage;
   }
 
   if(query.search){
