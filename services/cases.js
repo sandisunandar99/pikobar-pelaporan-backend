@@ -9,6 +9,7 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 
 function ListCase (query, user, callback) {
@@ -38,7 +39,7 @@ function ListCase (query, user, callback) {
   }
 
   if(user.role == 'dinkeskota'){
-    params.author = user._id;
+    params.author = new ObjectId(user._id);
   }
 
   if(query.search){
