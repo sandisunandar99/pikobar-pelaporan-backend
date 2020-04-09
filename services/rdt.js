@@ -356,12 +356,14 @@ function softDeleteRdt(rdt, cases,  deletedBy, callback) {
     }
 
     let param_case = Object.assign({deletedBy}, dates_case)
-    cases = Object.assign(cases, param_case)
-    cases.save((err, item) => {
-      if (err) return callback(err, null)
-    })
-
-
+    
+    if (cases !== null) {
+        cases = Object.assign(cases, param_case)
+        cases.save((err, item) => {
+          if (err) return callback(err, null)
+        })
+    }
+    
     let param = Object.assign({deletedBy}, dates)
     rdt = Object.assign(rdt, param)
     rdt.save((err, item) => {
@@ -393,7 +395,11 @@ function getCaseByidcase(idcase,callback) {
   Case.findOne(param)
       .exec()
       .then(cases => {
-          return callback(null, cases)
+          if (cases !== null) {
+            return callback(null, cases)
+          }else{
+            return callback(null, null)
+          }
       })
       .catch(err => callback(err, null))
 
