@@ -62,8 +62,24 @@ function ListCase (query, user, callback) {
 }
 
 function listCaseExport (query, user, callback) {
-  Case.find()
-    .where('status').ne('deleted')
+  const params = {}
+  if(query.start_date && query.end_date){
+    params.test_date = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    }
+  }
+  
+  Check.exportByRole(params,user,query)
+
+  if(query.status){
+    params.status = query.status;
+  }
+  if(query.stage){
+    params.stage = query.stage;
+  }
+  Case.find(params)
+    .where('delete_status').ne('deleted')
     .populate('author').populate('last_history')
     .exec()
     .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
