@@ -50,7 +50,9 @@ const getCasebyIdcase = server =>{
      return {
          method: (request, reply) => {
              let idcase = request.pre.rdt.id_case
-              server.methods.services.rdt.getCaseByidcase(idcase, (err, item) => {     
+              server.methods.services.rdt.getCaseByidcase(
+                  idcase.toLowerCase(),
+                  (err, item) => {     
                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                  return reply(item)
              })

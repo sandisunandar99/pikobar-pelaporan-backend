@@ -386,7 +386,7 @@ function getCodeDinkes(code, callback) {
 function getCaseByidcase(idcase,callback) {
 
   let param = {
-    id_case: idcase.toLowerCase(),
+    id_case: idcase,
     is_test_masif: true
   }
 
