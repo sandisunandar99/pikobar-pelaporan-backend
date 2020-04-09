@@ -64,7 +64,7 @@ function ListCase (query, user, callback) {
 function listCaseExport (query, user, callback) {
   const params = {}
   if(query.start_date && query.end_date){
-    params.test_date = {
+    params.createdAt = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
@@ -78,8 +78,18 @@ function listCaseExport (query, user, callback) {
   if(query.stage){
     params.stage = query.stage;
   }
+  if(query.search){
+    var search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+    var search = search_params
+  } else {
+    var search = {}
+  }
   Case.find(params)
     .where('delete_status').ne('deleted')
+    .or(search)
     .populate('author').populate('last_history')
     .exec()
     .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
