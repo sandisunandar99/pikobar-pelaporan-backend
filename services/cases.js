@@ -35,7 +35,7 @@ function ListCase (query, user, callback) {
   if(query.address_district_code){
     params.address_district_code = query.address_district_code;
     if (user.role == 'dinkeskota') {
-      params.author = user._id;
+      params.author = new ObjectId(user._id);
     }
   }
 
@@ -153,11 +153,11 @@ function getCaseSummary (query, user, callback) {
 
   if (query.address_district_code) {
     if (user.role == 'dinkeskota') {
-      var searching = { author: user._id, address_district_code:query.address_district_code }
+      var searching = { author: new ObjectId(user._id), address_district_code:query.address_district_code }
     }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
       var searching = {}
     }else{
-      var searching = { author:user._id }
+      var searching = { author:new ObjectId(user._id) }
     }
     var aggStatus = [
       { $match: { 
