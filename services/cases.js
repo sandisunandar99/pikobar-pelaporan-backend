@@ -52,8 +52,8 @@ function ListCase (query, user, callback) {
   if(query.status){
     params.status = query.status;
   }
-  if(query.stage){
-    params.stage = query.stage;
+  if(query.final_result){
+    params.final_result = query.final_result;
   }
 
   if(query.search){
@@ -89,8 +89,8 @@ function listCaseExport (query, user, callback) {
   if(query.status){
     params.status = query.status;
   }
-  if(query.stage){
-    params.stage = query.stage;
+  if(query.final_result){
+    params.final_result = query.final_result;
   }
   if(query.search){
     var search_params = [

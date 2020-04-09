@@ -41,7 +41,7 @@ const CaseQueryValidations = {
         address_district_code: Joi.string().empty('', null).default('').description('search data by Case name'),
         search: Joi.string().empty('', null).default('').description('search data by Case name'),
         status: Joi.string().empty('', null).default('').description('search data by status'),
-        stage: Joi.string().empty('', null).default('').description('search data by stage'),
+        final_result: Joi.string().empty('', null).default('').description('search data by final_result'),
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
         end_date: Joi.string().empty('', null).default('').description('search data by test date')
     },
