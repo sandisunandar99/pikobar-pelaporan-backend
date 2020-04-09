@@ -8,7 +8,7 @@ const Case = mongoose.model('Case');
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
-
+const ObjectId = require('mongoose').Types.ObjectId
 const https = require('https')
 
 function listPerRole(user,params,search_params){
@@ -18,7 +18,7 @@ function listPerRole(user,params,search_params){
       result_search = Rdt.find(params).where('status').ne('deleted')
     } else {
       result_search = Rdt.find({
-        'author': user._id
+        'author': new ObjectId(user._id)
       }).where('status').ne('deleted')
     }
   }else{
@@ -26,7 +26,7 @@ function listPerRole(user,params,search_params){
       result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
     } else {
       result_search = Rdt.find({
-        'author': user._id
+        'author': new ObjectId(user._id)
       }).or(search_params).where('status').ne('deleted')
     }
   }
@@ -80,7 +80,7 @@ function ListRdt (query, user, callback) {
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
     if(user.role == 'dinkeskota'){
-      params.author = user._id;
+      params.author = new ObjectId(user._id);
     }
   }
 
@@ -411,7 +411,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
-    params.author = user._id;
+    params.author = new ObjectId(user._id);
   }
 
   Case.find(params)
