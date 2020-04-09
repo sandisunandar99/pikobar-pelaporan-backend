@@ -161,7 +161,7 @@ module.exports = (server) => {
             let payload = request.payload
             let id = request.params.id
 
-            server.methods.services.cases.update(id, payload, (err, result) => {
+            server.methods.services.cases.update(id,request.auth.credentials.user, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result, request)
@@ -203,7 +203,7 @@ module.exports = (server) => {
                 fs.writeFileSync('kasus.xlsx', jsonXls, 'binary');
                 const xlsx = fs.readFileSync('kasus.xlsx')
                 return reply(xlsx)
-                .header('Content-Disposition', 'attachment; filename=kasus.xlsx');
+                .header('Content-Disposition: attachment; filename="kasus.xls"');
             })
         },
 

@@ -218,10 +218,13 @@ function createCase (raw_payload, author, pre, callback) {
       id_case += "0".repeat(4 - pre.count_pasien.toString().length)
       id_case += pre.count_pasien
 
-  let inset_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
-      inset_id_case = Object.assign(raw_payload, {id_case})
- 
-  let item = new Case(Object.assign(inset_id_case, {author}))
+  let insert_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
+      insert_id_case = Object.assign(raw_payload, {id_case})
+  
+  insert_id_case.author_district_code = author.code_district_city
+  insert_id_case.author_district_name = author.name_district_city
+
+  let item = new Case(Object.assign(insert_id_case, {author}))
 
   item.save().then(x => { // step 1 : create dan save case baru
     let c = {case: x._id}
@@ -245,7 +248,11 @@ function createCase (raw_payload, author, pre, callback) {
    }).catch(err => callback(err, null))
 }
 
-function updateCase (id, payload, callback) {
+function updateCase (id, author, payload, callback) {
+
+  payload.author_district_code = author.code_district_city
+  payload.author_district_name = author.name_district_city
+
   Case.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
   .then(result => {
     return callback(null, result);

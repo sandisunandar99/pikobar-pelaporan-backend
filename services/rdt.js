@@ -280,6 +280,9 @@ function createRdt (payload, author, pre, callback) {
 
 function updateRdt (id, payload, author, callback) {
   // update Rdt
+  payload.author_district_code = author.code_district_city
+  payload.author_district_name = author.name_district_city
+  
   Rdt.findOne({ _id: id}).then(rdt_item => {
      rdt_item = Object.assign(rdt_item, payload);
 

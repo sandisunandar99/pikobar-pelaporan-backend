@@ -32,6 +32,8 @@ const CaseSchema = new mongoose.Schema({
     occupation: {type:String},
     last_history : {type: mongoose.Schema.Types.ObjectId, ref: 'History'},
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    author_district_code : { type:String},
+    author_district_name : { type: String},
     stage: String,
     status: String,
     final_result: String,
