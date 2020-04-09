@@ -223,6 +223,9 @@ function createCase (raw_payload, author, pre, callback) {
 
   let inset_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
       inset_id_case = Object.assign(raw_payload, {id_case})
+
+  inset_id_case.author_district_code = author.code_district_city
+  inset_id_case.author_district_name = author.name_district_city
  
   let item = new Case(Object.assign(inset_id_case, {author}))
 
