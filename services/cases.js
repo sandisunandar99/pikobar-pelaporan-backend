@@ -122,16 +122,15 @@ function getCaseById (id, callback) {
 async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user,query)
 
-  const searchingPositif = {status:'POSITIF',stage:0}
-  const searchingSembuh = {status:'POSITIF',stage:1,final_result:1}
-  const searchingMeninggal = {status:'POSITIF',stage:1,final_result:2}
+  const searchingPositif = {status:'POSITIF', final_result : { $nin: ["null",""] }}
+  const searchingSembuh = {status:'POSITIF',final_result:1}
+  const searchingMeninggal = {status:'POSITIF',final_result:2}
   
   try {
     const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted').then(res => { return res.length })
     const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
     const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where('delete_status').ne('deleted').then(res => { return res.length })
     const result =  {
-      'NEGATIF':0, 
       'SEMBUH':sembuh, 
       'MENINGGAL':meninggal,
       'POSITIF':positif
