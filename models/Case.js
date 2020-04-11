@@ -118,23 +118,42 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
     }
 }
 
+function convertDate(dates){
+    return new Date(dates.getTime()).toLocaleDateString("id-ID")
+}
+
 CaseSchema.methods.JSONExcellOutput = function () {
-    let finals
+    let finals,finalsHistory,symptomDate,birthDate,createDate
     if(this.final_result == '0'){
         finals = 'NEGATIF'
     }else if(this.final_result == '1'){
-        finals = 'POSITIF'
-    }else{
+        finals = 'SEMBUH'
+    }else if(this.final_result == '2'){
         finals = 'MENINGGAL'
+    }else{
+        finals = ''
     }
+    if(this.last_history.final_result == '0'){
+        finalsHistory = 'NEGATIF'
+    }else if(this.last_history.final_result == '1'){
+        finalsHistory = 'SEMBUH'
+    }else if(this.last_history.final_result == '2'){
+        finalsHistory = 'MENINGGAL'
+    }else{
+        finalsHistory = ''
+    }
+    
+    symptomDate = (this.last_history.first_symptom_date != null ? convertDate(this.last_history.first_symptom_date) : null)
+    birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
+    createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
     return {
        "ID Kasus": this.id_case,
        "NIK": this.nik,
        "Nama": this.name,
-       "Tanggal Lahir": this.birth_date,
+       "Tanggal Lahir": birthDate,
        "Usia": this.age,
        "Jenis Kelamin": this.gender,
-       "Alamat Tempat Tinggal": `${this.address_street} ${this.address_district_name} ${this.address_subdistrict_name} ${this.address_subdistrict_name}`,
+       "Alamat Tempat Tinggal": `${this.address_street} ${this.address_district_name} Kelurahan ${this.address_subdistrict_name} Kecamatan ${this.address_subdistrict_name}`,
        "Kewarganegaraan": this.nationality,
        "No. Telp": this.phone_number,
        "Pekerjaan": this.office_address,
@@ -142,10 +161,10 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Tahapan": this.stage,
        "Hasil":finals,
        "Lokasi saat ini": this.last_history.current_location_address,
-       "Tanggal Awal gejala": this.last_history.first_symptom_date,
+       "Tanggal Awal gejala": symptomDate,
        "Gejala": this.last_history.diagnosis.toString(),
-       "Riwayat": this.last_history.final_result,
-       "Tanggal Input": this.createdAt,
+       "Riwayat": finalsHistory,
+       "Tanggal Input": createDate,
        "Author": this.author.fullname
     }
 }

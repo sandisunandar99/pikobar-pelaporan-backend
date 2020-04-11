@@ -121,52 +121,25 @@ function getCaseById (id, callback) {
 
 async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user,query)
-  var aggStatus = [
-    { $match: { delete_status: { $ne: 'deleted' }} },
-    {$group: {
-      _id: "$final_result",
-      total: {$sum: 1}
-    }}
-  ];
 
-  if (query.address_district_code) {
-    var aggStatus = [
-      { $match: { 
-      $and: [ searching,{ delete_status: { $ne: 'deleted' }} ]
-      }},
-      { $group: {
-        _id: "$final_result",
-        total: {$sum: 1}
-      }}
-    ];
-  }
-
-  const searchingSembuh = {status:'POSITIF',stage:1}
   const searchingPositif = {status:'POSITIF',stage:0}
-  const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
-
-  const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted')
-  .then(res => { return res.length })
-
-  let result =  {
-    'NEGATIF':0, 
-    'SEMBUH':sembuh, 
-    'MENINGGAL':0,
-    'POSITIF':positif
+  const searchingSembuh = {status:'POSITIF',stage:1,final_result:1}
+  const searchingMeninggal = {status:'POSITIF',stage:1,final_result:2}
+  
+  try {
+    const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const result =  {
+      'NEGATIF':0, 
+      'SEMBUH':sembuh, 
+      'MENINGGAL':meninggal,
+      'POSITIF':positif
+    }
+    callback(null,result)
+  } catch (error) {
+    callback(error, null)
   }
-
-  Case.aggregate(aggStatus).exec().then(item => {
-      item.forEach(function(item){
-        if (item['_id'] == '0') {
-          result.NEGATIF = item['total']
-        }
-        if (item['_id'] == '2') {
-          result.MENINGGAL = item['total']
-        }
-      });
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
 }
 
 function getCaseSummary (query, user, callback) {
