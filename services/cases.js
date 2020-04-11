@@ -122,7 +122,7 @@ function getCaseById (id, callback) {
 async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user,query)
 
-  const searchingPositif = {status:'POSITIF', final_result : { $nin: ["null",""] }}
+  const searchingPositif = {status:'POSITIF', final_result : { $nin: [1,2] }}
   const searchingSembuh = {status:'POSITIF',final_result:1}
   const searchingMeninggal = {status:'POSITIF',final_result:2}
   
