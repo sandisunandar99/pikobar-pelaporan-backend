@@ -142,6 +142,8 @@ CaseSchema.methods.JSONExcellOutput = function () {
     }else{
         finalsHistory = ''
     }
+
+    let stages = (this.stage == 0 ? "Prosess" : "Selesai")    
     
     symptomDate = (this.last_history.first_symptom_date != null ? convertDate(this.last_history.first_symptom_date) : null)
     birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
@@ -158,7 +160,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "No. Telp": this.phone_number,
        "Pekerjaan": this.office_address,
        "Status": this.status,
-       "Tahapan": this.stage,
+       "Tahapan":stages,
        "Hasil":finals,
        "Lokasi saat ini": this.last_history.current_location_address,
        "Tanggal Awal gejala": symptomDate,
