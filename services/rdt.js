@@ -435,7 +435,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
 function getDatafromExternal(address_district_code, search, callback) {
 
-   https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=xzyOIA23nasmYZsMhDujWVJBXixoxG3Y&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+   https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -474,7 +474,7 @@ function FormSelectIdCaseDetail(search_internal, search_external, user, callback
 
 function seacrhFromExternal(address_district_code, search, callback) {
 
-    https.get('https://covid19-executive.digitalservice.id/api/v1/pelaporan/pendaftaran_rdt?api_key=xzyOIA23nasmYZsMhDujWVJBXixoxG3Y&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+    https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' +search.toLowerCase()+ '&address_district_code=' +address_district_code, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
