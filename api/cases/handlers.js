@@ -201,7 +201,7 @@ module.exports = (server) => {
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 const jsonXls = json2xls(result);
-                const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD")}.xlsx`
+                const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
                 fs.writeFileSync(fileName, jsonXls, 'binary');
                 const xlsx = fs.readFileSync(fileName)
                 reply(xlsx)
