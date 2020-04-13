@@ -22,7 +22,7 @@ function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
-  const sorts = (query.sort ? JSON.parse(query.sort) : {_id:"desc"})
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
 
   const options = {
     page: query.page,
