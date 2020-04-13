@@ -40,6 +40,14 @@ function ListCase (query, user, callback) {
     params.address_district_code = query.address_district_code;
   }
 
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
+
   if(query.start_date && query.end_date){
     params.createdAt = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
@@ -79,6 +87,7 @@ function ListCase (query, user, callback) {
 
 function listCaseExport (query, user, callback) {
   const params = {}
+  
   if(query.start_date && query.end_date){
     params.createdAt = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
@@ -93,6 +102,12 @@ function listCaseExport (query, user, callback) {
   }
   if(query.final_result){
     params.final_result = query.final_result;
+  }
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
   }
   if(query.search){
     var search_params = [
