@@ -162,7 +162,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Usia": this.age,
        "Jenis Kelamin": this.gender,
        "Alamat Tempat Tinggal": `${this.address_district_name} ${this.address_street}, Kelurahan ${this.address_subdistrict_name}, Kecamatan ${this.address_subdistrict_name}`,
-       "No. Telp": this.phone_number.toString(),
+       "No.Telp": Number(this.phone_number),
        "Kewarganegaraan": this.nationality,
        "Negara": this.nationality_name,
        "Pekerjaan": this.occupation,

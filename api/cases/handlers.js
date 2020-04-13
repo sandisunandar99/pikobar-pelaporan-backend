@@ -200,13 +200,11 @@ module.exports = (server) => {
                 request.auth.credentials.user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                const jsonXls = json2xls(result);
-                const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
-                fs.writeFileSync(fileName, jsonXls, 'binary');
-                const xlsx = fs.readFileSync(fileName)
-                reply(xlsx)
-                .header('Content-Disposition', 'attachment; filename='+fileName);
-                return fs.unlinkSync(fileName);
+                // const jsonXls = json2xls(c);
+                // const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
+                // fs.writeFileSync(fileName, jsonXls, 'binary');
+                // const xlsx = fs.readFileSync(fileName)
+                reply(result).code(200)
             })
         },
 
