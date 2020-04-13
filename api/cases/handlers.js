@@ -204,8 +204,9 @@ module.exports = (server) => {
                 const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD")}.xlsx`
                 fs.writeFileSync(fileName, jsonXls, 'binary');
                 const xlsx = fs.readFileSync(fileName)
-                return reply(xlsx)
+                reply(xlsx)
                 .header('Content-Disposition', 'attachment; filename='+fileName);
+                return fs.unlinkSync(fileName);
             })
         },
 
