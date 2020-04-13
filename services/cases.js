@@ -22,12 +22,14 @@ function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
+  const sorts = (query.sort ? JSON.parse(query.sort) : {_id:"desc"})
+
   const options = {
     page: query.page,
     limit: query.limit,
     populate: (['last_history','author']),
     address_district_code: query.address_district_code,
-    sort: { createdAt: query.sort },
+    sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels
   };
