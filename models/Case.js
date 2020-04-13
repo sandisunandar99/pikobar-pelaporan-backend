@@ -123,7 +123,8 @@ function convertDate(dates){
 }
 
 CaseSchema.methods.JSONExcellOutput = function () {
-    let finals,finalsHistory,symptomDate,birthDate,createDate
+    let finals,finalsHistory,birthDate,createDate
+    
     if(this.final_result == '0'){
         finals = 'NEGATIF'
     }else if(this.final_result == '1'){
@@ -133,39 +134,44 @@ CaseSchema.methods.JSONExcellOutput = function () {
     }else{
         finals = ''
     }
-    if(this.last_history.final_result == '0'){
-        finalsHistory = 'NEGATIF'
-    }else if(this.last_history.final_result == '1'){
-        finalsHistory = 'SEMBUH'
-    }else if(this.last_history.final_result == '2'){
-        finalsHistory = 'MENINGGAL'
-    }else{
-        finalsHistory = ''
+
+    if(this.last_history !== null){
+        if(this.last_history.final_result == '0'){
+            finalsHistory = 'NEGATIF'
+        }else if(this.last_history.final_result == '1'){
+            finalsHistory = 'SEMBUH'
+        }else if(this.last_history.final_result == '2'){
+            finalsHistory = 'MENINGGAL'
+        }else{
+            finalsHistory = ''
+        }
     }
 
     let stages = (this.stage == 0 ? "Prosess" : "Selesai")    
     
-    symptomDate = (this.last_history.first_symptom_date != null ? convertDate(this.last_history.first_symptom_date) : null)
     birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
     createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
     return {
-       "ID Kasus": this.id_case,
-       "NIK": this.nik,
+       "Kode Kasus": this.id_case,
+       "Kode Kasus Pusat": this.id_case_national,
+       "Tanggal Lapor": createDate,
+       "Sumber Lapor": (this.last_history !== null ? this.last_history.report_source : null),
+       "NIK": this.id_case_national,
        "Nama": this.name,
        "Tanggal Lahir": birthDate,
        "Usia": this.age,
        "Jenis Kelamin": this.gender,
-       "Alamat Tempat Tinggal": `${this.address_street} ${this.address_district_name} Kelurahan ${this.address_subdistrict_name} Kecamatan ${this.address_subdistrict_name}`,
-       "Kewarganegaraan": this.nationality,
+       "Alamat Tempat Tinggal": `${this.address_district_name} ${this.address_street}, Kelurahan ${this.address_subdistrict_name}, Kecamatan ${this.address_subdistrict_name}`,
        "No. Telp": this.phone_number,
+       "Kewarganegaraan": this.nationality,
+       "Negara": this.nationality_name,
        "Pekerjaan": this.office_address,
+       "Gejala": (this.last_history !== null ? this.last_history.diagnosis.toString() : null),
+       "Riwayat": finalsHistory,
        "Status": this.status,
        "Tahapan":stages,
        "Hasil":finals,
-       "Lokasi saat ini": this.last_history.current_location_address,
-       "Tanggal Awal gejala": symptomDate,
-       "Gejala": this.last_history.diagnosis.toString(),
-       "Riwayat": finalsHistory,
+       "Lokasi saat ini": (this.last_history !== null ? this.last_history.current_location_address : null),
        "Tanggal Input": createDate,
        "Author": this.author.fullname
     }

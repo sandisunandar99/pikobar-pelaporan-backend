@@ -1,5 +1,6 @@
 const replyHelper = require('../helpers')
 const json2xls = require('json2xls');
+const moment = require('moment')
 const fs = require('fs');
 module.exports = (server) => {
     function constructCasesResponse(cases) {
@@ -193,17 +194,18 @@ module.exports = (server) => {
          */
         async ListCaseExport(request, reply){
             let query = request.query
-
+            const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
             server.methods.services.cases.listCaseExport(
                 query, 
                 request.auth.credentials.user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 const jsonXls = json2xls(result);
-                fs.writeFileSync('kasus.xlsx', jsonXls, 'binary');
-                const xlsx = fs.readFileSync('kasus.xlsx')
+                const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD")}.xlsx`
+                fs.writeFileSync(fileName, jsonXls, 'binary');
+                const xlsx = fs.readFileSync(fileName)
                 return reply(xlsx)
-                .header('Content-Disposition', 'attachment; filename=kasus.xlsx');
+                .header('Content-Disposition', 'attachment; filename='+fileName);
             })
         },
 
