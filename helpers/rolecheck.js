@@ -4,7 +4,7 @@ const countByRole = (user, query) => {
   if (user.role == 'dinkeskota') {
     searching = {
       author:new ObjectId(user._id),
-      address_district_code: query.address_district_code
+      author_district_code:user.code_district_city
     }
   } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
     searching = {}
@@ -19,9 +19,7 @@ const countByRole = (user, query) => {
 const exportByRole = (params, user, query) => {
   if (user.role == 'dinkeskota') {
     params.author = new ObjectId(user._id)
-    if(query.address_district_code){
-      params.address_district_code = query.address_district_code
-    }
+    params.author_district_code = user.code_district_city;
   } else if (user.role == 'dinkesprov' || user.role == 'superadmin') {
     
   } else {
