@@ -99,7 +99,7 @@ function listCaseExport (query, user, callback) {
   if(query.final_result){
     params.final_result = query.final_result;
   }
-  if(user.role != "dinkeskota" || user.role != "faskes"){
+  if(user.role !== "dinkeskota" || user.role !== "faskes"){
     if(query.address_district_code){
       params.address_district_code = query.address_district_code;
     }
@@ -140,7 +140,7 @@ function getCaseById (id, callback) {
 async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user)
 
-  if(user.role != "dinkeskota" || user.role != "faskes"){
+  if(user.role !== "dinkeskota" || user.role !== "faskes"){
     if(query.address_district_code){
       searching.address_district_code = query.address_district_code;
     }
@@ -167,11 +167,13 @@ async function getCaseSummaryFinal (query, user, callback) {
 
 function getCaseSummary (query, user, callback) {
   let searching = Check.countByRole(user,query)
-  if(user.role != "dinkeskota" || user.role != "faskes"){
+  if(user.role !== "dinkeskota" || user.role !== "faskes"){
     if(query.address_district_code){
       searching.address_district_code = query.address_district_code;
     }
   }
+  console.log(searching);
+  
   var aggStatus = [
     { $match: { 
       $and: [  
