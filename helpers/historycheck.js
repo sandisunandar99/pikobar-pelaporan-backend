@@ -10,7 +10,7 @@ const historyCheck = (history) => {
         }
 
         if(history.is_went_other_city == true){
-            city = `Perjalanan ke luar kota Mengunjungi Kota ${history.visited_country}`
+            city = `Perjalanan ke luar kota Mengunjungi Kota ${history.visited_city}`
         }else{
             city = ""
         }
@@ -26,9 +26,9 @@ const historyCheck = (history) => {
         }else{
             notes = ""
         }
-        a = (abroad == "" ? " " : "-")
-        b = (city == "" ? " " : "-")
-        c = (positive == "" ? " " : "-")
+        a = (abroad == "" ? " " : " - ")
+        b = (city == "" ? " " : " - ")
+        c = (positive == "" ? " " : " - ")
     }
     return `${abroad}${a}${city}${b}${positive}${c}${notes}`
 }
