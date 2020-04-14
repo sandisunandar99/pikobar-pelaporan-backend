@@ -132,18 +132,24 @@ CaseSchema.methods.JSONExcellOutput = function () {
     }else if(this.final_result == '2'){
         finals = 'MENINGGAL'
     }else{
-        finals = ''
+        finals = null
     }
 
     if(this.last_history !== null){
-        if(this.last_history.final_result == '0'){
-            finalsHistory = 'NEGATIF'
-        }else if(this.last_history.final_result == '1'){
-            finalsHistory = 'SEMBUH'
-        }else if(this.last_history.final_result == '2'){
-            finalsHistory = 'MENINGGAL'
+        if(this.last_history.is_went_abroad == true){
+            finalsHistory = `Dari Luar Negri Mengunjungi Negara ${this.last_history.visited_country}`
         }else{
-            finalsHistory = ''
+            finalsHistory = null
+        }
+        if(this.last_history.is_went_other_city == true){
+            finalsHistory = `Perjalanan ke luar kota Mengunjungi Kota ${this.last_history.visited_country}`
+        }else{
+            finalsHistory = null
+        }
+        if(this.last_history.is_contact_with_positive == true){
+            finalsHistory = 'Kontak Dengan Pasien Positif'
+        }else{
+            finalsHistory = null
         }
     }
 
