@@ -15,6 +15,7 @@ const register = (server, options, next) => {
     require('./Case')
     require('./History')
     require('./Occupation')
+    require('./RdtHistory')
 
     server.app.db = {
       link: db.db,
@@ -25,7 +26,8 @@ const register = (server, options, next) => {
       Village: db.model('Village'),
       Case: db.model('Case'),
       History: db.model('History'),
-      Occupation: db.model('Occupation')
+      Occupation: db.model('Occupation'),
+      RdtHistory: db.model('RdtHistory'),
     };
 
     return next();
