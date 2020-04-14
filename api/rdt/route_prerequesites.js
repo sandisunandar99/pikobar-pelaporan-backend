@@ -85,15 +85,23 @@ const checkIfDataNotNull = server => {
                 query,
                 user,
                 (err, result) => {
-                    if (result.rdt.length === 0) {
+                    if(result !== null){
+                        if (result.cases.length === 0) {
+                            return reply({
+                                status: 200,
+                                message: 'Data untuk '+fullname+' belum ada.',
+                                data: null
+                            }).code(200).takeover()
+                        }else{
+                            return reply()
+                        }
+                     }else{
                         return reply({
                             status: 200,
-                            message: 'Data untuk ' + fullname + ' belum ada.',
+                            message: 'Data untuk '+fullname+' belum ada.',
                             data: null
                         }).code(200).takeover()
-                    } else {
-                        return reply()
-                    }
+                     }
                 })
         },
         assign: 'check_rdt'
