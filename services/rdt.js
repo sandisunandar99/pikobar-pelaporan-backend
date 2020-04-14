@@ -497,6 +497,16 @@ function seacrhFromInternal(query, callback) {
       .catch()
 }
 
+function sendMessages(query, callback) {
+  let urlEndpoint = process.env.SMS_URL_SERVER
+  let username = process.env.SMS_USERNAME
+  let key = process.env.SMS_KEY
+  let number ='085223407000'
+  let message = 'test 123'
+
+}
+
+
 
 module.exports = [
   {
@@ -570,6 +580,10 @@ module.exports = [
   {
     name: 'services.rdt.seacrhFromInternal',
     method: seacrhFromInternal
+  },
+  {
+    name: 'services.rdt.sendMessages',
+    method: sendMessages
   },
 ];
 
