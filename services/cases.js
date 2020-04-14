@@ -137,7 +137,7 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-async function getCaseSummaryFinal (_query, user, callback) {
+async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user)
 
   if(user.role != "dinkeskota" || user.role != "faskes"){
