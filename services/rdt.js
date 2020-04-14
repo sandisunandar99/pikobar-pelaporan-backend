@@ -12,28 +12,6 @@ const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
 
-function listPerRole(user,params,search_params){
-  var result_search = ''
-  if(search_params == null){
-    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
-      result_search = Rdt.find(params).where('status').ne('deleted')
-    } else {
-      result_search = Rdt.find({
-        'author': new ObjectId(user._id)
-      }).where('status').ne('deleted')
-    }
-  }else{
-    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
-      result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
-    } else {
-      result_search = Rdt.find({
-        'author': new ObjectId(user._id)
-      }).or(search_params).where('status').ne('deleted')
-    }
-  }
-  return result_search
-}
-
 function ListRdt (query, user, callback) {
 
   const myCustomLabels = {
@@ -97,9 +75,9 @@ function ListRdt (query, user, callback) {
       { mechanism: new RegExp(query.search, "i") },
       { test_method: new RegExp(query.search, "i") },
     ];
-    var result_search = listPerRole(user, params, search_params)
+    var result_search = Check.listByRole(user, params, search_params,Rdt,"status")
   } else {
-    var result_search = listPerRole(user,params,null)
+    var result_search = Check.listByRole(user,params,null,Rdt,"status")
   }
 
   Rdt.paginate(result_search, options).then(function (results) {
