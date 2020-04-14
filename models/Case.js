@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
+const check = require("../helpers/historycheck")
 var uniqueValidator = require('mongoose-unique-validator')
 
 const CaseSchema = new mongoose.Schema({
@@ -123,7 +124,7 @@ function convertDate(dates){
 }
 
 CaseSchema.methods.JSONExcellOutput = function () {
-    let finals,finalsHistory,birthDate,createDate
+    let finals,stages,birthDate,createDate
     
     if(this.final_result == '0'){
         finals = 'NEGATIF'
@@ -135,28 +136,10 @@ CaseSchema.methods.JSONExcellOutput = function () {
         finals = null
     }
 
-    if(this.last_history !== null){
-        if(this.last_history.is_went_abroad == true){
-            finalsHistory = `Dari Luar Negri Mengunjungi Negara ${this.last_history.visited_country}`
-        }else{
-            finalsHistory = null
-        }
-        if(this.last_history.is_went_other_city == true){
-            finalsHistory = `Perjalanan ke luar kota Mengunjungi Kota ${this.last_history.visited_country}`
-        }else{
-            finalsHistory = null
-        }
-        if(this.last_history.is_contact_with_positive == true){
-            finalsHistory = 'Kontak Dengan Pasien Positif'
-        }else{
-            finalsHistory = null
-        }
-    }
-
-    let stages = (this.stage == 0 ? "Prosess" : "Selesai")    
-    
+    stages = (this.stage == 0 ? "Prosess" : "Selesai")    
     birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
     createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
+    
     return {
        "Kode Kasus": this.id_case,
        "Kode Kasus Pusat": this.id_case_national,
@@ -173,7 +156,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Negara": this.nationality_name,
        "Pekerjaan": this.occupation,
        "Gejala": (this.last_history !== null ? this.last_history.diagnosis.toString() : null),
-       "Riwayat": finalsHistory,
+       "Riwayat": check.historyCheck(this.last_history),
        "Status": this.status,
        "Tahapan":stages,
        "Hasil":finals,
