@@ -26,9 +26,9 @@ const historyCheck = (history) => {
         }else{
             notes = ""
         }
-        var a = (abroad != "" ? "," : "")
-        var b = (city != "" ? "," : "")
-        var c = (positive != "" ? "," : "")
+        var a = (city != "" ? "," : "")
+        var b = (positive != "" ? "," : "")
+        var c = (notes != "" ? "," : "")
     }
     return `${abroad}${a}${city}${b}${positive}${c}${notes}`
 }
