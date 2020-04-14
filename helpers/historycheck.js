@@ -1,6 +1,6 @@
 
 const historyCheck = (history) => {
-    let abroad,city,positive,notes
+    let abroad,city,positive,notes,a,b,c
     if(history !== ""){
 
         if(history.is_went_abroad == true){
