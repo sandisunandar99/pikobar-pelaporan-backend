@@ -50,8 +50,10 @@ function ListRdt (query, user, callback) {
   if(query.test_address_district_code){
     params.test_address_district_code = query.test_address_district_code;
   }
-  if (query.address_district_code) {
-    params.address_district_code = query.address_district_code;
+  if(user.role != "dinkeskota" || user.role != "faskes"){
+    if(query.address_district_code){
+      searching.address_district_code = query.address_district_code;
+    }
   }
   if(user.role == "dinkeskota"){
     params.author = new ObjectId(user._id);
