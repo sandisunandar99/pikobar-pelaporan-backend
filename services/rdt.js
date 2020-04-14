@@ -6,6 +6,9 @@ const Rdt = mongoose.model('Rdt');
 require('../models/Case')
 const Case = mongoose.model('Case');
 
+require('../models/RdtHistory')
+const RdtHistory = mongoose.model('RdtHistory');
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId
@@ -204,54 +207,86 @@ function GetRdtFaskesSummaryByCities (query, callback) {
     .catch(err => callback(err, null))
 }
 
-function createRdt (payload, author, pre, callback) {
-  // "code_test": "PST-100012000001"
-  // "code_tool_tester": "RDT-10012000001",
-  // "code_tool_tester": "PCR-10012000001",
-
-  let date = new Date().getFullYear().toString()
-  let code_test = "PTS-"
-      code_test += pre.code_dinkes.code
-      code_test += date.substr(2, 2)
-      code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
-      code_test += pre.count_rdt.count
-
-  let code_tool_tester
-  if (payload.tool_tester === "PCR") {
-    code_tool_tester = "PCR-"
-  }else{
-    code_tool_tester = "RDT-"
-  }
-  code_tool_tester += pre.code_dinkes.code
-  code_tool_tester += date.substr(2, 2)
-  code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
-  code_tool_tester += pre.count_rdt.count
-
-  let id_case
-  if (payload.final_result === "POSITIF") {
-          id_case = "COVID-"
-          id_case += pre.count_case.dinkes_code
-          id_case += date.substr(2, 2)
-          id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
-          id_case += pre.count_case.count_pasien
-  }
-
-  let code = {
-    code_test: code_test,
-    code_tool_tester: code_tool_tester,
-    id_case: id_case,
-    author_district_code: author.code_district_city,
-    author_district_name: author.name_district_city
-  }
-
-  let rdt = new Rdt(Object.assign(code, payload))
-  rdt = Object.assign(rdt,{author})
-
-
-  rdt.save((err, item) => {
-    if (err) return callback(err, null);
+function GetRdtHistoryByRdtId (query, callback) {
+  Rdt.find({ rdt: param.id}).exec().then(item => {
     return callback(null, item);
-  });
+  })
+  .catch(err => callback(err, null))
+}
+
+function createRdt (payload, author, pre, callback) {
+
+  // find existing Rdt by nik & phone_number
+  Rdt.findOne({ nik: payload.nik })
+     .or({ phone_number: payload.phone_number })
+     .exec()
+     .then( (rdt) => { 
+        if (rdt) {
+          // if rdt found, update rdt
+          payload.author_district_code = author.code_district_city
+          payload.author_district_name = author.name_district_city
+        
+          rdt = Object.assign(rdt, payload);
+
+          return rdt.save();
+        } else {
+          // if rdt found, create new rdt
+          
+          // "code_test": "PST-100012000001"
+          // "code_tool_tester": "RDT-10012000001",
+          // "code_tool_tester": "PCR-10012000001",
+
+          let date = new Date().getFullYear().toString()
+          let code_test = "PTS-"
+              code_test += pre.code_dinkes.code
+              code_test += date.substr(2, 2)
+              code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
+              code_test += pre.count_rdt.count
+
+          let code_tool_tester
+          if (payload.tool_tester === "PCR") {
+            code_tool_tester = "PCR-"
+          }else{
+            code_tool_tester = "RDT-"
+          }
+          code_tool_tester += pre.code_dinkes.code
+          code_tool_tester += date.substr(2, 2)
+          code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
+          code_tool_tester += pre.count_rdt.count
+
+          let id_case
+          if (payload.final_result === "POSITIF") {
+                  id_case = "COVID-"
+                  id_case += pre.count_case.dinkes_code
+                  id_case += date.substr(2, 2)
+                  id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+                  id_case += pre.count_case.count_pasien
+          }
+
+          let code = {
+            code_test: code_test,
+            code_tool_tester: code_tool_tester,
+            id_case: id_case,
+            author_district_code: author.code_district_city,
+            author_district_name: author.name_district_city
+          }
+
+          let rdt = new Rdt(Object.assign(code, payload))
+          rdt = Object.assign(rdt,{author})
+
+          return rdt.save();
+        }
+    })
+    .then( (rdt) => {
+        // whatever happen always create new TestHistory
+        let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+
+        rdt_history.save((err, item) => {
+            if (err) return callback(err, null);
+            return callback(null, rdt);
+        });
+    })
+    .catch( (err) => callback(err, null));
 }
 
 function updateRdt (id, payload, author, callback) {
