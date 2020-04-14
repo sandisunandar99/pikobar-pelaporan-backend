@@ -150,7 +150,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Tanggal Lahir": birthDate,
        "Usia": this.age,
        "Jenis Kelamin": this.gender,
-       "Alamat Tempat Tinggal": `${this.address_district_name} ${this.address_street}, Kelurahan ${this.address_subdistrict_name}, Kecamatan ${this.address_subdistrict_name}`,
+       "Alamat Tempat Tinggal": `${this.address_district_name} ${this.address_street}, Kelurahan ${this.address_village_name}, Kecamatan ${this.address_subdistrict_name}`,
        "No Telp": this.phone_number,
        "Kewarganegaraan": this.nationality,
        "Negara":(this.nationality == "WNI" ? "Indonesia" : this.nationality_name),
