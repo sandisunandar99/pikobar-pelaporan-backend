@@ -35,8 +35,10 @@ function ListCase (query, user, callback) {
 
   var params = new Object();
 
-  if(query.address_district_code){
-    params.address_district_code = query.address_district_code;
+  if(user.role != "dinkeskota" || user.role != "faskes"){
+    if(query.address_district_code){
+      params.address_district_code = query.address_district_code;
+    }
   }
   if(query.address_village_code){
     params.address_village_code = query.address_village_code;
@@ -97,8 +99,10 @@ function listCaseExport (query, user, callback) {
   if(query.final_result){
     params.final_result = query.final_result;
   }
-  if(query.address_district_code){
-    params.address_district_code = query.address_district_code;
+  if(user.role != "dinkeskota" || user.role != "faskes"){
+    if(query.address_district_code){
+      params.address_district_code = query.address_district_code;
+    }
   }
   if(query.address_village_code){
     params.address_village_code = query.address_village_code;
@@ -136,6 +140,12 @@ function getCaseById (id, callback) {
 async function getCaseSummaryFinal (_query, user, callback) {
   let searching = Check.countByRole(user)
 
+  if(user.role != "dinkeskota" || user.role != "faskes"){
+    if(query.address_district_code){
+      searching.address_district_code = query.address_district_code;
+    }
+  }
+
   const searchingPositif = {status:'POSITIF', final_result : { $nin: [1,2] }}
   const searchingSembuh = {status:'POSITIF',final_result:1}
   const searchingMeninggal = {status:'POSITIF',final_result:2}
@@ -157,6 +167,11 @@ async function getCaseSummaryFinal (_query, user, callback) {
 
 function getCaseSummary (query, user, callback) {
   let searching = Check.countByRole(user,query)
+  if(user.role != "dinkeskota" || user.role != "faskes"){
+    if(query.address_district_code){
+      searching.address_district_code = query.address_district_code;
+    }
+  }
   var aggStatus = [
     { $match: { 
       $and: [  
