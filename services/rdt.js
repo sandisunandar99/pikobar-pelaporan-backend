@@ -9,29 +9,8 @@ const Case = mongoose.model('Case');
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId
+const Check = require('../helpers/rolecheck')
 const https = require('https')
-
-function listPerRole(user,params,search_params){
-  var result_search = ''
-  if(search_params == null){
-    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
-      result_search = Rdt.find(params).where('status').ne('deleted')
-    } else {
-      result_search = Rdt.find({
-        'author': new ObjectId(user._id)
-      }).where('status').ne('deleted')
-    }
-  }else{
-    if (user.role == 'dinkeskota' || user.role == 'dinkesprov' || user.role == 'superadmin') {
-      result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
-    } else {
-      result_search = Rdt.find({
-        'author': new ObjectId(user._id)
-      }).or(search_params).where('status').ne('deleted')
-    }
-  }
-  return result_search
-}
 
 function ListRdt (query, user, callback) {
 
@@ -49,7 +28,6 @@ function ListRdt (query, user, callback) {
     page: query.page,
     limit: query.limit,
     populate: ( 'author'),
-    address_district_code: query.address_district_code,
     sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels
@@ -60,28 +38,24 @@ function ListRdt (query, user, callback) {
   if(query.category){
     params.category = query.category;
   }
-
   if(query.final_result){
     params.final_result = query.final_result;
   }
-
   if(query.mechanism){
     params.mechanism = query.mechanism;
   }
-
   if(query.test_method){
     params.test_method = query.test_method;
   }
-
   if(query.test_address_district_code){
     params.test_address_district_code = query.test_address_district_code;
   }
-
   if (query.address_district_code) {
     params.address_district_code = query.address_district_code;
-    if(user.role == 'dinkeskota'){
-      params.author = new ObjectId(user._id);
-    }
+  }
+  if(user.role == "dinkeskota"){
+    params.author = new ObjectId(user._id);
+    params.author_district_code = user.code_district_city;
   }
 
   if(query.start_date && query.end_date){
@@ -99,9 +73,9 @@ function ListRdt (query, user, callback) {
       { mechanism: new RegExp(query.search, "i") },
       { test_method: new RegExp(query.search, "i") },
     ];
-    var result_search = listPerRole(user,params,search_params)
+    var result_search = Check.listByRole(user, params, search_params,Rdt,"status")
   } else {
-    var result_search = listPerRole(user,params,null)
+    var result_search = Check.listByRole(user,params,null,Rdt,"status")
   }
 
   Rdt.paginate(result_search, options).then(function (results) {

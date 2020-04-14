@@ -65,9 +65,9 @@ function ListCase (query, user, callback) {
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
-    var result_search = Check.listByRole(user, params, search_params,Case)
+    var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
-    var result_search = Check.listByRole(user, params, null,Case)
+    var result_search = Check.listByRole(user, params, null,Case,"delete_status")
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -130,8 +130,8 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-async function getCaseSummaryFinal (query, user, callback) {
-  let searching = Check.countByRole(user,query)
+async function getCaseSummaryFinal (_query, user, callback) {
+  let searching = Check.countByRole(user)
 
   const searchingPositif = {status:'POSITIF', final_result : { $nin: [1,2] }}
   const searchingSembuh = {status:'POSITIF',final_result:1}
