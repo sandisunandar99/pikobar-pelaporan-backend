@@ -26,9 +26,9 @@ const historyCheck = (history) => {
         }else{
             notes = ""
         }
-        a = (abroad == "" ? " " : " - ")
-        b = (city == "" ? " " : " - ")
-        c = (positive == "" ? " " : " - ")
+        if (abroad != "" ) a = ","
+        if (city != "" ) b = ","
+        if (positive != "" ) c = ","
     }
     return `${abroad}${a}${city}${b}${positive}${c}${notes}`
 }
