@@ -97,6 +97,9 @@ function listCaseExport (query, user, callback) {
   if(query.final_result){
     params.final_result = query.final_result;
   }
+  if(query.address_district_code){
+    params.address_district_code = query.address_district_code;
+  }
   if(query.address_village_code){
     params.address_village_code = query.address_village_code;
   }
