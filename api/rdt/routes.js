@@ -181,17 +181,17 @@ module.exports = (server) =>{
             handler: handlers.GetRdtFaskesSummaryByCities
         },
 
-         // Get RDT Test Faskes summary by cities
-         {
-             method: 'POST',
-             path: '/rdt/send-messages',
-             config: {
-                 auth: 'jwt',
-                 description: 'send message sms and whatapp ',
-                 tags: ['api', 'rdt']
-             },
-             handler: handlers.sendMessage
-         }
+        // send message sms and whatsapps
+        //  {
+        //      method: 'POST',
+        //      path: '/rdt/send-messages',
+        //      config: {
+        //          auth: 'jwt',
+        //          description: 'send message sms and whatapp ',
+        //          tags: ['api', 'rdt']
+        //      },
+        //      handler: handlers.sendMessage
+        //  }
 
     ]
 
