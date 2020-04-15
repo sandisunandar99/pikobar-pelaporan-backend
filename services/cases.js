@@ -138,7 +138,7 @@ function getCaseById (id, callback) {
 }
 
 function getIdCase (callback) {
-  Case.find().select('id_case name')
+  Case.find().select('id_case name').where('delete_status').ne('deleted')
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null));
 }
