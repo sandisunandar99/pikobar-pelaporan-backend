@@ -10,6 +10,15 @@ module.exports = (server) => {
     return authUser
   }
 
+  function constructUserMultipleResponse(user) {
+    let authUser = { 
+      status : 200,
+      message: true,
+      data : user 
+    }
+    return authUser
+  }
+
   return {
     /**
      * GET /api/user
@@ -42,6 +51,20 @@ module.exports = (server) => {
         if (!user) return reply().code(422)
 
         return reply(constructUserResponse(user))
+      })
+    },
+    /**
+     * POST /api/users/multiple
+     * @param {*} request
+     * @param {*} reply
+     */
+    async registerUserMultiple(request, reply) {
+      let payload = request.payload
+      server.methods.services.users.createUserMultiple(payload, (err, user) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        if (!user) return reply().code(422)
+
+        return reply(constructUserMultipleResponse(user))
       })
     },
     /**

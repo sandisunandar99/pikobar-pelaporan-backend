@@ -18,8 +18,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list of all histories',
                 tags: ['api', 'histories'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]
@@ -34,8 +32,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new histories',
                 tags: ['api', 'histories'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleCreate
                 ]
@@ -50,8 +46,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show a specific histories details',
                 tags: ['api', 'histories'],
-                // validate: inputValidations,
-                // response: outputValidations
                 pre: [
                     CheckRoleView
                 ]

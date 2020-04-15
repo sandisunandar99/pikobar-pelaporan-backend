@@ -6,20 +6,12 @@ const _ = require('lodash')
 //    Schema - Input Validations
 // --------------------------------------------------
 
-const SurveyCreatePayload = Joi.object().keys({
-    survey_name: Joi.string().required().description('Nama survey'),
-    category: Joi.string().description('Kategori survei'),
-    using_for: Joi.string().description('Pengguna survei privat/public'),
-    description: Joi.string().description('Penjelasan survei'),
-    introduction: Joi.string().description('Teks pembukaan survei'),
-    periode_start: Joi.date().required().description('Tanggal survei dimulai'),
-    periode_end: Joi.date().required().description('Tanggal survei berakhir'),
-    respondent_target: Joi.number().description('Target survei respondent'),
-    status: Joi.string().description('Status publikasi survei')
+const CaseCreatePayload = Joi.object().keys({
+
 })
 
-const SurveyUpdatePayload = Joi.object().keys({
-    survey_name: Joi.string().optional(),
+const CaseUpdatePayload = Joi.object().keys({
+    Case_name: Joi.string().optional(),
     category: Joi.string().optional(),
     using_for: Joi.string().optional(),
     description: Joi.string().optional(),
@@ -30,7 +22,7 @@ const SurveyUpdatePayload = Joi.object().keys({
     status: Joi.string().optional()
 })
 
-const SurveyParamsValidations = {
+const CaseParamsValidations = {
     params: {
         id: Joi.string().required()
     }
@@ -46,8 +38,14 @@ const CaseQueryValidations = {
         offset: Joi.number().integer().default(0).description('number of record to skip'),
         page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
         sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
-        address_district_code: Joi.string().empty('', null).default('').description('search data by survey name'),
-        search: Joi.string().empty('', null).default('').description('search data by survey name')
+        address_village_code: Joi.string().empty('', null).default('').description('search data by Keluarahan/Desa'),
+        address_subdistrict_code: Joi.string().empty('', null).default('').description('search data by Kecamatan'),
+        address_district_code: Joi.string().empty('', null).default('').description('search data by Case name'),
+        search: Joi.string().empty('', null).default('').description('search data by Case name'),
+        status: Joi.string().empty('', null).default('').description('search data by status'),
+        final_result: Joi.string().empty('', null).default('').description('search data by final_result'),
+        start_date: Joi.string().empty('', null).default('').description('search data by test date'),
+        end_date: Joi.string().empty('', null).default('').description('search data by test date')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -55,32 +53,32 @@ const CaseQueryValidations = {
 
 
 
-const SurveyCreatePayloadValidations = {
-    payload: SurveyCreatePayload,
+const CaseCreatePayloadValidations = {
+    payload: CaseCreatePayload,
     headers: HeadersPayLoad,
     options: validateOptions.options,
     failAction: validateOptions.failAction
 }
 
 
-const SurveyUpdatePayloadValidations = Object.assign({
-    payload: SurveyUpdatePayload,
+const CaseUpdatePayloadValidations = Object.assign({
+    payload: CaseUpdatePayload,
     headers: HeadersPayLoad,
     options: validateOptions.options,
     failAction: validateOptions.failAction
-}, SurveyParamsValidations)
+}, CaseParamsValidations)
 
 
-const SurveyDeletePayloadValidations = Object.assign({
+const CaseDeletePayloadValidations = Object.assign({
     headers: HeadersPayLoad,
     options: validateOptions.options,
     failAction: validateOptions.failAction
-}, SurveyParamsValidations)
+}, CaseParamsValidations)
 
 module.exports = {
-    SurveyParamsValidations,
+    CaseParamsValidations,
     CaseQueryValidations,
-    SurveyCreatePayloadValidations,
-    SurveyUpdatePayloadValidations,
-    SurveyDeletePayloadValidations
+    CaseCreatePayloadValidations,
+    CaseUpdatePayloadValidations,
+    CaseDeletePayloadValidations
 }

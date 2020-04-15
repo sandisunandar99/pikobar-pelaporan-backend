@@ -1,5 +1,7 @@
 const replyHelper = require('../helpers')
-
+const json2xls = require('json2xls');
+const moment = require('moment')
+const fs = require('fs');
 module.exports = (server) => {
     function constructCasesResponse(cases) {
         let jsonCases = {
@@ -46,7 +48,7 @@ module.exports = (server) => {
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructCasesResponse(result,request)
                 ).code(200)
             })
         },
@@ -61,7 +63,7 @@ module.exports = (server) => {
             server.methods.services.cases.getById(id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -77,7 +79,7 @@ module.exports = (server) => {
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructCasesResponse(districs)
+                        constructCasesResponse(districs, request)
                     ).code(200)
                 }
             )
@@ -94,7 +96,7 @@ module.exports = (server) => {
                 (err, districs) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
-                        constructCasesResponse(districs)
+                        constructCasesResponse(districs, request)
                     ).code(200)
                 }
             )
@@ -112,7 +114,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -127,7 +129,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -145,7 +147,7 @@ module.exports = (server) => {
                 (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(item)
+                    constructCasesResponse(item, request)
                 ).code(200)
             })
         },
@@ -163,7 +165,7 @@ module.exports = (server) => {
             server.methods.services.cases.update(id, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
-                    constructCasesResponse(result)
+                    constructCasesResponse(result, request)
                 ).code(200)
             })
         },
@@ -181,10 +183,32 @@ module.exports = (server) => {
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                      return reply(
-                         constructCasesResponse(item)
+                         constructCasesResponse(item, request)
                      ).code(202)
                 })
-        }
+        },
+        /**
+         * GET /api/cases
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCaseExport(request, reply){
+            let query = request.query
+            const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
+            server.methods.services.cases.listCaseExport(
+                query, 
+                request.auth.credentials.user,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                const jsonXls = json2xls(result);
+                const fileName = `Data-Kasus-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
+                fs.writeFileSync(fileName, jsonXls, 'binary');
+                const xlsx = fs.readFileSync(fileName)
+                reply(xlsx)
+                .header('Content-Disposition', 'attachment; filename='+fileName);
+                return fs.unlinkSync(fileName);
+            })
+        },
 
     }//end
 
