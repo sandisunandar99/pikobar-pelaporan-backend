@@ -14,6 +14,7 @@ const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
+const url = require('url')
 
 function ListRdt (query, user, callback) {
 
@@ -534,12 +535,112 @@ function seacrhFromInternal(query, callback) {
       .catch()
 }
 
-function sendMessages(query, callback) {
-  let urlEndpoint = process.env.SMS_URL_SERVER
-  let username = process.env.SMS_USERNAME
-  let key = process.env.SMS_KEY
-  let number ='085223407000'
-  let message = 'test 123'
+function sendMessagesSMS(query, callback) {
+  let params = {
+    username: process.env.SMS_USERNAME,
+    key: process.env.SMS_KEY,
+    number: '085223407000',
+    message: "Test \n kirim \n sms \n input RDT",
+  }
+
+
+  const requestUrl = url.parse(url.format({
+      protocol: 'https',
+      hostname: process.env.SMS_URL_SERVER,
+      pathname: '/sms/smsmasking.php',
+      query: params
+  }));
+
+
+  const req = https.request(url.format(requestUrl), (res) => {
+    console.log(`statusCode: ${res.statusCode}`)
+    let data =''
+
+    res.on('data', (d) => {
+      data += d
+    })
+
+     res.on('end', () => {
+      let result = data.split('|')    
+      let id_sms = result[1]
+      let status = result[0]
+      let send
+       if (status === '\n0'){
+          send = 'Terkirim'
+       } else if (status === '\n1') {
+        send = 'Username/key salah'
+       } else if (status === '\n2') {
+        send = 'Saldo Minus'
+       } else if (status === '\n3') {
+        send = 'Masa Aktif Sudah lewat '
+       } else if (status === '\n4') {
+        send = 'Penulisan nomor handphone salah'
+       } else if (status === '\n5') {
+       sends = 'Maksimum sms per nomor per menit'
+       } else if (status === '\n6') {
+        send = 'Format api salah'
+       } else if (status === '\n7')(
+        send = 'System Error'
+       )
+
+       return callback(null, {id_sms: id_sms, no_sms: params.number, status_sms: send})
+     });     
+
+  })
+
+  req.on('error', (error) => {
+    console.error(error)
+  })
+
+  req.end()
+
+}
+
+function sendMessagesWA(query, callback) {
+
+  let body = JSON.stringify({   
+      phone:6285223407000,
+      body:"test di bakcend"
+    })
+console.log(JSON.parse(body));
+
+  var options = {
+    hostname: process.env.WA_URL,
+    method: 'POST',
+    path: '/' + process.env.WA_USER + '/sendMessage?token=' + process.env.WA_TOKEN,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json'
+    }
+  };
+
+ 
+  const req = https.request(options, (res) => {
+    console.log(`statusCode: ${res.statusCode}`)
+    let data =''
+
+    res.on('data', (d) => {
+      data += d
+    })
+
+     res.on('end', () => {
+      let result = JSON.parse(data) 
+
+       return callback(null, {
+         id_wa: result.id,
+         no_wa: query.number,
+         status_wa: result.sent
+       })
+     });          
+
+  })
+
+  req.on('error', (error) => {
+    console.error(error)
+  })
+  
+  req.write(body)
+  req.end()
 
 }
 
@@ -619,8 +720,12 @@ module.exports = [
     method: seacrhFromInternal
   },
   {
-    name: 'services.rdt.sendMessages',
-    method: sendMessages
+    name: 'services.rdt.sendMessagesSMS',
+    method: sendMessagesSMS
+  },
+  {
+    name: 'services.rdt.sendMessagesWA',
+    method: sendMessagesWA
   },
 ];
 

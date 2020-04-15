@@ -227,7 +227,15 @@ module.exports = (server) => {
         async sendMessage(request, reply) {
             let query = request.query
 
-            server.methods.services.rdt.sendMessages(
+            // server.methods.services.rdt.sendMessagesSMS(
+            //     query,
+            //     (err, result) => {
+            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            //         return reply(
+            //             constructRdtResponse(result, request)
+            //         ).code(200)
+            //     })
+            server.methods.services.rdt.sendMessagesWA(
                 query,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
