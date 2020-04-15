@@ -8,8 +8,7 @@ const History = mongoose.model('History')
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
-
-const ObjectId = require('mongoose').Types.ObjectId
+const ObjectId = require('mongoose').Types.ObjectId; 
 const Check = require('../helpers/rolecheck')
 
 function ListCase (query, user, callback) {
@@ -33,7 +32,7 @@ function ListCase (query, user, callback) {
     customLabels: myCustomLabels
   };
 
-  var params = new Object();
+  var params = {}
 
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
@@ -70,6 +69,7 @@ function ListCase (query, user, callback) {
     var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
     var result_search = Check.listByRole(user, params, null,Case,"delete_status")
+
   }
 
   Case.paginate(result_search, options).then(function(results){
