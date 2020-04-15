@@ -42,6 +42,15 @@ module.exports = (server) => {
       },
       handler: handlers.registerUser
     },
+    {
+      method: 'POST',
+      path: '/users/multiple',
+      config: {
+        description: 'Add user Multiple',
+        tags: ['api', 'users']
+      },
+      handler: handlers.registerUserMultiple
+    },
     // Login
     {
       method: 'POST',

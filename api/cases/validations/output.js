@@ -14,77 +14,85 @@ const _ = require('lodash')
 //    Schema - Output Validations
 // --------------------------------------------------
 
-const SurveyJSON = Joi.object().keys({
-    id: Joi.object().description('survei id'),
-    author: Joi.object().keys({
-        id: Joi.object().description('user id'),
-        username: Joi.string().description('nama pembuat survei')
-    }),
-    survey_name: Joi.string().required().description('Nama survey'),
-    category: Joi.string().description('Kategori survei'),
-    using_for: Joi.string().description('Pengguna survei privat/public'),
-    description: Joi.string().description('Penjelasan survei'),
-    introduction: Joi.string().description('Teks pembukaan survei'),
-    periode_start: Joi.date().iso().required().description('Tanggal survei dimulai'),
-    periode_end: Joi.date().iso().required().description('Tanggal survei berakhir'),
-    respondent_target: Joi.number().description('Target survei respondent'),
-    respondent_input: Joi.number().description('Increment yang sudah isi survei'),
-    status: Joi.string().description('Status publikasi survei'),
-    createdAt: Joi.date().iso().description('Tanggal survei dibuat'),
-    updatedAt: Joi.date().iso().description('Tanggal survei terakhir di update')
+const CaseJSON = Joi.object().keys({
+    _id: Joi.object(),
+    id_case: Joi.string().allow('', null),
+    name: Joi.string().allow('', null),
+    age: Joi.number().allow('', null),
+    nik: Joi.string().allow('',null),
+    nationality: Joi.string().allow('', null),
+    nationality_name: Joi.string().allow('', null),
+    gender: Joi.string().allow('', null),
+    current_location_address: Joi.string().allow('', null),
+    address_district_name: Joi.string().allow('', null),
+    address_district_code: Joi.string().allow('', null),
+    phone_number: Joi.string().allow('', null),
+    stage: Joi.string().allow('', null),
+    status: Joi.string().allow('', null),
+    verified_status: Joi.string().allow('', null),
+    verified_comment: Joi.string().allow('',null),
+    final_result: Joi.string().allow('', null),
+    delete_status: Joi.string().allow('', null),
+    deletedAt: Joi.date().allow('', null),
+    author: Joi.object(),
+    last_history: Joi.object(),
+    is_test_masif: Joi.boolean().allow('',null)
 })
 
 
-const SingleSurveyOutputPayload = Joi.object().keys({ SurveyJSON })
+const SingleCaseOutputPayload = Joi.object().keys({ CaseJSON })
 
-const ListSurveyOutputPayload = Joi.object().keys({
+const ListCaseOutputPayload = Joi.object().keys({
     status: Joi.number().description('Code response'),
-    message: Joi.boolean().description('Message response'),
-    data: Joi.array().items(SurveyJSON),
-    _metaData: Joi.object().description('meta data')
+    message: Joi.string().description('Message response'),
+    data: Joi.object().keys({
+         cases: Joi.array().items(CaseJSON),
+        _meta: Joi.object().description('meta data')
+    }).allow(null,'')
 })
+
 
 
 // --------------------------------------------------
 //    Config - Output Validations
 // --------------------------------------------------
 
-const ListSurveyOutputValidationsConfig = {
+const ListCaseOutputValidationsConfig = {
     status: {
-        200: ListSurveyOutputPayload
+        200: ListCaseOutputPayload
     }
 }
 
-const SurveyOnPostOutputValidationsConfig = _.merge({}, ErrorsOnPostOutputValidations, {
+const CaseOnPostOutputValidationsConfig = _.merge({}, ErrorsOnPostOutputValidations, {
     status: {
-        200: SingleSurveyOutputPayload
+        200: SingleCaseOutputPayload
     }
 })
 
-const SurveyOnPutOutputValidationsConfig = _.merge({}, ErrorsOnPutOutputValidations, {
+const CaseOnPutOutputValidationsConfig = _.merge({}, ErrorsOnPutOutputValidations, {
     status: {
-        200: SingleSurveyOutputPayload
+        200: SingleCaseOutputPayload
     }
 })
 
-const SurveyOnDeleteOutputValidationsConfig = _.merge({}, ErrorsOnDeleteOutputValidations, {
+const CaseOnDeleteOutputValidationsConfig = _.merge({}, ErrorsOnDeleteOutputValidations, {
     status: {
         204: false
     }
 })
 
-const SurveyOnGetOutputValidationsConfig = _.merge({}, ErrorsOnGetOutputValidations, {
+const CaseOnGetOutputValidationsConfig = _.merge({}, ErrorsOnGetOutputValidations, {
     status: {
-        200: SingleSurveyOutputPayload
+        200: SingleCaseOutputPayload
     }
 })
 
 module.exports = {
-    ListSurveyOutputValidationsConfig,
-    ListSurveyOutputPayload,
-    SurveyOnPostOutputValidationsConfig,
-    SingleSurveyOutputPayload,
-    SurveyOnPutOutputValidationsConfig,
-    SurveyOnDeleteOutputValidationsConfig,
-    SurveyOnGetOutputValidationsConfig
+    ListCaseOutputValidationsConfig,
+    ListCaseOutputPayload,
+    CaseOnPostOutputValidationsConfig,
+    SingleCaseOutputPayload,
+    CaseOnPutOutputValidationsConfig,
+    CaseOnDeleteOutputValidationsConfig,
+    CaseOnGetOutputValidationsConfig
 }

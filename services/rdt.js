@@ -3,11 +3,17 @@ const mongoose = require('mongoose');
 require('../models/Rdt');
 const Rdt = mongoose.model('Rdt');
 
-require('../models/History')
-const History = mongoose.model('History')
+require('../models/Case')
+const Case = mongoose.model('Case');
+
+require('../models/RdtHistory')
+const RdtHistory = mongoose.model('RdtHistory');
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
+const ObjectId = require('mongoose').Types.ObjectId
+const Check = require('../helpers/rolecheck')
+const https = require('https')
 
 function ListRdt (query, user, callback) {
 
@@ -19,100 +25,128 @@ function ListRdt (query, user, callback) {
     meta: '_meta'
   };
 
+  const sorts = (query.sort ? JSON.parse(query.sort) : {_id:"desc"})
+
   const options = {
     page: query.page,
     limit: query.limit,
-    populate: (['last_history','author']),
-    address_district_code: query.address_district_code,
-    sort: { createdAt: query.sort },
+    populate: ( 'author'),
+    sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels
   };
 
   var params = new Object();
 
-  if(query.address_district_code){
-    params.address_district_code = query.address_district_code;
+  if(query.category){
+    params.category = query.category;
+  }
+  if(query.final_result){
+    params.final_result = query.final_result;
+  }
+  if(query.mechanism){
+    params.mechanism = query.mechanism;
+  }
+  if(query.test_method){
+    params.test_method = query.test_method;
+  }
+  if(query.test_address_district_code){
+    params.test_address_district_code = query.test_address_district_code;
+  }
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.address_district_code){
+      searching.address_district_code = query.address_district_code;
+    }
+  }
+  if(user.role == "dinkeskota"){
+    params.author = new ObjectId(user._id);
+    params.author_district_code = user.code_district_city;
   }
 
-  if (user.role == 'faskes') {
-    params.author = user._id;
+  if(query.start_date && query.end_date){
+    params.test_date = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    }
   }
 
-  if(query.search){
+  if (query.search) {
     var search_params = [
-      { code_rdt : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
+      { code_test: new RegExp(query.search, "i") },
+      { final_result: new RegExp(query.search, "i") },
+      { mechanism: new RegExp(query.search, "i") },
+      { test_method: new RegExp(query.search, "i") },
     ];
-
-    var result_search = Rdt.find(params).or(search_params).where('status').ne('deleted')
+    var result_search = Check.listByRole(user, params, search_params,Rdt,"status")
   } else {
-    var result_search = Rdt.find(params).where('status').ne('deleted')
+    var result_search = Check.listByRole(user,params,null,Rdt,"status")
   }
 
-  Rdt.paginate(result_search, options).then(function(results){
-      let res = {
-        rdt: results.itemsList.map(rdt => rdt.toJSONFor()),
-        _meta: results._meta
-      }
-      return callback(null, res)
+  Rdt.paginate(result_search, options).then(function (results) {
+    let res = {
+      rdt: results.itemsList.map(rdt => rdt.toJSONFor()),
+      _meta: results._meta
+    }
+    return callback(null, res)
   }).catch(err => callback(err, null))
 }
 
 function getRdtById (id, callback) {
   Rdt.findOne({_id: id})
     .populate('author')
-    .populate('last_history')
     .exec()
-    .then(rdt => callback (null, rdt))
+    .then(rdt => {
+        return callback(null, rdt)
+    })
     .catch(err => callback(err, null));
 }
 
-function getRdtSummary (query, callback) {
+function GetRdtSummaryByCities (query, callback) {
   var aggStatus = [
-    { $match: { status: { $ne: 'deleted' }} },
+    { $match: { tool_tester: 'RAPID TEST'} },
     {$group: {
-      _id: "$status",
+      _id: "$test_address_district_code",
       total: {$sum: 1}
     }}
   ];
 
-  if (query.address_district_code) {
-    var aggStatus = [
-      { $match: {
-      $and: [
-            { address_district_code: query.address_district_code },
-            { status: { $ne: 'deleted' }}
-          ]
-      }},
-      { $group: {
-        _id: "$status",
-        total: {$sum: 1}
-      }}
-    ];
-  }
+  Rdt.aggregate(aggStatus).exec().then(item => {
+      return callback(null, item)
+    })
+    .catch(err => callback(err, null))
+}
+
+async function GetRdtSummaryResultByCities (query, callback) {
+  var aggStatus = [
+    { $match: {
+      tool_tester : "RAPID TEST",
+      test_location_type : "RS",
+      author_district_code : query.city_code
+    }
+    },
+    {$group: {
+      _id: "$final_result",
+      total: {$sum: 1}
+    }}
+  ];
 
   let result =  {
-    'ODP':0,
-    'PDP':0,
     'POSITIF':0,
-    'KONTAKERAT' : 0,
-    'PROBABEL' : 0
+    'NEGATIF':0,
+    'INVALID':0
   }
 
   Rdt.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
-        if (item['_id'] == 'ODP') {
-          result.ODP = item['total']
-        }
-        if (item['_id'] == 'PDP') {
-          result.PDP = item['total']
-        }
         if (item['_id'] == 'POSITIF') {
           result.POSITIF = item['total']
         }
-        if (item['_id'] == 'KONTAKERAT') {
-          result.KONTAKERAT = item['total']
+        if (item['_id'] == 'NEGATIF') {
+          result.NEGATIF = item['total']
+        }
+        if (item['_id'] == 'INVALID') {
+          result.INVALID = item['total']
         }
       });
       return callback(null, result)
@@ -120,63 +154,395 @@ function getRdtSummary (query, callback) {
     .catch(err => callback(err, null))
 }
 
-function createRdt (payload, author, pre, callback) {
-  let item = new Rdt(payload);
-  item.created_by = author._id;
-  item.created_by_name = author.fullname;
-  item.updated_by = author._id;
-  item.updated_by_name = author.fullname;
-  item.code_rdt = pre.count_rdt;
+async function GetRdtSummaryResultListByCities (query, callback) {
+  var aggStatus = [
+  { "$facet": {
+    "total_used": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", author_district_code : query.city_code}  },
+        { $group : { _id : "$test_location", total_used: { $sum: 1 } }}
+    ],
+    // positif, negatif, invalid
+    "total_positif": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "POSITIF", author_district_code : query.city_code}  },
+        { $group : { _id : "$test_location", total_positif: { $sum: 1 } }}
+    ],
+    "total_negatif": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "NEGATIF", author_district_code : query.city_code}  },
+        { $group : { _id : "$test_location", total_negatif: { $sum: 1 } }}
+    ],
+     "total_invalid": [
+        { $match: {tool_tester : "RAPID TEST", test_location_type : "RS", final_result : "INVALID", author_district_code : query.city_code}  },
+        { $group : { _id : "$test_location", total_invalid: { $sum: 1 } }}
+    ],
+  }},
+  { "$project": {
+    "total_used_list": "$total_used",
+    "total_positif_list": "$total_positif",
+    "total_negatif_list": "$total_negatif",
+    "total_invalid_list": "$total_invalid",
+  }}
+];
 
-  //console.log("author",author);
+  Rdt.aggregate(aggStatus).exec().then(item => {
+      return callback(null, item)
+    })
+    .catch(err => callback(err, null))
+}
 
-  item.save((err, item) => {
-    if (err) return callback(err, null);
+function GetRdtFaskesSummaryByCities (query, callback) {
+  var aggStatus = [
+    { $match: {
+      tool_tester: 'RAPID TEST',
+      author_district_code: query.district_code,
+    } },
+    {$group: {
+      _id: "$test_location",
+      total: {$sum: 1}
+    }}
+  ];
+
+  Rdt.aggregate(aggStatus).exec().then(item => {
+      return callback(null, item)
+    })
+    .catch(err => callback(err, null))
+}
+
+function GetRdtHistoryByRdtId (query, callback) {
+  Rdt.find({ rdt: param.id}).exec().then(item => {
     return callback(null, item);
-  });
-}
-
-function updateRdt (id, payload, callback) {
-  Rdt.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
-  .then(result => {
-    return callback(null, result);
-  }).catch(err => {
-    return callback(null, err);
   })
+  .catch(err => callback(err, null))
 }
 
-function getCountRdtCode(callback) {
-  /* Get last number of rdt_code */
-  Rdt.find({})
-      .sort({code_rdt: -1})
+function createRdt (payload, author, pre, callback) {
+
+  // find existing Rdt by nik & phone_number
+  Rdt.findOne({ nik: payload.nik })
+     .or({ phone_number: payload.phone_number })
+     .exec()
+     .then( (rdt) => { 
+        if (rdt) {
+          // if rdt found, update rdt
+          payload.author_district_code = author.code_district_city
+          payload.author_district_name = author.name_district_city
+        
+          rdt = Object.assign(rdt, payload);
+
+          return rdt.save();
+        } else {
+          // if rdt found, create new rdt
+          
+          // "code_test": "PST-100012000001"
+          // "code_tool_tester": "RDT-10012000001",
+          // "code_tool_tester": "PCR-10012000001",
+
+          let date = new Date().getFullYear().toString()
+          let code_test = "PTS-"
+              code_test += pre.code_dinkes.code
+              code_test += date.substr(2, 2)
+              code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
+              code_test += pre.count_rdt.count
+
+          let code_tool_tester
+          if (payload.tool_tester === "PCR") {
+            code_tool_tester = "PCR-"
+          }else{
+            code_tool_tester = "RDT-"
+          }
+          code_tool_tester += pre.code_dinkes.code
+          code_tool_tester += date.substr(2, 2)
+          code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
+          code_tool_tester += pre.count_rdt.count
+
+          let id_case
+          if (payload.final_result === "POSITIF") {
+                  id_case = "COVID-"
+                  id_case += pre.count_case.dinkes_code
+                  id_case += date.substr(2, 2)
+                  id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+                  id_case += pre.count_case.count_pasien
+          }
+
+          let code = {
+            code_test: code_test,
+            code_tool_tester: code_tool_tester,
+            id_case: id_case,
+            author_district_code: author.code_district_city,
+            author_district_name: author.name_district_city
+          }
+
+          let rdt = new Rdt(Object.assign(code, payload))
+          rdt = Object.assign(rdt,{author})
+
+          return rdt.save();
+        }
+    })
+    .then( (rdt) => {
+        // whatever happen always create new TestHistory
+        let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+
+        rdt_history.save((err, item) => {
+            if (err) return callback(err, null);
+            return callback(null, rdt);
+        });
+    })
+    .catch( (err) => callback(err, null));
+}
+
+function updateRdt (id, payload, author, callback) {
+  // update Rdt
+  payload.author_district_code = author.code_district_city
+  payload.author_district_name = author.name_district_city
+  
+  Rdt.findOne({ _id: id}).then(rdt_item => {
+     rdt_item = Object.assign(rdt_item, payload);
+
+     rdt_item.save((err, res) => {
+       if (err) return callback(err, null);
+       return callback(null, rdt_item);
+     });
+  }).catch(err => callback(err, null))
+}
+
+function getCountRdtCode(code,callback) {
+    DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                    Rdt.find({ address_district_code: code})
+                      .sort({code_test: -1})
+                      .exec()
+                      .then(res =>{
+
+                          let count = 1;
+                          if (res.length > 0){
+                            // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
+                            let str = res[0].code_test
+                            count = (Number(str.substring(10)) + 1)
+                          }
+
+                          let result = {
+                            prov_city_code: code,
+                            dinkes_code: dinkes.dinkes_kota_kode,
+                            count: count
+                          }
+                        return callback(null, result)
+                      }).catch(err => callback(err, null))
+              })
+
+
+}
+
+
+function getCountByDistrict(code, callback) {
+  /* Get last number of current district id case order */
+  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                Case.find({ address_district_code: code})
+                    .sort({id_case: -1})
+                    .exec()
+                    .then(res =>{
+                        let count = 1;
+                        if (res.length > 0)
+                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
+                          count = (Number(res[0].id_case.substring(12)));
+                        let result = {
+                          prov_city_code: code,
+                          dinkes_code: dinkes.dinkes_kota_kode,
+                          count_pasien: count
+                        }
+                      return callback(null, result)
+                    }).catch(err => callback(err, null))
+              })
+}
+
+
+function softDeleteRdt(rdt, cases,  deletedBy, callback) {
+    let date = new Date()
+   
+    if (cases !== null) {
+      let dates_case = {
+        delete_status: 'deleted',
+        deletedAt: date.toISOString()
+      }
+      let param_case = Object.assign({deletedBy}, dates_case)
+        cases = Object.assign(cases, param_case)
+        cases.save((err, item) => {
+          if (err) return callback(err, null)
+        })
+    }
+
+    let dates = {
+      status: 'deleted',
+      deletedAt: date.toISOString()
+    }
+    let param = Object.assign({deletedBy}, dates)
+    rdt = Object.assign(rdt, param)
+    rdt.save((err, item) => {
+      if (err) return callback(err, null)
+      return callback(null, item)
+    })
+}
+
+function getCodeDinkes(code, callback) {
+  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                 let result = {
+                   prov_city_code: code,
+                   code: dinkes.dinkes_kota_kode,
+                 }
+                 return callback(null, result)
+              })
+}
+
+
+function getCaseByidcase(idcase,callback) {
+
+  let param = {
+    id_case: new RegExp(idcase, "i"),
+    is_test_masif: true
+  }
+
+  Case.findOne(param)
+      .exec()
+      .then(cases => { 
+          if (cases !== null) {
+            return callback(null, cases)
+          }else{
+            return callback(null, null)
+          }
+      })
+      .catch(err => callback(err, null))
+
+}
+
+function FormSelectIdCase(query, user, data_pendaftaran, callback) {
+
+  let params = new Object();
+
+  if (query.address_district_code) {
+    params.address_district_code = query.address_district_code;
+    params.author = new ObjectId(user._id);
+  }
+
+  Case.find(params)
+    .and({
+      status: 'ODP'
+    })
+    .where('delete_status')
+    .ne('deleted')
+    .or([{name: new RegExp(query.search, "i")},
+          {nik: new RegExp(query.search , "i")},
+          {phone_number: new RegExp(query.search , "i")}])
+    .exec()
+    .then(x => {
+      let res = x.map(res => res.JSONFormCase())
+      let concat = res.concat(data_pendaftaran)
+      return callback(null, concat)
+    })
+    .catch(err => callback(err, null))
+}
+
+function getDatafromExternal(address_district_code, search, callback) {
+
+   https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+     let data = '';
+     // A chunk of data has been recieved.
+     res.on('data', (chunk) => {
+       data += chunk;
+     });
+
+
+     res.on('end', () => {
+       let jsonData = JSON.parse(data)
+       let result = jsonData.data.content
+
+       let outputData = []
+       result.forEach(val => {
+         outputData.push({
+           display: val.name + "/" + val.nik + "/" + val.phone_number,
+           id_case: null,
+           id: null
+         })
+       });
+
+       return callback(null, outputData)
+     });
+
+   }).on("error", (err) => {
+     console.log("Error: " + err.message);
+   });
+}
+
+function FormSelectIdCaseDetail(search_internal, search_external, user, callback) {
+    if (search_internal === null || search_internal=== undefined) {
+      return callback(null, search_external)
+    }else{
+      return callback(null, search_internal.JSONSeacrhOutput())
+    }
+}
+
+function seacrhFromExternal(address_district_code, search, callback) {
+
+    https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' +search.toLowerCase()+ '&address_district_code=' +address_district_code, (res) => {
+      let data = '';
+      // A chunk of data has been recieved.
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        let jsonData = JSON.parse(data)
+        let result = jsonData.data.content
+
+        let outputData = {}
+        result.forEach(val => {
+          outputData = val
+        });
+        let concate ={
+          id: null,
+          id_case: null,
+        }
+        let res = Object.assign(outputData, concate)
+        return callback(null, res)
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });
+}
+
+function seacrhFromInternal(query, callback) {
+
+  Case.findOne({address_district_code:query.address_district_code})
+       .and({
+        status: 'ODP'
+      })
+      .where('delete_status')
+      .ne('deleted')
+      .or([
+        {name: query.search},
+        {nik: query.search},
+        {phone_number: query.search}
+      ])
       .exec()
       .then(res =>{
-          let count = 1;
-          if (res.length > 0)
-            // ambil 4 karakter terakhir yg merupakan nomor urut dari id_rdt
-            count = (Number(res[0].code_rdt) + 1);
-          let result = {
-            count_rdt: count
-          }
-        return callback(null, result)
-      }).catch(err => callback(err, null))
+          // let result = res.JSONSeacrhOutput()
+          return callback(null, res)
+      })
+      .catch()
 }
 
+function sendMessages(query, callback) {
+  let urlEndpoint = process.env.SMS_URL_SERVER
+  let username = process.env.SMS_USERNAME
+  let key = process.env.SMS_KEY
+  let number ='085223407000'
+  let message = 'test 123'
 
-function softDeleteRdt(rdt,deletedBy, payload, callback) {
-   let date = new Date()
-   let dates = {
-     status: 'deleted',
-     deletedAt: date.toISOString()
-   }
-   let param = Object.assign({deletedBy}, dates)
-
-   rdt = Object.assign(rdt, param)
-   rdt.save((err, item) => {
-     if (err) return callback(err, null)
-     return callback(null, item)
-   })
 }
+
 
 
 module.exports = [
@@ -205,9 +571,56 @@ module.exports = [
     method: getCountRdtCode
   },
   {
-    name: 'services.rdt.getSummary',
-    method: getRdtSummary
+    name: 'services.rdt.GetRdtSummaryByCities',
+    method: GetRdtSummaryByCities
   },
-
+  {
+    name: 'services.rdt.GetRdtSummaryResultByCities',
+    method: GetRdtSummaryResultByCities
+  },
+  {
+    name: 'services.rdt.GetRdtSummaryResultListByCities',
+    method: GetRdtSummaryResultListByCities
+  },
+  {
+    name: 'services.rdt.GetRdtFaskesSummaryByCities',
+    method: GetRdtFaskesSummaryByCities
+  },
+  {
+    name: 'services.rdt.getCodeDinkes',
+    method: getCodeDinkes
+  },
+  {
+    name: 'services.rdt.getCountByDistrict',
+    method: getCountByDistrict
+  },
+  {
+    name: 'services.rdt.getCaseByidcase',
+    method: getCaseByidcase
+  },
+  {
+    name: 'services.rdt.FormSelectIdCase',
+    method: FormSelectIdCase
+  },
+  {
+    name: 'services.rdt.getDatafromExternal',
+    method: getDatafromExternal
+  },
+  {
+    name: 'services.rdt.FormSelectIdCaseDetail',
+    method: FormSelectIdCaseDetail
+  },
+  {
+    name: 'services.rdt.seacrhFromExternal',
+    method: seacrhFromExternal
+  },
+  {
+    name: 'services.rdt.seacrhFromInternal',
+    method: seacrhFromInternal
+  },
+  {
+    name: 'services.rdt.sendMessages',
+    method: sendMessages
+  },
 ];
 

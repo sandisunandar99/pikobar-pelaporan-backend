@@ -8,24 +8,26 @@ const register = (server, options, next) => {
     if (err) console.log(err);
 
     require('./User')
-    // require('./Province')
+    require('./Category')
     require('./DistrictCity')
     require('./SubDistrict')
     require('./Village')
     require('./Case')
     require('./History')
     require('./Occupation')
+    require('./RdtHistory')
 
     server.app.db = {
       link: db.db,
       User: db.model('User'),
-      // Province: db.model('Province'),
+      Category: db.model('Category'),
       DistrictCity: db.model('Districtcity'),
       SubDistrict: db.model('SubDistrict'),
       Village: db.model('Village'),
       Case: db.model('Case'),
       History: db.model('History'),
-      Occupation: db.model('Occupation')
+      Occupation: db.model('Occupation'),
+      RdtHistory: db.model('RdtHistory'),
     };
 
     return next();

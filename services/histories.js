@@ -96,6 +96,7 @@ function createHistoryIfChanged (payload, callback) {
               status: payload.status,
               stage: payload.stage,
               final_result: payload.final_result,
+              is_test_masif: payload.is_test_masif,
               last_history: item._id
           }
           

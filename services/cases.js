@@ -9,6 +9,7 @@ const History = mongoose.model('History')
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
+const Check = require('../helpers/rolecheck')
 
 function ListCase (query, user, callback) {
 
@@ -20,62 +21,111 @@ function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
+
   const options = {
     page: query.page,
     limit: query.limit,
     populate: (['last_history','author']),
-    address_district_code: query.address_district_code,
-    sort: { createdAt: query.sort },
+    sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels
   };
 
   var params = {}
 
-  if(query.address_district_code){
-    params.address_district_code = query.address_district_code;
-    if (user.role == 'dinkeskota') {
-      params.author = new ObjectId(user._id);
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.address_district_code){
+      params.address_district_code = query.address_district_code;
     }
   }
-
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
+  if(query.start_date && query.end_date){
+    params.createdAt = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    }
+  }
+  if(user.role == 'dinkeskota'){
+    params.author = new ObjectId(user._id);
+    params.author_district_code = user.code_district_city;
+  }
+  if(query.status){
+    params.status = query.status;
+  }
+  if(query.final_result){
+    params.final_result = query.final_result;
+  }
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
-
-    if (user.role == 'dinkeskota') {
-      var result_search = Case.find(params).or(search_params).where('delete_status').ne('deleted')
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var result_search = Case.find().or(search_params).where('delete_status').ne('deleted')
-    }else{
-      var result_search = Case.find({'author':user._id}).or(search_params).where('delete_status').ne('deleted')
-    }
+    var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
-    if (user.role == 'dinkeskota') {
-      var result_search = Case.find(params).where('delete_status').ne('deleted')
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var result_search = Case.find().where('delete_status').ne('deleted')
-    }else{
-      var result_search = Case.find({'author':user._id}).where('delete_status').ne('deleted')
-    }
+    var result_search = Check.listByRole(user, params, null,Case,"delete_status")
+
   }
 
   Case.paginate(result_search, options).then(function(results){
-    // if (user.role == 'dinkeskota') {
-    //   var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-    //   var resultCaseFilter = resultCase.filter(cs => cs.author.code_district_city == user.code_district_city)
-    // }else{
-    //   var resultCase = results.itemsList.map(cases => cases.toJSONFor())
-    //   var resultCaseFilter = resultCase
-    // }
       let res = {
         cases: results.itemsList.map(cases => cases.toJSONFor()),
         _meta: results._meta
       }
       return callback(null, res)
   }).catch(err => callback(err, null))
+}
+
+function listCaseExport (query, user, callback) {
+  const params = {}
+  
+  if(query.start_date && query.end_date){
+    params.createdAt = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    }
+  }
+  
+  Check.exportByRole(params,user,query)
+
+  if(query.status){
+    params.status = query.status;
+  }
+  if(query.final_result){
+    params.final_result = query.final_result;
+  }
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.address_district_code){
+      params.address_district_code = query.address_district_code;
+    }
+  }
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
+  if(query.search){
+    var search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+    var search = search_params
+  } else {
+    var search = {}
+  }
+  Case.find(params)
+    .where('delete_status').ne('deleted')
+    .or(search)
+    .populate('author').populate('last_history')
+    .exec()
+    .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
+    .catch(err => callback(err, null));
 }
 
 function getCaseById (id, callback) {
@@ -88,90 +138,53 @@ function getCaseById (id, callback) {
 }
 
 async function getCaseSummaryFinal (query, user, callback) {
-  var aggStatus = [
-    { $match: { delete_status: { $ne: 'deleted' }} },
-    {$group: {
-      _id: "$final_result",
-      total: {$sum: 1}
-    }}
-  ];
+  let searching = Check.countByRole(user)
 
-  if (query.address_district_code) {
-    if (user.role == 'dinkeskota') {
-      var searching = { author: new ObjectId(user._id), address_district_code:query.address_district_code }
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var searching = {}
-    }else{
-      var searching = { author:new ObjectId(user._id) }
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.address_district_code){
+      searching.address_district_code = query.address_district_code;
     }
-    var aggStatus = [
-      { $match: { 
-      $and: [ 
-            searching, 
-            { delete_status: { $ne: 'deleted' }}
-          ]
-      }},
-      { $group: {
-        _id: "$final_result",
-        total: {$sum: 1}
-      }}
-    ];
   }
 
+  const searchingPositif = {status:'POSITIF', final_result : { $nin: [1,2] }}
+  const searchingSembuh = {status:'POSITIF',final_result:1}
+  const searchingMeninggal = {status:'POSITIF',final_result:2}
   
-  let result =  {
-    'NEGATIF':0, 
-    'SEMBUH':0, 
-    'MENINGGAL':0
+  try {
+    const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const result =  {
+      'SEMBUH':sembuh, 
+      'MENINGGAL':meninggal,
+      'POSITIF':positif
+    }
+    callback(null,result)
+  } catch (error) {
+    callback(error, null)
   }
-
-    Case.aggregate(aggStatus).exec().then(item => {
-      item.forEach(function(item){
-        if (item['_id'] == '0') {
-          result.NEGATIF = item['total']
-        }
-        if (item['_id'] == '1') {
-          result.SEMBUH = item['total']
-        }
-        if (item['_id'] == '2') {
-          result.MENINGGAL = item['total']
-        }
-      });
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
 }
 
 function getCaseSummary (query, user, callback) {
+  let searching = Check.countByRole(user,query)
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.address_district_code){
+      searching.address_district_code = query.address_district_code;
+    }
+  }
+  
   var aggStatus = [
-    { $match: { delete_status: { $ne: 'deleted' }} },
+    { $match: { 
+      $and: [  
+            searching,
+            { delete_status: { $ne: 'deleted' }}
+          ]
+    }},
     {$group: {
       _id: "$status",
       total: {$sum: 1}
     }}
   ];
-
-  if (query.address_district_code) {
-    if (user.role == 'dinkeskota') {
-      var searching = { author: new ObjectId(user._id), address_district_code:query.address_district_code }
-    }else if(user.role == 'dinkesprov' || user.role == 'superadmin'){
-      var searching = {}
-    }else{
-      var searching = { author:new ObjectId(user._id) }
-    }
-    var aggStatus = [
-      { $match: { 
-      $and: [ 
-            searching, 
-            { delete_status: { $ne: 'deleted' }}
-          ]
-      }},
-      { $group: {
-        _id: "$status",
-        total: {$sum: 1}
-      }}
-    ];
-  }
 
   let result =  {
     'ODP':0, 
@@ -221,13 +234,13 @@ function createCase (raw_payload, author, pre, callback) {
       id_case += "0".repeat(4 - pre.count_pasien.toString().length)
       id_case += pre.count_pasien
 
-  let inset_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
-      inset_id_case = Object.assign(raw_payload, {id_case})
+  let insert_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
+      insert_id_case = Object.assign(raw_payload, {id_case})
+  
+  insert_id_case.author_district_code = author.code_district_city
+  insert_id_case.author_district_name = author.name_district_city
 
-  inset_id_case.author_district_code = author.code_district_city
-  inset_id_case.author_district_name = author.name_district_city
- 
-  let item = new Case(Object.assign(inset_id_case, {author}))
+  let item = new Case(Object.assign(insert_id_case, {author}))
 
   item.save().then(x => { // step 1 : create dan save case baru
     let c = {case: x._id}
@@ -251,7 +264,11 @@ function createCase (raw_payload, author, pre, callback) {
    }).catch(err => callback(err, null))
 }
 
-function updateCase (id, payload, callback) {
+function updateCase (id, author, payload, callback) {
+
+  payload.author_district_code = author.code_district_city
+  payload.author_district_name = author.name_district_city
+
   Case.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
   .then(result => {
     return callback(null, result);
@@ -374,6 +391,10 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
+  },
+  {
+    name: 'services.cases.listCaseExport',
+    method: listCaseExport
   }
 ];
 
