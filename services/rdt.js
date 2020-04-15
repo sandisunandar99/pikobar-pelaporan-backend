@@ -284,6 +284,10 @@ function createRdt (payload, author, pre, callback) {
 
         rdt_history.save((err, item) => {
             if (err) return callback(err, null);
+            
+            sendMessagesSMS(rdt)
+            sendMessagesWA(rdt)
+
             return callback(null, rdt);
         });
     })
@@ -535,11 +539,21 @@ function seacrhFromInternal(query, callback) {
       .catch()
 }
 
-function sendMessagesSMS(query, callback) {
+function sendMessagesSMS(rdt) {
+  // console.log(rdt.nik);
+  // console.log(rdt.name);
+  // console.log(rdt.phone_number);
+  // console.log(rdt.final_result);
+  // console.log(rdt.tool_tester);
+  // console.log(rdt.test_location);
+  // console.log(rdt.test_date);
+  // console.log(rdt.test_method);
+  
   let params = {
     username: process.env.SMS_USERNAME,
     key: process.env.SMS_KEY,
-    number: '085223407000',
+    number: '6281223953113',
+    // number: '6285223407000',
     message: "Test \n kirim \n sms \n input RDT",
   }
 
@@ -582,8 +596,14 @@ function sendMessagesSMS(query, callback) {
        } else if (status === '\n7')(
         send = 'System Error'
        )
+      
+       return (console.log({
+         id_sms: id_sms,
+         no_sms: params.number,
+         status_sms: send
+       }))
 
-       return callback(null, {id_sms: id_sms, no_sms: params.number, status_sms: send})
+      //  return callback(null, {id_sms: id_sms, no_sms: params.number, status_sms: send})
      });     
 
   })
@@ -596,13 +616,32 @@ function sendMessagesSMS(query, callback) {
 
 }
 
-function sendMessagesWA(query, callback) {
+function sendMessagesWA(rdt) {
+  // console.log(rdt.nik);
+  // console.log(rdt.name);
+  // console.log(rdt.phone_number);
+  // console.log(rdt.final_result);
+  // console.log(rdt.tool_tester);
+  // console.log(rdt.test_location);
+  // console.log(rdt.test_date);
+  // console.log(rdt.test_method);
+
+  let hp = rdt.phone_number
+  let substr = hp.substring(0,1)
+  let substr_blk = hp.substring(1)
+
+  let phone
+  if (substr === '0'){
+    phone = parseInt('62'+substr_blk)
+  }else{
+    phone = hp
+  }
 
   let body = JSON.stringify({   
-      phone:6285223407000,
-      body:"test di bakcend"
-    })
-console.log(JSON.parse(body));
+      // phone:6285223407000,
+      phone:6281223953113,
+      body:"test \nkirim Wa \ninput RTD"
+  })
 
   var options = {
     hostname: process.env.WA_URL,
@@ -626,11 +665,17 @@ console.log(JSON.parse(body));
      res.on('end', () => {
       let result = JSON.parse(data) 
 
-       return callback(null, {
-         id_wa: result.id,
-         no_wa: query.number,
-         status_wa: result.sent
-       })
+      return (console.log({
+                 id_wa: result.id,
+                 no_wa: 085223407000,
+                 status_wa: result.sent
+               }))
+
+      //  return callback(null, {
+      //    id_wa: result.id,
+      //    no_wa: query.number,
+      //    status_wa: result.sent
+      //  })
      });          
 
   })
