@@ -210,6 +210,25 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * POST /api/cases-import
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ImportCases(request, reply){
+            let payload = request.payload
+            server.methods.services.cases.ImportCases(
+                payload,
+                request.auth.credentials.user,
+                request.pre.data_sheet,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result,request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }
