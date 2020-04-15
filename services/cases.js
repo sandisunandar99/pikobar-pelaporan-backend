@@ -337,6 +337,101 @@ function getCountByDistrict(code, callback) {
               })
 }
 
+async function importCases (raw_payload, author, pre, callback) {
+
+  const dataSheet = pre
+  const mongoose = require('mongoose')
+
+  let savedCases = []
+
+  let promise = Promise.resolve()
+
+  const session = await mongoose.startSession()
+
+  session.startTransaction()
+
+  dataSheet.forEach((item) => {
+
+    promise = promise.then(async () => {
+
+      const code = item.address_district_code
+      const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+      const districtCases = await Case.find({ address_district_code: code}).sort({id_case: -1})
+
+      let count = 1
+      let casePayload = {}
+
+      if (districtCases.length > 0) {
+        count = (Number(districtCases[0].id_case.substring(12)) + 1)
+      }
+
+      let district = {
+        prov_city_code: code,
+        dinkes_code: dinkes.dinkes_kota_kode,
+        count_pasien: count
+      }
+
+      let verified = {
+        verified_status: 'pending'
+      }
+
+      if (author.role === "dinkeskota") {
+        verified = {
+          verified_status: 'verified'
+        }
+      }
+
+      // create case
+      let date = new Date().getFullYear().toString()
+      let id_case = "covid-"
+      id_case += district.dinkes_code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(4 - district.count_pasien.toString().length)
+      id_case += district.count_pasien
+
+      casePayload = Object.assign(item, verified)
+      casePayload = Object.assign(item, {id_case})
+
+      casePayload.author_district_code = author.code_district_city
+      casePayload.author_district_name = author.name_district_city
+
+      casePayload = new Case(Object.assign(casePayload, {author}))
+
+      let savedCase = await casePayload.save()
+
+      let historyPayload = { case: savedCase._id }
+
+      if (item.current_hospital_id == ""){
+        item.current_hospital_id = null
+      }
+
+      if (item.first_symptom_date == ""){
+        item.first_symptom_date = Date.now()
+      }
+
+      let history = new History(Object.assign(item, historyPayload))
+
+      let savedHistory = await history.save()
+
+      let last_history = { last_history: savedHistory._id }
+      savedCase = Object.assign(savedCase, last_history)
+      savedCase = await savedCase.save()
+
+      savedCases.push(savedCase)
+  
+      return new Promise(function (resolve) {
+        resolve(savedCase)
+      })
+    })
+  })
+
+  promise.then(() => {
+      session.abortTransaction()
+      return callback(null, savedCases)
+  }).finally(() => {
+    session.endSession()
+  })
+}
 
 function softDeleteCase(cases,deletedBy, payload, callback) {
    let date = new Date()
@@ -395,6 +490,10 @@ module.exports = [
   {
     name: 'services.cases.listCaseExport',
     method: listCaseExport
+  },
+  {
+    name: 'services.cases.ImportCases',
+    method: importCases
   }
 ];
 
