@@ -639,7 +639,7 @@ function sendMessagesWA(rdt) {
 
   let body = JSON.stringify({   
       // phone:6285223407000,
-      phone:6281223953113,
+      phone: 6281223953113,
       body:"test \nkirim Wa \ninput RTD"
   })
 
@@ -667,7 +667,7 @@ function sendMessagesWA(rdt) {
 
       return (console.log({
                  id_wa: result.id,
-                 no_wa: 085223407000,
+                 no_wa: 6281223953113,
                  status_wa: result.sent
                }))
 
