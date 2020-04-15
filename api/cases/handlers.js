@@ -209,7 +209,6 @@ module.exports = (server) => {
                 return fs.unlinkSync(fileName);
             })
         },
-
         /**
          * POST /api/cases-import
          * @param {*} request
@@ -221,6 +220,20 @@ module.exports = (server) => {
                 payload,
                 request.auth.credentials.user,
                 request.pre.data_sheet,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result,request)
+                ).code(200)
+            })
+        },
+        /**
+         * GET /api/cases-listid
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetIdCase(request, reply){
+            server.methods.services.cases.getIdCase(
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
