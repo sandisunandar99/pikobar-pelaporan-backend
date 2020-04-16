@@ -143,7 +143,7 @@ function getCaseById (id, callback) {
 function getIdCase (query,callback) {
   const params = {}
   if(query.name_case_related){
-    params.name_case_related = query.name_case_related;
+    params.name = query.name_case_related;
   }
   Case.find(params).select('id_case name').where('delete_status').ne('deleted')
     .then(cases => callback (null, cases))
