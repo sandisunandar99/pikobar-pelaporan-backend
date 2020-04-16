@@ -143,9 +143,9 @@ function getCaseById (id, callback) {
 function getIdCase (query,callback) {
   const params = {}
   if(query.name_case_related){
-    params.name_case_related = query.name_case_related;
+    params.name = new RegExp(query.name_case_related, "i");
   }
-  Case.find(params).select('id_case name').where('delete_status').ne('deleted')
+  Case.find(params).select('id_case name').where('delete_status').ne('deleted').exec()
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null));
 }

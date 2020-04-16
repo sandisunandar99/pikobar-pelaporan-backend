@@ -71,9 +71,15 @@ const caseSheetExtraction = async (request) => {
         name: dt[25].split('-')[1] || null
       }
 
+      let caseRelated = {
+        code: dt[1].split('-')[0] || null,
+        name: dt[1].split('-')[1] || null
+      }
+
       let obj = {
         id_case_national: dt[0],
-        id_case_related: dt[1],
+        id_case_related: caseRelated.code,
+        name_case_related: caseRelated.name,
         name: dt[3],
         nik: dt[2], //todo
         birth_date: dt[4],
