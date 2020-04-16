@@ -184,7 +184,9 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new cases',
                 tags: ['api', 'cases'],
+                validate: inputValidations.CaseImportPayloadValidations,
                 payload: {
+                    maxBytes: 1000 * 1000 * 25,
                     output: 'stream',
                     parse: true,
                     allow: 'multipart/form-data'
