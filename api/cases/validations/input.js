@@ -52,6 +52,12 @@ const CaseQueryValidations = {
 }
 
 
+const CaseImportPayload = Joi.object().keys({
+    file: Joi.any()
+        .required()
+        .description('xlsx file')
+})
+
 
 const CaseCreatePayloadValidations = {
     payload: CaseCreatePayload,
@@ -75,10 +81,18 @@ const CaseDeletePayloadValidations = Object.assign({
     failAction: validateOptions.failAction
 }, CaseParamsValidations)
 
+const CaseImportPayloadValidations = {
+    payload: CaseImportPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
     CaseCreatePayloadValidations,
     CaseUpdatePayloadValidations,
-    CaseDeletePayloadValidations
+    CaseDeletePayloadValidations,
+    CaseImportPayloadValidations
 }

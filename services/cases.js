@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
+require('../models/Hospital');
+const Hospital = mongoose.model('Hospital');
+
 require('../models/History')
 const History = mongoose.model('History')
 
@@ -346,15 +349,10 @@ function getCountByDistrict(code, callback) {
 async function importCases (raw_payload, author, pre, callback) {
 
   const dataSheet = pre
-  const mongoose = require('mongoose')
 
   let savedCases = []
 
   let promise = Promise.resolve()
-
-  const session = await mongoose.startSession()
-
-  session.startTransaction()
 
   dataSheet.forEach((item) => {
 
@@ -407,8 +405,13 @@ async function importCases (raw_payload, author, pre, callback) {
 
       let historyPayload = { case: savedCase._id }
 
-      if (item.current_hospital_id == ""){
-        item.current_hospital_id = null
+      if (item.current_hospital_id) {
+        try {
+          let hospitalId = (await Hospital.findById(item.current_hospital_id))._id || null
+          item.current_hospital_id = hospitalId
+        } catch (err) {
+          item.current_hospital_id = null
+        }
       }
 
       if (item.first_symptom_date == ""){
@@ -432,10 +435,7 @@ async function importCases (raw_payload, author, pre, callback) {
   })
 
   promise.then(() => {
-      session.abortTransaction()
       return callback(null, savedCases)
-  }).finally(() => {
-    session.endSession()
   })
 }
 
