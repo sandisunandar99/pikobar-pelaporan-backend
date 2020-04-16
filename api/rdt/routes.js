@@ -97,6 +97,21 @@ module.exports = (server) =>{
             handler: handlers.GetRdtDetail
         },
 
+        // Get rdt hostories
+        {
+            method: 'GET',
+            path: '/rdt/{id}/histories',
+            config: {
+                auth: 'jwt',
+                description: 'show a specific rdt details',
+                tags: ['api', 'rdt'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetRdtHistories
+        },
+
         // Update rdt
         {
             method: 'PUT',

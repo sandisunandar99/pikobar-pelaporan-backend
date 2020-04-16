@@ -68,6 +68,21 @@ module.exports = (server) => {
         },
 
         /**
+         * GET /api/rdt/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetRdtHistories(request, reply) {
+            let id = request.params.id
+            server.methods.services.rdt.getHistoriesByRdtId(id, (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructRdtResponse(item)
+                ).code(200)
+            })
+        },
+
+        /**
          * PUT /api/rdt/{id}
          * @param {*} request
          * @param {*} reply

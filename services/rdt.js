@@ -208,8 +208,8 @@ function GetRdtFaskesSummaryByCities (query, callback) {
     .catch(err => callback(err, null))
 }
 
-function GetRdtHistoryByRdtId (query, callback) {
-  Rdt.find({ rdt: param.id}).exec().then(item => {
+function GetRdtHistoryByRdtId (id, callback) {
+  RdtHistory.find({ rdt: id}).exec().then(item => {
     return callback(null, item);
   })
   .catch(err => callback(err, null))
@@ -689,8 +689,6 @@ function sendMessagesWA(rdt) {
 
 }
 
-
-
 module.exports = [
   {
     name: 'services.rdt.list',
@@ -699,6 +697,10 @@ module.exports = [
   {
     name: 'services.rdt.getById',
     method: getRdtById
+  },
+  {
+    name: 'services.rdt.getHistoriesByRdtId',
+    method: GetRdtHistoryByRdtId
   },
   {
     name: 'services.rdt.create',
