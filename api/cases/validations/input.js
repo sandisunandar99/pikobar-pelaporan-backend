@@ -41,6 +41,7 @@ const CaseQueryValidations = {
         address_village_code: Joi.string().empty('', null).default('').description('search data by Keluarahan/Desa'),
         address_subdistrict_code: Joi.string().empty('', null).default('').description('search data by Kecamatan'),
         address_district_code: Joi.string().empty('', null).default('').description('search data by Case name'),
+        name_case_related: Joi.string().empty('', null).default('').description('search data by Case name'),
         search: Joi.string().empty('', null).default('').description('search data by Case name'),
         status: Joi.string().empty('', null).default('').description('search data by status'),
         final_result: Joi.string().empty('', null).default('').description('search data by final_result'),

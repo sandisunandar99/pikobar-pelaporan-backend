@@ -234,6 +234,7 @@ module.exports = (server) => {
          */
         async GetIdCase(request, reply){
             server.methods.services.cases.getIdCase(
+                request.query,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
