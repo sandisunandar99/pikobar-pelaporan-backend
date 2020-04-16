@@ -10,6 +10,7 @@ const CaseSchema = new mongoose.Schema({
     id_case_national : {type:String},
     nik : {type:String},
     id_case_related : {type:String},
+    name_case_related : {type:String},
     name: {type:String},
     // tentatif jika diisi usia, required jika tidak
     birth_date : { type: Date},

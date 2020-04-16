@@ -176,7 +176,6 @@ module.exports = (server) =>{
             },
             handler: handlers.DeleteCase
         },
-
         // Import excel case
         {
             method: 'POST',
@@ -196,6 +195,17 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.ImportCases
+        },
+        // Get case name and id
+        {
+            method: 'GET',
+            path: '/cases-listid',
+            config: {
+                auth: 'jwt',
+                description: 'Get case name and id',
+                tags: ['api', 'cases']
+            },
+            handler: handlers.GetIdCase
         },
     ]
 

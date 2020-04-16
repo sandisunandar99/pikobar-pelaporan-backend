@@ -137,6 +137,12 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
+function getIdCase (callback) {
+  Case.find().select('id_case name').where('delete_status').ne('deleted')
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
 async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user)
 
@@ -494,6 +500,10 @@ module.exports = [
   {
     name: 'services.cases.ImportCases',
     method: importCases
+  },
+  {
+    name: 'services.cases.getIdCase',
+    method: getIdCase
   }
 ];
 
