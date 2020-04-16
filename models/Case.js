@@ -90,6 +90,15 @@ CaseSchema.methods.JSONFormCase = function () {
     }
 }
 
+CaseSchema.methods.JSONFormIdCase = function () {
+    return {
+        _id: this._id,
+        id_case: this.id_case,
+        name: this.name,
+        relateds: `${this.name} (${this.id_case})`
+    }
+}
+
 
 CaseSchema.methods.JSONSeacrhOutput = function () {
     return {

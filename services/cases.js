@@ -145,9 +145,10 @@ function getIdCase (query,callback) {
   if(query.name_case_related){
     params.name = new RegExp(query.name_case_related, "i");
   }
-  Case.find(params).select('id_case name').where('delete_status').ne('deleted').exec()
-    .then(cases => callback (null, cases))
-    .catch(err => callback(err, null));
+  Case.find(params).select('id_case name')
+  .where('delete_status').ne('deleted')
+  .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
+  .catch(err => callback(err, null));
 }
 
 async function getCaseSummaryFinal (query, user, callback) {
