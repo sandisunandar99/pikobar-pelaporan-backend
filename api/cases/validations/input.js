@@ -59,6 +59,50 @@ const CaseImportPayload = Joi.object().keys({
         .description('xlsx file')
 })
 
+const caseSchemaValidation = Joi.object().keys({
+    id_case_national: Joi.string().allow('', null),
+    nik: Joi.string().allow('', null),
+    id_case_related: Joi.string().allow('', null),
+    name_case_related: Joi.string().allow('', null),
+    name: Joi.string().min(3).required(),
+    birth_date: Joi.date().allow('', null),
+    age: Joi.number().allow('', null),
+    gender: Joi.string().allow('', null),
+    address_street: Joi.string().allow('', null),
+    address_village_code: Joi.string().required(),
+    address_village_name: Joi.string().required(),
+    address_subdistrict_code: Joi.string().required(),
+    address_subdistrict_name: Joi.string().required(),
+    address_district_code: Joi.string().required(),
+    address_district_name: Joi.string().required(),
+    office_address: Joi.string().allow('', null),
+    phone_number: Joi.string().allow('', null),
+    nationality: Joi.string().allow('', null),
+    nationality_name: Joi.string().allow('', null),
+    occupation: Joi.string().allow('', null),
+    stage: Joi.string().allow('', null),
+    status: Joi.string().allow('', null),
+    final_result: Joi.string().allow('', null),
+    diagnosis: Joi.array(),
+    diagnosis_other: Joi.string().allow('', null),
+    is_went_abroad: Joi.boolean(),
+    visited_country: Joi.string().allow('', null),
+    return_date: Joi.date().allow('', null),
+    is_went_other_city: Joi.boolean(),
+    visited_city: Joi.string().allow('', null),
+    is_contact_with_positive: Joi.boolean(),
+    history_notes: Joi.string().allow('', null),
+    is_sample_taken: Joi.boolean(),
+    report_source: Joi.string().allow('', null),
+    first_symptom_date: Joi.date().allow('', null),
+    other_notes: Joi.string().allow('', null),
+    current_location_type: Joi.string().allow('', null),
+    current_location_address: Joi.string().allow('', null),
+    current_location_village_code: Joi.string().allow('', null),
+    current_location_subdistrict_code: Joi.string().allow('', null),
+    current_location_district_code: Joi.string().allow('', null)
+}).unknown()
+
 
 const CaseCreatePayloadValidations = {
     payload: CaseCreatePayload,
@@ -95,5 +139,6 @@ module.exports = {
     CaseCreatePayloadValidations,
     CaseUpdatePayloadValidations,
     CaseDeletePayloadValidations,
-    CaseImportPayloadValidations
+    CaseImportPayloadValidations,
+    caseSchemaValidation
 }
