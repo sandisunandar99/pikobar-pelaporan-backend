@@ -1,5 +1,21 @@
 const replyHelper = require('../helpers')
 
+const validationBeforeInput = server => {
+    return {
+        method: (request, reply) => {
+            if (request.payload.address_district_code === request.auth.credentials.user.code_district_city) {
+                return reply(request.auth.credentials.user.code_district_city)
+            } else {
+                return reply({
+                    status: 403,
+                    message: 'Anda tidak dapat melakukan input kasus di luar wilayah anda.!',
+                    data: null
+                }).code(403).takeover()
+            }
+        },
+        assign: 'validation_before_input'
+    }
+}
 
 const countRdtCode = server =>{
     return {
@@ -162,5 +178,6 @@ module.exports ={
     checkIfDataNotNull,
     getDataExternal,
     searchIdcasefromInternal,
-    searchIdcasefromExternal
+    searchIdcasefromExternal,
+    validationBeforeInput
 }

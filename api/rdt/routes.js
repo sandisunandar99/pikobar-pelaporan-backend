@@ -17,6 +17,7 @@ module.exports = (server) =>{
     const getDataExternal = require('./route_prerequesites').getDataExternal(server)
     const searchIdcasefromExternal = require('./route_prerequesites').searchIdcasefromExternal(server)
     const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
+    const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
 
 
     return [
@@ -75,6 +76,7 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleCreate,
+                    validationBeforeInput,
                     countRdtCode,
                     getCodeDinkes,
                     countCaseByDistrict
