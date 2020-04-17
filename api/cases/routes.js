@@ -182,7 +182,7 @@ module.exports = (server) =>{
             path: '/cases-import',
             config: {
                 auth: 'jwt',
-                description: 'create new cases',
+                description: 'Cases import',
                 tags: ['api', 'cases'],
                 validate: inputValidations.CaseImportPayloadValidations,
                 payload: {

@@ -354,8 +354,10 @@ async function importCases (raw_payload, author, pre, callback) {
   let savedCases = []
 
   let promise = Promise.resolve()
-
-  dataSheet.forEach((item) => {
+  
+  for (i in dataSheet) {
+    
+    let item = dataSheet[i]
 
     promise = promise.then(async () => {
 
@@ -429,15 +431,14 @@ async function importCases (raw_payload, author, pre, callback) {
 
       savedCases.push(savedCase)
   
-      return new Promise(function (resolve) {
-        resolve(savedCase)
-      })
-    })
-  })
+      return new Promise(resolve => resolve(savedCase))
 
-  promise.then(() => {
-      return callback(null, savedCases)
-  })
+    }).catch((e) => { throw new Error(e) })
+  }
+
+  promise
+    .then(() => callback(null, savedCases))
+    .catch(err => callback(err, null))
 }
 
 function softDeleteCase(cases,deletedBy, payload, callback) {

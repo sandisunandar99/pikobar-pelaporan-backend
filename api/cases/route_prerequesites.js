@@ -69,26 +69,35 @@ const checkIfDataNotNull = server =>{
 const DataSheetRequest = server => {
     return {
         method: async (request, reply) => {
-            const helper = require("../../helpers/casesheetextraction")
+            const helper = require("../../helpers/casesheet/casesheetextraction")
 
             const payload = await helper.caseSheetExtraction(request)
 
-            var Joi = require('joi')
-            const schema = Joi.object().keys({
-                name: Joi.string().min(3).required(),
-                address_village_name: Joi.string().min(3).required(),
-                address_subdistrict_name: Joi.string().min(3).required(),
-                address_district_name: Joi.string().min(3).required()
-            }).unknown()
+            const validations = require('./validations/input')
+
+            const Joi = require('joi')
 
             let objError = {}
+            let strErrors = ''
 
             for (let i in payload) {
+              let propErr = {}
               let errors = []
 
-              const result = Joi.validate(payload[i], schema)
+              const result = Joi.validate(payload[i], validations.caseSchemaValidation)
+            
               if (result.error!==null) {
-                errors.push(result.error.details[0].message)
+                strErrors += '[row_' + (parseInt(i)+1).toString() + ']'
+                for (e in result.error.details) {
+                    let messg = result.error.details[e].message
+                    let prop = messg.substr(1, messg.lastIndexOf('"')-1)
+                    strErrors += messg + ', '
+
+                    if (!Array.isArray(propErr[prop])) {
+                        propErr[prop] = []
+                    }
+                    propErr[prop].push(messg)
+                }   
               }
 
               // is address_district_code exist?
@@ -96,19 +105,30 @@ const DataSheetRequest = server => {
               const isDistrictCodeValid = await helper.isDistrictCodeValid(code)
               
               if (!isDistrictCodeValid) {
-                errors.push('Invalid address_district_code')
+                let prop = 'address_district_code'
+                let messg = 'Invalid address_district_code '
+                if (!Array.isArray(propErr[prop])) {
+                    propErr[prop] = []
+                }
+                propErr[prop].push(messg)
+                strErrors += messg
+              }
+
+              strErrors += '\n'
+              if (Object.keys(propErr).length !== 0) {
+                errors.push(propErr)
               }
 
               if (errors.length) {
-                objError[parseInt(i)+1] = errors
+                objError['row_' + (parseInt(i)+1).toString()] = errors
               }
             }
             
             if (Object.entries(objError).length) {
                 let response ={
                     status: 400,
-                    message: "Bad request",
-                    error: objError
+                    message: strErrors,
+                    errors: objError
                 }
                 return reply(response).code(400).takeover()
             }
