@@ -160,18 +160,18 @@ async function getCaseSummaryFinal (query, user, callback) {
     }
   }
 
-  const searchingPositif = {status:'POSITIF', final_result : { $nin: [1,2] }}
-  const searchingSembuh = {status:'POSITIF',final_result:1}
-  const searchingMeninggal = {status:'POSITIF',final_result:2}
+  const searchingPositif = {status:"POSITIF", final_result : { $nin: [1,2] }}
+  const searchingSembuh = {status:"POSITIF",final_result:1}
+  const searchingMeninggal = {status:"POSITIF",final_result:2}
   
   try {
-    const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted').then(res => { return res.length })
-    const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
-    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const positif = await Case.find(Object.assign(searching,searchingPositif)).where("delete_status").ne("deleted").then(res => { return res.length })
+    const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where("delete_status").ne("deleted").then(res => { return res.length })
+    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where("delete_status").ne("deleted").then(res => { return res.length })
     const result =  {
-      'SEMBUH':sembuh, 
-      'MENINGGAL':meninggal,
-      'POSITIF':positif
+      "SEMBUH":sembuh, 
+      "MENINGGAL":meninggal,
+      "POSITIF":positif
     }
     callback(null,result)
   } catch (error) {
@@ -189,15 +189,11 @@ function getCaseSummary (query, user, callback) {
   
   var aggStatus = [
     { $match: { 
-      $and: [  
-            searching,
-            { delete_status: { $ne: 'deleted' }}
-          ]
+      $and: [  searching, { delete_status: { $ne: 'deleted' }} ]
     }},
-    {$group: {
-      _id: "$status",
-      total: {$sum: 1}
-    }}
+    { 
+      $group: { _id: "$status", total: {$sum: 1}}
+    }
   ];
 
   let result =  {
