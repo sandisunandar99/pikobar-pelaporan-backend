@@ -12,6 +12,7 @@ module.exports = (server) =>{
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
     const DataSheetRequest = require('./route_prerequesites').DataSheetRequest(server)
+    const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
 
 
     return [
@@ -42,6 +43,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleCreate,
+                    validationBeforeInput,
                     countCaseByDistrict
                 ]
             },
