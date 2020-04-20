@@ -78,11 +78,24 @@ module.exports = (server) =>{
                     CheckRoleCreate,
                     validationBeforeInput,
                     countRdtCode,
-                    getCodeDinkes,
-                    countCaseByDistrict
+                    countCaseByDistrict,
+                    getCodeDinkes
                 ]
             },
             handler: handlers.CreateRdt
+        },
+        {
+            method: 'POST',
+            path: '/rdt-multiple',
+            config: {
+                auth: 'jwt',
+                description: 'create new rdt with multiple insert',
+                tags: ['api', 'rdt'],
+                pre: [
+                    CheckRoleCreate
+                ]
+            },
+            handler: handlers.CreateRdtMultiple
         },
         // Get detail rdt
         {
