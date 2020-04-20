@@ -197,6 +197,7 @@ function getCaseSummary (query, user, callback) {
   ];
 
   let result =  {
+    'OTG':0, 
     'ODP':0, 
     'PDP':0, 
     'POSITIF':0, 
@@ -206,6 +207,9 @@ function getCaseSummary (query, user, callback) {
 
   Case.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
+        if (item['_id'] == 'OTG') {
+          result.OTG = item['total']
+        }
         if (item['_id'] == 'ODP') {
           result.ODP = item['total']
         }
@@ -354,6 +358,8 @@ async function importCases (raw_payload, author, pre, callback) {
   let savedCases = []
 
   let promise = Promise.resolve()
+
+  const refHospitals = await Hospital.find()
   
   for (i in dataSheet) {
     
@@ -382,11 +388,6 @@ async function importCases (raw_payload, author, pre, callback) {
         verified_status: 'pending'
       }
 
-      if (author.role === "dinkeskota") {
-        verified = {
-          verified_status: 'verified'
-        }
-      }
 
       // create case
       let date = new Date().getFullYear().toString()
@@ -408,16 +409,26 @@ async function importCases (raw_payload, author, pre, callback) {
 
       let historyPayload = { case: savedCase._id }
 
-      if (item.current_hospital_id) {
-        try {
-          let hospitalId = (await Hospital.findById(item.current_hospital_id))._id || null
-          item.current_hospital_id = hospitalId
-        } catch (err) {
-          item.current_hospital_id = null
+      let hospitalId = null
+
+      if (item && item.current_location_type === 'RS') {
+        
+        const hospital = refHospitals.find((h) => h.name === item.current_location_address) || null
+
+        hospitalId = hospital && hospital._id ? hospital._id : null
+
+        if (!hospitalId) {
+          if (item.other_notes) {
+            item.other_notes += ' , Dirawat di ' + item.current_location_address
+          } else {
+            item.other_notes = 'Dirawat di ' + item.current_location_address
+          }
         }
       }
 
-      if (item.first_symptom_date == ""){
+      item.current_hospital_id = hospitalId || null
+
+      if (item.first_symptom_date == "") {
         item.first_symptom_date = Date.now()
       }
 

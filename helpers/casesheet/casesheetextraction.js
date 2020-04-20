@@ -9,14 +9,13 @@ const caseSheetExtraction = async (request) => {
     let dataSheet = await readXlsxFile(dir + uploaded.filename)
 
     dataSheet.splice(0, conf.start_row)
-  
     let payload = []
     
     for (i in dataSheet)
     {
-      if (dataSheet[i][0] === null) continue 
-
       caseSheet.init(dataSheet[i], conf)
+
+      if (!caseSheet.isRowFilled()) continue 
 
       let obj = {
         id_case_national: caseSheet.getIdCaseNational(),
@@ -76,7 +75,6 @@ const caseSheetExtraction = async (request) => {
     }
 
     handleFileUnlink(dir + uploaded.filename)
-  
     return payload
 }
 
