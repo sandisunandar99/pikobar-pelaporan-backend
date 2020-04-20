@@ -382,7 +382,7 @@ function createRdtMultiple(payload, author, pre, callback) {
               return rdt_history.save((err, item) => {
                 if (err) console.log(err)
                 sendMessagesSMS(rdt)
-                sendMessagesWA(rdt)
+                sendMessagesWA(rdts)
               });
             }
 
