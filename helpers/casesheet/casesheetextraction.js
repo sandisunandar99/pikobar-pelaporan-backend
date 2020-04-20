@@ -9,7 +9,6 @@ const caseSheetExtraction = async (request) => {
     let dataSheet = await readXlsxFile(dir + uploaded.filename)
 
     dataSheet.splice(0, conf.start_row)
-  
     let payload = []
     
     for (i in dataSheet)
@@ -76,7 +75,6 @@ const caseSheetExtraction = async (request) => {
     }
 
     handleFileUnlink(dir + uploaded.filename)
-  
     return payload
 }
 
