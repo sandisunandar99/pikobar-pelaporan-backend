@@ -13,9 +13,9 @@ const caseSheetExtraction = async (request) => {
     
     for (i in dataSheet)
     {
-      if (dataSheet[i][0] === null) continue 
-
       caseSheet.init(dataSheet[i], conf)
+
+      if (!caseSheet.isRowFilled()) continue 
 
       let obj = {
         id_case_national: caseSheet.getIdCaseNational(),

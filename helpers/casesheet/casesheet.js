@@ -255,6 +255,16 @@ const _toUnsignedInt = (value) => {
     return value
 }
 
+const isRowFilled = () => {
+    const c = conf.cell
+    if (dt[c.name] || dt[c.nik] || dt[c.birth_date] || dt[c.gender] || dt[c.address_province_code])
+    {
+        return true
+    }
+
+    return false
+}
+
 const refDiagnosis = [
     'Suhu tubuh >= 38°C',
     'Suhu tubuh < 38°C',
@@ -319,4 +329,5 @@ module.exports = {
     getOtherNotes,
     getLastChanged,
     isSampleTaken,
+    isRowFilled,
 }
