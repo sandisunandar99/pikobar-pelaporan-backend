@@ -381,7 +381,7 @@ function createRdtMultiple(payload, author, pre, callback) {
               let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
               return rdt_history.save((err, item) => {
                 if (err) console.log(err)
-                sendMessagesSMS(rdt)
+                sendMessagesSMS(rdts)
                 sendMessagesWA(rdts)
               });
             }
