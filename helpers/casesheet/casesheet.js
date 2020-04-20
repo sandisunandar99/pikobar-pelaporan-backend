@@ -1,8 +1,10 @@
-var dt, conf
+var dt, conf, registeredDiagnosis, unknownDiagnosis
 
 const init = (value, config) => {
     dt = value
     conf = config
+    registeredDiagnosis = []
+    unknownDiagnosis = []
 }
 
 const getIdCaseNational = () => {
@@ -121,11 +123,34 @@ const getReportSource = () => {
 
 const getDiagnosis = () => {
     if (!dt[conf.cell.diagnosis]) return []
-    return dt[conf.cell.diagnosis].split(',')
+    let diagnosis = dt[conf.cell.diagnosis].split(',')
+
+    for (i in diagnosis) {
+        let diagnose = _toString(diagnosis[i])
+        if (diagnose.trim) {
+            diagnose = diagnose.trim()
+        }
+
+        if (refDiagnosis.includes(diagnose)) {
+            registeredDiagnosis.push(diagnose)
+        } else {
+            unknownDiagnosis.push(diagnose)
+        }
+    }
+
+    return registeredDiagnosis || []
 }
 
 const getDiagnosisOther = () => {
-    return _toString(dt[conf.cell.diagnosis_other])
+    let otherDiagnosis = _toString(dt[conf.cell.diagnosis_other])
+    if (unknownDiagnosis && unknownDiagnosis.join) {
+        if (otherDiagnosis) {
+            otherDiagnosis += ' ' + unknownDiagnosis.join(',')
+        } else {
+            otherDiagnosis = unknownDiagnosis.join(',')
+        }
+    }
+    return otherDiagnosis || null
 }
 
 const getFirstSymptomDate = () => {
@@ -229,6 +254,22 @@ const _toUnsignedInt = (value) => {
 
     return value
 }
+
+const refDiagnosis = [
+    'Suhu tubuh >= 38°C',
+    'Suhu tubuh < 38°C',
+    'Batuk',
+    'Pilek', 
+    'Sakit Tenggorokan',
+    'Sakit Kepala',
+    'Sesak Napas',
+    'Menggigil', 
+    'Lemah (malaise)',
+    'Nyeri Otot',
+    'Mual atau Muntah',
+    'Nyeri Abdomen',
+    'Diare'
+]
 
 module.exports = {
     init,
