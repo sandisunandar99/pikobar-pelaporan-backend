@@ -197,6 +197,7 @@ function getCaseSummary (query, user, callback) {
   ];
 
   let result =  {
+    'OTG':0, 
     'ODP':0, 
     'PDP':0, 
     'POSITIF':0, 
@@ -206,6 +207,9 @@ function getCaseSummary (query, user, callback) {
 
   Case.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
+        if (item['_id'] == 'OTG') {
+          result.OTG = item['total']
+        }
         if (item['_id'] == 'ODP') {
           result.ODP = item['total']
         }
