@@ -32,7 +32,7 @@ const getNik = () => {
 }
 
 const getBirthDate = () => {
-    return _toString(dt[conf.cell.birth_date])
+    return _toDateString(dt[conf.cell.birth_date])
 }
 
 const getAge = () => {
@@ -154,7 +154,7 @@ const getDiagnosisOther = () => {
 }
 
 const getFirstSymptomDate = () => {
-    return dt[conf.cell.first_symptom_date]
+    return _toDateString(dt[conf.cell.first_symptom_date])
 }
 
 const getHistoryTracing = () => {
@@ -171,7 +171,7 @@ const getVisitedCountry = () => {
 
 const getReturnDate = () => {
     if (!dt[conf.cell.return_date]) return null
-    let returnDate = _toString(dt[conf.cell.return_date])
+    let returnDate = _toDateString(dt[conf.cell.return_date])
     return returnDate
 }
 
@@ -239,6 +239,25 @@ const isSampleTaken = () => {
 const _toString = (value) => {
     if (value && value.toString) {
         return value.toString()
+    }
+
+    return value
+}
+
+const _toDateString = (value) => {
+    if (value && value.toString) {
+        let strDate = value.toString()
+
+        if (strDate.split) {
+            let arrDate = strDate.split('/')
+            if (arrDate.join) {
+                return arrDate.join('-')
+            } else {
+                return null
+            }
+        }
+
+        return  null
     }
 
     return value
