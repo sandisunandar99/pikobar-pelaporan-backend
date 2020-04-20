@@ -51,6 +51,25 @@ module.exports = (server) => {
                 }
             )
         },
+        /**
+         * POST /api/rdt
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateRdtMultiple(request, reply){
+            let payload = request.payload
+            server.methods.services.rdt.createMultiple(
+                payload,
+                request.auth.credentials.user,
+                request.pre,
+                  (err, result) => {
+                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                  return reply(
+                      constructRdtResponse(result)
+                  ).code(200)
+                }
+            )
+        },
 
         /**
          * GET /api/rdt/{id}
