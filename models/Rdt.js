@@ -31,6 +31,8 @@ const RdtSchema = new mongoose.Schema({
     final_result : {type : String},
     tool_tester: String,
     code_tool_tester: String, // code alat pas tes ex: (RDT / TCR)
+    sampling_type: String, // Jenis pengambilan sampel: Vena / Kapiler
+    test_method: String,
     
     test_location_type: String,
     test_location: String,
@@ -44,8 +46,6 @@ const RdtSchema = new mongoose.Schema({
     test_address_detail: String,
     test_note : {type : String},
     test_date: Date,
-
-    test_method: String,
     
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     author_district_code : { type:String},
@@ -92,6 +92,8 @@ RdtSchema.methods.toJSONFor = function () {
     final_result: this.final_result ,
     tool_teste: this.tool_teste ,
     code_tool_tester: this.code_tool_tester , // code alat pas tes ex (RDT / TCR)
+    test_method: this.test_method,
+    sampling_type: this.sampling_type, 
     
     test_location :this.test_location ,
     test_other_location :this.test_other_location ,
@@ -104,8 +106,6 @@ RdtSchema.methods.toJSONFor = function () {
     test_address_detail :this.test_address_detail ,
     test_note :this.test_note ,
     test_date :this.test_date ,
-
-    test_method: this.test_method,
     
     status :this.status ,
     author: this.author.JSONCase()
