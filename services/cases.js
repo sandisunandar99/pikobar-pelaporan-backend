@@ -55,6 +55,8 @@ function ListCase (query, user, callback) {
     }
   }
   if(user.role == 'dinkeskota'){
+    params.address_district_code = user.code_district_city;
+  }  else if (user.role == 'faskses') {
     params.author = new ObjectId(user._id);
     params.author_district_code = user.code_district_city;
   }
