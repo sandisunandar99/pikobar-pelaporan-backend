@@ -1,7 +1,6 @@
 const validate = async (payload, Joi, rules, label, helper, Case) => {
     let results = []
     let objError = {}
-    let strErrors = ''
 
     for (let i in payload) {
       let propErr = {}
@@ -10,7 +9,6 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       const result = Joi.validate(payload[i], rules.caseSchemaValidation)
     
       if (result.error!==null) {
-        strErrors += '[row_' + (parseInt(i)+1).toString() + ']'
         for (e in result.error.details) {
             let messg = result.error.details[e].message
             let prop = messg.substr(1, messg.lastIndexOf('"')-1)
@@ -31,9 +29,57 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
                 }
             }
 
-            strErrors += messg + ', '
             propErr[prop].push(messg)
         }   
+      }
+
+      // valid domicile code
+      const districtCode = payload[i].address_district_code
+      const subDistrictCode = payload[i].address_subdistrict_code
+      const villageCode = payload[i].address_village_code
+      if (districtCode.substr && subDistrictCode.substr && villageCode.substr) {
+        if (subDistrictCode.substr(0,5) != districtCode) {
+          let prop = label['address_subdistrict_code']
+          domicileMsg = `\"${prop}"\ Not registered in selected "Kabupaten"`
+          if (!Array.isArray(propErr[prop])) {
+            propErr[prop] = []
+          }
+          propErr[prop].push(domicileMsg)
+        }
+
+        if (villageCode.substr(0,8) != subDistrictCode) {
+          let prop = label['address_village_code']
+          domicileMsg = `\"${prop}"\ Not registered in selected "Kecamatan"`
+          if (!Array.isArray(propErr[prop])) {
+            propErr[prop] = []
+          }
+          propErr[prop].push(domicileMsg)
+        }
+      }
+
+      // valid current address code
+      const curDistrictCode = payload[i].current_location_district_code
+      const curSubDistrictCode = payload[i].current_location_subdistrict_code
+      const curVillageCode = payload[i].current_location_village_code
+      let domicileMsg = ''
+      if (curDistrictCode.substr && curSubDistrictCode.substr && curVillageCode.substr) {
+        if (curSubDistrictCode.substr(0,5) != curDistrictCode) {
+          let prop = label['current_location_subdistrict_code']
+          domicileMsg = `\"${prop}"\ Not registered in selected "Kabupaten"`
+          if (!Array.isArray(propErr[prop])) {
+            propErr[prop] = []
+          }
+          propErr[prop].push(domicileMsg)
+        }
+
+        if (curVillageCode.substr(0,8) != curSubDistrictCode) {
+          let prop = label['current_location_village_code']
+          domicileMsg = `\"${prop}"\ Not registered in selected "Kecamatan"`
+          if (!Array.isArray(propErr[prop])) {
+            propErr[prop] = []
+          }
+          propErr[prop].push(domicileMsg)
+        }
       }
 
       // is address_district_code exist?
@@ -49,7 +95,6 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
             propErr[prop] = []
         }
         propErr[prop].push(messg)
-        strErrors += messg
       }
 
       const nik = payload[i].nik
@@ -64,10 +109,8 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
             propErr[prop] = []
         }
         propErr[prop].push(messg)
-        strErrors += messg
       }
 
-      strErrors += '\n'
       if (Object.keys(propErr).length !== 0) {
         errors.push(propErr)
       }
