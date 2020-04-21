@@ -3,7 +3,7 @@ const countByRole = (user) => {
   let searching
   if (user.role == "dinkeskota") {
     searching = {
-      author_district_code:new ObjectId(user._id)
+      author_district_code:user.code_district_city
     }
   } else if (user.role == "dinkesprov" || user.role == "superadmin") {
     searching = {}
