@@ -40,7 +40,7 @@ HistorySchema.methods.toJSONFor = function () {
         stage : this.stage,
         final_result : this.final_result,
         diagnosis : this.diagnosis,
-        diagnosis_other : this.diagnosis,
+        diagnosis_other : this.diagnosis_other,
         last_changed: this.last_changed,
 
         is_went_abroad : this.is_went_abroad,
