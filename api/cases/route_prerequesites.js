@@ -91,62 +91,21 @@ const DataSheetRequest = server => {
 
             const payload = await helper.caseSheetExtraction(request)
 
-            const validations = require('./validations/input')
+            const rules = require('./validations/input')
 
             const Joi = require('joi')
 
-            let objError = {}
-            let strErrors = ''
+            const { label } = require('../../helpers/casesheet/casesheetconfig.json')
 
-            for (let i in payload) {
-              let propErr = {}
-              let errors = []
+            const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
 
-              const result = Joi.validate(payload[i], validations.caseSchemaValidation)
-            
-              if (result.error!==null) {
-                strErrors += '[row_' + (parseInt(i)+1).toString() + ']'
-                for (e in result.error.details) {
-                    let messg = result.error.details[e].message
-                    let prop = messg.substr(1, messg.lastIndexOf('"')-1)
-                    strErrors += messg + ', '
+            const errors = await caseSheetValidator.validate(payload, Joi, rules, label, helper)
 
-                    if (!Array.isArray(propErr[prop])) {
-                        propErr[prop] = []
-                    }
-                    propErr[prop].push(messg)
-                }   
-              }
-
-              // is address_district_code exist?
-              const code = payload[i].address_district_code
-              const isDistrictCodeValid = await helper.isDistrictCodeValid(code)
-              
-              if (!isDistrictCodeValid) {
-                let prop = 'address_district_code'
-                let messg = 'Invalid address_district_code '
-                if (!Array.isArray(propErr[prop])) {
-                    propErr[prop] = []
-                }
-                propErr[prop].push(messg)
-                strErrors += messg
-              }
-
-              strErrors += '\n'
-              if (Object.keys(propErr).length !== 0) {
-                errors.push(propErr)
-              }
-
-              if (errors.length) {
-                objError['row_' + (parseInt(i)+1).toString()] = errors
-              }
-            }
-            
-            if (Object.entries(objError).length) {
+            if (Object.entries(errors).length) {
                 let response ={
                     status: 400,
-                    message: strErrors,
-                    errors: objError
+                    message: 'Bad request.',
+                    errors: errors
                 }
                 return reply(response).code(400).takeover()
             }

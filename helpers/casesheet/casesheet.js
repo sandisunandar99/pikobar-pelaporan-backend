@@ -24,7 +24,7 @@ const getNameCaseRelated = () => {
 }
 
 const getName = () => {
-    return _toString(dt[conf.cell.name])
+    return _toString(dt[conf.cell.name]) || undefined
 }
 
 const getNik = () => {
@@ -36,15 +36,18 @@ const getBirthDate = () => {
 }
 
 const getAge = () => {
-    return _toUnsignedInt(dt[conf.cell.age])
+    if (dt[conf.cell.age] === '' || dt[conf.cell.age] === null) return null
+    let age = _toUnsignedInt(dt[conf.cell.age]) || '0'
+    return _toString(age)
 }
 
 const getGender = () => {
+    if (!dt[conf.cell.gender]) return undefined
     return dt[conf.cell.gender] == 'Perempuan' ? 'P' : 'L'
 }
 
 const getPhoneNumber = () => {
-    return _toString(dt[conf.cell.phone_number])
+    return _toString(dt[conf.cell.phone_number]) || undefined
 }
 
 const getAddressStreet = () => {
@@ -60,37 +63,37 @@ const getAddressProvinceName = () => {
 }
 
 const getAddressDistrictCode = () => {
-    if (!dt[conf.cell.address_district_code]) return null
+    if (!dt[conf.cell.address_district_code]) return undefined
     return _toString(dt[conf.cell.address_district_code].split('-')[1] || null)
 }
 
 const getAddressDistrictName = () => {
-    if (!dt[conf.cell.address_district_code]) return null
+    if (!dt[conf.cell.address_district_code]) return undefined
     return _toString(dt[conf.cell.address_district_code].split('-')[0] || null)
 }
 
 const getAddressSubdistrictCode = () => {
-    if (!dt[conf.cell.address_subdistrict_code]) return null
+    if (!dt[conf.cell.address_subdistrict_code]) return undefined
     return _toString(dt[conf.cell.address_subdistrict_code].split('-')[1] || null)
 }
 
 const getAddressSubdistrictName = () => {
-    if (!dt[conf.cell.address_subdistrict_code]) return null
+    if (!dt[conf.cell.address_subdistrict_code]) return undefined
     return _toString(dt[conf.cell.address_subdistrict_code].split('-')[0] || null)
 }
 
 const getAddressVillageCode = () => {
-    if (!dt[conf.cell.address_village_code]) return null
+    if (!dt[conf.cell.address_village_code]) return undefined
     return _toString(dt[conf.cell.address_village_code].split('-')[1] || null)
 }
 
 const getAddressVillageName = () => {
-    if (!dt[conf.cell.address_village_code]) return null
+    if (!dt[conf.cell.address_village_code]) return undefined
     return _toString(dt[conf.cell.address_village_code].split('-')[0] || null)
 }
 
 const getNationality = () => {
-    return _toString(dt[conf.cell.nationality])
+    return _toString(dt[conf.cell.nationality]) || undefined
 }
 
 const getNationalityName = () => {
@@ -106,15 +109,27 @@ const getOfficeAddress = () => {
 }
 
 const getStatus = () => {
-    return _toString(dt[conf.cell.status])
+    return _toString(dt[conf.cell.status]) || undefined
 }
 
 const getStage = () => {
-    return _toString(dt[conf.cell.stage])
+    if (!dt[conf.cell.stage]) return undefined
+    let stage = _toString(dt[conf.cell.stage])
+    return stage === 'Selesai' ? '1' : '0'
 }
 
 const getFinalResult = () => {
-    return _toString(dt[conf.cell.final_result])
+    if(!dt[conf.cell.final_result]) return undefined
+    const result = _toString(dt[conf.cell.final_result])
+    let resultCode = '0'
+
+    if (result == 'Sembuh') {
+        resultCode = '1'
+    } else if (result == 'Meninggal') {
+        resultCode = '2'
+    }
+
+    return resultCode
 }
 
 const getReportSource = () => {
@@ -171,6 +186,7 @@ const getVisitedCountry = () => {
 
 const getReturnDate = () => {
     if (!dt[conf.cell.return_date]) return null
+    // console.log(dt[conf.cell.return_date])
     let returnDate = _toDateString(dt[conf.cell.return_date])
     return returnDate
 }
@@ -188,10 +204,11 @@ const isContactWithPositive = () => {
 }
 
 const getHistoryNotes = () => {
-    return //todo
+    return null
 }
 
 const getCurrentLocationType = () => {
+    if (!dt[conf.cell.current_location_type]) return undefined
     return dt[conf.cell.current_location_type] == 'Ya' ? 'RS' : 'RUMAH'
 }
 
@@ -245,22 +262,8 @@ const _toString = (value) => {
 }
 
 const _toDateString = (value) => {
-    if (value && value.toString) {
-        let strDate = value.toString()
-
-        if (strDate.split) {
-            let arrDate = strDate.split('/')
-            if (arrDate.join) {
-                return arrDate.join('-')
-            } else {
-                return null
-            }
-        }
-
-        return  null
-    }
-
-    return value
+    if (!value) return null
+    return new Date((value - (25567 + 1))*86400*1000) || null
 }
 
 const _toUnsignedInt = (value) => {
