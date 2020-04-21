@@ -9,7 +9,6 @@ const RdtHistorySchema = new mongoose.Schema({
     test_method: String,
     sampling_type: String, // Jenis pengambilan sampel: Vena / Kapiler
     
-    test_sample: String,
     test_location_type: String,
     test_location: String,
     test_other_location: String,

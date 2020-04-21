@@ -32,7 +32,6 @@ const RdtSchema = new mongoose.Schema({
     tool_tester: String,
     code_tool_tester: String, // code alat pas tes ex: (RDT / TCR)
     sampling_type: String, // Jenis pengambilan sampel: Vena / Kapiler
-    test_sample: String,
     test_method: String,
     
     test_location_type: String,
