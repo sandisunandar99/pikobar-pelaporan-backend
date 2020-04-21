@@ -21,9 +21,18 @@ const exportByRole = (params, user) => {
     params.author = new ObjectId(user._id)
     params.author_district_code = user.code_district_city;
   } else if (user.role == "dinkesprov" || user.role == "superadmin") {
-    
+    return true;
   } else {
     params.author = new ObjectId(user._id)
+  }
+  return params
+}
+
+const userByRole = (params, user) => {
+  if (user.role == "dinkeskota") {
+    params.code_district_city = user.code_district_city;
+  } else {
+    return true;
   }
   return params
 }
@@ -55,5 +64,6 @@ const listByRole = (user, params, search_params, schema, conditions) => {
 module.exports = {
   countByRole,
   exportByRole,
-  listByRole
+  listByRole,
+  userByRole
 }

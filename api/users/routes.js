@@ -1,9 +1,21 @@
-const inputValidations = require('./validations/input')
-const outputValidations = require('./validations/output')
+const inputValidations = require('./validations/input');
+const outputValidations = require('./validations/output');
 
 module.exports = (server) => {
   const handlers = require('./handlers')(server)
   return [
+    // Get list user
+    {
+      method: 'GET',
+      path: '/users',
+      config: {
+        auth: 'jwt',
+        description: 'Get list user',
+        validate: inputValidations.UserQueryValidations,
+        tags: ['api', 'users']
+      },
+      handler: handlers.getListUser
+    },
     // Get current user
     {
       method: 'GET',
@@ -59,7 +71,7 @@ module.exports = (server) => {
         validate: inputValidations.LoginPayload,
         response: outputValidations.AuthOnLoginOutputValidationConfig,
         description: 'Login  user',
-        tags: ['api', 'users']
+        tags: ['api', 'users'],
       },
       handler: handlers.loginUser
     }

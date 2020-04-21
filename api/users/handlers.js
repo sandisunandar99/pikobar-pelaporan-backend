@@ -10,6 +10,15 @@ module.exports = (server) => {
     return authUser
   }
 
+  function constructUsersResponse(user) {
+    let authUser = { 
+      status : 200,
+      message: true,
+      data : user 
+    }
+    return authUser
+  }
+
   function constructUserMultipleResponse(user) {
     let authUser = { 
       status : 200,
@@ -21,6 +30,19 @@ module.exports = (server) => {
 
   return {
     /**
+     * GET /api/users
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getListUser (request, reply) {
+      server.methods.services.users.listUser(
+        request.auth.credentials.user,
+        request.query, (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        return reply(constructUsersResponse(listUser))
+      })
+    },
+    /**
      * GET /api/user
      * @param {*} request
      * @param {*} reply
@@ -28,7 +50,6 @@ module.exports = (server) => {
     async getCurrentUser (request, reply) {
       return reply(constructUserResponse(request.auth.credentials.user))
     },
-    
     async updateMe(request, reply) {
       let payload = request.payload
       let user = request.auth.credentials.user

@@ -1,7 +1,49 @@
-const mongoose = require('mongoose');
-const crypto = require('crypto')
 require('../models/User');
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 const User = mongoose.model('User');
+const Check = require('../helpers/rolecheck');
+
+function listUser (user, query, callback) {
+
+  const myCustomLabels = {
+    totalDocs: 'itemCount',
+    docs: 'itemsList',
+    limit: 'perPage',
+    page: 'currentPage',
+    meta: '_meta'
+  };
+
+  const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort))
+  const options = {
+    page: query.page,
+    limit: query.limit,
+    sort: sorts,
+    leanWithId: true,
+    customLabels: myCustomLabels
+  };
+
+  let result_search;
+  let params={};
+  params = Check.userByRole(params,user)
+  if(query.search){
+    var search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+    result_search = User.find(params).or(search_params).where("deleted_status").ne("deleted")
+  } else {
+    result_search = User.find(params).where("deleted_status").ne("deleted")
+  }
+
+  User.paginate(result_search, options).then(function(results){
+      let res = {
+        users: results.itemsList.map(users => users.toJSONFor()),
+        _meta: results._meta
+      }
+      return callback(null, res)
+  }).catch(err => callback(err, null))
+}
 
 function getUserByEmail (email, callback) {
   User.findOne({ email }, (err, user) => {
@@ -86,12 +128,14 @@ function updateUser (user, payload, callback) {
   });
 }
 
-
-
 module.exports = [
   {
     name: 'services.users.getByEmail',
     method: getUserByEmail
+  },
+  {
+    name: 'services.users.listUser',
+    method: listUser
   },
   {
     name: 'services.users.getById',

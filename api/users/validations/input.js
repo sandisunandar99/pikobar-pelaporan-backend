@@ -41,6 +41,19 @@ const RegisterPayload = {
   failAction: validateOptions.failAction
 }
 
+const UserQueryValidations = {
+  query: {
+      limit: Joi.number().integer().empty('', 10).default(10).description('limit result set'),
+      offset: Joi.number().integer().default(0).description('number of record to skip'),
+      page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
+      sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
+      search: Joi.string().empty('', null).default('').description('search data by Case name'),
+      status: Joi.string().empty('', null).default('').description('search data by status')
+  },
+  options: validateOptions.options,
+  failAction: validateOptions.failAction
+}
+
 const UpdatePayload = {
   headers: HeadersPayLoad,
   payload: Joi.object().keys({
@@ -66,5 +79,6 @@ module.exports = {
   GetCurrentPayload,
   LoginPayload,
   RegisterPayload,
-  UpdatePayload
+  UpdatePayload,
+  UserQueryValidations
 }
