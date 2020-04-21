@@ -106,7 +106,7 @@ const DataSheetRequest = server => {
 
             const errors = await caseSheetValidator.validate(payload, Joi, rules, label, helper, Case)
 
-            if (Object.entries(errors).length) {
+            if (errors.length) {
                 let response ={
                     status: 400,
                     message: 'Bad request.',

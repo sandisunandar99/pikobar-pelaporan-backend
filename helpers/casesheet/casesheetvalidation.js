@@ -1,4 +1,5 @@
 const validate = async (payload, Joi, rules, label, helper, Case) => {
+    let results = []
     let objError = {}
     let strErrors = ''
 
@@ -72,11 +73,38 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       }
 
       if (errors.length) {
-        objError['row_' + (parseInt(i)+1).toString()] = errors
+        objError[(parseInt(i)+9).toString()] = errors
       }
     }
-    
-    return objError
+
+    // transform error response
+    for (i in objError) {
+      let rowDetail = {}
+      let rowErrors = []
+      let err = objError[i] || []
+
+      for (j in err) {
+        let errs = err[j] || {}
+        
+        for (k in errs) {
+          let desc = ''
+          let  transform = {}
+          if (errs[k].join) {
+            desc = errs[k].join(',')
+          }
+          transform.columnName = k
+          transform.description = desc
+          rowErrors.push(transform)
+        }
+
+      }
+      
+      rowDetail.rowNumber = i
+      rowDetail.data = rowErrors
+      results.push(rowDetail)
+    }
+
+    return results
 }
 
 module.exports = {
