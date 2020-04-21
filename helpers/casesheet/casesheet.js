@@ -119,7 +119,7 @@ const getStage = () => {
 }
 
 const getFinalResult = () => {
-    if(!dt[conf.cell.final_result]) return undefined
+    if(!dt[conf.cell.final_result]) return null
     const result = _toString(dt[conf.cell.final_result])
     let resultCode = '0'
 

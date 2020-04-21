@@ -82,7 +82,7 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     occupation: Joi.string().allow('', null),
     stage: Joi.string().required(),
     status: Joi.string().required(),
-    final_result: Joi.string().required(),
+    final_result: Joi.string().allow('', null),
     diagnosis: Joi.array(),
     diagnosis_other: Joi.string().allow('', null),
     is_went_abroad: Joi.boolean(),
