@@ -144,7 +144,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Kode Kasus": this.id_case,
        "Kode Kasus Pusat": this.id_case_national,
        "Tanggal Lapor": createDate,
-       "Sumber Lapor": (this.last_history !== null ? this.last_history.report_source : null),
+       "Sumber Lapor": (this.last_history !== null && this.last_history.report_source !== null ? this.last_history.report_source : null),
        "NIK": this.nik,
        "Nama": this.name,
        "Tanggal Lahir": birthDate,
