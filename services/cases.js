@@ -353,7 +353,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
   const dataSheet = pre
 
-  let savedCases = []
+  let savedCases = null //[]
 
   let promise = Promise.resolve()
 
@@ -364,6 +364,12 @@ async function importCases (raw_payload, author, pre, callback) {
     let item = dataSheet[i]
 
     promise = promise.then(async () => {
+
+      const isCaseExist = await Case.find({nik: item.nik}).countDocuments()
+
+      if (isCaseExist) {
+        return new Promise(resolve => resolve(null))
+      }
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
@@ -438,7 +444,7 @@ async function importCases (raw_payload, author, pre, callback) {
       savedCase = Object.assign(savedCase, last_history)
       savedCase = await savedCase.save()
 
-      savedCases.push(savedCase)
+      // savedCases.push(savedCase)
   
       return new Promise(resolve => resolve(savedCase))
 

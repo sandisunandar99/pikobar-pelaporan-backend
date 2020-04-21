@@ -61,7 +61,7 @@ const CaseImportPayload = Joi.object().keys({
 
 const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     id_case_national: Joi.string().allow('', null),
-    nik: Joi.string().allow('', null),
+    nik: Joi.string().required(),
     id_case_related: Joi.string().allow('', null),
     name_case_related: Joi.string().allow('', null),
     name: Joi.string().required(),

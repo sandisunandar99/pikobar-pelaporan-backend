@@ -1,4 +1,4 @@
-const validate = async (payload, Joi, rules, label, helper, Case) => {
+const validate = async (payload, Joi, rules, label, helper/*, Case*/) => {
     let results = []
     let objError = {}
 
@@ -37,6 +37,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       const districtCode = payload[i].address_district_code
       const subDistrictCode = payload[i].address_subdistrict_code
       const villageCode = payload[i].address_village_code
+      let domicileMsg = ''
       if (districtCode.substr && subDistrictCode.substr && villageCode.substr) {
         if (subDistrictCode.substr(0,5) != districtCode) {
           let prop = label['address_subdistrict_code']
@@ -61,7 +62,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       const curDistrictCode = payload[i].current_location_district_code
       const curSubDistrictCode = payload[i].current_location_subdistrict_code
       const curVillageCode = payload[i].current_location_village_code
-      let domicileMsg = ''
+
       if (curDistrictCode.substr && curSubDistrictCode.substr && curVillageCode.substr) {
         if (curSubDistrictCode.substr(0,5) != curDistrictCode) {
           let prop = label['current_location_subdistrict_code']
@@ -97,6 +98,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
         propErr[prop].push(messg)
       }
 
+      /*
       const nik = payload[i].nik
       const isCaseExist = await Case.find({nik: nik}).countDocuments()
 
@@ -110,6 +112,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
         }
         propErr[prop].push(messg)
       }
+      */
 
       if (Object.keys(propErr).length !== 0) {
         errors.push(propErr)

@@ -28,7 +28,7 @@ const getName = () => {
 }
 
 const getNik = () => {
-    return _toString(dt[conf.cell.nik])
+    return _toString(dt[conf.cell.nik]) || undefined
 }
 
 const getBirthDate = () => {
