@@ -1,4 +1,4 @@
-const validate = async (payload, Joi, rules, label, helper) => {
+const validate = async (payload, Joi, rules, label, helper, Case) => {
     let objError = {}
     let strErrors = ''
 
@@ -43,6 +43,21 @@ const validate = async (payload, Joi, rules, label, helper) => {
         let prop = 'address_district_code'
             prop = label[prop]
         let messg = `\"${prop}"\ Invalid/Not found`
+
+        if (!Array.isArray(propErr[prop])) {
+            propErr[prop] = []
+        }
+        propErr[prop].push(messg)
+        strErrors += messg
+      }
+
+      const nik = payload[i].nik
+      const isCaseExist = await Case.find({nik: nik}).countDocuments()
+
+      if (isCaseExist) {
+        let prop = 'nik'
+        prop = label[prop]
+        let messg = `\"${prop}"\ Already exists`
 
         if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []

@@ -87,6 +87,11 @@ const checkIfDataNotNull = server =>{
 const DataSheetRequest = server => {
     return {
         method: async (request, reply) => {
+            const mongoose = require('mongoose');
+
+            require('../../models/Case');
+            const Case = mongoose.model('Case');
+
             const helper = require("../../helpers/casesheet/casesheetextraction")
 
             const payload = await helper.caseSheetExtraction(request)
@@ -99,7 +104,7 @@ const DataSheetRequest = server => {
 
             const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
 
-            const errors = await caseSheetValidator.validate(payload, Joi, rules, label, helper)
+            const errors = await caseSheetValidator.validate(payload, Joi, rules, label, helper, Case)
 
             if (Object.entries(errors).length) {
                 let response ={
