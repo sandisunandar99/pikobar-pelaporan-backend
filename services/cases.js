@@ -54,12 +54,6 @@ function ListCase (query, user, callback) {
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
   }
-  if(user.role == 'dinkeskota'){
-    params.address_district_code = user.code_district_city;
-  }  else if (user.role == 'faskses') {
-    params.author = new ObjectId(user._id);
-    params.author_district_code = user.code_district_city;
-  }
   if(query.status){
     params.status = query.status;
   }
