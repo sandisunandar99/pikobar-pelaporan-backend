@@ -12,6 +12,18 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, lowercase: true, required: [true, "can't be blank"]},
   code_district_city: { type: String, default: null},
   name_district_city: { type: String, default: null},
+  phone_number: {type:String},
+  address_street: {type:String},
+  address_village_code: { type: String, required: [true, "can't be blank"]},
+  address_village_name: { type: String, required: [true, "can't be blank"]},
+  // kecamatan
+  address_subdistrict_code: { type: String, required: [true, "can't be blank"]},
+  address_subdistrict_name: { type: String, required: [true, "can't be blank"]},
+  // kab/kota
+  address_district_code: { type: String, required: [true, "can't be blank"]},
+  address_district_name: { type: String, required: [true, "can't be blank"]},
+  address_province_code: { type: String, default:32},
+  address_province_name: { type: String, default:"Jawa Barat"},
   hash: String,
   salt: String
 }, {timestamps: true})
