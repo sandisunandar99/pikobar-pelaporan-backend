@@ -40,7 +40,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       if (districtCode.substr && subDistrictCode.substr && villageCode.substr) {
         if (subDistrictCode.substr(0,5) != districtCode) {
           let prop = label['address_subdistrict_code']
-          domicileMsg = `\"${prop}"\ Not registered in selected "Kabupaten"`
+          domicileMsg = `\"${prop}"\ tidak terdaftar sesuai pada kabupaten yang dipilih.`
           if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
           }
@@ -49,7 +49,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
 
         if (villageCode.substr(0,8) != subDistrictCode) {
           let prop = label['address_village_code']
-          domicileMsg = `\"${prop}"\ Not registered in selected "Kecamatan"`
+          domicileMsg = `\"${prop}"\ tidak terdaftar sesuai pada kecamatan yang dipilih.`
           if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
           }
@@ -65,7 +65,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       if (curDistrictCode.substr && curSubDistrictCode.substr && curVillageCode.substr) {
         if (curSubDistrictCode.substr(0,5) != curDistrictCode) {
           let prop = label['current_location_subdistrict_code']
-          domicileMsg = `\"${prop}"\ Not registered in selected "Kabupaten"`
+          domicileMsg = `\"${prop}"\ tidak terdaftar sesuai pada kabupaten yang dipilih.`
           if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
           }
@@ -74,7 +74,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
 
         if (curVillageCode.substr(0,8) != curSubDistrictCode) {
           let prop = label['current_location_village_code']
-          domicileMsg = `\"${prop}"\ Not registered in selected "Kecamatan"`
+          domicileMsg = `\"${prop}"\ tidak terdaftar sesuai pada kecamatan yang dipilih.`
           if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
           }
@@ -89,7 +89,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       if (!isDistrictCodeValid) {
         let prop = 'address_district_code'
             prop = label[prop]
-        let messg = `\"${prop}"\ Invalid/Not found`
+        let messg = `\"${prop}"\ Kode Kabupaten Salah.`
 
         if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
@@ -103,7 +103,7 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
       if (isCaseExist) {
         let prop = 'nik'
         prop = label[prop]
-        let messg = `\"${prop}"\ Already exists`
+        let messg = `\"${prop}"\ Sudah ada.`
 
         if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
@@ -134,6 +134,11 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
           let  transform = {}
           if (errs[k].join) {
             desc = errs[k].join(',')
+            if (desc && desc.replace) {
+              desc = desc.replace('is required', 'Harus diisi')
+              desc = desc.replace('must be a string', 'Harus berisi string')
+              desc = desc.replace('must be a number', 'Harus berisi angka')
+            }
           }
           transform.columnName = k
           transform.description = desc
