@@ -30,7 +30,7 @@ const exportByRole = (params, user) => {
 
 const userByRole = (params, user) => {
   if (user.role == "dinkeskota") {
-    params.code_district_city = user.code_district_city;
+    params.author_district_code = user.code_district_city;
   } else {
     return true;
   }
@@ -41,26 +41,26 @@ const listByRole = (user, params, search_params, schema, conditions) => {
   let result_search
   if (search_params == null) {
     if(user.role == "dinkeskota"){
-      params.address_district_code = user.code_district_city;
+      params.author_district_code = user.code_district_city;
       result_search = schema.find(params).where(conditions).ne("deleted")
     }else if (user.role == "dinkesprov" || user.role == "superadmin") {
       result_search = schema.find(params).where(conditions).ne("deleted")
     } else {
       result_search = schema.find({
         "author":new ObjectId(user._id),
-        "address_district_code":user.code_district_city,
+        "author_district_code":user.code_district_city,
       }).where(conditions).ne("deleted")
     }
   } else {
     if(user.role == "dinkeskota"){
-      params.address_district_code = user.code_district_city;
+      params.author_district_code = user.code_district_city;
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
     }else if (user.role == "dinkesprov" || user.role == "superadmin") {
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
     } else {
       result_search = schema.find({
         "author":new ObjectId(user._id),
-        "address_district_code":user.code_district_city
+        "author_district_code":user.code_district_city
       }).or(search_params).where(conditions).ne("deleted")
     }
   }
