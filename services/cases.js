@@ -365,11 +365,13 @@ async function importCases (raw_payload, author, pre, callback) {
 
     promise = promise.then(async () => {
 
+      /*
       const isCaseExist = await Case.find({nik: item.nik}).countDocuments()
 
       if (isCaseExist) {
         return new Promise(resolve => resolve(null))
       }
+      */
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})

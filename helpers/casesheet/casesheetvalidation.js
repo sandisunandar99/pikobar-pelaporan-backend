@@ -1,4 +1,4 @@
-const validate = async (payload, Joi, rules, label, helper/*, Case*/) => {
+const validate = async (payload, Joi, rules, label, helper, Case) => {
     let results = []
     let objError = {}
 
@@ -98,21 +98,21 @@ const validate = async (payload, Joi, rules, label, helper/*, Case*/) => {
         propErr[prop].push(messg)
       }
 
-      /*
+      
       const nik = payload[i].nik
       const isCaseExist = await Case.find({nik: nik}).countDocuments()
 
       if (isCaseExist) {
         let prop = 'nik'
         prop = label[prop]
-        let messg = `\"${prop}"\ Sudah ada.`
+        let messg = `\"${prop}"\ '${nik}' Sudah terdata di laporan kasus!`
 
         if (!Array.isArray(propErr[prop])) {
             propErr[prop] = []
         }
         propErr[prop].push(messg)
       }
-      */
+      
 
       if (Object.keys(propErr).length !== 0) {
         errors.push(propErr)
