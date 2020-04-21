@@ -72,7 +72,6 @@ function ListCase (query, user, callback) {
     var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
     var result_search = Check.listByRole(user, params, null,Case,"delete_status")
-
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -165,9 +164,12 @@ async function getCaseSummaryFinal (query, user, callback) {
   const searchingMeninggal = {status:"POSITIF",final_result:2}
   
   try {
-    const positif = await Case.find(Object.assign(searching,searchingPositif)).where("delete_status").ne("deleted").then(res => { return res.length })
-    const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where("delete_status").ne("deleted").then(res => { return res.length })
-    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where("delete_status").ne("deleted").then(res => { return res.length })
+    const positif = await Case.find(Object.assign(searching,searchingPositif))
+    .where("delete_status").ne("deleted").then(res => { return res.length })
+    const sembuh = await Case.find(Object.assign(searching,searchingSembuh))
+    .where("delete_status").ne("deleted").then(res => { return res.length })
+    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal))
+    .where("delete_status").ne("deleted").then(res => { return res.length })
     const result =  {
       "SEMBUH":sembuh, 
       "MENINGGAL":meninggal,
