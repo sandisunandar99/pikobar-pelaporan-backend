@@ -1,8 +1,10 @@
-var dt, conf
+var dt, conf, registeredDiagnosis, unknownDiagnosis
 
 const init = (value, config) => {
     dt = value
     conf = config
+    registeredDiagnosis = []
+    unknownDiagnosis = []
 }
 
 const getIdCaseNational = () => {
@@ -10,15 +12,19 @@ const getIdCaseNational = () => {
 }
 
 const getIdCaseRelated = () => {
+    if (!dt[conf.cell.id_case_related]) return null
+    if (! _toString(dt[conf.cell.id_case_related].split)) return null
     return _toString(dt[conf.cell.id_case_related].split('-')[0] || null)
 }
 
 const getNameCaseRelated = () => {
+    if (!dt[conf.cell.id_case_related]) return null
+    if (!_toString(dt[conf.cell.id_case_related].split)) return null
     return _toString(dt[conf.cell.id_case_related].split('-')[1] || null)
 }
 
 const getName = () => {
-    return _toString(dt[conf.cell.name])
+    return _toString(dt[conf.cell.name]) || undefined
 }
 
 const getNik = () => {
@@ -26,19 +32,22 @@ const getNik = () => {
 }
 
 const getBirthDate = () => {
-    return dt[conf.cell.birth_date]
+    return _toDateString(dt[conf.cell.birth_date])
 }
 
 const getAge = () => {
-    return _toInt(dt[conf.cell.age])
+    if (dt[conf.cell.age] === '' || dt[conf.cell.age] === null) return null
+    let age = _toUnsignedInt(dt[conf.cell.age]) || '0'
+    return _toString(age)
 }
 
 const getGender = () => {
+    if (!dt[conf.cell.gender]) return undefined
     return dt[conf.cell.gender] == 'Perempuan' ? 'P' : 'L'
 }
 
 const getPhoneNumber = () => {
-    return _toString(dt[conf.cell.phone_number])
+    return _toString(dt[conf.cell.phone_number]) || undefined
 }
 
 const getAddressStreet = () => {
@@ -54,31 +63,37 @@ const getAddressProvinceName = () => {
 }
 
 const getAddressDistrictCode = () => {
-    return _toString(dt[conf.cell.address_district_code].split('-')[0] || null)
-}
-
-const getAddressDistrictName = () => {
+    if (!dt[conf.cell.address_district_code]) return undefined
     return _toString(dt[conf.cell.address_district_code].split('-')[1] || null)
 }
 
-const getAddressSubdistrictCode = () => {
-    return _toString(dt[conf.cell.address_subdistrict_code].split('-')[0] || null)
+const getAddressDistrictName = () => {
+    if (!dt[conf.cell.address_district_code]) return undefined
+    return _toString(dt[conf.cell.address_district_code].split('-')[0] || null)
 }
 
-const getAddressSubdistrictName = () => {
+const getAddressSubdistrictCode = () => {
+    if (!dt[conf.cell.address_subdistrict_code]) return undefined
     return _toString(dt[conf.cell.address_subdistrict_code].split('-')[1] || null)
 }
 
-const getAddressVillageCode = () => {
-    return _toString(dt[conf.cell.address_village_code].split('-')[0] || null)
+const getAddressSubdistrictName = () => {
+    if (!dt[conf.cell.address_subdistrict_code]) return undefined
+    return _toString(dt[conf.cell.address_subdistrict_code].split('-')[0] || null)
 }
 
-const getAddressVillageName = () => {
+const getAddressVillageCode = () => {
+    if (!dt[conf.cell.address_village_code]) return undefined
     return _toString(dt[conf.cell.address_village_code].split('-')[1] || null)
 }
 
+const getAddressVillageName = () => {
+    if (!dt[conf.cell.address_village_code]) return undefined
+    return _toString(dt[conf.cell.address_village_code].split('-')[0] || null)
+}
+
 const getNationality = () => {
-    return _toString(dt[conf.cell.nationality])
+    return _toString(dt[conf.cell.nationality]) || undefined
 }
 
 const getNationalityName = () => {
@@ -90,35 +105,71 @@ const getOccupation = () => {
 }
 
 const getOfficeAddress = () => {
-    return conf.cell.office_address
+    return _toString(dt[conf.cell.office_address])
 }
 
 const getStatus = () => {
-    return _toString(dt[conf.cell.status])
+    return _toString(dt[conf.cell.status]) || undefined
 }
 
 const getStage = () => {
-    return _toString(dt[conf.cell.stage])
+    if (!dt[conf.cell.stage]) return undefined
+    let stage = _toString(dt[conf.cell.stage])
+    return stage === 'Selesai' ? '1' : '0'
 }
 
 const getFinalResult = () => {
-    return _toString(dt[conf.cell.final_result])
+    if(!dt[conf.cell.final_result]) return undefined
+    const result = _toString(dt[conf.cell.final_result])
+    let resultCode = '0'
+
+    if (result == 'Sembuh') {
+        resultCode = '1'
+    } else if (result == 'Meninggal') {
+        resultCode = '2'
+    }
+
+    return resultCode
 }
 
 const getReportSource = () => {
-    return conf.cell.report_source //todo
+    return _toString(dt[conf.cell.report_source])
 }
 
 const getDiagnosis = () => {
-    return dt[conf.cell.diagnosis].split(',')
+    if (!dt[conf.cell.diagnosis]) return []
+    let diagnosis = dt[conf.cell.diagnosis].split(',')
+
+    for (i in diagnosis) {
+        let diagnose = _toString(diagnosis[i])
+        if (diagnose.trim) {
+            diagnose = diagnose.trim()
+        }
+
+        if (refDiagnosis.includes(diagnose)) {
+            registeredDiagnosis.push(diagnose)
+        } else {
+            unknownDiagnosis.push(diagnose)
+        }
+    }
+
+    return registeredDiagnosis || []
 }
 
 const getDiagnosisOther = () => {
-    return conf.cell.diagnosis_other //todo
+    let otherDiagnosis = _toString(dt[conf.cell.diagnosis_other])
+    if (unknownDiagnosis && unknownDiagnosis.join) {
+        if (otherDiagnosis) {
+            otherDiagnosis += ' ' + unknownDiagnosis.join(',')
+        } else {
+            otherDiagnosis = unknownDiagnosis.join(',')
+        }
+    }
+    return otherDiagnosis || null
 }
 
 const getFirstSymptomDate = () => {
-    return conf.cell.first_symptom_date //todo
+    return _toDateString(dt[conf.cell.first_symptom_date])
 }
 
 const getHistoryTracing = () => {
@@ -126,61 +177,72 @@ const getHistoryTracing = () => {
 }
 
 const isWentAbroad = () => {
-    return false //todo
+    return dt[conf.cell.is_went_abroad] == 'Dari luar negeri'
 }
 
 const getVisitedCountry = () => {
-    return conf.cell.visited_country //todo
+    return isWentAbroad() ? _toString(dt[conf.cell.visited_country]) : null
 }
 
 const getReturnDate = () => {
-    return conf.cell.return_date //todo
+    if (!dt[conf.cell.return_date]) return null
+    // console.log(dt[conf.cell.return_date])
+    let returnDate = _toDateString(dt[conf.cell.return_date])
+    return returnDate
 }
 
 const isWentOtherCity = () => {
-    return false //todo
+    return dt[conf.cell.is_went_other_city] == 'Dari luar kota'
 }
 
 const getVisitedCity = () => {
-    return conf.cell.visited_city //todo
+    return isWentOtherCity() ? _toString(dt[conf.cell.visited_city]) : null
 }
 
 const isContactWithPositive = () => {
-    return false //todo
+    return dt[conf.cell.is_contact_with_positive] == 'Kontak erat'
 }
 
 const getHistoryNotes = () => {
-    return //todo
+    return null
 }
 
 const getCurrentLocationType = () => {
-    return dt[conf.cell.current_location_type] ? 'RS' : 'RUMAH'
+    if (!dt[conf.cell.current_location_type]) return undefined
+    return dt[conf.cell.current_location_type] == 'Ya' ? 'RS' : 'RUMAH'
 }
 
 const getCurrentHospitalId = () => {
-    return dt[conf.cell.current_hospital_id].split('-')[0] || null
+    if (!dt[conf.cell.current_hospital_id]) return null
+    return dt[conf.cell.current_hospital_id].split('-')[1] || null
 }
 
 const getCurrentLocationAddress = () => {
-    return dt[conf.cell.current_location_address] 
-        ? dt[conf.cell.current_hospital_id].split('-')[1] || null
-        : 'todo home street'
+    if (dt[conf.cell.current_location_type] == 'Ya') {
+        if (!dt[conf.cell.current_hospital_id]) return null
+        return dt[conf.cell.current_hospital_id].split('-')[0] || null
+    } else {
+        return dt[conf.cell.current_location_address]
+    }
 }
 
 const getCurrentLocationDistrictCode = () => {
-    return _toString(dt[conf.cell.current_location_district_code].split('-')[0] || null)
+    if (!dt[conf.cell.current_location_district_code]) return null
+    return _toString(dt[conf.cell.current_location_district_code].split('-')[1] || null)
 }
 
 const getCurrentLocationSubdistrictCode = () => {
-    return _toString(dt[conf.cell.current_location_subdistrict_code].split('-')[0] || null)
+    if (!dt[conf.cell.current_location_subdistrict_code]) return null
+    return _toString(dt[conf.cell.current_location_subdistrict_code].split('-')[1] || null)
 }
 
 const getCurrentLocationVillageCode = () => {
-    return _toString(dt[conf.cell.current_location_village_code].split('-')[0] || null)
+    if (!dt[conf.cell.current_location_village_code]) return null
+    return _toString(dt[conf.cell.current_location_village_code].split('-')[1] || null)
 }
 
 const getOtherNotes = () => {
-    return conf.cell.other_notes //todo
+    return _toString(dt[conf.cell.other_notes])
 }
 
 const getLastChanged = () => {
@@ -199,13 +261,47 @@ const _toString = (value) => {
     return value
 }
 
-const _toInt = (value) => {
+const _toDateString = (value) => {
+    if (!value) return null
+    return new Date((value - (25567 + 1))*86400*1000) || null
+}
+
+const _toUnsignedInt = (value) => {
+
     if (value && value.parseToInt) {
-        return value.parseToInt()
+        return Math.abs(value.parseToInt())
+    } else if (value && typeof value === 'number') {
+        return Math.abs(value)
     }
 
     return value
 }
+
+const isRowFilled = () => {
+    const c = conf.cell
+    if (dt[c.name] || dt[c.nik] || dt[c.birth_date] || dt[c.gender] || dt[c.address_province_code])
+    {
+        return true
+    }
+
+    return false
+}
+
+const refDiagnosis = [
+    'Suhu tubuh >= 38°C',
+    'Suhu tubuh < 38°C',
+    'Batuk',
+    'Pilek', 
+    'Sakit Tenggorokan',
+    'Sakit Kepala',
+    'Sesak Napas',
+    'Menggigil', 
+    'Lemah (malaise)',
+    'Nyeri Otot',
+    'Mual atau Muntah',
+    'Nyeri Abdomen',
+    'Diare'
+]
 
 module.exports = {
     init,
@@ -255,4 +351,5 @@ module.exports = {
     getOtherNotes,
     getLastChanged,
     isSampleTaken,
+    isRowFilled,
 }
