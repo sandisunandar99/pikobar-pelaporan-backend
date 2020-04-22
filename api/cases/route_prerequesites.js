@@ -124,14 +124,22 @@ const DataSheetRequest = server => {
 
             const Joi = require('joi')
 
-            const { label } = require('../../helpers/casesheet/casesheetconfig.json')
+            const config = require('../../helpers/casesheet/casesheetconfig.json')
 
             const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
 
-            const errors = await caseSheetValidator.validate(payload, Joi, rules, label, helper, Case)
+            const errors = await caseSheetValidator.validate(payload, Joi, rules, config, helper, Case)
+
+            if (payload.length > config.max_rows_allowed) {
+                let response = {
+                    status: 422,
+                    message: `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
+                }
+                return reply(response).code(400).takeover()
+            }
 
             if (errors.length) {
-                let response ={
+                let response = {
                     status: 400,
                     message: 'Bad request.',
                     errors: errors

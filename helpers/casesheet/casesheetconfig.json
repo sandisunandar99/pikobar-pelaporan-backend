@@ -1,5 +1,6 @@
 {
     "start_row": 6,
+    "max_rows_allowed": 300,
     "cell": {
         "id_case_national": 0,
         "id_case_related": 25,
