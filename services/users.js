@@ -105,17 +105,19 @@ const updateUser = (user, payload, callback) => {
   });
 }
 
-const updateUsers = async (id, payload, category, author, callback) =>{
+const updateUsers = async (id, pay, category, author, callback) =>{
   try {
+    const payloads = {};
+    const payload = (pay == null ? {} : pay );
     if(category == "delete"){
       const date = new Date();
-      const payload = {};
-      payload.delete_status = "deleted";
-      payload.deletedAt = date.toISOString();
-      payload.deletedBy = author;
+      payloads.delete_status = "deleted";
+      payloads.deletedAt = date.toISOString();
+      payloads.deletedBy = author;
     }
+    const params = Object.assign(payload,payloads);
     const result = await User.findByIdAndUpdate(id,
-    { $set: payload }, { new: true })
+    { $set: params }, { new: true })
     callback(null, result)
   } catch (error) {
     callback(error, null)
