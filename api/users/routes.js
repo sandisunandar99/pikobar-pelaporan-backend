@@ -53,6 +53,17 @@ module.exports = (server) => {
       },
       handler: handlers.updateMe
     },
+    // Soft delete user
+    {
+      method: 'DELETE',
+      path: '/users/{id}',
+      config: {
+        auth: 'jwt',
+        description: 'Soft delete user',
+        tags: ['api', 'users']
+      },
+      handler: handlers.deleteUsers
+    },
     // Register
     {
       method: 'POST',

@@ -1,6 +1,3 @@
-const replyHelper = require('../helpers')
-
-
 const CheckRoleView = server => {
     return {
         method: (request, reply) => {
