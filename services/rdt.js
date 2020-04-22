@@ -629,19 +629,19 @@ function getDatafromExternal(address_district_code, search, callback) {
 
 
      res.on('end', () => {
-       let jsonData = JSON.parse(data)
-       let result = jsonData.data.content
+      let jsonData = JSON.parse(data)
+      let result = jsonData.data.content
 
-       let outputData = []
-       result.forEach(val => {
-         outputData.push({
-           display: val.name + "/" + val.nik + "/" + val.phone_number,
-           id_case: null,
-           id: null
-         })
-       });
+      let outputData = []
+      result.forEach(val => {
+        outputData.push({
+          display: val.name + "/" + val.nik + "/" + val.phone_number,
+          id_case: null,
+          id: null
+        })
+      });
 
-       return callback(null, outputData)
+      return callback(null, outputData)
      });
 
    }).on("error", (err) => {
@@ -659,7 +659,7 @@ function FormSelectIdCaseDetail(search_internal, search_external, user, callback
 
 function seacrhFromExternal(address_district_code, search, callback) {
 
-    https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' +search.toLowerCase()+ '&address_district_code=' +address_district_code, (res) => {
+    https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' +'&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
