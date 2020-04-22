@@ -21,11 +21,11 @@ const UserSchema = new mongoose.Schema({
   address_subdistrict_name: { type: String, required: [true, "can't be blank"]},
   address_province_code: { type: String, default:32},
   address_province_name: { type: String, default:"Jawa Barat"},
-  delete_status: String,
-  deletedAt: Date,
-  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   hash: String,
-  salt: String
+  salt: String,
+  delete_status: { type: String, default:""},
+  deletedAt: { type: Date, default:""},
+  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null},
 }, {timestamps: true})
 
 UserSchema.plugin(uniqueValidator, {
@@ -61,8 +61,6 @@ UserSchema.methods.toAuthJSON = function () {
     role: this.role,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
-    // hash: this.hash,
-    // salt: this.salt,
     token: this.generateJWT()
   }
 }
@@ -86,14 +84,6 @@ UserSchema.methods.JSONCase = function () {
     fullname: this.fullname,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
-  }
-}
-
-UserSchema.methods.toProfileJSONFor = function (user) {
-  return {
-    id : this._id,
-    username: this.username,
-    role: this.role
   }
 }
 

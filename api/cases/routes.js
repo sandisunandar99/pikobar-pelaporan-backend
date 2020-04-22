@@ -13,6 +13,7 @@ module.exports = (server) =>{
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
     const DataSheetRequest = require('./route_prerequesites').DataSheetRequest(server)
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
+    const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
 
 
     return [
@@ -44,7 +45,8 @@ module.exports = (server) =>{
                 pre: [
                     CheckRoleCreate,
                     validationBeforeInput,
-                    countCaseByDistrict
+                    countCaseByDistrict,
+                    checkCaseIsExists
                 ]
             },
             handler: handlers.CreateCase
@@ -211,6 +213,20 @@ module.exports = (server) =>{
             },
             handler: handlers.GetIdCase
         },
+        // Get detail case by nik
+        {
+            method: 'GET',
+            path: '/cases-by-nik/{nik}',
+            config: {
+                auth: 'jwt',
+                description: 'show a specific cases details by nik',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetCaseDetailByNik
+        }
     ]
 
 }

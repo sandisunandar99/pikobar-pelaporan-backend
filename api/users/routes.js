@@ -27,6 +27,17 @@ module.exports = (server) => {
       },
       handler: handlers.getUserById
     },
+    // Get user by email or username
+    {
+      method: 'GET',
+      path: '/users/check',
+      config: {
+        auth: 'jwt',
+        description: 'Get current info user',
+        tags: ['api', 'users']
+      },
+      handler: handlers.checkUser
+    },
     // Get current user
     {
       method: 'GET',
@@ -52,6 +63,28 @@ module.exports = (server) => {
         tags: ['api', 'users']
       },
       handler: handlers.updateMe
+    },
+    // Soft delete user
+    {
+      method: 'DELETE',
+      path: '/users/{id}',
+      config: {
+        auth: 'jwt',
+        description: 'Soft delete user',
+        tags: ['api', 'users']
+      },
+      handler: handlers.deleteUsers
+    },
+    // UPDATE user
+    {
+      method: 'PUT',
+      path: '/users/{id}',
+      config: {
+        auth: 'jwt',
+        description: 'update user',
+        tags: ['api', 'users']
+      },
+      handler: handlers.updateUsers
     },
     // Register
     {

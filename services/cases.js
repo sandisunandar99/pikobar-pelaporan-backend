@@ -135,6 +135,15 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
+function getCaseByNik (nik, callback) {
+  Case.findOne({nik: nik})
+    .where('delete_status').ne('deleted')
+    .populate('author')
+    .populate('last_history')
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
 function getIdCase (query,callback) {
   const params = {}
   if(query.name_case_related){
@@ -365,14 +374,6 @@ async function importCases (raw_payload, author, pre, callback) {
 
     promise = promise.then(async () => {
 
-      /*
-      const isCaseExist = await Case.find({nik: item.nik}).countDocuments()
-
-      if (isCaseExist) {
-        return new Promise(resolve => resolve(null))
-      }
-      */
-
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
       const districtCases = await Case.find({ address_district_code: code}).sort({id_case: -1})
@@ -483,6 +484,10 @@ module.exports = [
   {
     name: 'services.cases.getById',
     method: getCaseById
+  },
+  {
+    name: 'services.cases.getByNik',
+    method: getCaseByNik
   },
   {
     name: 'services.cases.getSummary',

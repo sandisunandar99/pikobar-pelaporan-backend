@@ -46,12 +46,52 @@ module.exports = (server) => {
       });
     },
     /**
+     * GET /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async checkUser (request, reply) {
+      server.methods.services.users.checkUser(
+        request.query, (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      });
+    },
+    /**
      * GET /api/users
      * @param {*} request
      * @param {*} reply
      */
     async getCurrentUser (request, reply) {
       return reply(constructUserResponse(request.auth.credentials.user))
+    },
+    /**
+     * DELETE /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async deleteUsers (request, reply) {
+      server.methods.services.users.updateUsers(
+        request.params.id, request.payload, "delete",
+        request.auth.credentials.user._id,
+        (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      })
+    },
+    /**
+     * PUT /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async updateUsers (request, reply) {
+      server.methods.services.users.updateUsers(
+        request.params.id, request.payload, "update",
+        request.auth.credentials.user._id,
+        (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      })
     },
     /**
      * PUT /api/users/change-password
@@ -108,7 +148,7 @@ module.exports = (server) => {
           }).code(401)
         }
 
-          return reply(constructUserResponse(user))
+        return reply(constructUserResponse(user))
       });
     }
   }

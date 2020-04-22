@@ -8,6 +8,14 @@ const caseSheetExtraction = async (request) => {
   
     let dataSheet = await readXlsxFile(dir + uploaded.filename)
 
+    if (dataSheet[0][34] !== conf.verified_template 
+      || dataSheet[1][34] !== conf.verified_template 
+      || dataSheet[2][34] !== conf.verified_template 
+      || dataSheet[3][34] !== conf.verified_template 
+      || dataSheet[4][34] !== conf.verified_template ) {
+      return conf.unverified_template
+    }
+
     dataSheet.splice(0, conf.start_row)
     let payload = []
     

@@ -1,5 +1,8 @@
 {
-    "start_row": 6,
+    "start_row": 8,
+    "max_rows_allowed": 300,
+    "verified_template": "VERIFIED TEMPLATE",
+    "unverified_template": "UNVERIFIED TEMPLATE",
     "cell": {
         "id_case_national": 0,
         "id_case_related": 25,
@@ -95,5 +98,8 @@
         "other_notes": "Catatan Tembahan",
         "last_changed": "Perubahan Terakhir",
         "is_sample_taken": "Apakah diambil sample"
+    },
+    "messages": {
+        "unverified_template": "Template Kasus Yang diimport tidak dikenali, Silahkan download template terbaru"
     }
 }

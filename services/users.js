@@ -5,7 +5,7 @@ const User = mongoose.model('User');
 const Check = require('../helpers/rolecheck');
 const Helper = require('../helpers/custom');
 
-async function listUser (user, query, callback) {
+const listUser = async (user, query, callback) => {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -48,46 +48,49 @@ async function listUser (user, query, callback) {
   }).catch(err => callback(err, null));
 }
 
-function getUserByEmail (email, callback) {
-  User.findOne({ email }, (err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
-}
-
-async function getUserById (id, callback) {
+const getUserById = async (id, callback) => {
   try {
     const result = await User.findById(id);
-    console.log(result);
-    
-    return callback(null, result);
+    callback(null, result);
   } catch (error) {
-    return callback(error, null);
+    callback(error, null);
   }
 }
 
-function getUserByUsername (username, callback) {
+const getUserByUsername = (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
     return callback(null, user);
   });
 }
 
-async function createUser (payload, callback) {
+const checkUser = async (query, callback) => {
+  let check;
+  if(query.params){
+    const gets = await User.find({ $or:[ 
+      {'username':query.params}, {'email':query.params} ]})
+    .where("delete_status").ne("deleted").then(res => { return res.length });
+    check = (gets > 0 ? true : false);
+  } else {
+    check = {};
+  }
+  callback(null, check);
+}
+
+const createUser = async (payload, callback) => {
   try {
-    payload.salt = crypto.randomBytes(16).toString('hex')
-    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex')
-    payload.password = Helper.setPwd(payload.password)
-  
+    payload.salt = crypto.randomBytes(16).toString('hex');
+    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
+    payload.password = Helper.setPwd(payload.password);
     const user = new User(payload);
     const result = await user.save();
     callback(null, result);
   } catch (error) {
-    return callback(error, null);
+    callback(error, null);
   }
 }
 
-function updateUser (user, payload, callback) {
+const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
   let users = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
@@ -99,7 +102,7 @@ function updateUser (user, payload, callback) {
     name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city
   }
   
-  user = Object.assign(user, users)
+  user = Object.assign(user, users);
 
   user.save((err, user) => {
     if (err) return callback(err, null);
@@ -107,10 +110,29 @@ function updateUser (user, payload, callback) {
   });
 }
 
+const updateUsers = async (id, pay, category, author, callback) =>{
+  try {
+    const payloads = {};
+    const payload = (pay == null ? {} : pay );
+    if(category == "delete"){
+      const date = new Date();
+      payloads.delete_status = "deleted";
+      payloads.deletedAt = date.toISOString();
+      payloads.deletedBy = author;
+    }
+    const params = Object.assign(payload,payloads);
+    const result = await User.findByIdAndUpdate(id,
+    { $set: params }, { new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
 module.exports = [
   {
-    name: 'services.users.getByEmail',
-    method: getUserByEmail
+    name: 'services.users.checkUser',
+    method: checkUser
   },
   {
     name: 'services.users.listUser',
@@ -131,6 +153,10 @@ module.exports = [
   {
     name: 'services.users.update',
     method: updateUser
+  },
+  {
+    name: 'services.users.updateUsers',
+    method: updateUsers
   }
 ];
  
