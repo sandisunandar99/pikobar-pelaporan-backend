@@ -243,6 +243,21 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases-by-nik/{nik}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseDetailByNik(request, reply) {
+            let nik = request.params.nik
+            server.methods.services.cases.getByNik(nik, (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }

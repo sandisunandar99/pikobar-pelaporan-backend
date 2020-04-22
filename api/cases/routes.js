@@ -213,6 +213,20 @@ module.exports = (server) =>{
             },
             handler: handlers.GetIdCase
         },
+        // Get detail case by nik
+        {
+            method: 'GET',
+            path: '/cases-by-nik/{nik}',
+            config: {
+                auth: 'jwt',
+                description: 'show a specific cases details by nik',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetCaseDetailByNik
+        }
     ]
 
 }

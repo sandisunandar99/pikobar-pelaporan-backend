@@ -139,6 +139,7 @@ function getCaseByNik (nik, callback) {
   Case.findOne({nik: nik})
     .where('delete_status').ne('deleted')
     .populate('author')
+    .populate('last_history')
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null));
 }
