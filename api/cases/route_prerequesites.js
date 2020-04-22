@@ -118,8 +118,6 @@ const DataSheetRequest = server => {
             
             const helper = require("../../helpers/casesheet/casesheetextraction")
 
-            const payload = await helper.caseSheetExtraction(request)
-
             const rules = require('./validations/input')
 
             const Joi = require('joi')
@@ -128,15 +126,25 @@ const DataSheetRequest = server => {
 
             const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
 
-            const errors = await caseSheetValidator.validate(payload, Joi, rules, config, helper, Case)
+            const payload = await helper.caseSheetExtraction(request)
 
-            if (payload.length > config.max_rows_allowed) {
+            let invalidPaylodMessage = null
+
+            if (payload === config.unverified_template) {
+                invalidPaylodMessage = config.messages.unverified_template
+            } else if (payload.length > config.max_rows_allowed) {
+                invalidPaylodMessage = `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
+            }
+
+            if (invalidPaylodMessage) {
                 let response = {
-                    status: 422,
-                    message: `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
+                    status: 400,
+                    message: invalidPaylodMessage
                 }
                 return reply(response).code(400).takeover()
             }
+
+            const errors = await caseSheetValidator.validate(payload, Joi, rules, config, helper, Case)
 
             if (errors.length) {
                 let response = {
