@@ -28,8 +28,10 @@ function listUser (user, query, callback) {
   params = Check.userByRole(params,user)
   if(query.search){
     var search_params = [
-      { id_case : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
+      { username : new RegExp(query.search,"i") },
+      { fullname: new RegExp(query.search, "i") },
+      { email: new RegExp(query.search, "i") },
+      { phone_number: new RegExp(query.search, "i") },
     ];
     result_search = User.find(params).or(search_params).where("deleted_status").ne("deleted")
   } else {
