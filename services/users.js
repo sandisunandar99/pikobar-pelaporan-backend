@@ -79,8 +79,6 @@ function createUser (payload, callback) {
   user.name_district_city = payload.name_district_city;
   user.phone_number = payload.phone_number;
   user.address_street = payload.address_street;
-  user.address_district_code = payload.address_district_code;
-  user.address_district_name = payload.address_district_name;
   user.address_subdistrict_code = payload.address_subdistrict_code;
   user.address_subdistrict_name = payload.address_subdistrict_name;
   user.address_village_code = payload.address_village_code;

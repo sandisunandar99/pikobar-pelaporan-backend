@@ -38,8 +38,6 @@ const RegisterPayload = {
       code_district_city: Joi.number().required().allow(null, '').default('null'),
       phone_number: Joi.string().required().allow(null, '').default('null'),
       address_street: Joi.string().required().allow(null, '').default('null'),
-      address_district_code: Joi.string().required().allow(null, '').default('null'),
-      address_district_name: Joi.string().required().allow(null, '').default('null'),
       address_subdistrict_code: Joi.string().required().allow(null, '').default('null'),
       address_subdistrict_name: Joi.string().required().allow(null, '').default('null'),
       address_village_code: Joi.string().required().allow(null, '').default('null'),

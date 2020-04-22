@@ -75,7 +75,8 @@ UserSchema.methods.toJSONFor = function () {
     email: this.email,
     role: this.role,
     code_district_city: this.code_district_city,
-    name_district_city: this.name_district_city
+    name_district_city: this.name_district_city,
+    phone_number: this.phone_number
   }
 }
 
