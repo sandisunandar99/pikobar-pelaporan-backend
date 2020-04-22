@@ -186,7 +186,6 @@ module.exports = (server) => {
          */
         async GetListRegisteredUser(request, reply) {
             server.methods.services.rdt.getRegisteredUser(
-                request.pre.reg_user_internal,
                 request.pre.reg_user_external,
                 request.auth.credentials.user,
                 (err, result) => {
