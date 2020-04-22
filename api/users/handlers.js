@@ -46,6 +46,18 @@ module.exports = (server) => {
       });
     },
     /**
+     * GET /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async checkUser (request, reply) {
+      server.methods.services.users.checkUser(
+        request.query, (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      });
+    },
+    /**
      * GET /api/users
      * @param {*} request
      * @param {*} reply

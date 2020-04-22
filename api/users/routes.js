@@ -27,6 +27,17 @@ module.exports = (server) => {
       },
       handler: handlers.getUserById
     },
+    // Get user by email or username
+    {
+      method: 'GET',
+      path: '/users/check',
+      config: {
+        auth: 'jwt',
+        description: 'Get current info user',
+        tags: ['api', 'users']
+      },
+      handler: handlers.checkUser
+    },
     // Get current user
     {
       method: 'GET',
