@@ -19,15 +19,6 @@ module.exports = (server) => {
     return authUser
   }
 
-  function constructUserMultipleResponse(user) {
-    let authUser = { 
-      status : 200,
-      message: true,
-      data : user 
-    }
-    return authUser
-  }
-
   return {
     /**
      * GET /api/users
@@ -43,13 +34,30 @@ module.exports = (server) => {
       })
     },
     /**
-     * GET /api/user
+     * GET /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getUserById (request, reply) {
+      server.methods.services.users.getById(
+        request.params.id, (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      });
+    },
+    /**
+     * GET /api/users
      * @param {*} request
      * @param {*} reply
      */
     async getCurrentUser (request, reply) {
       return reply(constructUserResponse(request.auth.credentials.user))
     },
+    /**
+     * PUT /api/users/change-password
+     * @param {*} request
+     * @param {*} reply
+     */
     async updateMe(request, reply) {
       let payload = request.payload
       let user = request.auth.credentials.user
@@ -67,25 +75,9 @@ module.exports = (server) => {
       let payload = request.payload
       server.methods.services.users.create(payload, (err, user) => {
       // TODO: Better error response
-      
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         if (!user) return reply().code(422)
-
-        return reply(constructUserResponse(user))
-      })
-    },
-    /**
-     * POST /api/users/multiple
-     * @param {*} request
-     * @param {*} reply
-     */
-    async registerUserMultiple(request, reply) {
-      let payload = request.payload
-      server.methods.services.users.createUserMultiple(payload, (err, user) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        if (!user) return reply().code(422)
-
-        return reply(constructUserMultipleResponse(user))
+        return reply(constructUsersResponse(user))
       })
     },
     /**
@@ -95,31 +87,6 @@ module.exports = (server) => {
      */
     async loginUser(request, reply) {
       let payload = request.payload
-
-      // method login menggunakna email
-      // server.methods.services.users.getByEmail(payload.email, (err, user) => {
-      //   if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-
-      //   if (!user) {
-      //     return reply({
-            // "status":404,
-            // "message": 'email/user belum terdaftar!',
-            // "data": null
-      //     }).code(404)
-      //   }
-
-      //   if (!user.validPassword(payload.user.password)) {
-      //     return reply({
-            // "status":404,
-            // "message": 'email/user belum terdaftar!',
-            // "data": null
-      //     }).code(401)
-      //   }
-
-      //   return reply(constructUserResponse(user))
-      // });
-
-      // method login menggunakan username
       server.methods.services.users.getByUsername(
         payload.username, 
         (err, user) => {
@@ -143,10 +110,6 @@ module.exports = (server) => {
 
           return reply(constructUserResponse(user))
       });
-
-
-
     }
-
   }
 }

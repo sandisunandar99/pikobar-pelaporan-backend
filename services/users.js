@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const User = mongoose.model('User');
 const Check = require('../helpers/rolecheck');
+const Helper = require('../helpers/custom');
 
-function listUser (user, query, callback) {
+async function listUser (user, query, callback) {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -14,37 +15,37 @@ function listUser (user, query, callback) {
     meta: '_meta'
   };
 
-  const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort))
+  const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort));
   const options = {
     page: query.page,
     limit: query.limit,
     sort: sorts,
     leanWithId: true,
-    customLabels: myCustomLabels
+    customLabels: myCustomLabels,
   };
 
   let result_search;
-  let params={};
-  params = Check.userByRole(params,user)
+  let params = {};
+  params = Check.userByRole(params,user);
   if(query.search){
     var search_params = [
       { username : new RegExp(query.search,"i") },
       { fullname: new RegExp(query.search, "i") },
       { email: new RegExp(query.search, "i") },
-      { phone_number: new RegExp(query.search, "i") },
+      { phone_number: new RegExp(query.search, "i"), },
     ];
-    result_search = User.find(params).or(search_params).where("deleted_status").ne("deleted")
+    result_search = User.find(params).or(search_params).where("delete_status").ne("deleted");
   } else {
-    result_search = User.find(params).where("deleted_status").ne("deleted")
+    result_search = User.find(params).where("delete_status").ne("deleted");
   }
 
   User.paginate(result_search, options).then(function(results){
-      let res = {
-        users: results.itemsList.map(users => users.toJSONFor()),
-        _meta: results._meta
-      }
-      return callback(null, res)
-  }).catch(err => callback(err, null))
+    const res = {
+      users: results.itemsList.map(users => users.toJSONFor()),
+      _meta: results._meta,
+    }
+    return callback(null, res);
+  }).catch(err => callback(err, null));
 }
 
 function getUserByEmail (email, callback) {
@@ -54,12 +55,15 @@ function getUserByEmail (email, callback) {
   });
 }
 
-
-function getUserById (id, callback) {
-  User.findById(id, (err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
+async function getUserById (id, callback) {
+  try {
+    const result = await User.findById(id);
+    console.log(result);
+    
+    return callback(null, result);
+  } catch (error) {
+    return callback(error, null);
+  }
 }
 
 function getUserByUsername (username, callback) {
@@ -69,51 +73,18 @@ function getUserByUsername (username, callback) {
   });
 }
 
-function createUser (payload, callback) {
-  const user = new User(payload);
+async function createUser (payload, callback) {
+  try {
+    payload.salt = crypto.randomBytes(16).toString('hex')
+    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex')
+    payload.password = Helper.setPwd(payload.password)
   
-  user.fullname = payload.fullname;
-  user.username = payload.username;
-  user.setPassword(payload.password);
-  user.email = payload.email;
-  user.role = payload.role;
-  user.code_district_city = payload.code_district_city;
-  user.name_district_city = payload.name_district_city;
-  user.phone_number = payload.phone_number;
-  user.address_street = payload.address_street;
-  user.address_subdistrict_code = payload.address_subdistrict_code;
-  user.address_subdistrict_name = payload.address_subdistrict_name;
-  user.address_village_code = payload.address_village_code;
-  user.address_village_name = payload.address_village_name;
-
-  user.save((err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
-}
-
-function setPwd(password){
-  const salts = crypto.randomBytes(16).toString('hex')
-  const hashing = crypto.pbkdf2Sync(password, salts, 10000, 512, 'sha512').toString('hex')
-  return hashing
-}
-
-function createUserMultiple (payload, callback) {
-
-  const payloadMultiple = payload.map(pay => {
-    pay.username = pay.fullname.toLowerCase().replace(/\s+/g, '').replace(/[^a-zA-Z ]/g, "");
-    pay.email = `${pay.username}@gmail.com`
-    pay.salt = crypto.randomBytes(16).toString('hex')
-    pay.password = setPwd(`${pay.username}890`)
-    pay.hash = crypto.pbkdf2Sync(`${pay.username}890`, pay.salt, 10000, 512, 'sha512').toString('hex')
-    return pay
-  })
-
-  User.create(payloadMultiple).then(_result => {
-    callback(null,'success')
-  }).catch(err => {
-    callback(null,err)
-  })
+    const user = new User(payload);
+    const result = await user.save();
+    callback(null, result);
+  } catch (error) {
+    return callback(error, null);
+  }
 }
 
 function updateUser (user, payload, callback) {
@@ -156,10 +127,6 @@ module.exports = [
   {
     name: 'services.users.create',
     method: createUser
-  },
-  {
-    name: 'services.users.createUserMultiple',
-    method: createUserMultiple
   },
   {
     name: 'services.users.update',

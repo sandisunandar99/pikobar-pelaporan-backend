@@ -21,12 +21,15 @@ const UserSchema = new mongoose.Schema({
   address_subdistrict_name: { type: String, required: [true, "can't be blank"]},
   address_province_code: { type: String, default:32},
   address_province_name: { type: String, default:"Jawa Barat"},
+  delete_status: String,
+  deletedAt: Date,
+  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   hash: String,
   salt: String
 }, {timestamps: true})
 
 UserSchema.plugin(uniqueValidator, {
-  message: 'username atau password salah!'
+  message: 'sudah ada di basisdata'
 });
 UserSchema.plugin(mongoosePaginate);
 UserSchema.methods.validPassword = function (password) {

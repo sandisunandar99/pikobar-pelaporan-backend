@@ -16,6 +16,17 @@ module.exports = (server) => {
       },
       handler: handlers.getListUser
     },
+    // Get user by id
+    {
+      method: 'GET',
+      path: '/users/{id}',
+      config: {
+        auth: 'jwt',
+        description: 'Get user by id',
+        tags: ['api', 'users']
+      },
+      handler: handlers.getUserById
+    },
     // Get current user
     {
       method: 'GET',
@@ -53,15 +64,6 @@ module.exports = (server) => {
         tags: ['api', 'users']
       },
       handler: handlers.registerUser
-    },
-    {
-      method: 'POST',
-      path: '/users/multiple',
-      config: {
-        description: 'Add user Multiple',
-        tags: ['api', 'users']
-      },
-      handler: handlers.registerUserMultiple
     },
     // Login
     {
