@@ -68,6 +68,20 @@ module.exports = (server) => {
       })
     },
     /**
+     * PUT /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async updateUsers (request, reply) {
+      server.methods.services.users.updateUsers(
+        request.params.id, request.payload, "update",
+        request.auth.credentials.user._id,
+        (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      })
+    },
+    /**
      * PUT /api/users/change-password
      * @param {*} request
      * @param {*} reply

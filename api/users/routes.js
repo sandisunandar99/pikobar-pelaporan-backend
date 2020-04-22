@@ -64,6 +64,17 @@ module.exports = (server) => {
       },
       handler: handlers.deleteUsers
     },
+    // UPDATE user
+    {
+      method: 'PUT',
+      path: '/users/{id}',
+      config: {
+        auth: 'jwt',
+        description: 'update user',
+        tags: ['api', 'users']
+      },
+      handler: handlers.updateUsers
+    },
     // Register
     {
       method: 'POST',
