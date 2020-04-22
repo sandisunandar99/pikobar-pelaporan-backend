@@ -17,6 +17,8 @@ module.exports = (server) =>{
     const getDataExternal = require('./route_prerequesites').getDataExternal(server)
     const searchIdcasefromExternal = require('./route_prerequesites').searchIdcasefromExternal(server)
     const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
+    const getRegisteredUserfromExternal = require('./route_prerequesites').getRegisteredUserfromExternal(server)
+    
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
 
 
@@ -48,6 +50,29 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetListIdCaseDetail
+        },
+        {
+            method: 'GET',
+            path: '/rdt/list-registered-user',
+            config: {
+                auth: 'jwt',
+                description: 'show list id_case detil',
+                tags: ['api', 'rdt'],
+                pre:[
+                    getRegisteredUserfromExternal
+                ]
+            },
+            handler: handlers.GetListRegisteredUser
+        },
+        {
+            method: 'GET',
+            path: '/rdt/list-location-test',
+            config: {
+                auth: 'jwt',
+                description: 'show list location test for form multiple input rdt',
+                tags: ['api', 'rdt'],
+            },
+            handler: handlers.formLocationTest
         },
         // Get list rdt
         {
