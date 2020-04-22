@@ -168,6 +168,19 @@ const searchIdcasefromInternal = server => {
     }
 }
 
+const getRegisteredUserfromExternal = server => {
+    return {
+        method: (request, reply) => {
+            server.methods.services.rdt.getRegisteredFromExternal(
+                request.query,
+                (err, item) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(item)
+                })
+        },
+        assign: 'reg_user_external'
+    }
+}
 
 module.exports ={
     countRdtCode,
@@ -179,5 +192,6 @@ module.exports ={
     getDataExternal,
     searchIdcasefromInternal,
     searchIdcasefromExternal,
-    validationBeforeInput
+    validationBeforeInput,
+    getRegisteredUserfromExternal
 }
