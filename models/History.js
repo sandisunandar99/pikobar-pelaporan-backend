@@ -18,7 +18,7 @@ const HistorySchema = new mongoose.Schema({
     history_notes: String,
     is_sample_taken : Boolean,
 
-    report_source : String,
+    report_source : { type: String, default: null },
     first_symptom_date : {type : Date, default: Date.now()},
 
     other_notes: String,

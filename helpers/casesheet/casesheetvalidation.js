@@ -1,6 +1,7 @@
-const validate = async (payload, Joi, rules, label, helper, Case) => {
+const validate = async (payload, Joi, rules, config, helper, Case) => {
     let results = []
     let objError = {}
+    const label = config.label
 
     for (let i in payload) {
       let propErr = {}
@@ -143,6 +144,8 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
               desc = desc.replace('is required', 'Harus diisi')
               desc = desc.replace('must be a string', 'Harus berisi string')
               desc = desc.replace('must be a number', 'Harus berisi angka')
+              desc = desc.replace('length must be at least 16 characters long', 'Harus 16 digit')
+              desc = desc.replace('length must be less than or equal to 16 characters long', 'Harus 16 digit')
             }
           }
           transform.columnName = k
