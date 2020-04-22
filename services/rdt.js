@@ -620,7 +620,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
 function getDatafromExternal(address_district_code, search, callback) {
 
-   https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+   https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -708,20 +708,13 @@ function seacrhFromInternal(query, callback) {
       .catch()
 }
 
-function getRegisteredUser(search_internal, search_external, user, callback) {   
-  if (search_internal === null || search_internal === undefined) {
-    return callback(null, search_external)
-  } else {
-    return callback(null, search_internal.JSONSeacrhOutput())
-  }
+function getRegisteredUser(search_external, user, callback) {   
+  return callback(null, search_external)
 }
 
 function getRegisteredFromExternal(query, callback) {
-  console.log("getRegisteredFromExternal");
-  console.log(query);
-  
 
-    https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' + query.search.toLowerCase() + '&address_district_code=' + query.address_district_code, (res) => {
+    https.get(process.env.URL_USER_PENDAFTARAN_COVID + '&mode=bytest' + '&test_location=' + query.test_location + '&test_date_from=' + query.test_date + '&test_date_to=' + query.test_date, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
@@ -731,13 +724,8 @@ function getRegisteredFromExternal(query, callback) {
       res.on('end', () => {
         let jsonData = JSON.parse(data)
         let result = jsonData.data.content
-
-        let concate ={
-          id: null,
-          id_case: null,
-        }
-        let res = Object.assign(result, concate)
-        return callback(null, res)
+        
+        return callback(null, result)
       });
 
     }).on("error", (err) => {
