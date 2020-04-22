@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+require('../models/LocationTest')
+const LocationTest = mongoose.model('LocationTest')
+
 require('../models/Rdt');
 const Rdt = mongoose.model('Rdt');
 
@@ -300,7 +303,6 @@ function createRdt (payload, author, pre, callback) {
     })
     .catch( (err) => callback(err, null));
 }
-
 
 function createRdtMultiple(payload, author, pre, callback) {
   let resultForResnpose =[]
@@ -706,6 +708,54 @@ function seacrhFromInternal(query, callback) {
       .catch()
 }
 
+function getRegisteredUser(search_internal, search_external, user, callback) {   
+  if (search_internal === null || search_internal === undefined) {
+    return callback(null, search_external)
+  } else {
+    return callback(null, search_internal.JSONSeacrhOutput())
+  }
+}
+
+function getRegisteredFromExternal(query, callback) {
+  console.log("getRegisteredFromExternal");
+  console.log(query);
+  
+
+    https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' + query.search.toLowerCase() + '&address_district_code=' + query.address_district_code, (res) => {
+      let data = '';
+      // A chunk of data has been recieved.
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        let jsonData = JSON.parse(data)
+        let result = jsonData.data.content
+
+        let concate ={
+          id: null,
+          id_case: null,
+        }
+        let res = Object.assign(result, concate)
+        return callback(null, res)
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });
+}
+
+function getLocationTest(callback) {
+  LocationTest.find({})
+              .exec()
+              .then(res => {
+                let result = res.map(x => x.toJSONFor())
+                return callback(null, result)
+              })
+              .catch(err => callback(err, null))
+  
+}
+
 function sendMessagesSMS(rdt) {
     console.log("call function sms");
   // console.log(rdt.nik);
@@ -932,8 +982,16 @@ module.exports = [
     method: FormSelectIdCaseDetail
   },
   {
+    name: 'services.rdt.getRegisteredUser',
+    method: getRegisteredUser
+  },
+  {
     name: 'services.rdt.seacrhFromExternal',
     method: seacrhFromExternal
+  },
+  {
+    name: 'services.rdt.getRegisteredFromExternal',
+    method: getRegisteredFromExternal
   },
   {
     name: 'services.rdt.seacrhFromInternal',
@@ -946,6 +1004,10 @@ module.exports = [
   {
     name: 'services.rdt.sendMessagesWA',
     method: sendMessagesWA
+  },
+  {
+    name: 'services.rdt.getLocationTest',
+    method: getLocationTest
   },
 ];
 
