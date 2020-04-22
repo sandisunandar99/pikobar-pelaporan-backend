@@ -16,6 +16,7 @@ const register = (server, options, next) => {
     require('./History')
     require('./Occupation')
     require('./RdtHistory')
+    require('./LocationTest')
 
     server.app.db = {
       link: db.db,
@@ -28,6 +29,7 @@ const register = (server, options, next) => {
       History: db.model('History'),
       Occupation: db.model('Occupation'),
       RdtHistory: db.model('RdtHistory'),
+      LocationTest: db.model('LocationTest')
     };
 
     return next();
