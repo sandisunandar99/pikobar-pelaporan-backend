@@ -18,6 +18,29 @@ const validationBeforeInput = server => {
     }
 }
 
+const checkCaseIsExists = server => {
+    return {
+        method: (request, reply) => {
+            const nik = request.payload.nik
+            server.methods.services.cases.getByNik(nik, (err, result) => {
+                if (!result) return reply(result)
+
+                let author = result.author ? result.author.fullname : null
+
+                let message
+                message = `NIK ${nik} atas nama ${result.name} `
+                message += `Sudah terdata di laporan kasus oleh ${author}`
+
+                return reply({
+                    status: 409,
+                    message: message,
+                    data: null
+                }).code(409).takeover()
+            })
+       },
+       assign: 'case_exist'
+    }
+}
 
 const countCaseByDistrict = server =>{
     return {
@@ -127,5 +150,6 @@ module.exports ={
     getCasebyId,
     checkIfDataNotNull,
     DataSheetRequest,
-    validationBeforeInput
+    validationBeforeInput,
+    checkCaseIsExists
 }

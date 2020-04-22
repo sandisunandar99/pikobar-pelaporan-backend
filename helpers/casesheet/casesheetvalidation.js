@@ -100,7 +100,9 @@ const validate = async (payload, Joi, rules, label, helper, Case) => {
 
       
       const nik = payload[i].nik
-      const isCaseExist = await Case.find({nik: nik}).countDocuments()
+      const isCaseExist = await Case.find({nik: nik})
+        .where('delete_status').ne('deleted')
+        .countDocuments()
 
       if (isCaseExist) {
         let prop = 'nik'

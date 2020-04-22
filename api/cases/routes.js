@@ -13,6 +13,7 @@ module.exports = (server) =>{
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
     const DataSheetRequest = require('./route_prerequesites').DataSheetRequest(server)
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
+    const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
 
 
     return [
@@ -44,7 +45,8 @@ module.exports = (server) =>{
                 pre: [
                     CheckRoleCreate,
                     validationBeforeInput,
-                    countCaseByDistrict
+                    countCaseByDistrict,
+                    checkCaseIsExists
                 ]
             },
             handler: handlers.CreateCase

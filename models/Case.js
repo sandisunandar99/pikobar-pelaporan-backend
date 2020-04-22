@@ -8,7 +8,7 @@ const CaseSchema = new mongoose.Schema({
     id_case : {type: String, lowercase: true, unique: true, index: true},
     // NIK sumber terkait kontak erat
     id_case_national : {type:String},
-    nik : {type:String},
+    nik : { type:String, minlength: 16, maxlength: 16, required: [true, "can't be blank"] },
     id_case_related : {type:String},
     name_case_related : {type:String},
     name: {type:String},
