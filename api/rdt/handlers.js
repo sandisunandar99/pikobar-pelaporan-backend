@@ -163,7 +163,6 @@ module.exports = (server) => {
 
 
         /**
-         * DELETE /api/rdt/{id}
          * @param {*} request
          * @param {*} reply
          */
@@ -172,6 +171,39 @@ module.exports = (server) => {
                 request.pre.search_internal,
                 request.pre.search_external,
                 request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+            })
+        },
+
+
+        /**
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetListRegisteredUser(request, reply) {
+            server.methods.services.rdt.getRegisteredUser(
+                request.pre.reg_user_internal,
+                request.pre.reg_user_external,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+            })
+        },
+
+
+        /**
+         * @param {*} request
+         * @param {*} reply
+         */
+        async formLocationTest(request, reply) {
+            server.methods.services.rdt.getLocationTest(
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
