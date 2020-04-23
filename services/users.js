@@ -92,6 +92,8 @@ const createUser = async (payload, callback) => {
 
 const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
+  console.log(user);
+  
   let users = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
@@ -99,7 +101,13 @@ const updateUser = (user, payload, callback) => {
     email: payload.email ? payload.email: user.email,
     role: payload.role ? payload.role: user.role,
     code_district_city: payload.code_district_city ? payload.code_district_city : user.code_district_city,
-    name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city
+    name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city,
+    phone_number: payload.phone_number ? payload.phone_number : user.phone_number,
+    address_street: payload.address_street ? payload.address_street : user.address_street,
+    address_subdistrict_code: payload.address_subdistrict_code ? payload.address_subdistrict_code : user.address_subdistrict_code,
+    address_subdistrict_name: payload.address_subdistrict_name ? payload.address_subdistrict_name : user.address_subdistrict_name,
+    address_village_code: payload.address_village_code ? payload.address_village_code : user.address_village_code,
+    address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name
   }
   
   user = Object.assign(user, users);
