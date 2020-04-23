@@ -132,7 +132,9 @@ const DataSheetRequest = server => {
 
             if (payload === config.unverified_template) {
                 invalidPaylodMessage = config.messages.unverified_template
-            } else if (payload.length > config.max_rows_allowed) {
+            } else if (payload === config.version_out_of_date) {
+                invalidPaylodMessage = config.messages.version_out_of_date
+            }else if (payload.length > config.max_rows_allowed) {
                 invalidPaylodMessage = `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
             }
 

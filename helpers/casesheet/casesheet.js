@@ -14,13 +14,13 @@ const getIdCaseNational = () => {
 const getIdCaseRelated = () => {
     if (!dt[conf.cell.id_case_related]) return null
     if (! _toString(dt[conf.cell.id_case_related].split)) return null
-    return _toString(dt[conf.cell.id_case_related].split('-')[0] || null)
+    return _toString(dt[conf.cell.id_case_related].split('|')[0] || null)
 }
 
 const getNameCaseRelated = () => {
     if (!dt[conf.cell.id_case_related]) return null
     if (!_toString(dt[conf.cell.id_case_related].split)) return null
-    return _toString(dt[conf.cell.id_case_related].split('-')[1] || null)
+    return _toString(dt[conf.cell.id_case_related].split('|')[1] || null)
 }
 
 const getName = () => {

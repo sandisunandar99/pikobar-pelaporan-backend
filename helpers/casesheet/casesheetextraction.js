@@ -8,12 +8,17 @@ const caseSheetExtraction = async (request) => {
   
     let dataSheet = await readXlsxFile(dir + uploaded.filename)
 
-    if (dataSheet[0][34] !== conf.verified_template 
-      || dataSheet[1][34] !== conf.verified_template 
-      || dataSheet[2][34] !== conf.verified_template 
-      || dataSheet[3][34] !== conf.verified_template 
-      || dataSheet[4][34] !== conf.verified_template ) {
+    const version = `VERSION ${conf.version}`
+    const verfiedTemplate = conf.verified_template
+    if (dataSheet[1][34] !== verfiedTemplate 
+      || dataSheet[2][34] !== verfiedTemplate 
+      || dataSheet[3][34] !== verfiedTemplate 
+      || dataSheet[4][34] !== verfiedTemplate ) {
       return conf.unverified_template
+    }
+
+    if (dataSheet[0][34] !== version) {
+      return conf.version_out_of_date
     }
 
     dataSheet.splice(0, conf.start_row)

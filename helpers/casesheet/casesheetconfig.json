@@ -1,8 +1,10 @@
 {
+    "version": "1.0",
     "start_row": 8,
     "max_rows_allowed": 300,
     "verified_template": "VERIFIED TEMPLATE",
     "unverified_template": "UNVERIFIED TEMPLATE",
+    "version_out_of_date": "TEMPLATE OUT OF DATE",
     "cell": {
         "id_case_national": 0,
         "id_case_related": 25,
@@ -100,6 +102,7 @@
         "is_sample_taken": "Apakah diambil sample"
     },
     "messages": {
-        "unverified_template": "Template Kasus Yang diimport tidak dikenali, Silahkan download template terbaru"
+        "unverified_template": "Template Kasus Yang diimport tidak dikenali, Silahkan download template terbaru",
+        "version_out_of_date": "Versi template tidak didukung, Silahkan download template terbaru"
     }
 }
