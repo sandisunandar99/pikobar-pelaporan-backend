@@ -714,7 +714,17 @@ function getRegisteredUser(search_external, user, callback) {
 
 function getRegisteredFromExternal(query, callback) {
 
-    https.get(process.env.URL_USER_PENDAFTARAN_COVID + '&mode=bytest' + '&test_location=' + query.test_location + '&test_date_from=' + query.test_date + '&test_date_to=' + query.test_date, (res) => {
+    let date = new Date()
+    let years = date.getFullYear()
+    let month = date.getMonth()+1
+    let months
+    if (month >= 10) {
+      months = month
+    } else {
+      months = '0' + month
+    }
+
+    https.get(process.env.URL_USER_PENDAFTARAN_COVID + '&mode=bytest' + '&test_location=' + query.test_location + '&test_date_from=' + years+'-'+months+'-01' + '&test_date_to=' + query.test_date, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
