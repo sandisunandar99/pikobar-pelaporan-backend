@@ -27,6 +27,17 @@ module.exports = (server) => {
       },
       handler: handlers.getUserById
     },
+    // Reset password by id
+    {
+      method: 'PUT',
+      path: '/users/reset/{id}',
+      config: {
+        auth: 'jwt',
+        description: 'Reset user by id',
+        tags: ['api', 'users']
+      },
+      handler: handlers.resetPassword
+    },
     // Get user by email or username
     {
       method: 'GET',

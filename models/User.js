@@ -12,8 +12,8 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, lowercase: true, required: [true, "can't be blank"]},
   code_district_city: { type: String, default: null},
   name_district_city: { type: String, default: null},
-  phone_number: {type:String},
-  address_street: {type:String},
+  phone_number: {type:String,default: null},
+  address_street: {type:String,default: null},
   address_village_code: { type: String, default: null},
   address_village_name: { type: String, default: null},
   // kecamatan
@@ -74,7 +74,10 @@ UserSchema.methods.toJSONFor = function () {
     role: this.role,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
-    phone_number: this.phone_number
+    phone_number: this.phone_number,
+    address_street: this.address_street,
+    address_village_name: this.address_village_name,
+    address_subdistrict_name: this.address_subdistrict_name,
   }
 }
 
