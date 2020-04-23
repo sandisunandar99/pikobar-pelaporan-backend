@@ -40,7 +40,19 @@ module.exports = (server) => {
      */
     async getUserById (request, reply) {
       server.methods.services.users.getById(
-        request.params.id, (err, listUser) => {
+        request.params.id, "update", (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      });
+    },
+    /**
+     * PUT /api/users/reset/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async resetPassword (request, reply) {
+      server.methods.services.users.getById(
+        request.params.id, "reset", (err, listUser) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
         return reply(constructUsersResponse(listUser));
       });

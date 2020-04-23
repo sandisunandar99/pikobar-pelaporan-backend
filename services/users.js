@@ -48,9 +48,20 @@ const listUser = async (user, query, callback) => {
   }).catch(err => callback(err, null));
 }
 
-const getUserById = async (id, callback) => {
+const getUserById = async (id, category, callback) => {
+  let result;
   try {
-    const result = await User.findById(id);
+    result = await User.findById(id);
+    if(category == 'reset'){
+      const salt = crypto.randomBytes(16).toString('hex')
+      const params = {
+        salt:salt,
+        hash:crypto.pbkdf2Sync(`${result.username}890`, salt, 10000, 512, 'sha512').toString('hex'),
+        password:Helper.setPwd(`${result.username}890`)
+      }
+      result = await User.findByIdAndUpdate(id,
+        { $set: params }, { new: true });
+    }
     callback(null, result);
   } catch (error) {
     callback(error, null);
@@ -92,8 +103,7 @@ const createUser = async (payload, callback) => {
 
 const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
-  console.log(user);
-  
+
   let users = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
