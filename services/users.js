@@ -79,8 +79,7 @@ const checkUser = async (query, callback) => {
   let check;
   if(query.params){
     const gets = await User.find({ $or:[ 
-      {'username':query.params}, {'email':query.params} ]})
-    .where("delete_status").ne("deleted").then(res => { return res.length });
+      {'username':query.params}, {'email':query.params} ]}).then(res => { return res.length });
     check = (gets > 0 ? true : false);
   } else {
     check = {};
