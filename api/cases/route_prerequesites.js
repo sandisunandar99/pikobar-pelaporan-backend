@@ -139,7 +139,8 @@ const DataSheetRequest = server => {
             if (invalidPaylodMessage) {
                 let response = {
                     status: 400,
-                    message: invalidPaylodMessage
+                    message: 'Bad request.',
+                    errors:  invalidPaylodMessage.split()
                 }
                 return reply(response).code(400).takeover()
             }
