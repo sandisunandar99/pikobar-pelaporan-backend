@@ -758,8 +758,8 @@ function sendMessagesSMS(rdt) {
   let params = {
     username: process.env.SMS_USERNAME,
     key: process.env.SMS_KEY,
-    // number: '6281223953113',
-    number: '6285223407000',
+    number: '6281223953113',
+    // number: '6285223407000',
     message: "Test \n kirim \n sms \n input RDT",
   }
 
@@ -845,8 +845,8 @@ function sendMessagesWA(rdt) {
   }
 
   let body = JSON.stringify({   
-      phone:6285223407000,
-      // phone: 6281223953113,
+      // phone:6285223407000,
+      phone: 6281223953113,
       body:"test \nkirim Wa \ninput RTD"
   })
 

@@ -92,8 +92,7 @@ const createUser = async (payload, callback) => {
 
 const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
-  console.log(user);
-  
+
   let users = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
