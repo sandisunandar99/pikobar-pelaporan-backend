@@ -399,7 +399,7 @@ function createRdtMultiple(payload, author, pre, callback) {
       setTimeout(() =>{
         resolve(x)
         resultForResnpose.push(x)
-      }, 300)
+      }, 100)
     })
   }
 
