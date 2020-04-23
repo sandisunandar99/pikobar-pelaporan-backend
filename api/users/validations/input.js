@@ -58,7 +58,13 @@ const UpdatePayload = {
     password: Joi.string().required(),
     role: Joi.string(),
     name_district_city: Joi.string(),
-    code_district_city: Joi.number()
+    code_district_city: Joi.number(),
+    phone_number : Joi.string(),
+    address_street: Joi.string(),
+    address_subdistrict_code:Joi.string(),
+    address_subdistrict_name: Joi.string(),
+    address_village_codeL: Joi.string(),
+    address_village_name: Joi.string()
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction
