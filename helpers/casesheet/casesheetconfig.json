@@ -1,7 +1,7 @@
 {
     "version": "1.0",
     "start_row": 8,
-    "max_rows_allowed": 500,
+    "max_rows_allowed": 2000,
     "verified_template": "VERIFIED TEMPLATE",
     "unverified_template": "UNVERIFIED TEMPLATE",
     "version_out_of_date": "TEMPLATE OUT OF DATE",
