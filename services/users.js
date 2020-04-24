@@ -33,6 +33,8 @@ const listUser = async (user, query, callback) => {
       { fullname: new RegExp(query.search, "i") },
       { email: new RegExp(query.search, "i") },
       { phone_number: new RegExp(query.search, "i"), },
+      { address_street: new RegExp(query.search, "i"), },
+      { address_village_name: new RegExp(query.search, "i"), },
     ];
     result_search = User.find(params).or(search_params).where("delete_status").ne("deleted");
   } else {
@@ -53,14 +55,13 @@ const getUserById = async (id, category, callback) => {
   try {
     result = await User.findById(id);
     if(category == 'reset'){
-      const salt = crypto.randomBytes(16).toString('hex')
+      const salt = crypto.randomBytes(16).toString('hex');
       const params = {
         salt:salt,
         hash:crypto.pbkdf2Sync(`${result.username}890`, salt, 10000, 512, 'sha512').toString('hex'),
-        password:Helper.setPwd(`${result.username}890`)
+        password:Helper.setPwd(`${result.username}890`),
       }
-      result = await User.findByIdAndUpdate(id,
-        { $set: params }, { new: true });
+      result = await User.findByIdAndUpdate(id,{ $set: params }, { new: true });
     }
     callback(null, result);
   } catch (error) {
