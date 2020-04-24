@@ -17,9 +17,8 @@ module.exports = (server) =>{
     const getDataExternal = require('./route_prerequesites').getDataExternal(server)
     const searchIdcasefromExternal = require('./route_prerequesites').searchIdcasefromExternal(server)
     const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
-    const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
-
-
+    const getRegisteredUserfromExternal = require('./route_prerequesites').getRegisteredUserfromExternal(server)
+    
     return [
         // Get list case for form
         {
@@ -48,6 +47,29 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetListIdCaseDetail
+        },
+        {
+            method: 'GET',
+            path: '/rdt/list-registered-user',
+            config: {
+                auth: 'jwt',
+                description: 'show list id_case detil',
+                tags: ['api', 'rdt'],
+                pre:[
+                    getRegisteredUserfromExternal
+                ]
+            },
+            handler: handlers.GetListRegisteredUser
+        },
+        {
+            method: 'GET',
+            path: '/rdt/list-location-test',
+            config: {
+                auth: 'jwt',
+                description: 'show list location test for form multiple input rdt',
+                tags: ['api', 'rdt'],
+            },
+            handler: handlers.formLocationTest
         },
         // Get list rdt
         {
@@ -78,11 +100,24 @@ module.exports = (server) =>{
                     CheckRoleCreate,
                     validationBeforeInput,
                     countRdtCode,
-                    getCodeDinkes,
-                    countCaseByDistrict
+                    countCaseByDistrict,
+                    getCodeDinkes
                 ]
             },
             handler: handlers.CreateRdt
+        },
+        {
+            method: 'POST',
+            path: '/rdt-multiple',
+            config: {
+                auth: 'jwt',
+                description: 'create new rdt with multiple insert',
+                tags: ['api', 'rdt'],
+                pre: [
+                    CheckRoleCreate
+                ]
+            },
+            handler: handlers.CreateRdtMultiple
         },
         // Get detail rdt
         {
@@ -97,6 +132,21 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetRdtDetail
+        },
+
+        // Get rdt hostories
+        {
+            method: 'GET',
+            path: '/rdt/{id}/histories',
+            config: {
+                auth: 'jwt',
+                description: 'show a specific rdt details',
+                tags: ['api', 'rdt'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetRdtHistories
         },
 
         // Update rdt
@@ -183,17 +233,17 @@ module.exports = (server) =>{
             handler: handlers.GetRdtFaskesSummaryByCities
         },
 
-         // Get RDT Test Faskes summary by cities
-         {
-             method: 'POST',
-             path: '/rdt/send-messages',
-             config: {
-                 auth: 'jwt',
-                 description: 'send message sms and whatapp ',
-                 tags: ['api', 'rdt']
-             },
-             handler: handlers.sendMessage
-         }
+        // send message sms and whatsapps
+        //  {
+        //      method: 'POST',
+        //      path: '/rdt/send-messages',
+        //      config: {
+        //          auth: 'jwt',
+        //          description: 'send message sms and whatapp ',
+        //          tags: ['api', 'rdt']
+        //      },
+        //      handler: handlers.sendMessage
+        //  }
 
     ]
 

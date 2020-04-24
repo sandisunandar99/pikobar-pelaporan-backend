@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
+require('../models/Hospital');
+const Hospital = mongoose.model('Hospital');
+
 require('../models/History')
 const History = mongoose.model('History')
 
@@ -50,10 +53,6 @@ function ListCase (query, user, callback) {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
-  }
-  if(user.role == 'dinkeskota'){
-    params.author = new ObjectId(user._id);
-    params.author_district_code = user.code_district_city;
   }
   if(query.status){
     params.status = query.status;
@@ -137,6 +136,26 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
+function getCaseByNik (nik, callback) {
+  Case.findOne({nik: nik})
+    .where('delete_status').ne('deleted')
+    .populate('author')
+    .populate('last_history')
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
+function getIdCase (query,callback) {
+  const params = {}
+  if(query.name_case_related){
+    params.name = new RegExp(query.name_case_related, "i");
+  }
+  Case.find(params).select('id_case name')
+  .where('delete_status').ne('deleted')
+  .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
+  .catch(err => callback(err, null));
+}
+
 async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user)
 
@@ -146,18 +165,21 @@ async function getCaseSummaryFinal (query, user, callback) {
     }
   }
 
-  const searchingPositif = {status:'POSITIF', final_result : { $nin: [1,2] }}
-  const searchingSembuh = {status:'POSITIF',final_result:1}
-  const searchingMeninggal = {status:'POSITIF',final_result:2}
+  const searchingPositif = {status:"POSITIF", final_result : { $nin: [1,2] }}
+  const searchingSembuh = {status:"POSITIF",final_result:1}
+  const searchingMeninggal = {status:"POSITIF",final_result:2}
   
   try {
-    const positif = await Case.find(Object.assign(searching,searchingPositif)).where('delete_status').ne('deleted').then(res => { return res.length })
-    const sembuh = await Case.find(Object.assign(searching,searchingSembuh)).where('delete_status').ne('deleted').then(res => { return res.length })
-    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal)).where('delete_status').ne('deleted').then(res => { return res.length })
+    const positif = await Case.find(Object.assign(searching,searchingPositif))
+    .where("delete_status").ne("deleted").then(res => { return res.length })
+    const sembuh = await Case.find(Object.assign(searching,searchingSembuh))
+    .where("delete_status").ne("deleted").then(res => { return res.length })
+    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal))
+    .where("delete_status").ne("deleted").then(res => { return res.length })
     const result =  {
-      'SEMBUH':sembuh, 
-      'MENINGGAL':meninggal,
-      'POSITIF':positif
+      "SEMBUH":sembuh, 
+      "MENINGGAL":meninggal,
+      "POSITIF":positif
     }
     callback(null,result)
   } catch (error) {
@@ -175,18 +197,15 @@ function getCaseSummary (query, user, callback) {
   
   var aggStatus = [
     { $match: { 
-      $and: [  
-            searching,
-            { delete_status: { $ne: 'deleted' }}
-          ]
+      $and: [  searching, { delete_status: { $ne: 'deleted' }} ]
     }},
-    {$group: {
-      _id: "$status",
-      total: {$sum: 1}
-    }}
+    { 
+      $group: { _id: "$status", total: {$sum: 1}}
+    }
   ];
 
   let result =  {
+    'OTG':0, 
     'ODP':0, 
     'PDP':0, 
     'POSITIF':0, 
@@ -196,6 +215,9 @@ function getCaseSummary (query, user, callback) {
 
   Case.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
+        if (item['_id'] == 'OTG') {
+          result.OTG = item['total']
+        }
         if (item['_id'] == 'ODP') {
           result.ODP = item['total']
         }
@@ -337,6 +359,106 @@ function getCountByDistrict(code, callback) {
               })
 }
 
+async function importCases (raw_payload, author, pre, callback) {
+
+  const dataSheet = pre
+
+  let savedCases = null //[]
+
+  let promise = Promise.resolve()
+
+  const refHospitals = await Hospital.find()
+  
+  for (i in dataSheet) {
+    
+    let item = dataSheet[i]
+
+    promise = promise.then(async () => {
+
+      const code = item.address_district_code
+      const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+      const districtCases = await Case.find({ address_district_code: code}).sort({id_case: -1})
+
+      let count = 1
+      let casePayload = {}
+
+      if (districtCases.length > 0) {
+        count = (Number(districtCases[0].id_case.substring(12)) + 1)
+      }
+
+      let district = {
+        prov_city_code: code,
+        dinkes_code: dinkes.dinkes_kota_kode,
+        count_pasien: count
+      }
+
+      let verified = {
+        verified_status: 'pending'
+      }
+
+
+      // create case
+      let date = new Date().getFullYear().toString()
+      let id_case = "covid-"
+      id_case += district.dinkes_code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(4 - district.count_pasien.toString().length)
+      id_case += district.count_pasien
+
+      casePayload = Object.assign(item, verified)
+      casePayload = Object.assign(item, {id_case})
+
+      casePayload.author_district_code = author.code_district_city
+      casePayload.author_district_name = author.name_district_city
+
+      casePayload = new Case(Object.assign(casePayload, {author}))
+
+      let savedCase = await casePayload.save()
+
+      let historyPayload = { case: savedCase._id }
+
+      let hospitalId = null
+
+      if (item && item.current_location_type === 'RS') {
+        
+        const hospital = refHospitals.find((h) => h.name === item.current_location_address) || null
+
+        hospitalId = hospital && hospital._id ? hospital._id : null
+
+        if (!hospitalId) {
+          if (item.other_notes) {
+            item.other_notes += ' , Dirawat di ' + item.current_location_address
+          } else {
+            item.other_notes = 'Dirawat di ' + item.current_location_address
+          }
+        }
+      }
+
+      item.current_hospital_id = hospitalId || null
+
+      if (item.first_symptom_date == "") {
+        item.first_symptom_date = Date.now()
+      }
+
+      let history = new History(Object.assign(item, historyPayload))
+
+      let savedHistory = await history.save()
+
+      let last_history = { last_history: savedHistory._id }
+      savedCase = Object.assign(savedCase, last_history)
+      savedCase = await savedCase.save()
+
+      // savedCases.push(savedCase)
+  
+      return new Promise(resolve => resolve(savedCase))
+
+    }).catch((e) => { throw new Error(e) })
+  }
+
+  promise
+    .then(() => callback(null, savedCases))
+    .catch(err => callback(err, null))
+}
 
 function softDeleteCase(cases,deletedBy, payload, callback) {
    let date = new Date()
@@ -363,6 +485,10 @@ module.exports = [
   {
     name: 'services.cases.getById',
     method: getCaseById
+  },
+  {
+    name: 'services.cases.getByNik',
+    method: getCaseByNik
   },
   {
     name: 'services.cases.getSummary',
@@ -395,6 +521,14 @@ module.exports = [
   {
     name: 'services.cases.listCaseExport',
     method: listCaseExport
+  },
+  {
+    name: 'services.cases.ImportCases',
+    method: importCases
+  },
+  {
+    name: 'services.cases.getIdCase',
+    method: getIdCase
   }
 ];
 

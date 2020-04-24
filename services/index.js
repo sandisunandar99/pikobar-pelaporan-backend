@@ -7,7 +7,8 @@ const register = (server, options, next) => {
       require('./occupations'),
       require('./rdt'),
       require('./category'),
-      require('./rdt_histories')
+      require('./rdt_histories'),
+      require('./country')
     );
     server.method(services)
     return next()

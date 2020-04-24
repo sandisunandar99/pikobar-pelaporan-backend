@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+require('../models/LocationTest')
+const LocationTest = mongoose.model('LocationTest')
+
 require('../models/Rdt');
 const Rdt = mongoose.model('Rdt');
 
@@ -14,6 +17,7 @@ const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
+const url = require('url')
 
 function ListRdt (query, user, callback) {
 
@@ -207,8 +211,8 @@ function GetRdtFaskesSummaryByCities (query, callback) {
     .catch(err => callback(err, null))
 }
 
-function GetRdtHistoryByRdtId (query, callback) {
-  Rdt.find({ rdt: param.id}).exec().then(item => {
+function GetRdtHistoryByRdtId (id, callback) {
+  RdtHistory.find({ rdt: id}).exec().then(item => {
     return callback(null, item);
   })
   .catch(err => callback(err, null))
@@ -228,7 +232,10 @@ function createRdt (payload, author, pre, callback) {
         
           rdt = Object.assign(rdt, payload);
 
-          return rdt.save();
+          if (rdt.address_district_code === author.code_district_city) {
+            return rdt.save();
+          }
+
         } else {
           // if rdt found, create new rdt
           
@@ -274,19 +281,188 @@ function createRdt (payload, author, pre, callback) {
           let rdt = new Rdt(Object.assign(code, payload))
           rdt = Object.assign(rdt,{author})
 
-          return rdt.save();
+          if (rdt.address_district_code === author.code_district_city) {
+            return rdt.save();
+          }
+         
         }
     })
     .then( (rdt) => {
         // whatever happen always create new TestHistory
-        let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+        if (rdt.address_district_code === author.code_district_city) {
+            let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+            rdt_history.save((err, item) => {
+              if (err) return callback(err, null);
+              
+              sendMessagesSMS(rdt)
+              sendMessagesWA(rdt)
 
-        rdt_history.save((err, item) => {
-            if (err) return callback(err, null);
-            return callback(null, rdt);
-        });
+              return callback(null, rdt);
+            });
+        }
     })
     .catch( (err) => callback(err, null));
+}
+
+function createRdtMultiple(payload, author, pre, callback) {
+  let resultForResnpose =[]
+
+  const process = async () =>{
+    for (const payloads of payload) {
+      const result = await returnPayload(payloads)
+      const countRdt = await getCountRdt(result.address_district_code)
+      const countCase = await getCountCase(result.address_district_code)
+      
+      // find existing Rdt by nik & phone_number
+      Rdt.findOne({ nik: result.nik })
+        .or({ phone_number: result.phone_number })
+        .exec()
+        .then((rdt) => { 
+
+            if (rdt) {
+              // if rdt found, update rdt
+              result.author_district_code = author.code_district_city
+              result.author_district_name = author.name_district_city
+            
+              rdt = Object.assign(rdt, result);
+
+              return rdt.save();
+            } else {
+              // if rdt found, create new rdt
+              
+              // "code_test": "PST-100012000001"
+              // "code_tool_tester": "RDT-10012000001",
+              // "code_tool_tester": "PCR-10012000001",
+
+              let date = new Date().getFullYear().toString()
+              let code_test = "PTS-"
+                  code_test += countRdt.dinkes_code
+                  code_test += date.substr(2, 2)
+                  code_test += "0".repeat(5 - countRdt.count.toString().length)
+                  code_test += countRdt.count
+        
+              let code_tool_tester
+              if (result.tool_tester === "PCR") {
+                code_tool_tester = "PCR-"
+              }else{
+                code_tool_tester = "RDT-"
+              }
+              code_tool_tester += countRdt.dinkes_code
+              code_tool_tester += date.substr(2, 2)
+              code_tool_tester += "0".repeat(5 - countRdt.count.toString().length)
+              code_tool_tester += countRdt.count
+ 
+              let id_case
+              if (result.final_result === "POSITIF") {
+                      id_case = "COVID-"
+                      id_case += countCase.dinkes_code
+                      id_case += date.substr(2, 2)
+                      id_case += "0".repeat(4 - countCase.count_pasien.toString().length)
+                      id_case += countCase.count_pasien
+              }
+ 
+              let codes = {
+                code_test: (code_test === undefined ? "" : code_test),
+                code_tool_tester: (code_tool_tester === undefined? "": code_tool_tester),
+                id_case: (id_case === undefined ? "": id_case),
+                author_district_code: author.code_district_city,
+                author_district_name: author.name_district_city
+              }
+
+              let rdt = new Rdt(Object.assign(codes, result))
+              rdt = Object.assign(rdt,{author})
+
+              if (rdt.address_district_code === author.code_district_city) {
+                return rdt.save();
+              }
+
+            }
+        }).then((rdts) => {
+            // whatever happen always create new TestHistory
+            if (rdts.address_district_code === author.code_district_city) {
+              let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
+              return rdt_history.save((err, item) => {
+                if (err) console.log(err)
+                sendMessagesSMS(rdts)
+                sendMessagesWA(rdts)
+              });
+            }
+
+        }).catch( (err) => console.log(err));
+      
+    }
+  }
+
+
+  const returnPayload = x =>{
+    return new Promise((resolve,reject) =>{
+      setTimeout(() =>{
+        resolve(x)
+        resultForResnpose.push(x)
+      }, 100)
+    })
+  }
+
+  const getCountRdt = code => {
+    return new Promise((resolve, reject) =>{ 
+      DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+          .exec()
+          .then(dinkes =>{
+                Rdt.find({ address_district_code: code})
+                  .sort({code_test: -1})
+                  .exec()
+                  .then(res =>{
+
+                      let count = 1;
+                      if (res.length > 0){
+                        // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
+                        let str = res[0].code_test
+                        count = (Number(str.substring(10)) + 1)
+                      }
+
+                      let results = {
+                        prov_city_code: code,
+                        dinkes_code: dinkes.dinkes_kota_kode,
+                        count: count
+                      } 
+
+                    resolve (results)
+                  }).catch(err => console.log(err))
+          })
+    })
+  }
+
+  const getCountCase = code =>{
+    return new Promise((resolve,reject)=>{
+        DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                Case.find({ address_district_code: code})
+                    .sort({id_case: -1})
+                    .exec()
+                    .then(res =>{
+                        let count = 1;
+                        if (res.length > 0)
+                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
+                          count = (Number(res[0].id_case.substring(12)));
+                        let results = {
+                          prov_city_code: code,
+                          dinkes_code: dinkes.dinkes_kota_kode,
+                          count_pasien: count
+                        }
+                      
+                        resolve(results)
+                    }).catch(err => console.log(err))
+              })
+    })
+  }
+
+
+  process().then(()=> {
+    return callback(null, resultForResnpose)
+  })
+
+
 }
 
 function updateRdt (id, payload, author, callback) {
@@ -328,8 +504,6 @@ function getCountRdtCode(code,callback) {
                         return callback(null, result)
                       }).catch(err => callback(err, null))
               })
-
-
 }
 
 
@@ -446,7 +620,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
 function getDatafromExternal(address_district_code, search, callback) {
 
-   https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+   https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -455,19 +629,19 @@ function getDatafromExternal(address_district_code, search, callback) {
 
 
      res.on('end', () => {
-       let jsonData = JSON.parse(data)
-       let result = jsonData.data.content
+      let jsonData = JSON.parse(data)
+      let result = jsonData.data.content
 
-       let outputData = []
-       result.forEach(val => {
-         outputData.push({
-           display: val.name + "/" + val.nik + "/" + val.phone_number,
-           id_case: null,
-           id: null
-         })
-       });
+      let outputData = []
+      result.forEach(val => {
+        outputData.push({
+          display: val.name + "/" + val.nik + "/" + val.phone_number,
+          id_case: null,
+          id: null
+        })
+      });
 
-       return callback(null, outputData)
+      return callback(null, outputData)
      });
 
    }).on("error", (err) => {
@@ -485,7 +659,7 @@ function FormSelectIdCaseDetail(search_internal, search_external, user, callback
 
 function seacrhFromExternal(address_district_code, search, callback) {
 
-    https.get(process.env.URL_PENDAFTARAN_COVID + '&keyword=' +search.toLowerCase()+ '&address_district_code=' +address_district_code, (res) => {
+    https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' +'&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
@@ -534,16 +708,203 @@ function seacrhFromInternal(query, callback) {
       .catch()
 }
 
-function sendMessages(query, callback) {
-  let urlEndpoint = process.env.SMS_URL_SERVER
-  let username = process.env.SMS_USERNAME
-  let key = process.env.SMS_KEY
-  let number ='085223407000'
-  let message = 'test 123'
+function getRegisteredUser(search_external, user, callback) {   
+  return callback(null, search_external)
+}
+
+function getRegisteredFromExternal(query, callback) {
+
+    let date = new Date()
+    let years = date.getFullYear()
+    let month = date.getMonth()+1
+    let months
+    if (month >= 10) {
+      months = month
+    } else {
+      months = '0' + month
+    }
+
+    https.get(process.env.URL_USER_PENDAFTARAN_COVID + '&mode=bytest' + '&test_location=' + query.test_location + '&test_date_from=' + years+'-'+months+'-01' + '&test_date_to=' + query.test_date, (res) => {
+      let data = '';
+      // A chunk of data has been recieved.
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        let jsonData = JSON.parse(data)
+        let result = jsonData.data.content
+        
+        return callback(null, result)
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });
+}
+
+function getLocationTest(callback) {
+  LocationTest.find({})
+              .exec()
+              .then(res => {
+                let result = res.map(x => x.toJSONFor())
+                return callback(null, result)
+              })
+              .catch(err => callback(err, null))
+  
+}
+
+function sendMessagesSMS(rdt) {
+    console.log("call function sms");
+  // console.log(rdt.nik);
+  // console.log(rdt.name);
+  // console.log(rdt.phone_number);
+  // console.log(rdt.final_result);
+  // console.log(rdt.tool_tester);
+  // console.log(rdt.test_location);
+  // console.log(rdt.test_date);
+  // console.log(rdt.test_method);
+  
+  let params = {
+    username: process.env.SMS_USERNAME,
+    key: process.env.SMS_KEY,
+    number: '6281223953113',
+    // number: '6285223407000',
+    message: "Test \n kirim \n sms \n input RDT",
+  }
+
+
+  const requestUrl = url.parse(url.format({
+      protocol: 'https',
+      hostname: process.env.SMS_URL_SERVER,
+      pathname: '/sms/smsmasking.php',
+      query: params
+  }));
+
+
+  const req = https.request(url.format(requestUrl), (res) => {
+    console.log(`statusCode: ${res.statusCode}`)
+    let data =''
+
+    res.on('data', (d) => {
+      data += d
+    })
+
+     res.on('end', () => {
+      let result = data.split('|')    
+      let id_sms = result[1]
+      let status = result[0]
+      let send
+       if (status === '\n0'){
+          send = 'Terkirim'
+       } else if (status === '\n1') {
+        send = 'Username/key salah'
+       } else if (status === '\n2') {
+        send = 'Saldo Minus'
+       } else if (status === '\n3') {
+        send = 'Masa Aktif Sudah lewat '
+       } else if (status === '\n4') {
+        send = 'Penulisan nomor handphone salah'
+       } else if (status === '\n5') {
+       sends = 'Maksimum sms per nomor per menit'
+       } else if (status === '\n6') {
+        send = 'Format api salah'
+       } else if (status === '\n7')(
+        send = 'System Error'
+       )
+      
+       return (console.log({
+         id_sms: id_sms,
+         no_sms: params.number,
+         status_sms: send
+       }))
+
+      //  return callback(null, {id_sms: id_sms, no_sms: params.number, status_sms: send})
+     });     
+
+  })
+
+  req.on('error', (error) => {
+    console.error(error)
+  })
+
+  req.end()
 
 }
 
+function sendMessagesWA(rdt) {
+  console.log("call function wa");
+  // console.log(rdt.nik);
+  // console.log(rdt.name);
+  // console.log(rdt.phone_number);
+  // console.log(rdt.final_result);
+  // console.log(rdt.tool_tester);
+  // console.log(rdt.test_location);
+  // console.log(rdt.test_date);
+  // console.log(rdt.test_method);
 
+  let hp = rdt.phone_number
+  let substr = hp.substring(0,1)
+  let substr_blk = hp.substring(1)
+
+  let phone
+  if (substr === '0'){
+    phone = parseInt('62'+substr_blk)
+  }else{
+    phone = hp
+  }
+
+  let body = JSON.stringify({   
+      // phone:6285223407000,
+      phone: 6281223953113,
+      body:"test \nkirim Wa \ninput RTD"
+  })
+
+  var options = {
+    hostname: process.env.WA_URL,
+    method: 'POST',
+    path: '/' + process.env.WA_USER + '/sendMessage?token=' + process.env.WA_TOKEN,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json'
+    }
+  };
+
+ 
+  const req = https.request(options, (res) => {
+    console.log(`statusCode: ${res.statusCode}`)
+    let data =''
+
+    res.on('data', (d) => {
+      data += d
+    })
+
+     res.on('end', () => {
+      let result = JSON.parse(data) 
+
+      return (console.log({
+                 id_wa: result.id,
+                 no_wa: 6281223953113,
+                 status_wa: result.sent
+               }))
+
+      //  return callback(null, {
+      //    id_wa: result.id,
+      //    no_wa: query.number,
+      //    status_wa: result.sent
+      //  })
+     });          
+
+  })
+
+  req.on('error', (error) => {
+    console.error(error)
+  })
+  
+  req.write(body)
+  req.end()
+
+}
 
 module.exports = [
   {
@@ -555,8 +916,16 @@ module.exports = [
     method: getRdtById
   },
   {
+    name: 'services.rdt.getHistoriesByRdtId',
+    method: GetRdtHistoryByRdtId
+  },
+  {
     name: 'services.rdt.create',
     method: createRdt
+  },
+  {
+    name: 'services.rdt.createMultiple',
+    method: createRdtMultiple
   },
   {
     name: 'services.rdt.update',
@@ -611,16 +980,32 @@ module.exports = [
     method: FormSelectIdCaseDetail
   },
   {
+    name: 'services.rdt.getRegisteredUser',
+    method: getRegisteredUser
+  },
+  {
     name: 'services.rdt.seacrhFromExternal',
     method: seacrhFromExternal
+  },
+  {
+    name: 'services.rdt.getRegisteredFromExternal',
+    method: getRegisteredFromExternal
   },
   {
     name: 'services.rdt.seacrhFromInternal',
     method: seacrhFromInternal
   },
   {
-    name: 'services.rdt.sendMessages',
-    method: sendMessages
+    name: 'services.rdt.sendMessagesSMS',
+    method: sendMessagesSMS
+  },
+  {
+    name: 'services.rdt.sendMessagesWA',
+    method: sendMessagesWA
+  },
+  {
+    name: 'services.rdt.getLocationTest',
+    method: getLocationTest
   },
 ];
 

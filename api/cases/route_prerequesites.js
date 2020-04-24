@@ -17,6 +17,29 @@ const validationBeforeInput = server => {
     }
 }
 
+const checkCaseIsExists = server => {
+    return {
+        method: (request, reply) => {
+            const nik = request.payload.nik
+            server.methods.services.cases.getByNik(nik, (err, result) => {
+                if (!result) return reply(result)
+
+                let author = result.author ? result.author.fullname : null
+
+                let message
+                message = `NIK ${nik} atas nama ${result.name} `
+                message += `Sudah terdata di laporan kasus oleh ${author}`
+
+                return reply({
+                    status: 409,
+                    message: message,
+                    data: null
+                }).code(409).takeover()
+            })
+       },
+       assign: 'case_exist'
+    }
+}
 
 const countCaseByDistrict = server =>{
     return {
@@ -83,9 +106,68 @@ const checkIfDataNotNull = server =>{
      }
 }
 
+const DataSheetRequest = server => {
+    return {
+        method: async (request, reply) => {
+            
+            const mongoose = require('mongoose');
+
+            require('../../models/Case');
+            const Case = mongoose.model('Case');
+            
+            const helper = require("../../helpers/casesheet/casesheetextraction")
+
+            const rules = require('./validations/input')
+
+            const Joi = require('joi')
+
+            const config = require('../../helpers/casesheet/casesheetconfig.json')
+
+            const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
+
+            const payload = await helper.caseSheetExtraction(request)
+
+            let invalidPaylodMessage = null
+
+            if (payload === config.unverified_template) {
+                invalidPaylodMessage = config.messages.unverified_template
+            } else if (payload === config.version_out_of_date) {
+                invalidPaylodMessage = config.messages.version_out_of_date
+            }else if (payload.length > config.max_rows_allowed) {
+                invalidPaylodMessage = `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
+            }
+
+            if (invalidPaylodMessage) {
+                let response = {
+                    status: 400,
+                    message: 'Bad request.',
+                    errors:  invalidPaylodMessage.split()
+                }
+                return reply(response).code(400).takeover()
+            }
+
+            const errors = await caseSheetValidator.validate(payload, Joi, rules, config, helper, Case)
+
+            if (errors.length) {
+                let response = {
+                    status: 400,
+                    message: 'Bad request.',
+                    errors: errors
+                }
+                return reply(response).code(400).takeover()
+            }
+
+            return reply(payload)
+        },
+        assign: 'data_sheet'
+    }
+}
+
 module.exports ={
     countCaseByDistrict,
     getCasebyId,
     checkIfDataNotNull,
-    validationBeforeInput
+    DataSheetRequest,
+    validationBeforeInput,
+    checkCaseIsExists
 }

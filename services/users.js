@@ -1,73 +1,109 @@
-const mongoose = require('mongoose');
-const crypto = require('crypto')
 require('../models/User');
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 const User = mongoose.model('User');
+const Check = require('../helpers/rolecheck');
+const Helper = require('../helpers/custom');
 
-function getUserByEmail (email, callback) {
-  User.findOne({ email }, (err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
+const listUser = async (user, query, callback) => {
+
+  const myCustomLabels = {
+    totalDocs: 'itemCount',
+    docs: 'itemsList',
+    limit: 'perPage',
+    page: 'currentPage',
+    meta: '_meta'
+  };
+
+  const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort));
+  const options = {
+    page: query.page,
+    limit: query.limit,
+    sort: sorts,
+    leanWithId: true,
+    customLabels: myCustomLabels,
+  };
+
+  let result_search;
+  let params = {};
+  params = Check.userByRole(params,user);
+  if(query.search){
+    var search_params = [
+      { username : new RegExp(query.search,"i") },
+      { fullname: new RegExp(query.search, "i") },
+      { email: new RegExp(query.search, "i") },
+      { phone_number: new RegExp(query.search, "i"), },
+      { address_street: new RegExp(query.search, "i"), },
+      { address_village_name: new RegExp(query.search, "i"), },
+    ];
+    result_search = User.find(params).or(search_params).where("delete_status").ne("deleted");
+  } else {
+    result_search = User.find(params).where("delete_status").ne("deleted");
+  }
+
+  User.paginate(result_search, options).then(function(results){
+    const res = {
+      users: results.itemsList.map(users => users.toJSONFor()),
+      _meta: results._meta,
+    }
+    return callback(null, res);
+  }).catch(err => callback(err, null));
 }
 
-
-function getUserById (id, callback) {
-  User.findById(id, (err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
+const getUserById = async (id, category, callback) => {
+  let result;
+  try {
+    result = await User.findById(id);
+    if(category == 'reset'){
+      const salt = crypto.randomBytes(16).toString('hex');
+      const params = {
+        salt:salt,
+        hash:crypto.pbkdf2Sync(`${result.username}890`, salt, 10000, 512, 'sha512').toString('hex'),
+        password:Helper.setPwd(`${result.username}890`),
+      }
+      result = await User.findByIdAndUpdate(id,{ $set: params }, { new: true });
+    }
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
-function getUserByUsername (username, callback) {
+const getUserByUsername = (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
     return callback(null, user);
   });
 }
 
-function createUser (payload, callback) {
-  let user = new User();
-  
-  user.fullname = payload.fullname;
-  user.username = payload.username;
-  user.setPassword(payload.password);
-  user.email = payload.email;
-  user.role = payload.role;
-  user.code_district_city = payload.code_district_city;
-  user.name_district_city = payload.name_district_city;
-
-  user.save((err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
+const checkUser = async (query, callback) => {
+  let check;
+  if(query.params){
+    const gets = await User.find({ $or:[ 
+      {'username':query.params}, {'email':query.params} ]}).then(res => { return res.length });
+    check = (gets > 0 ? true : false);
+  } else {
+    check = {};
+  }
+  callback(null, check);
 }
 
-function setPwd(password){
-  const salts = crypto.randomBytes(16).toString('hex')
-  const hashing = crypto.pbkdf2Sync(password, salts, 10000, 512, 'sha512').toString('hex')
-  return hashing
+const createUser = async (payload, callback) => {
+  try {
+    payload.salt = crypto.randomBytes(16).toString('hex');
+    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
+    payload.password = Helper.setPwd(payload.password);
+    const user = new User(payload);
+    const result = await user.save();
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
-function createUserMultiple (payload, callback) {
-
-  const payloadMultiple = payload.map(pay => {
-    pay.username = pay.fullname.toLowerCase().replace(/\s+/g, '').replace(/[^a-zA-Z ]/g, "");
-    pay.email = `${pay.username}@gmail.com`
-    pay.salt = crypto.randomBytes(16).toString('hex')
-    pay.password = setPwd(`${pay.username}890`)
-    pay.hash = crypto.pbkdf2Sync(`${pay.username}890`, pay.salt, 10000, 512, 'sha512').toString('hex')
-    return pay
-  })
-
-  User.create(payloadMultiple).then(_result => {
-    callback(null,'success')
-  }).catch(err => {
-    callback(null,err)
-  })
-}
-
-function updateUser (user, payload, callback) {
+const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
+
   let users = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
@@ -75,10 +111,16 @@ function updateUser (user, payload, callback) {
     email: payload.email ? payload.email: user.email,
     role: payload.role ? payload.role: user.role,
     code_district_city: payload.code_district_city ? payload.code_district_city : user.code_district_city,
-    name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city
+    name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city,
+    phone_number: payload.phone_number ? payload.phone_number : user.phone_number,
+    address_street: payload.address_street ? payload.address_street : user.address_street,
+    address_subdistrict_code: payload.address_subdistrict_code ? payload.address_subdistrict_code : user.address_subdistrict_code,
+    address_subdistrict_name: payload.address_subdistrict_name ? payload.address_subdistrict_name : user.address_subdistrict_name,
+    address_village_code: payload.address_village_code ? payload.address_village_code : user.address_village_code,
+    address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name
   }
   
-  user = Object.assign(user, users)
+  user = Object.assign(user, users);
 
   user.save((err, user) => {
     if (err) return callback(err, null);
@@ -86,12 +128,33 @@ function updateUser (user, payload, callback) {
   });
 }
 
-
+const updateUsers = async (id, pay, category, author, callback) =>{
+  try {
+    const payloads = {};
+    const payload = (pay == null ? {} : pay );
+    if(category == "delete"){
+      const date = new Date();
+      payloads.delete_status = "deleted";
+      payloads.deletedAt = date.toISOString();
+      payloads.deletedBy = author;
+    }
+    const params = Object.assign(payload,payloads);
+    const result = await User.findByIdAndUpdate(id,
+    { $set: params }, { new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
 
 module.exports = [
   {
-    name: 'services.users.getByEmail',
-    method: getUserByEmail
+    name: 'services.users.checkUser',
+    method: checkUser
+  },
+  {
+    name: 'services.users.listUser',
+    method: listUser
   },
   {
     name: 'services.users.getById',
@@ -106,12 +169,12 @@ module.exports = [
     method: createUser
   },
   {
-    name: 'services.users.createUserMultiple',
-    method: createUserMultiple
-  },
-  {
     name: 'services.users.update',
     method: updateUser
+  },
+  {
+    name: 'services.users.updateUsers',
+    method: updateUsers
   }
 ];
  

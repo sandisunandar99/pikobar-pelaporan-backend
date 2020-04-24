@@ -31,6 +31,7 @@ const register = (server, options, next) => {
   server.register(require('./occupations'))
   server.register(require('./rdt'))
   server.register(require('./category'))
+  server.register(require('./country'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
@@ -44,7 +45,7 @@ const register = (server, options, next) => {
       tags: ['api', 'status']
     },
     handler: (request, reply) => {
-      return reply({status: 'UP'})
+      return reply({status: `UP in ${Math.floor(process.uptime())}`})
     }
   })
 

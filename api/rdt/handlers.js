@@ -51,6 +51,25 @@ module.exports = (server) => {
                 }
             )
         },
+        /**
+         * POST /api/rdt
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateRdtMultiple(request, reply){
+            let payload = request.payload
+            server.methods.services.rdt.createMultiple(
+                payload,
+                request.auth.credentials.user,
+                request.pre,
+                  (err, result) => {
+                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                  return reply(
+                      constructRdtResponse(result)
+                  ).code(200)
+                }
+            )
+        },
 
         /**
          * GET /api/rdt/{id}
@@ -60,6 +79,21 @@ module.exports = (server) => {
         async GetRdtDetail(request, reply) {
             let id = request.params.id
             server.methods.services.rdt.getById(id, (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructRdtResponse(item)
+                ).code(200)
+            })
+        },
+
+        /**
+         * GET /api/rdt/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetRdtHistories(request, reply) {
+            let id = request.params.id
+            server.methods.services.rdt.getHistoriesByRdtId(id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructRdtResponse(item)
@@ -129,7 +163,6 @@ module.exports = (server) => {
 
 
         /**
-         * DELETE /api/rdt/{id}
          * @param {*} request
          * @param {*} reply
          */
@@ -138,6 +171,38 @@ module.exports = (server) => {
                 request.pre.search_internal,
                 request.pre.search_external,
                 request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+            })
+        },
+
+
+        /**
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetListRegisteredUser(request, reply) {
+            server.methods.services.rdt.getRegisteredUser(
+                request.pre.reg_user_external,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+            })
+        },
+
+
+        /**
+         * @param {*} request
+         * @param {*} reply
+         */
+        async formLocationTest(request, reply) {
+            server.methods.services.rdt.getLocationTest(
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -224,17 +289,24 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async sendMessage(request, reply) {
-            let query = request.query
-
-            server.methods.services.rdt.sendMessages(
-                query,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructRdtResponse(result, request)
-                    ).code(200)
-                })
+        async sendMessage(result) {
+            // let query = request.query
+            // server.methods.services.rdt.sendMessagesSMS(
+            //     query,
+            //     (err, result) => {
+            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            //         return reply(
+            //             constructRdtResponse(result, request)
+            //         ).code(200)
+            //     })
+            // server.methods.services.rdt.sendMessagesWA(
+            //     query,
+            //     (err, result) => {
+            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            //         return reply(
+            //             constructRdtResponse(result, request)
+            //         ).code(200)
+            //     })
         }
 
 
