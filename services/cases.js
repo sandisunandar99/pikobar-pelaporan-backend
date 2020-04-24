@@ -68,6 +68,7 @@ function ListCase (query, user, callback) {
     var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
     var result_search = Check.listByRole(user, params, null,Case,"delete_status")
+
   }
 
   Case.paginate(result_search, options).then(function(results){

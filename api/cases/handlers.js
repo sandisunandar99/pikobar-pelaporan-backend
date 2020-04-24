@@ -169,7 +169,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * DELETE /api/cases/{id}
          * @param {*} request

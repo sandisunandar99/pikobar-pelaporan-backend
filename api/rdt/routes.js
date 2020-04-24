@@ -19,9 +19,6 @@ module.exports = (server) =>{
     const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
     const getRegisteredUserfromExternal = require('./route_prerequesites').getRegisteredUserfromExternal(server)
     
-    const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
-
-
     return [
         // Get list case for form
         {

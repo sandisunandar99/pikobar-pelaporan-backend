@@ -47,6 +47,9 @@ module.exports = (server) =>{
                     validationBeforeInput,
                     countCaseByDistrict,
                     checkCaseIsExists
+
+                    countCaseByDistrict
+
                 ]
             },
             handler: handlers.CreateCase

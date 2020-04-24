@@ -11,8 +11,8 @@ API service for Jabar Pikobar application
 
 Clone project and install dependencies:
 ```bash
-$ https://gitlab.com/jdsteam/crowdsource/survey-backend.git
-$ cd survey-bakcend
+$ https://github.com/jabardigitalservice/pikobar-pelaporan-backend.git
+$ cd pikobar-pelaporan-backend
 $ docker-compose up --build
 ```
 
@@ -57,8 +57,6 @@ $ npm test
 ```
 
 ## License
-The MIT License (MIT)
-
 Copyright (c) 2020 JDS (Jabar Digital Service)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

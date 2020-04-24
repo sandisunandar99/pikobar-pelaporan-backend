@@ -1,6 +1,5 @@
 const replyHelper = require('../helpers')
 
-
 const validationBeforeInput = server => {
     return {
         method: (request, reply) => {
