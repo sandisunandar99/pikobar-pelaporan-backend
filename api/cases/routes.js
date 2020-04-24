@@ -147,7 +147,10 @@ module.exports = (server) =>{
             config: {
                 auth: 'jwt',
                 description: 'Get count summary of all cases by district',
-                tags: ['api', 'cases']
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleView
+                ]
             },
             handler: handlers.ListCaseExport
         },
