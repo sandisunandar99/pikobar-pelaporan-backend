@@ -130,6 +130,7 @@ module.exports = (server) => {
       method: 'POST',
       path: '/users',
       config: {
+        auth: 'jwt',
         validate: inputValidations.RegisterPayload,
         response: outputValidations.AuthOnRegisterOutputValidationConfig,
         description: 'Add user',
