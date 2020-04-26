@@ -46,7 +46,7 @@ module.exports = (server) =>{
                     CheckRoleCreate,
                     validationBeforeInput,
                     countCaseByDistrict,
-                    checkCaseIsExists,
+                    // checkCaseIsExists, // sementara jangan di pake karena cek nik
                     countCaseByDistrict
 
                 ]
