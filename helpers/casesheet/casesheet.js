@@ -109,7 +109,14 @@ const getOfficeAddress = () => {
 }
 
 const getStatus = () => {
-    return _toString(dt[conf.cell.status]) || undefined
+    if (!dt[conf.cell.status]) return undefined
+
+    let status = _toString(dt[conf.cell.status]) 
+
+    if (status && status.toUpperCase) {
+        status = status.toUpperCase()
+    }
+    return status || undefined
 }
 
 const getStage = () => {
@@ -121,12 +128,21 @@ const getStage = () => {
 const getFinalResult = () => {
     if(!dt[conf.cell.final_result]) return null
     const result = _toString(dt[conf.cell.final_result])
-    let resultCode = '0'
+    
+    let resultCode = null
+
+    const status = getStatus()
+
+    if (status === 'OTG' || status === 'ODP') {
+        return null
+    }
 
     if (result == 'Sembuh') {
         resultCode = '1'
     } else if (result == 'Meninggal') {
         resultCode = '2'
+    } if (result == 'Negatif' && status !== 'POSITIF') {
+        resultCode = '0'
     }
 
     return resultCode
