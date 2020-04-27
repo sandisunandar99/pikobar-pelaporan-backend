@@ -79,6 +79,31 @@ CaseSchema.methods.toJSONFor = function () {
     }
 }
 
+CaseSchema.methods.toJSONForList = function () {
+    return {
+        _id: this._id,
+        id_case: this.id_case,
+        name: this.name,
+        age: this.age,
+        nik: this.nik,
+        nationality: this.nationality,
+        nationality_name: this.nationality_name,
+        gender: this.gender,
+        address_district_name: this.address_district_name,
+        address_district_code: this.address_district_code,
+        phone_number: this.phone_number,
+        stage: this.stage,
+        status: this.status,
+        verified_status: this.verified_status,
+        verified_comment: this.verified_comment,
+        final_result: this.final_result,
+        delete_status: this.delete_status,
+        deletedAt: this.deletedAt,
+        last_history: this.last_history,
+        is_test_masif: this.is_test_masif,
+        author: this.author.JSONCase(),
+    }
+}
 
 CaseSchema.methods.JSONFormCase = function () {
     let covid = this.id_case
