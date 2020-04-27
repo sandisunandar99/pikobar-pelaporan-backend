@@ -157,7 +157,14 @@ function getIdCase (query,callback) {
 }
 
 async function getCaseSummaryFinal (query, user, callback) {
-  let searching = Check.countByRole(user)
+  let searching = Check.countByRole(user);
+
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
 
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
