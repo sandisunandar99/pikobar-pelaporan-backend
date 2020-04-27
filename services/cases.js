@@ -396,6 +396,11 @@ async function importCases (raw_payload, author, pre, callback) {
         verified_status: 'pending'
       }
 
+      if (author.role === "dinkeskota") {
+        verified= {
+          verified_status: 'verified'
+        }
+      }
 
       // create case
       let date = new Date().getFullYear().toString()
