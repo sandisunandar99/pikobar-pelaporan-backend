@@ -257,6 +257,23 @@ module.exports = (server) => {
             })
         },
 
+
+        /**
+         * GET /api/cases-healthcheck
+         * @param {*} request
+         * @param {*} reply
+         */
+        async HealthCheck(request, reply) {
+            server.methods.services.cases.healthcheck(
+                request.query,
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }

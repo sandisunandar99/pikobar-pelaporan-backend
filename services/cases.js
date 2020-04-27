@@ -487,6 +487,19 @@ function softDeleteCase(cases,deletedBy, payload, callback) {
 
 } 
 
+async function healthCheck(payload, callback) {
+  try {
+    let case_no_last_history = await Case.find({ last_history: {"$exists": false}})
+
+    let result = {
+      'case_no_last_history' : case_no_last_history,
+    }
+
+    return callback(null, result);
+  } catch (error) {
+    return callback(error, null)
+  }
+}
 
 module.exports = [
   {
@@ -540,6 +553,10 @@ module.exports = [
   {
     name: 'services.cases.getIdCase',
     method: getIdCase
-  }
+  },
+  {
+    name: 'services.cases.healthcheck',
+    method: healthCheck,
+  },
 ];
 
