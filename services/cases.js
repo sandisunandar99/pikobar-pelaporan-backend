@@ -25,7 +25,7 @@ function ListCase (query, user, callback) {
   };
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
-
+  
   const options = {
     page: query.page,
     limit: query.limit,
@@ -72,7 +72,7 @@ function ListCase (query, user, callback) {
 
   Case.paginate(result_search, options).then(function(results){
       let res = {
-        cases: results.itemsList.map(cases => cases.toJSONForList()),
+        cases: results.itemsList.map(cases => cases.toJSONFor()),
         _meta: results._meta
       }
       return callback(null, res)
