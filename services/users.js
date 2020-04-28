@@ -157,6 +157,29 @@ const updateUsers = async (id, pay, category, author, callback) =>{
   }
 }
 
+const listUserIds = async (user, query, callback) => {
+  const params = {}
+  
+  if(query.search){
+    params.fullname = new RegExp(query.search, "i")
+  }
+
+  if(query.code_district_city){
+    params.code_district_city = query.code_district_city
+  }
+
+  if(query.role){
+    params.role = query.role
+  }
+
+  try {
+    const users = await User.find(params).select('fullname')
+    return callback(null, users.map(users => users.JSONCase()))
+  } catch (err) {
+    callback(err, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.users.checkUser',
@@ -185,6 +208,10 @@ module.exports = [
   {
     name: 'services.users.updateUsers',
     method: updateUsers
+  },
+  {
+    name: 'services.users.listUserIds',
+    method: listUserIds
   }
 ];
  
