@@ -1,49 +1,49 @@
 require('../models/Case');
-const mongoose = require('mongoose');
-const Case = mongoose.model('Case');
+const Mongoose = require('mongoose');
+const Helpers = require('../helpers/dashboardbottom');
+const Case = Mongoose.model('Case');
 const Check = require('../helpers/rolecheck');
+const Filter = require('../helpers/casefilter');
 
 const countByGender = async (query, user, callback) => {
-  let searching = Check.countByRole(user);
-
-  if (query.address_village_code) {
-    searching.address_village_code = query.address_village_code;
-  }
-
-  if (query.address_subdistrict_code) {
-    searching.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  if (user.role == "dinkesprov" || user.role == "superadmin") {
-    if (query.address_district_code) {
-      searching.address_district_code = query.address_district_code;
-    }
-  }
-
-  const searchingMan = {gender: "L"};
-  const searchingWoman = {gender: "P"};
-
-  console.log(searching);
-  
+  const search = Check.countByRole(user);
+  const filter = await Filter.filterCase(user, query);
+  const searching = Object.assign(search,filter);
 
   try {
-    const man = await Case.find(Object.assign(searching, searchingMan))
-    .where("delete_status").ne("deleted").then(res => { return res.length });
-    const woman = await Case.find(Object.assign(searching, searchingWoman))
-    .where("delete_status").ne("deleted").then(res => { return res.length });
-    const result = {
-      "MAN": man,
-      "WOMAN": woman,
-    }
-    callback(null, result);
+    const conditionAge = [
+      {$match: { 
+        $and: [searching, {delete_status: {$ne :'deleted' }}]
+      }},
+      {$bucket:
+      {
+        groupBy: "$age", 
+        boundaries: [0,10,20,30,40,50,60,70,80,90,100], 
+        default: "other", 
+        output : {
+          "total": {$sum: 1},
+          "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "L" ] }, then: 1, else: 0 }}},
+          "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "P" ] }, then: 1, else: 0 }}}  }
+        }
+      }
+    ];
+
+    const conditionGender = [
+      { $match: { 
+        $and: [ searching, { delete_status: { $ne: 'deleted' }} ]
+      }},
+      { $group: { _id: "$gender", "total": { $sum: 1 }}}
+    ];
+
+    const ageGroup = await Case.aggregate(conditionAge);
+    const genderGroup = await Case.aggregate(conditionGender);
+    const results = await Helpers.filterJson(ageGroup,genderGroup);
+    
+    callback(null,results);
   } catch (error) {
     callback(error, null);
   }
 };
-
-const countByAge = (callback) => {
-
-}
 
 module.exports = [{
   name: "services.dashboard.countByGender",
