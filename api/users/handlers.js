@@ -162,6 +162,19 @@ module.exports = (server) => {
 
         return reply(constructUserResponse(user))
       });
+    },
+    /**
+     * GET /api/users-listid
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getListUserIds (request, reply) {
+      server.methods.services.users.listUserIds(
+        request.auth.credentials.user,
+        request.query, (err, listUserIds) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        return reply(constructUsersResponse(listUserIds))
+      })
     }
   }
 }
