@@ -84,6 +84,7 @@ UserSchema.methods.toJSONFor = function () {
 UserSchema.methods.JSONCase = function () {
   return {
     _id: this._id,
+    username: this.username,
     fullname: this.fullname,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,

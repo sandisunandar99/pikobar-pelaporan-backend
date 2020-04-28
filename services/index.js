@@ -8,7 +8,8 @@ const register = (server, options, next) => {
       require('./rdt'),
       require('./category'),
       require('./rdt_histories'),
-      require('./country')
+      require('./country'),
+      require('./dashboard'),
     );
     server.method(services)
     return next()

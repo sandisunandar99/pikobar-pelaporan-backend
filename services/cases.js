@@ -25,7 +25,7 @@ function ListCase (query, user, callback) {
   };
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
-
+  
   const options = {
     page: query.page,
     limit: query.limit,
@@ -68,7 +68,6 @@ function ListCase (query, user, callback) {
     var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
     var result_search = Check.listByRole(user, params, null,Case,"delete_status")
-
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -157,7 +156,14 @@ function getIdCase (query,callback) {
 }
 
 async function getCaseSummaryFinal (query, user, callback) {
-  let searching = Check.countByRole(user)
+  let searching = Check.countByRole(user);
+
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
 
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
@@ -396,6 +402,11 @@ async function importCases (raw_payload, author, pre, callback) {
         verified_status: 'pending'
       }
 
+      if (author.role === "dinkeskota") {
+        verified= {
+          verified_status: 'verified'
+        }
+      }
 
       // create case
       let date = new Date().getFullYear().toString()
@@ -476,6 +487,19 @@ function softDeleteCase(cases,deletedBy, payload, callback) {
 
 } 
 
+async function healthCheck(payload, callback) {
+  try {
+    let case_no_last_history = await Case.find({ last_history: {"$exists": false}})
+
+    let result = {
+      'case_no_last_history' : case_no_last_history,
+    }
+
+    return callback(null, result);
+  } catch (error) {
+    return callback(error, null)
+  }
+}
 
 module.exports = [
   {
@@ -529,6 +553,10 @@ module.exports = [
   {
     name: 'services.cases.getIdCase',
     method: getIdCase
-  }
+  },
+  {
+    name: 'services.cases.healthcheck',
+    method: healthCheck,
+  },
 ];
 

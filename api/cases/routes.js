@@ -231,7 +231,21 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetCaseDetailByNik
-        }
+        },
+        // Healthcheck endpoint
+        {
+            method: 'GET',
+            path: '/cases-healthcheck',
+            config: {
+                auth: 'jwt',
+                description: 'display some healthcheck info regarding cases data',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.HealthCheck
+        },
     ]
 
 }
