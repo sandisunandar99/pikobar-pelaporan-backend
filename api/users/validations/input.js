@@ -42,8 +42,9 @@ const UserQueryValidations = {
     limit: Joi.number().integer().empty('', 10).default(10).description('limit result set'),
     offset: Joi.number().integer().default(0).description('number of record to skip'),
     page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
-    sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
-    search: Joi.string().empty('', null).default('').description('search data by Case name')
+    sort: Joi.string().empty('', 'desc').default('desc').description('sorting'),
+    search: Joi.string().empty('', null).default('').description('search data'),
+    role: Joi.string().empty('', null).default('').description('search data by Role'),
   },
   options: validateOptions.options,
   failAction: validateOptions.failAction

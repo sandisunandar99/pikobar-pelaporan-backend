@@ -26,7 +26,12 @@ const listUser = async (user, query, callback) => {
 
   let result_search;
   let params = {};
-  params = Check.userByRole(params,user);
+  params = Check.userByRole(params, user);
+
+  if(query.role){
+    params.role = query.role;
+  }
+
   if(query.search){
     var search_params = [
       { username : new RegExp(query.search,"i") },
