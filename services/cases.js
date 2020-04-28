@@ -60,6 +60,9 @@ function ListCase (query, user, callback) {
   if(query.final_result){
     params.final_result = query.final_result;
   }
+  if(query.author){
+    params.author = query.author;
+  }
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
