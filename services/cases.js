@@ -63,6 +63,15 @@ function ListCase (query, user, callback) {
   if(query.author){
     params.author = query.author;
   }
+
+  if (query.approval === 'faskes') {
+    params.verified_status = { $in: ['pending', 'declined'] };
+  } else if (query.approval === 'dinkeskota') {
+    params.verified_status = 'pending'
+  } else {
+    params.verified_status = 'verified'
+  }
+  
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
