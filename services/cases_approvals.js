@@ -6,6 +6,18 @@ const Case = mongoose.model('Case');
 require('../models/CaseApproval');
 const CaseApproval = mongoose.model('CaseApproval');
 
+require('../models/DistrictCity')
+const DistrictCity = mongoose.model('Districtcity')
+
+
+var schedule = require('node-schedule');
+schedule.scheduleJob('* * * * *', function(){
+  createCasesAproval((err, result) => {
+    if (err) return 'auto approval error'
+    return 'auto approval succeed'
+  })
+});
+
 async function getCaseAprovals (caseId, callback) {
   try {
 
