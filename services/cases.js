@@ -116,6 +116,9 @@ function listCaseExport (query, user, callback) {
   if(query.address_subdistrict_code){
     params.address_subdistrict_code = query.address_subdistrict_code;
   }
+  if (query.verified_status && query.verified_status.split) {
+    params.verified_status = { $in: query.verified_status.split(',') }
+  }
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
@@ -185,11 +188,11 @@ async function getCaseSummaryFinal (query, user, callback) {
   
   try {
     const positif = await Case.find(Object.assign(searching,searchingPositif))
-    .where("delete_status").ne("deleted").countDocuments()
+    .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
     const sembuh = await Case.find(Object.assign(searching,searchingSembuh))
-    .where("delete_status").ne("deleted").countDocuments()
+    .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
     const meninggal = await Case.find(Object.assign(searching,searchingMeninggal))
-    .where("delete_status").ne("deleted").countDocuments()
+    .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
     const result =  {
       "SEMBUH":sembuh, 
       "MENINGGAL":meninggal,
@@ -219,7 +222,7 @@ async function getCaseSummary (query, user, callback) {
   
   var aggStatus = [
     { $match: { 
-      $and: [  searching, { delete_status: { $ne: 'deleted' }} ]
+      $and: [  searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' } ]
     }},
     { 
       $group: { _id: "$status", total: {$sum: 1}}
@@ -260,16 +263,16 @@ async function getCaseSummary (query, user, callback) {
       });
       
       // OTG 
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':'Proses'}],"delete_status": { $ne: "deleted" }})).countDocuments();
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':'Selesai'}], "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':'Proses'}], "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':'Selesai'}], "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':'Proses'}], "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':'Selesai'}], "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       return callback(null, result)
     })
@@ -287,11 +290,21 @@ function createCase (raw_payload, author, pre, callback) {
   }
 
   let date = new Date().getFullYear().toString()
-  let id_case = "covid-"
-      id_case += pre.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_pasien.toString().length)
-      id_case += pre.count_pasien
+  let id_case
+
+  if (author.role === 'faskes') {
+    id_case = "precovid-"
+    id_case += pre.count_case_pending.dinkes_code
+    id_case += date.substr(2, 2)
+    id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
+    id_case += pre.count_case_pending.count_pasien 
+  } else {
+    id_case = "covid-"
+    id_case += pre.count_case.dinkes_code
+    id_case += date.substr(2, 2)
+    id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+    id_case += pre.count_case.count_pasien
+  }
 
   let insert_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
       insert_id_case = Object.assign(raw_payload, {id_case})
@@ -378,7 +391,7 @@ function getCountByDistrict(code, callback) {
   DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
               .exec()
               .then(dinkes =>{
-                Case.find({ address_district_code: code})
+                Case.find({ address_district_code: code, verified_status: 'verified' })
                     .sort({id_case: -1})
                     .exec()
                     .then(res =>{
@@ -386,6 +399,29 @@ function getCountByDistrict(code, callback) {
                         if (res.length > 0)
                           // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
                           count = (Number(res[0].id_case.substring(12)) + 1);
+                        let result = {
+                          prov_city_code: code,
+                          dinkes_code: dinkes.dinkes_kota_kode,
+                          count_pasien: count
+                        }
+                      return callback(null, result)
+                    }).catch(err => callback(err, null))
+              })
+}
+
+function getCountPendingByDistrict(code, callback) {
+  /* Get last number of current district id case order */
+  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+              .exec()
+              .then(dinkes =>{
+                Case.find({ address_district_code: code, verified_status: { $in: ['pending', 'declined'] } })
+                    .sort({id_case: -1})
+                    .exec()
+                    .then(res =>{
+                        let count = 1;
+                        if (res.length > 0)
+                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
+                          count = (Number(res[0].id_case.substring(15)) + 1);
                         let result = {
                           prov_city_code: code,
                           dinkes_code: dinkes.dinkes_kota_kode,
@@ -414,7 +450,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const districtCases = await Case.find({ address_district_code: code}).sort({id_case: -1})
+      const districtCases = await Case.find({ address_district_code: code, verified_status: 'verified'}).sort({id_case: -1})
 
       let count = 1
       let casePayload = {}
@@ -566,6 +602,10 @@ module.exports = [
   {
     name: 'services.cases.getCountByDistrict',
     method: getCountByDistrict
+  },
+  {
+    name: 'services.cases.getCountPendingByDistrict',
+    method: getCountPendingByDistrict
   },
   {
     name: 'services.cases.softDeleteCase',

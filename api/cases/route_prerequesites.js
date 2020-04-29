@@ -57,6 +57,22 @@ const countCaseByDistrict = server =>{
     }
 }
 
+const countCasePendingByDistrict = server =>{
+    return {
+        method: (request, reply) => {
+            server.methods.services.cases.getCountPendingByDistrict(
+                request.payload.address_district_code,
+                (err, count) => {
+                    if (err) {
+                        return reply(replyHelper.constructErrorResponse(err)).takeover()
+                    }
+                    return reply(count)
+                })
+        },
+        assign: 'count_case_pending'
+    }
+}
+
 
 const getCasebyId = server => {
     return {
@@ -163,24 +179,37 @@ const DataSheetRequest = server => {
     }
 }
 
-const autoVerifyAfter24Hours = server => {
+const getDetailCase = server => {
     return {
-        method: async (request, reply) => {
-           server.methods.services.casesApprovals.createCasesAproval(
-            (err, result) => {
-                return reply(result)
+        method: (request, reply) => {
+            const id = request.params.id
+            server.methods.services.cases.getById(id, async (err, result) => { 
+                if (err) {
+                    return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                }
+                
+                server.methods.services.cases.getCountByDistrict(
+                    result.address_district_code,
+                    async (err, count) => {
+                        if (err) {
+                            return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                        }
+
+                        return reply(count)
+                    })
             })
         },
-        assign: 'auto_approve'
+        assign: 'count_case'
     }
 }
 
 module.exports ={
     countCaseByDistrict,
+    countCasePendingByDistrict,
     getCasebyId,
     checkIfDataNotNull,
     DataSheetRequest,
     validationBeforeInput,
     checkCaseIsExists,
-    autoVerifyAfter24Hours
+    getDetailCase
 }

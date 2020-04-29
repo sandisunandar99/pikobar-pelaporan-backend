@@ -44,7 +44,7 @@ module.exports = (server) => {
             server.methods.services.cases.create(
                 payload,
                 request.auth.credentials.user,
-                request.pre.count_case,
+                request.pre,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
@@ -303,7 +303,7 @@ module.exports = (server) => {
             server.methods.services.casesApprovals.create(
                 id,
                 author,
-                request.pre,
+                request.pre.count_case,
                 payload,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

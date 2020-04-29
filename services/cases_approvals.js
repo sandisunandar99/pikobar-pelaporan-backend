@@ -38,19 +38,28 @@ async function getCaseAprovals (caseId, callback) {
 async function createCaseAproval (id, author, pre, payload, callback) {
   try {
 
+    // generate new verified id_case
+    let date = new Date().getFullYear().toString()
+    let id_case = "covid-"
+    id_case += pre.dinkes_code
+    id_case += date.substr(2, 2)
+    id_case += "0".repeat(4 - pre.count_pasien.toString().length)
+    id_case += pre.count_pasien
+
     // update case verifed status
     const case_ = await Case.findOneAndUpdate({ _id: id}, {
       $set: {
+        id_case: id_case,
         verified_status: payload.verified_status
       }
     }, { new: true })
     
     // insert approval logs
-    payload.case = case_._id
+    payload.case = case_
     payload.verifier = author
 
     let item = new CaseApproval(payload)
-    console.log(item)
+
     const casesApproval = await item.save()
     
     return callback(null, casesApproval)
@@ -80,7 +89,7 @@ async function createCasesAproval (callback) {
         verified_status: 'verified'
       }
       
-      if (!item.id_case) {
+      if (item.id_case.substr(0,3) === 'pre') {
         const districtCases = await Case.find({
           address_district_code: code, verified_status: 'verified'
         }).sort({id_case: -1})
