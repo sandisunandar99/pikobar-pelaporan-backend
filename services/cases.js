@@ -278,15 +278,12 @@ async function getCaseSummary (query, user, callback) {
 
 function createCase (raw_payload, author, pre, callback) {
 
-  let verified 
-  if (author.role === "dinkeskota") {
-    verified= {
-      verified_status: 'verified'
-    }
-  }else{
-    verified = {
-      verified_status: 'pending'
-    }
+  let verified  = {
+    verified_status: 'verified'
+  }
+
+  if (author.role === "faskes") {
+    verified.verified_status = 'pending'
   }
 
   let date = new Date().getFullYear().toString()
@@ -432,14 +429,12 @@ async function importCases (raw_payload, author, pre, callback) {
         count_pasien: count
       }
 
-      let verified = {
-        verified_status: 'pending'
+      let verified  = {
+        verified_status: 'verified'
       }
-
-      if (author.role === "dinkeskota") {
-        verified= {
-          verified_status: 'verified'
-        }
+    
+      if (author.role === "faskes") {
+        verified.verified_status = 'pending'
       }
 
       // create case
