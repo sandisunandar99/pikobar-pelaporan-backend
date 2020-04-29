@@ -260,16 +260,16 @@ async function getCaseSummary (query, user, callback) {
       });
       
       // OTG 
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':'Proses'}],"delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':'Selesai'}], "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':'Proses'}], "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':'Selesai'}], "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':'Proses'}], "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':'Selesai'}], "delete_status": { $ne: "deleted" }})).countDocuments();
 
       return callback(null, result)
     })
