@@ -53,7 +53,7 @@ const CaseQueryValidations = {
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
         end_date: Joi.string().empty('', null).default('').description('search data by test date'),
         author: Joi.string().empty('', null).default('').description('filter by author'),
-        approval: Joi.string().empty('', null).default('').description('approval cases list')
+        verified_status: Joi.string().empty('', null).default('').description('filter by verified status')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction

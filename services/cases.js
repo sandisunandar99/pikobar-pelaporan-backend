@@ -64,12 +64,8 @@ function ListCase (query, user, callback) {
     params.author = query.author;
   }
 
-  if (query.approval === 'faskes') {
-    params.verified_status = { $in: ['pending', 'declined'] };
-  } else if (query.approval === 'dinkeskota') {
-    params.verified_status = 'pending'
-  } else {
-    params.verified_status = 'verified'
+  if (query.verified_status && query.verified_status.split) {
+    params.verified_status = { $in: query.verified_status.split(',') }
   }
   
   if(query.search){
