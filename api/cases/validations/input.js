@@ -22,6 +22,11 @@ const CaseUpdatePayload = Joi.object().keys({
     status: Joi.string().optional()
 })
 
+const CaseVerifyPayload = Joi.object().keys({
+    verified_status: Joi.string().valid('verified','declined').required(),
+    note: Joi.string().optional()
+})
+
 const CaseParamsValidations = {
     params: {
         id: Joi.string().required()
@@ -135,6 +140,13 @@ const CaseImportPayloadValidations = {
     failAction: validateOptions.failAction
 }
 
+const CaseVerifyPayloadValidations = Object.assign({
+    payload: CaseVerifyPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, CaseParamsValidations)
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
@@ -142,5 +154,6 @@ module.exports = {
     CaseUpdatePayloadValidations,
     CaseDeletePayloadValidations,
     CaseImportPayloadValidations,
-    caseSchemaValidation
+    caseSchemaValidation,
+    CaseVerifyPayloadValidations
 }

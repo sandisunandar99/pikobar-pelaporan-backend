@@ -13,6 +13,7 @@ const register = (server, options, next) => {
     require('./SubDistrict')
     require('./Village')
     require('./Case')
+    require('./CaseApproval')
     require('./History')
     require('./Occupation')
     require('./RdtHistory')

@@ -163,11 +163,24 @@ const DataSheetRequest = server => {
     }
 }
 
+const autoVerifyAfter24Hours = server => {
+    return {
+        method: async (request, reply) => {
+           server.methods.services.casesApprovals.createCasesAproval(
+            (err, result) => {
+                return reply(result)
+            })
+        },
+        assign: 'auto_approve'
+    }
+}
+
 module.exports ={
     countCaseByDistrict,
     getCasebyId,
     checkIfDataNotNull,
     DataSheetRequest,
     validationBeforeInput,
-    checkCaseIsExists
+    checkCaseIsExists,
+    autoVerifyAfter24Hours
 }
