@@ -274,6 +274,45 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases/{id}/approvals
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseApprovals(request, reply){
+            server.methods.services.casesApprovals.get(
+                request.params.id,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * PUT /api/cases/{id}/approvals
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateCaseApproval(request, reply){
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+
+            server.methods.services.casesApprovals.create(
+                id,
+                author,
+                request.pre,
+                payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }
