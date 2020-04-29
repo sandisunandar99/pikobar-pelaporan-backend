@@ -11,7 +11,8 @@ const DistrictCity = mongoose.model('Districtcity')
 
 
 var schedule = require('node-schedule');
-schedule.scheduleJob('* * * * *', function(){
+// running task every 1 hours
+schedule.scheduleJob('*/59 * * * *', function(){
   createCasesAproval((err, result) => {
     if (err) return 'auto approval error'
     return 'auto approval succeed'
