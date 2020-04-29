@@ -32,6 +32,18 @@ const listUser = async (user, query, callback) => {
     params.role = query.role;
   }
 
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.code_district_city){
+      params.code_district_city = query.code_district_city;
+    }
+  }
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
+
   if(query.search){
     var search_params = [
       { username : new RegExp(query.search,"i") },

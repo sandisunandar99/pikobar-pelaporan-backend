@@ -45,6 +45,9 @@ const UserQueryValidations = {
     sort: Joi.string().empty('', 'desc').default('desc').description('sorting'),
     search: Joi.string().empty('', null).default('').description('search data'),
     role: Joi.string().empty('', null).default('').description('search data by Role'),
+    address_village_code: Joi.string().empty('', null).default('').description('search data by Keluarahan/Desa'),
+    address_subdistrict_code: Joi.string().empty('', null).default('').description('search data by Kecamatan'),
+    code_district_city: Joi.string().empty('', null).default('').description('search data by Case name'),
   },
   options: validateOptions.options,
   failAction: validateOptions.failAction
