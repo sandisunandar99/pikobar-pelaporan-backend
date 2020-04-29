@@ -105,21 +105,23 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
 
       
       const nik = payload[i].nik
-      const isCaseExist = await Case.find({nik: nik})
-        .where('delete_status').ne('deleted')
-        .countDocuments()
+      if (nik) {
+        const isCaseExist = await Case.find({nik: nik})
+          .where('delete_status').ne('deleted')
+          .countDocuments()
 
-      if (isCaseExist) {
-        let prop = 'nik'
-        prop = label[prop]
-        let messg = `\"${prop}"\ '${nik}' Sudah terdata di laporan kasus!`
+        if (isCaseExist) {
+          let prop = 'nik'
+          prop = label[prop]
+          let messg = `\"${prop}"\ '${nik}' Sudah terdata di laporan kasus!`
 
-        if (!Array.isArray(propErr[prop])) {
-            propErr[prop] = []
+          if (!Array.isArray(propErr[prop])) {
+              propErr[prop] = []
+          }
+          propErr[prop].push(messg)
         }
-        propErr[prop].push(messg)
       }
-      
+        
 
       if (Object.keys(propErr).length !== 0) {
         errors.push(propErr)
