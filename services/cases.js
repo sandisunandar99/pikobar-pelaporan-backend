@@ -185,11 +185,11 @@ async function getCaseSummaryFinal (query, user, callback) {
   
   try {
     const positif = await Case.find(Object.assign(searching,searchingPositif))
-    .where("delete_status").ne("deleted").then(res => { return res.length })
+    .where("delete_status").ne("deleted").countDocuments()
     const sembuh = await Case.find(Object.assign(searching,searchingSembuh))
-    .where("delete_status").ne("deleted").then(res => { return res.length })
+    .where("delete_status").ne("deleted").countDocuments()
     const meninggal = await Case.find(Object.assign(searching,searchingMeninggal))
-    .where("delete_status").ne("deleted").then(res => { return res.length })
+    .where("delete_status").ne("deleted").countDocuments()
     const result =  {
       "SEMBUH":sembuh, 
       "MENINGGAL":meninggal,
@@ -260,16 +260,16 @@ async function getCaseSummary (query, user, callback) {
       });
       
       // OTG 
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }})).countDocuments();
 
       return callback(null, result)
     })
