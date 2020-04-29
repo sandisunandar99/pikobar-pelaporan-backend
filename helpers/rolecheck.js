@@ -20,7 +20,7 @@ const exportByRole = (params, user) => {
   if (user.role == "dinkeskota") {
     params.author_district_code = user.code_district_city;
   } else if (user.role == "dinkesprov" || user.role == "superadmin") {
-    return true;
+    
   } else {
     params.author = new ObjectId(user._id);
     params.author_district_code = user.code_district_city;
@@ -32,7 +32,7 @@ const userByRole = (params, user) => {
   if (user.role == "dinkeskota") {
     params.code_district_city = user.code_district_city;
   } else {
-    return true;
+    
   }
   return params
 }

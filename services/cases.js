@@ -60,6 +60,14 @@ function ListCase (query, user, callback) {
   if(query.final_result){
     params.final_result = query.final_result;
   }
+  if(query.author){
+    params.author = query.author;
+  }
+
+  if (query.verified_status && query.verified_status.split) {
+    params.verified_status = { $in: query.verified_status.split(',') }
+  }
+  
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
@@ -159,10 +167,10 @@ async function getCaseSummaryFinal (query, user, callback) {
   let searching = Check.countByRole(user);
 
   if(query.address_village_code){
-    params.address_village_code = query.address_village_code;
+    searching.address_village_code = query.address_village_code;
   }
   if(query.address_subdistrict_code){
-    params.address_subdistrict_code = query.address_subdistrict_code;
+    searching.address_subdistrict_code = query.address_subdistrict_code;
   }
 
   if(user.role == "dinkesprov" || user.role == "superadmin"){
@@ -193,12 +201,20 @@ async function getCaseSummaryFinal (query, user, callback) {
   }
 }
 
-function getCaseSummary (query, user, callback) {
-  let searching = Check.countByRole(user,query)
+async function getCaseSummary (query, user, callback) {
+  let searching = Check.countByRole(user,query);
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
       searching.address_district_code = query.address_district_code;
     }
+  }
+
+  if(query.address_village_code){
+    searching.address_village_code = query.address_village_code;
+  }
+
+  if(query.address_subdistrict_code){
+    searching.address_subdistrict_code = query.address_subdistrict_code;
   }
   
   var aggStatus = [
@@ -212,14 +228,19 @@ function getCaseSummary (query, user, callback) {
 
   let result =  {
     'OTG':0, 
+    'OTG_PROCESS':0,
+    'OTG_DONE':0,
     'ODP':0, 
+    'ODP_PROCESS':0,
+    'ODP_DONE':0,
     'PDP':0, 
+    'PDP_PROCESS':0,
+    'PDP_DONE':0,
     'POSITIF':0, 
     'KONTAKERAT' : 0, 
     'PROBABEL' : 0
   }
-
-  Case.aggregate(aggStatus).exec().then(item => {
+  Case.aggregate(aggStatus).exec().then(async item => {
       item.forEach(function(item){
         if (item['_id'] == 'OTG') {
           result.OTG = item['total']
@@ -237,6 +258,19 @@ function getCaseSummary (query, user, callback) {
           result.KONTAKERAT = item['total']
         }
       });
+      
+      // OTG 
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+
+      // ODP
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+
+      // PDP
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+
       return callback(null, result)
     })
     .catch(err => callback(err, null))

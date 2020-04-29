@@ -23,7 +23,7 @@ const countByGender = async (query, user, callback) => {
         output : {
           "total": {$sum: 1},
           "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "L" ] }, then: 1, else: 0 }}},
-          "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "P" ] }, then: 1, else: 0 }}}  }
+          "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "P" ] }, then: 1, else: 0 }}} }
         }
       }
     ];

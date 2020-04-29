@@ -246,6 +246,36 @@ module.exports = (server) =>{
             },
             handler: handlers.HealthCheck
         },
+        // get case approvals
+        {
+            method: 'GET',
+            path: '/cases/{id}/approvals',
+            config: {
+                auth: 'jwt',
+                description: 'Get case approvals',
+                tags: ['api', 'cases.approvals'],
+                pre: [
+                    CheckRoleUpdate,
+                ]
+            },
+            handler: handlers.GetCaseApprovals
+        },
+        // create approval
+        {
+            method: 'POST',
+            path: '/cases/{id}/approvals',
+            config: {
+                auth: 'jwt',
+                description: 'Create case approval',
+                tags: ['api', 'cases.approvals'],
+                validate: inputValidations.CaseVerifyPayloadValidations,
+                pre: [
+                    CheckRoleUpdate,
+                    // DetailCase
+                ]
+            },
+            handler: handlers.CreateCaseApproval
+        },
     ]
 
 }

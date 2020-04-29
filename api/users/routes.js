@@ -152,6 +152,17 @@ module.exports = (server) => {
         tags: ['api', 'users'],
       },
       handler: handlers.loginUser
+    },
+    // Get case name and id
+    {
+      method: 'GET',
+      path: '/users-listid',
+      config: {
+        auth: 'jwt',
+        description: 'Get user fullname and id',
+        tags: ['api', 'users']
+      },
+      handler: handlers.getListUserIds
     }
   ]
 }
