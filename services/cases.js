@@ -236,20 +236,7 @@ async function getCaseSummary (query, user, callback) {
     'KONTAKERAT' : 0, 
     'PROBABEL' : 0
   }
-
-  // OTG 
-  result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-  result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-
-  // ODP
-  result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-  result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-
-  // PDP
-  result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-  result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
-
-  Case.aggregate(aggStatus).exec().then(item => {
+  Case.aggregate(aggStatus).exec().then(async item => {
       item.forEach(function(item){
         if (item['_id'] == 'OTG') {
           result.OTG = item['total']
@@ -268,6 +255,18 @@ async function getCaseSummary (query, user, callback) {
         }
       });
       
+      // OTG 
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+
+      // ODP
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+
+      // PDP
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }})).then(res => { return res.length });
+
       return callback(null, result)
     })
     .catch(err => callback(err, null))
