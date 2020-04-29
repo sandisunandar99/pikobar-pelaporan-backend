@@ -238,16 +238,16 @@ async function getCaseSummary (query, user, callback) {
   }
 
   // OTG 
-  result.OTG_PROCESS = await Case.countDocuments({"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }});
-  result.OTG_DONE = await Case.countDocuments({"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }});
+  result.OTG_PROCESS = await Case.countDocuments(Object.assign(searching,{"status":"OTG","stage":0, "delete_status": { $ne: "deleted" }}));
+  result.OTG_DONE = await Case.countDocuments(Object.assign(searching,{"status":"OTG","stage":1, "delete_status": { $ne: "deleted" }}));
 
   // ODP
-  result.ODP_PROCESS = await Case.countDocuments({"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }});
-  result.ODP_DONE = await Case.countDocuments({"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }});
+  result.ODP_PROCESS = await Case.countDocuments(Object.assign(searching,{"status":"ODP","stage":0, "delete_status": { $ne: "deleted" }}));
+  result.ODP_DONE = await Case.countDocuments(Object.assign(searching,{"status":"ODP","stage":1, "delete_status": { $ne: "deleted" }}));
 
   // PDP
-  result.PDP_PROCESS = await Case.countDocuments({"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }});
-  result.PDP_DONE = await Case.countDocuments({"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }});
+  result.PDP_PROCESS = await Case.countDocuments(Object.assign(searching,{"status":"PDP","stage":0, "delete_status": { $ne: "deleted" }}));
+  result.PDP_DONE = await Case.countDocuments(Object.assign(searching,{"status":"PDP","stage":1, "delete_status": { $ne: "deleted" }}));
 
   Case.aggregate(aggStatus).exec().then(item => {
       item.forEach(function(item){
