@@ -212,6 +212,14 @@ async function getCaseSummary (query, user, callback) {
       searching.address_district_code = query.address_district_code;
     }
   }
+
+  if(query.address_village_code){
+    searching.address_village_code = query.address_village_code;
+  }
+
+  if(query.address_subdistrict_code){
+    searching.address_subdistrict_code = query.address_subdistrict_code;
+  }
   
   var aggStatus = [
     { $match: { 
