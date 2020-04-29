@@ -25,8 +25,7 @@ const listUser = async (user, query, callback) => {
   };
 
   let result_search;
-  let params = {};
-  params = Check.userByRole(params, user);
+  let params = Check.userByRole({}, user);
 
   if(query.role){
     params.role = query.role;

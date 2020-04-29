@@ -206,7 +206,7 @@ async function getCaseSummaryFinal (query, user, callback) {
 }
 
 async function getCaseSummary (query, user, callback) {
-  let searching = Check.countByRole(user,query)
+  let searching = Check.countByRole(user,query);
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
       searching.address_district_code = query.address_district_code;
