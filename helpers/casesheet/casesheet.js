@@ -47,7 +47,7 @@ const getGender = () => {
 }
 
 const getPhoneNumber = () => {
-    return _toString(dt[conf.cell.phone_number]) || undefined
+    return _toString(dt[conf.cell.phone_number])
 }
 
 const getAddressStreet = () => {
