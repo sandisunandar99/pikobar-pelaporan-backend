@@ -83,7 +83,7 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     address_district_code: Joi.string().required(),
     address_district_name: Joi.string().required(),
     office_address: Joi.string().allow('', null),
-    phone_number: Joi.string().required(),
+    phone_number: Joi.string().allow('', null),
     nationality: Joi.string().required(),
     nationality_name: Joi.string().allow('', null),
     occupation: Joi.string().allow('', null),
