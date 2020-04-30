@@ -8,7 +8,7 @@ const Filter = require('../helpers/casefilter');
 const countByGender = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search,filter);
+  const searching = Object.assign(search, filter);
 
   try {
     const conditionAge = [
@@ -34,12 +34,10 @@ const countByGender = async (query, user, callback) => {
       }},
       { $group: { _id: "$gender", "total": { $sum: 1 }}}
     ];
-    
 
     const ageGroup = await Case.aggregate(conditionAge);
     const genderGroup = await Case.aggregate(conditionGender);
-
-    const results = await Helpers.filterJson(ageGroup,genderGroup);
+    const results = await Helpers.filterJson(ageGroup, genderGroup);
     
     callback(null,results);
   } catch (error) {
@@ -51,7 +49,7 @@ const countByGender = async (query, user, callback) => {
 const countByODP = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search,filter);
+  const searching = Object.assign(search, filter);
 
   try {
     const queryODP = [
@@ -109,7 +107,7 @@ const countByODP = async (query, user, callback) => {
 const countByPDP = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search,filter);
+  const searching = Object.assign(search, filter);
 
   try {
     const queryODP = [
@@ -167,7 +165,7 @@ const countByPDP = async (query, user, callback) => {
 const countByOTG = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search,filter);
+  const searching = Object.assign(search, filter);
 
   try {
     const queryODP = [
