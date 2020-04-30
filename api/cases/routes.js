@@ -257,7 +257,7 @@ module.exports = (server) =>{
                 description: 'Get case verifications',
                 tags: ['api', 'cases.verifications'],
                 pre: [
-                    CheckRoleUpdate,
+                    CheckRoleView,
                 ]
             },
             handler: handlers.GetCaseVerifications
@@ -272,7 +272,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.verifications'],
                 validate: inputValidations.CaseVerifyPayloadValidations,
                 pre: [
-                    CheckRoleUpdate,
+                    CheckRoleCreate,
                     getDetailCase
                 ]
             },

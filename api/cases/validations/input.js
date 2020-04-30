@@ -23,7 +23,7 @@ const CaseUpdatePayload = Joi.object().keys({
 })
 
 const CaseVerifyPayload = Joi.object().keys({
-    verified_status: Joi.string().valid('verified','declined').required(),
+    verified_status: Joi.string().valid('pending','verified','declined').required(),
     note: Joi.string().optional()
 })
 
