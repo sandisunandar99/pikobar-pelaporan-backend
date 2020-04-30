@@ -118,6 +118,18 @@ async function createCasesAproval (callback) {
         $set: payload
       }, { new: true })
 
+      // insert approval logs
+      let approvalPayload = {
+        case: id,
+        verified_status: 'verified',
+        note: 'Automatically approved by the system',
+        verifier: null
+      }
+
+      let approvalItem = new CaseApproval(approvalPayload)
+
+      await approvalItem.save()
+
       return new Promise(resolve => resolve())
     })
   }
