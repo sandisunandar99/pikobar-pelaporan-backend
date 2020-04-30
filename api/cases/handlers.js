@@ -275,12 +275,12 @@ module.exports = (server) => {
         },
 
         /**
-         * GET /api/cases/{id}/approvals
+         * GET /api/cases/{id}/verifications
          * @param {*} request
          * @param {*} reply
          */
-        async GetCaseApprovals(request, reply){
-            server.methods.services.casesApprovals.get(
+        async GetCaseVerifications(request, reply){
+            server.methods.services.casesVerifications.get(
                 request.params.id,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
@@ -291,16 +291,16 @@ module.exports = (server) => {
         },
 
         /**
-         * PUT /api/cases/{id}/approvals
+         * PUT /api/cases/{id}/verifications
          * @param {*} request
          * @param {*} reply
          */
-        async CreateCaseApproval(request, reply){
+        async CreateCaseVerification(request, reply){
             let payload = request.payload
             let id = request.params.id
             let author = request.auth.credentials.user
 
-            server.methods.services.casesApprovals.create(
+            server.methods.services.casesVerifications.create(
                 id,
                 author,
                 request.pre.count_case,

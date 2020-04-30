@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 
-require('../models/CaseApproval');
-const CaseApproval = mongoose.model('CaseApproval');
+require('../models/CaseVerification');
+const CaseVerification = mongoose.model('CaseVerification');
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
@@ -13,29 +13,29 @@ const DistrictCity = mongoose.model('Districtcity')
 var schedule = require('node-schedule');
 // running task every 1 hours
 schedule.scheduleJob('*/59 * * * *', function(){
-  createCasesAproval((err, result) => {
-    if (err) return 'auto approval error'
-    return 'auto approval succeed'
+  createCasesVerification((err, result) => {
+    if (err) return 'auto verification error'
+    return 'auto verification succeed'
   })
 });
 
-async function getCaseAprovals (caseId, callback) {
+async function getCaseVerifications (caseId, callback) {
   try {
 
-    let approvals = await CaseApproval
+    let verifications = await CaseVerification
       .find({ case: caseId })
       .populate('verifier')
       .sort({ createdAt: 'desc'})
 
-    approvals = approvals.map(approvals => approvals.toJSONFor())
+    verifications = verifications.map(verifications => verifications.toJSONFor())
     
-    return callback(null, approvals)
+    return callback(null, verifications)
   } catch (error) {
     return callback(null, error)
   }
 }
 
-async function createCaseAproval (id, author, pre, payload, callback) {
+async function createCaseVerification (id, author, pre, payload, callback) {
   try {
 
     // generate new verified id_case
@@ -53,33 +53,33 @@ async function createCaseAproval (id, author, pre, payload, callback) {
         verified_status: payload.verified_status
       }
     }, { new: true })
-    
-    // insert approval logs
+
+    // insert verification logs
     payload.case = case_
     payload.verifier = author
 
-    let item = new CaseApproval(payload)
+    let item = new CaseVerification(payload)
 
-    const casesApproval = await item.save()
+    const caseVerification = await item.save()
     
-    return callback(null, casesApproval)
+    return callback(null, caseVerification)
   } catch (error) {
     return callback(null, error)
   }
 }
 
-async function createCasesAproval (callback) {
+async function createCasesVerification (callback) {
   const start = new Date(new Date().getTime() - (24 * 60 * 60 * 1000))
 
-  const approved = await Case.find({
+  const verified = await Case.find({
     verified_status: 'pending',
     createdAt: { $lt: start }
   })
 
   let promise = Promise.resolve()
 
-  for (i in approved) {
-    let item = approved[i]
+  for (i in verified) {
+    let item = verified[i]
     promise = promise.then(async () => {
       const id = item._id
       const code = item.address_district_code
@@ -118,17 +118,17 @@ async function createCasesAproval (callback) {
         $set: payload
       }, { new: true })
 
-      // insert approval logs
-      let approvalPayload = {
+      // insert verification logs
+      let verificationPayload = {
         case: id,
         verified_status: 'verified',
-        note: 'Automatically approved by the system',
+        note: 'Automatically verified by the system',
         verifier: null
       }
 
-      let approvalItem = new CaseApproval(approvalPayload)
+      let verification = new CaseVerification(verificationPayload)
 
-      await approvalItem.save()
+      await verification.save()
 
       return new Promise(resolve => resolve())
     })
@@ -141,16 +141,16 @@ async function createCasesAproval (callback) {
 
 module.exports = [
   {
-    name: 'services.casesApprovals.get',
-    method: getCaseAprovals
+    name: 'services.casesVerifications.get',
+    method: getCaseVerifications
   },
   {
-    name: 'services.casesApprovals.create',
-    method: createCaseAproval
+    name: 'services.casesVerifications.create',
+    method: createCaseVerification
   },
   {
-    name: 'services.casesApprovals.createCasesAproval',
-    method: createCasesAproval,
+    name: 'services.casesVerifications.createCasesVerification',
+    method: createCasesVerification,
   }
 ];
 

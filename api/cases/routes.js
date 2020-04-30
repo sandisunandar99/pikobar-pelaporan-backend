@@ -248,35 +248,35 @@ module.exports = (server) =>{
             },
             handler: handlers.HealthCheck
         },
-        // get case approvals
+        // get case verifications
         {
             method: 'GET',
-            path: '/cases/{id}/approvals',
+            path: '/cases/{id}/verifications',
             config: {
                 auth: 'jwt',
-                description: 'Get case approvals',
-                tags: ['api', 'cases.approvals'],
+                description: 'Get case verifications',
+                tags: ['api', 'cases.verifications'],
                 pre: [
                     CheckRoleUpdate,
                 ]
             },
-            handler: handlers.GetCaseApprovals
+            handler: handlers.GetCaseVerifications
         },
-        // create approval
+        // create verifications
         {
             method: 'POST',
-            path: '/cases/{id}/approvals',
+            path: '/cases/{id}/verifications',
             config: {
                 auth: 'jwt',
-                description: 'Create case approval',
-                tags: ['api', 'cases.approvals'],
+                description: 'Create case verifications',
+                tags: ['api', 'cases.verifications'],
                 validate: inputValidations.CaseVerifyPayloadValidations,
                 pre: [
                     CheckRoleUpdate,
                     getDetailCase
                 ]
             },
-            handler: handlers.CreateCaseApproval
+            handler: handlers.CreateCaseVerification
         },
     ]
 
