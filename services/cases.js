@@ -455,13 +455,15 @@ async function importCases (raw_payload, author, pre, callback) {
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const districtCases = await Case.find({ address_district_code: code, verified_status: 'verified'}).sort({id_case: -1})
+      const verifStatus = author.role === 'faskes' ? ['pending', 'declined'] : ['verified']
+      const districtCases = await Case.find({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
 
       let count = 1
       let casePayload = {}
 
       if (districtCases.length > 0) {
-        count = (Number(districtCases[0].id_case.substring(12)) + 1)
+        const startNum = author.role === 'faskes' ? 15 : 12
+        count = (Number(districtCases[0].id_case.substring(startNum)) + 1)
       }
 
       let district = {
@@ -480,10 +482,11 @@ async function importCases (raw_payload, author, pre, callback) {
 
       // create case
       let date = new Date().getFullYear().toString()
-      let id_case = "covid-"
+      const digit = author.role === 'faskes' ? 5 : 4
+      let id_case = author.role === 'faskes' ? "precovid-" : "covid-"
       id_case += district.dinkes_code
       id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - district.count_pasien.toString().length)
+      id_case += "0".repeat(digit - district.count_pasien.toString().length)
       id_case += district.count_pasien
 
       casePayload = Object.assign(item, verified)
