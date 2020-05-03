@@ -84,7 +84,7 @@ async function ListCase (query, user, callback) {
     ];
 
     if (query.verified_status !== 'verified') {
-      var users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
+      let users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
