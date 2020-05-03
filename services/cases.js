@@ -14,7 +14,7 @@ const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
 const Check = require('../helpers/rolecheck')
 
-function ListCase (query, user, callback) {
+async function ListCase (query, user, callback) {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -77,7 +77,14 @@ function ListCase (query, user, callback) {
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
+      { nik: new RegExp(query.search, "i") }
     ];
+
+    if (query.verified_status !== 'verified') {
+      let histories = await History.find({report_source: new RegExp(query.search,"i")}).select('_id')
+      search_params.push({ last_history: { $in: histories.map(obj => obj._id) } })
+    }
+
     var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
   } else {
     var result_search = Check.listByRole(user, params, null,Case,"delete_status")
