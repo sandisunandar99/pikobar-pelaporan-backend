@@ -9,6 +9,9 @@ const Hospital = mongoose.model('Hospital');
 require('../models/History')
 const History = mongoose.model('History')
 
+require('../models/User')
+const User = mongoose.model('User')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
@@ -81,8 +84,8 @@ async function ListCase (query, user, callback) {
     ];
 
     if (query.verified_status !== 'verified') {
-      let histories = await History.find({report_source: new RegExp(query.search,"i")}).select('_id')
-      search_params.push({ last_history: { $in: histories.map(obj => obj._id) } })
+      var users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
+      search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
     var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")

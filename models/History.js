@@ -35,8 +35,6 @@ const HistorySchema = new mongoose.Schema({
     current_location_province_code : {type: String, default: "32"},
 }, { timestamps : true });
 
-HistorySchema.index( { report_source: 1 } )
-
 HistorySchema.methods.toJSONFor = function () {
     return {
         case: this.case,
