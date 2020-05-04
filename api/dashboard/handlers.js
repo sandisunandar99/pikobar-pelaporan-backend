@@ -40,7 +40,7 @@ module.exports = (server) => {
                     const convertResult = result.map(res => {
                         res.proses = res.proses+res.proses
                         res.selesai = res.selesai+res.selesai
-                        res.total = res.seleprosessai+res.selesai
+                        res.total = res.proses+res.selesai
                         return res
                     })  
                     return reply(dashboardResponse(convertResult)).code(200);
@@ -61,9 +61,9 @@ module.exports = (server) => {
                     const convertResult = result.map(res => {
                         res.proses = res.proses+res.proses
                         res.selesai = res.selesai+res.selesai
-                        res.total = res.seleprosessai+res.selesai
+                        res.total = res.proses+res.selesai
                         return res
-                    })                      
+                    })                     
                     return reply(dashboardResponse(convertResult)).code(200);
                 }
             )
@@ -82,7 +82,7 @@ module.exports = (server) => {
                     const convertResult = result.map(res => {
                         res.proses = res.proses+res.proses
                         res.selesai = res.selesai+res.selesai
-                        res.total = res.seleprosessai+res.selesai
+                        res.total = res.proses+res.selesai
                         return res
                     })  
                     return reply(dashboardResponse(convertResult)).code(200);
