@@ -65,7 +65,7 @@ const countByODP = async (query, user, callback) => {
       {
           $project: {
               createdAt: {$dateToString: { 
-                  format: "%m/%d", 
+                  format: "%Y/%m/%d", 
                   date: "$createdAt" 
               }},
               stage: 1
@@ -123,7 +123,7 @@ const countByPDP = async (query, user, callback) => {
       {
           $project: {
               createdAt: {$dateToString: { 
-                  format: "%m/%d", 
+                  format: "%Y/%m/%d",
                   date: "$createdAt" 
               }},
               stage: 1
@@ -181,7 +181,7 @@ const countByOTG = async (query, user, callback) => {
       {
           $project: {
               createdAt: {$dateToString: { 
-                  format: "%m/%d", 
+                  format: "%Y/%m/%d",
                   date: "$createdAt" 
               }},
               stage: 1
