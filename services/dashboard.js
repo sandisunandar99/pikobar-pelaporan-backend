@@ -5,7 +5,7 @@ const Case = Mongoose.model('Case');
 const Check = require('../helpers/rolecheck');
 const Filter = require('../helpers/casefilter');
 
-const countByGender = async (query, user, callback) => {
+const countByGenderAge = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
@@ -222,8 +222,8 @@ const countByOTG = async (query, user, callback) => {
 
 module.exports = [
   {
-    name: "services.dashboard.countByGender",
-    method: countByGender
+    name: "services.dashboard.countByGenderAge",
+    method: countByGenderAge
   },
   {
     name: "services.dashboard.countByODP",

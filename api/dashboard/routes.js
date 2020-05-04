@@ -9,7 +9,7 @@ module.exports = (server) => {
                 description: 'show dashboard statistik',
                 tags: ['api', 'dashboard statistik'],
             },
-            handler: handlers.countGender,
+            handler: handlers.countGenderAge,
         },
         {
             method: 'GET',
@@ -40,6 +40,36 @@ module.exports = (server) => {
                 tags: ['api', 'dashboard statistik'],
             },
             handler: handlers.countOTG,
+        },
+        {
+            method: 'GET',
+            path: '/dashboard/chart-odp-cumulative',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard statistik',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.countODPCumulative,
+        },
+        {
+            method: 'GET',
+            path: '/dashboard/chart-pdp-cumulative',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard statistik',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.countPDPCumulative,
+        },
+        {
+            method: 'GET',
+            path: '/dashboard/chart-otg-cumulative',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard statistik',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.countOTGCumulative,
         }
 ]
 }
