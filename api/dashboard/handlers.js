@@ -31,69 +31,6 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async countODPCumulative(request, reply) {
-            server.methods.services.dashboard.countByODP(
-                request.query,
-                request.auth.credentials.user,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    const convertResult = result.map(res => {
-                        res.proses = res.proses+res.proses
-                        res.selesai = res.selesai+res.selesai
-                        res.total = res.proses+res.selesai
-                        return res
-                    })  
-                    return reply(dashboardResponse(convertResult)).code(200);
-                }
-            )
-        },
-        /**
-         * GET /api/dashboard
-         * @param {*} request
-         * @param {*} reply
-         */
-        async countPDPCumulative(request, reply) {
-            server.methods.services.dashboard.countByPDP(
-                request.query,
-                request.auth.credentials.user,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    const convertResult = result.map(res => {
-                        res.proses = res.proses+res.proses
-                        res.selesai = res.selesai+res.selesai
-                        res.total = res.proses+res.selesai
-                        return res
-                    })                     
-                    return reply(dashboardResponse(convertResult)).code(200);
-                }
-            )
-        },
-        /**
-         * GET /api/dashboard
-         * @param {*} request
-         * @param {*} reply
-         */
-        async countOTGCumulative(request, reply) {
-            server.methods.services.dashboard.countByOTG(
-                request.query,
-                request.auth.credentials.user,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    const convertResult = result.map(res => {
-                        res.proses = res.proses+res.proses
-                        res.selesai = res.selesai+res.selesai
-                        res.total = res.proses+res.selesai
-                        return res
-                    })  
-                    return reply(dashboardResponse(convertResult)).code(200);
-                }
-            )
-        },
-        /**
-         * GET /api/dashboard
-         * @param {*} request
-         * @param {*} reply
-         */
         async countODP(request, reply) {
             server.methods.services.dashboard.countByODP(
                 request.query,
@@ -126,6 +63,21 @@ module.exports = (server) => {
          */
         async countOTG(request, reply) {
             server.methods.services.dashboard.countByOTG(
+                request.query,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(dashboardResponse(result)).code(200);
+                }
+            )
+        },
+        /**
+         * GET /api/dashboard/chart-confirm
+         * @param {*} request
+         * @param {*} reply
+         */
+        async countByConfirm(request, reply) {
+            server.methods.services.dashboard.countByConfirm(
                 request.query,
                 request.auth.credentials.user,
                 (err, result) => {

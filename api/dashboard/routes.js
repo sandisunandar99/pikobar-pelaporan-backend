@@ -43,33 +43,13 @@ module.exports = (server) => {
         },
         {
             method: 'GET',
-            path: '/dashboard/chart-odp-cumulative',
+            path: '/dashboard/chart-confirm',
             config: {
                 auth: 'jwt',
                 description: 'show dashboard statistik',
                 tags: ['api', 'dashboard statistik'],
             },
-            handler: handlers.countODPCumulative,
+            handler: handlers.countByConfirm,
         },
-        {
-            method: 'GET',
-            path: '/dashboard/chart-pdp-cumulative',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countPDPCumulative,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/chart-otg-cumulative',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countOTGCumulative,
-        }
 ]
 }

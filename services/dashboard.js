@@ -103,7 +103,6 @@ const countByODP = async (query, user, callback) => {
   }
 }
 
-
 const countByPDP = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
@@ -219,6 +218,65 @@ const countByOTG = async (query, user, callback) => {
   }
 }
 
+const countByConfirm = async (query, user, callback) => {
+  const search = Check.countByRole(user);
+  const filter = await Filter.filterCase(user, query);
+  const searching = Object.assign(search, filter);
+
+  try {
+    const queryConfirm = [
+      {
+          $match: {
+              $and: [
+                  searching,
+                  {"delete_status": {"$ne": "deleted"}},
+                  {"status": "POSITIF"}
+              ]
+          }
+      },
+      {
+          $project: {
+              createdAt: {$dateToString: { 
+                  format: "%Y/%m/%d",
+                  date: "$createdAt" 
+              }},
+              final_result: 1
+          }
+      },
+      {
+          $group: { 
+              _id: {createdAt: "$createdAt"},
+              aktif : {$sum: {$cond: { if: { $eq: ["$final_result",[0,"",null]] }, then: 1, else: 0 }}},
+              sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
+              meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}},
+              total : {$sum: 1}
+          }
+      },
+      {
+          $sort: {
+              "_id.createdAt": 1
+          }
+      },
+      {
+          $project: {
+              _id: 0,
+              date: "$_id.createdAt",
+              aktif: 1,
+              sembuh: 1,
+              meninggal: 1,
+              total: 1
+          }
+      }
+    ]
+
+    const result = await Case.aggregate(queryConfirm);
+  
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
 
 module.exports = [
   {
@@ -236,5 +294,9 @@ module.exports = [
   {
     name: "services.dashboard.countByOTG",
     method: countByOTG
+  },
+  {
+    name: "services.dashboard.countByConfirm",
+    method: countByConfirm
   },
 ]
