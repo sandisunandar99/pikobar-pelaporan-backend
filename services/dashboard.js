@@ -246,10 +246,8 @@ const countByConfirm = async (query, user, callback) => {
       {
           $group: { 
               _id: {createdAt: "$createdAt"},
-              aktif : {$sum: {$cond: { if: { $eq: ["$final_result",[0,"",null]] }, then: 1, else: 0 }}},
               sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
-              meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}},
-              total : {$sum: 1}
+              meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}}
           }
       },
       {
@@ -261,7 +259,6 @@ const countByConfirm = async (query, user, callback) => {
           $project: {
               _id: 0,
               date: "$_id.createdAt",
-              aktif: 1,
               sembuh: 1,
               meninggal: 1,
               total: 1
