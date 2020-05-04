@@ -8,7 +8,8 @@ const Filter = require('../helpers/casefilter');
 const countByGender = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search, filter);
+  const searchs = Object.assign(search, filter);
+  const searching = Object.assign(searchs, {status:"POSITIF", final_result : { $nin: [1,2] }});
 
   try {
     const conditionAge = [
