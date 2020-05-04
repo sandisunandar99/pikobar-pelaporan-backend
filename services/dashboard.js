@@ -13,7 +13,7 @@ const countByGender = async (query, user, callback) => {
   try {
     const conditionAge = [
       {$match: { 
-        $and: [searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$nin": ["1","2"] }}]
+        $and: [searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
       }},
       {$bucket:
       {
