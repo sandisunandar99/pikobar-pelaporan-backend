@@ -8,13 +8,12 @@ const Filter = require('../helpers/casefilter');
 const countByGender = async (query, user, callback) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
-  const searchs = Object.assign(search, filter);
-  const searching = Object.assign(searchs, {status:"POSITIF", final_result : { $nin: [1,2] }});
+  const searching = Object.assign(search, filter);
 
   try {
     const conditionAge = [
       {$match: { 
-        $and: [searching, {delete_status: {$ne :'deleted' }}]
+        $and: [searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
       }},
       {$bucket:
       {
@@ -31,7 +30,7 @@ const countByGender = async (query, user, callback) => {
 
     const conditionGender = [
       { $match: { 
-        $and: [ searching, { delete_status: { $ne: 'deleted' }} ]
+        $and: [ searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
       }},
       { $group: { _id: "$gender", "total": { $sum: 1 }}}
     ];
@@ -97,7 +96,7 @@ const countByODP = async (query, user, callback) => {
     ]
 
     const result = await Case.aggregate(queryODP);
-  
+
     callback(null, result);
   } catch (error) {
     callback(error, null);
