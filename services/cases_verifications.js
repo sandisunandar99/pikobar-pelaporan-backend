@@ -50,13 +50,14 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     const case_ = await Case.findOneAndUpdate({ _id: id}, {
       $set: {
         id_case: id_case,
+        verified_comment: payload.verified_comment,
         verified_status: payload.verified_status
       }
     }, { new: true })
 
     // insert verification logs
-    payload.case = case_
     payload.verifier = author
+    payload.case = case_
 
     let item = new CaseVerification(payload)
 
@@ -86,7 +87,8 @@ async function createCasesVerification (callback) {
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
 
       let payload = {
-        verified_status: 'verified'
+        verified_status: 'verified',
+        verified_comment: 'Automatically verified by the system'
       }
       
       if (item.id_case.substr(0,3) === 'pre') {
@@ -122,7 +124,7 @@ async function createCasesVerification (callback) {
       let verificationPayload = {
         case: id,
         verified_status: 'verified',
-        note: 'Automatically verified by the system',
+        verified_comment: 'Automatically verified by the system',
         verifier: null
       }
 

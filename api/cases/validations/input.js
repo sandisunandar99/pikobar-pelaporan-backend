@@ -24,7 +24,7 @@ const CaseUpdatePayload = Joi.object().keys({
 
 const CaseVerifyPayload = Joi.object().keys({
     verified_status: Joi.string().valid('pending','verified','declined').required(),
-    note: Joi.string().optional()
+    verified_comment: Joi.string().optional()
 })
 
 const CaseParamsValidations = {
