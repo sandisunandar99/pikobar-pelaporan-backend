@@ -16,7 +16,7 @@ const filterJson = async (ageGroup, genderGroup) => {
       "age_female_0": (countGroupAge.age_female_0 ? countGroupAge.age_female_0 : 0),
       "age_10": (countGroupAge.age_10 ? countGroupAge.age_10 : 0),
       "age_male_10": (countGroupAge.age_male_10 ? countGroupAge.age_male_10 : 0),
-      "age_female_10": (countGroupAge.age_female_10 ? countGroupAge.age_female_0 : 0),
+      "age_female_10": (countGroupAge.age_female_10 ? countGroupAge.age_female_10 : 0),
       "age_20": (countGroupAge.age_20 ? countGroupAge.age_20 : 0),
       "age_male_20": (countGroupAge.age_male_20 ? countGroupAge.age_male_20 : 0),
       "age_female_20": (countGroupAge.age_female_20 ? countGroupAge.age_female_20 : 0),
