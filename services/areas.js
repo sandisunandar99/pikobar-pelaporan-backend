@@ -98,6 +98,10 @@ function getHospital(query, callback) {
     params.kemendagri_kabupaten_kode = query.city_code
   }
 
+  if(query.rs_jabar){
+    params.rs_jabar = query.rs_jabar === 'true'
+  }
+
   Hospital.find(params)
       .exec()
       .then(hsp => {
