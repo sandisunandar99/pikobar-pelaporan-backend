@@ -11,6 +11,8 @@ const filterJson = async (ageGroup, genderGroup) => {
     ,{});
 
     const defineKey = {
+      "L": (countGroupGender.L ? countGroupGender.L : 0),
+      "P": (countGroupGender.P ? countGroupGender.P : 0),
       "age_0": (countGroupAge.age_0 ? countGroupAge.age_0 : 0),
       "age_male_0": (countGroupAge.age_male_0 ? countGroupAge.age_male_0 : 0),
       "age_female_0": (countGroupAge.age_female_0 ? countGroupAge.age_female_0 : 0),
