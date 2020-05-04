@@ -13,7 +13,7 @@ const countByGender = async (query, user, callback) => {
   try {
     const conditionAge = [
       {$match: { 
-        $and: [searching, {delete_status: {$ne :'deleted' }}, {status:"POSITIF", final_result : { $nin: [1,2] }}]
+        $and: [searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$nin": ["1","2"] }}]
       }},
       {$bucket:
       {
@@ -30,7 +30,7 @@ const countByGender = async (query, user, callback) => {
 
     const conditionGender = [
       { $match: { 
-        $and: [ searching, { delete_status: { $ne: 'deleted' }}, {status:"POSITIF", final_result : { $nin: [1,2] }} ]
+        $and: [ searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
       }},
       { $group: { _id: "$gender", "total": { $sum: 1 }}}
     ];
@@ -96,7 +96,7 @@ const countByODP = async (query, user, callback) => {
     ]
 
     const result = await Case.aggregate(queryODP);
-  
+
     callback(null, result);
   } catch (error) {
     callback(error, null);
