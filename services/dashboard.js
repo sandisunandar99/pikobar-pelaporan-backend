@@ -4,6 +4,7 @@ const Helpers = require('../helpers/dashboardbottom');
 const Case = Mongoose.model('Case');
 const Check = require('../helpers/rolecheck');
 const Filter = require('../helpers/casefilter');
+const Sql = require('../helpers/sectionnumber');
 
 const countByGenderAge = async (query, user, callback) => {
   const search = Check.countByRole(user);
@@ -46,114 +47,20 @@ const countByGenderAge = async (query, user, callback) => {
 };
 
 
-const countByODP = async (query, user, callback) => {
-  const search = Check.countByRole(user);
-  const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search, filter);
-
+const countByOdp = async (query, user, callback) => {
+  const queryODP = Sql.sqlCondtion(user, query, "ODP");
   try {
-    const queryODP = [
-      {
-          $match: {
-              $and: [
-                  searching,
-                  {"delete_status": {"$ne": "deleted"}},
-                  {"status": "ODP"}
-              ]
-          }
-      },
-      {
-          $project: {
-              createdAt: {$dateToString: { 
-                  format: "%Y/%m/%d", 
-                  date: "$createdAt" 
-              }},
-              stage: 1
-          }
-      },
-      {
-          $group: { 
-              _id: {createdAt: "$createdAt"},
-              proses : {$sum: {$cond: { if: { $eq: ["$stage",'0'] }, then: 1, else: 0 }}},
-              selesai : {$sum: {$cond: { if: { $eq: ["$stage",'1'] }, then: 1, else: 0 }}},
-              total : {$sum: 1}
-          }
-      },
-      {
-          $sort: {
-              "_id.createdAt": 1
-          }
-      },
-      {
-          $project: {
-              _id: 0,
-              date: "$_id.createdAt",
-              proses: 1,
-              selesai: 1,
-              total: 1
-          }
-      }
-    ]
-
     const result = await Case.aggregate(queryODP);
-
     callback(null, result);
   } catch (error) {
     callback(error, null);
   }
 }
 
-const countByPDP = async (query, user, callback) => {
-  const search = Check.countByRole(user);
-  const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search, filter);
-
+const countByPdp = async (query, user, callback) => {
+  const queryODP = Sql.sqlCondtion(user, query, "PDP");
   try {
-    const queryODP = [
-      {
-          $match: {
-              $and: [
-                  searching,
-                  {"delete_status": {"$ne": "deleted"}},
-                  {"status": "PDP"}
-              ]
-          }
-      },
-      {
-          $project: {
-              createdAt: {$dateToString: { 
-                  format: "%Y/%m/%d",
-                  date: "$createdAt" 
-              }},
-              stage: 1
-          }
-      },
-      {
-          $group: { 
-              _id: {createdAt: "$createdAt"},
-              proses : {$sum: {$cond: { if: { $eq: ["$stage",'0'] }, then: 1, else: 0 }}},
-              selesai : {$sum: {$cond: { if: { $eq: ["$stage",'1'] }, then: 1, else: 0 }}},
-              total : {$sum: 1}
-          }
-      },
-      {
-          $sort: {
-              "_id.createdAt": 1
-          }
-      },
-      {
-          $project: {
-              _id: 0,
-              date: "$_id.createdAt",
-              proses: 1,
-              selesai: 1,
-              total: 1
-          }
-      }
-    ]
-
     const result = await Case.aggregate(queryODP);
-  
     callback(null, result);
   } catch (error) {
     callback(error, null);
@@ -161,57 +68,10 @@ const countByPDP = async (query, user, callback) => {
 }
 
 
-const countByOTG = async (query, user, callback) => {
-  const search = Check.countByRole(user);
-  const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search, filter);
-
+const countByOtg = async (query, user, callback) => {
+  const queryOtg = Sql.sqlCondtion(user, query, "OTG");
   try {
-    const queryODP = [
-      {
-          $match: {
-              $and: [
-                  searching,
-                  {"delete_status": {"$ne": "deleted"}},
-                  {"status": "OTG"}
-              ]
-          }
-      },
-      {
-          $project: {
-              createdAt: {$dateToString: { 
-                  format: "%Y/%m/%d",
-                  date: "$createdAt" 
-              }},
-              stage: 1
-          }
-      },
-      {
-          $group: { 
-              _id: {createdAt: "$createdAt"},
-              proses : {$sum: {$cond: { if: { $eq: ["$stage",'0'] }, then: 1, else: 0 }}},
-              selesai : {$sum: {$cond: { if: { $eq: ["$stage",'1'] }, then: 1, else: 0 }}},
-              total : {$sum: 1}
-          }
-      },
-      {
-          $sort: {
-              "_id.createdAt": 1
-          }
-      },
-      {
-          $project: {
-              _id: 0,
-              date: "$_id.createdAt",
-              proses: 1,
-              selesai: 1,
-              total: 1
-          }
-      }
-    ]
-
-    const result = await Case.aggregate(queryODP);
-  
+    const result = await Case.aggregate(queryOtg);
     callback(null, result);
   } catch (error) {
     callback(error, null);
@@ -281,16 +141,16 @@ module.exports = [
     method: countByGenderAge
   },
   {
-    name: "services.dashboard.countByODP",
-    method: countByODP
+    name: "services.dashboard.countByOdp",
+    method: countByOdp
   },
   {
-    name: "services.dashboard.countByPDP",
-    method: countByPDP
+    name: "services.dashboard.countByPdp",
+    method: countByPdp
   },
   {
-    name: "services.dashboard.countByOTG",
-    method: countByOTG
+    name: "services.dashboard.countByOtg",
+    method: countByOtg
   },
   {
     name: "services.dashboard.countByConfirm",

@@ -29,7 +29,7 @@ module.exports = (server) => {
                 description: 'show dashboard statistik',
                 tags: ['api', 'dashboard statistik'],
             },
-            handler: handlers.countPDP,
+            handler: handlers.countPdp,
         },
         {
             method: 'GET',
@@ -39,7 +39,7 @@ module.exports = (server) => {
                 description: 'show dashboard statistik',
                 tags: ['api', 'dashboard statistik'],
             },
-            handler: handlers.countOTG,
+            handler: handlers.countOtg,
         },
         {
             method: 'GET',

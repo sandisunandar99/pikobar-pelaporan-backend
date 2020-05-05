@@ -31,8 +31,8 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async countODP(request, reply) {
-            server.methods.services.dashboard.countByODP(
+        async countOdp(request, reply) {
+            server.methods.services.dashboard.countByOdp(
                 request.query,
                 request.auth.credentials.user,
                 (err, result) => {
@@ -46,8 +46,8 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async countPDP(request, reply) {
-            server.methods.services.dashboard.countByPDP(
+        async countPdp(request, reply) {
+            server.methods.services.dashboard.countByPdp(
                 request.query,
                 request.auth.credentials.user,
                 (err, result) => {
@@ -61,8 +61,8 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async countOTG(request, reply) {
-            server.methods.services.dashboard.countByOTG(
+        async countOtg(request, reply) {
+            server.methods.services.dashboard.countByOtg(
                 request.query,
                 request.auth.credentials.user,
                 (err, result) => {
