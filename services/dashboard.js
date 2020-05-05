@@ -48,8 +48,8 @@ const countByGenderAge = async (query, user, callback) => {
 
 
 const countByOdp = async (query, user, callback) => {
-  const queryODP = Sql.sqlCondtion(user, query, "ODP");
   try {
+    const queryODP = await Sql.sqlCondtion(user, query, "ODP");
     const result = await Case.aggregate(queryODP);
     callback(null, result);
   } catch (error) {
@@ -58,8 +58,8 @@ const countByOdp = async (query, user, callback) => {
 }
 
 const countByPdp = async (query, user, callback) => {
-  const queryODP = Sql.sqlCondtion(user, query, "PDP");
   try {
+    const queryODP = await Sql.sqlCondtion(user, query, "PDP");
     const result = await Case.aggregate(queryODP);
     callback(null, result);
   } catch (error) {
@@ -69,8 +69,8 @@ const countByPdp = async (query, user, callback) => {
 
 
 const countByOtg = async (query, user, callback) => {
-  const queryOtg = Sql.sqlCondtion(user, query, "OTG");
   try {
+    const queryOtg = await Sql.sqlCondtion(user, query, "OTG");
     const result = await Case.aggregate(queryOtg);
     callback(null, result);
   } catch (error) {

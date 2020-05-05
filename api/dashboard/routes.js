@@ -19,7 +19,7 @@ module.exports = (server) => {
                 description: 'show dashboard statistik',
                 tags: ['api', 'dashboard statistik'],
             },
-            handler: handlers.countODP,
+            handler: handlers.countOdp,
         },
         {
             method: 'GET',

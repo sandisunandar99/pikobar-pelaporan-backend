@@ -80,3 +80,7 @@ const sqlCondtion = async (user, query, status) => {
 
   return condition
 }
+
+module.exports = {
+  sqlCondtion
+}
