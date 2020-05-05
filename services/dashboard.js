@@ -2,40 +2,12 @@ require('../models/Case');
 const Mongoose = require('mongoose');
 const Helpers = require('../helpers/dashboardbottom');
 const Case = Mongoose.model('Case');
-const Check = require('../helpers/rolecheck');
-const Filter = require('../helpers/casefilter');
 const Sql = require('../helpers/sectionnumber');
 
 const countByGenderAge = async (query, user, callback) => {
-  const search = Check.countByRole(user);
-  const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search, filter);
-
   try {
-    const conditionAge = [
-      {$match: { 
-        $and: [searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
-      }},
-      {$bucket:
-      {
-        groupBy: "$age", 
-        boundaries: [0,10,20,30,40,50,60,70,80,90,100], 
-        default: "other", 
-        output : {
-          "total": {$sum: 1},
-          "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "L" ] }, then: 1, else: 0 }}},
-          "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "P" ] }, then: 1, else: 0 }}} }
-        }
-      }
-    ];
-
-    const conditionGender = [
-      { $match: { 
-        $and: [ searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
-      }},
-      { $group: { _id: "$gender", "total": { $sum: 1 }}}
-    ];
-
+    const conditionAge = await Sql.conditionAge(user, query);
+    const conditionGender = await Sql.conditionGender(user, query);
     const ageGroup = await Case.aggregate(conditionAge);
     const genderGroup = await Case.aggregate(conditionGender);
     const results = await Helpers.filterJson(ageGroup, genderGroup);
