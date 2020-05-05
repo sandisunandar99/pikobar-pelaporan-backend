@@ -21,7 +21,7 @@ const countByGenderAge = async (query, user, callback) => {
 
 const countByOdp = async (query, user, callback) => {
   try {
-    const queryODP = await Sql.sqlCondtion(user, query, "ODP");
+    const queryODP = await Sql.sqlCondition(user, query, "ODP");
     const result = await Case.aggregate(queryODP);
     callback(null, result);
   } catch (error) {
@@ -31,7 +31,7 @@ const countByOdp = async (query, user, callback) => {
 
 const countByPdp = async (query, user, callback) => {
   try {
-    const queryODP = await Sql.sqlCondtion(user, query, "PDP");
+    const queryODP = await Sql.sqlCondition(user, query, "PDP");
     const result = await Case.aggregate(queryODP);
     callback(null, result);
   } catch (error) {
@@ -42,7 +42,7 @@ const countByPdp = async (query, user, callback) => {
 
 const countByOtg = async (query, user, callback) => {
   try {
-    const queryOtg = await Sql.sqlCondtion(user, query, "OTG");
+    const queryOtg = await Sql.sqlCondition(user, query, "OTG");
     const result = await Case.aggregate(queryOtg);
     callback(null, result);
   } catch (error) {
@@ -78,6 +78,7 @@ const countByConfirm = async (query, user, callback) => {
       {
           $group: { 
               _id: {createdAt: "$createdAt"},
+              positif : {$sum: {$cond: { if: { $eq: ["$final_result",[null,"",0]] }, then: 1, else: 0 }}},
               sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
               meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}}
           }
@@ -91,6 +92,7 @@ const countByConfirm = async (query, user, callback) => {
           $project: {
               _id: 0,
               date: "$_id.createdAt",
+              positif: 1,
               sembuh: 1,
               meninggal: 1,
               total: 1
