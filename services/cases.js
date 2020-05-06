@@ -29,13 +29,11 @@ async function ListCase (query, user, callback) {
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
   
-  console.log(sorts);
-  
   const options = {
     page: query.page,
     limit: query.limit,
     populate: (['last_history','author']),
-    sort: [{"id_case":"asc"},{"age":"desc"}],
+    sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels
   };
