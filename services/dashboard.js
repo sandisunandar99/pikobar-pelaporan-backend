@@ -282,8 +282,6 @@ const countByConfirm = async (query, user, callback) => {
   try {
     
     const queryConfirm = await Sql.conditionConfirmResult(user, query);
-    console.log(JSON.stringify(queryConfirm));
-    
     const result = await Case.aggregate(queryConfirm);
   
     callback(null, result);
