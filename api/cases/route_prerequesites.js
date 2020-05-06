@@ -187,6 +187,14 @@ const getDetailCase = server => {
                 if (err) {
                     return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                 }
+
+                if (result.verified_status === 'verified') {
+                    return reply({
+                        status: 422,
+                        message: 'Case already verified!',
+                        data: null
+                    }).code(422).takeover()
+                }
                 
                 server.methods.services.cases.getCountByDistrict(
                     result.address_district_code,

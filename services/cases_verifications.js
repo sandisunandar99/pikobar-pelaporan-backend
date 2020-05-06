@@ -38,21 +38,25 @@ async function getCaseVerifications (caseId, callback) {
 async function createCaseVerification (id, author, pre, payload, callback) {
   try {
 
+    let updatePayload = {
+      verified_comment: payload.verified_comment,
+      verified_status: payload.verified_status
+    }
+
     // generate new verified id_case
-    let date = new Date().getFullYear().toString()
-    let id_case = "covid-"
-    id_case += pre.dinkes_code
-    id_case += date.substr(2, 2)
-    id_case += "0".repeat(4 - pre.count_pasien.toString().length)
-    id_case += pre.count_pasien
+    if (payload.verified_status === 'verified') {
+      let date = new Date().getFullYear().toString()
+      let id_case = "covid-"
+      id_case += pre.dinkes_code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(4 - pre.count_pasien.toString().length)
+      id_case += pre.count_pasien
+      updatePayload.id_case = id_case
+    }
 
     // update case verifed status
     const case_ = await Case.findOneAndUpdate({ _id: id}, {
-      $set: {
-        id_case: id_case,
-        verified_comment: payload.verified_comment,
-        verified_status: payload.verified_status
-      }
+      $set: updatePayload
     }, { new: true })
 
     // insert verification logs
