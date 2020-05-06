@@ -92,6 +92,9 @@ const countByOdp = async (query, user, callback) => {
         cum_proses: triger_proses
       })
     })
+    console.log(result_cum_proses);
+    console.log(triger_proses);
+    
 
     let cum_proses_selesai = []
     res.forEach((val, key)=>{

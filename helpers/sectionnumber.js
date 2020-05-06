@@ -11,7 +11,7 @@ const conditionConfirmResult = async (user, query) => {
                 $and: [
                     searching,
                     {"delete_status": {"$ne": "deleted"}},
-                    {"status": "POSITIF" || "Positif"}
+                    {"status": "POSITIF"}
                 ]
             }
         },
@@ -27,7 +27,13 @@ const conditionConfirmResult = async (user, query) => {
         {
             $group: { 
                 _id: {createdAt: "$createdAt"},
-                positif : {$sum: {$cond: { if: { $eq: ["$final_result",[null,"",0]] }, then: 1, else: 0 }}},
+                positif : {$sum: 
+                           { $cond: [ 
+                             { $or : [ 
+                                { $eq: ["$final_result", ""] },
+                                { $eq: ["$final_result", 0] },
+                                { $eq: ["$final_result", null] }
+                            ] },1,0 ] }},
                 sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
                 meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}},
             }
@@ -51,7 +57,6 @@ const conditionConfirmResult = async (user, query) => {
 
   return queryConfirm
 }
-
 
 const sqlCondition = async (user, query, status) => {
   const search = Check.countByRole(user);
