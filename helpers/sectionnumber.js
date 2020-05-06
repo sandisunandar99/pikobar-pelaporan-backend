@@ -29,7 +29,7 @@ const conditionConfirmResult = async (user, query) => {
                 _id: {createdAt: "$createdAt"},
                 positif : {$sum: {$cond: { if: { $eq: ["$final_result",[null,"",0]] }, then: 1, else: 0 }}},
                 sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
-                meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}}
+                meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}},
             }
         },
         {
@@ -40,11 +40,11 @@ const conditionConfirmResult = async (user, query) => {
         {
             $project: {
                 _id: 0,
-                date: "$_id.createdAt",
                 positif: 1,
                 sembuh: 1,
                 meninggal: 1,
-                total: 1
+                total: {$sum: ["$positif","$sembuh", "$meninggal"]},
+                date: "$_id.createdAt"
             }
         }
       ]
