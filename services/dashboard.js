@@ -279,55 +279,11 @@ const countByOtg = async (query, user, callback) => {
 }
 
 const countByConfirm = async (query, user, callback) => {
-  const search = Check.countByRole(user);
-  const filter = await Filter.filterCase(user, query);
-  const searching = Object.assign(search, filter);
-
   try {
-    const queryConfirm = [
-      {
-          $match: {
-              $and: [
-                  searching,
-                  {"delete_status": {"$ne": "deleted"}},
-                  {"status": "POSITIF"}
-              ]
-          }
-      },
-      {
-          $project: {
-              createdAt: {$dateToString: { 
-                  format: "%Y/%m/%d",
-                  date: "$createdAt" 
-              }},
-              final_result: 1
-          }
-      },
-      {
-          $group: { 
-              _id: {createdAt: "$createdAt"},
-              positif : {$sum: {$cond: { if: { $eq: ["$final_result",[null,"",0]] }, then: 1, else: 0 }}},
-              sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
-              meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}}
-          }
-      },
-      {
-          $sort: {
-              "_id.createdAt": 1
-          }
-      },
-      {
-          $project: {
-              _id: 0,
-              date: "$_id.createdAt",
-              positif: 1,
-              sembuh: 1,
-              meninggal: 1,
-              total: 1
-          }
-      }
-    ]
-
+    
+    const queryConfirm = await Sql.conditionConfirmResult(user, query);
+    console.log(JSON.stringify(queryConfirm));
+    
     const result = await Case.aggregate(queryConfirm);
   
     callback(null, result);
