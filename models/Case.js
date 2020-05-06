@@ -134,7 +134,7 @@ function convertDate(dates){
 }
 
 CaseSchema.methods.JSONExcellOutput = function () {
-    let finals,stages,birthDate,createDate
+    let finals,stages,birthDate,createDate,diagnosis,diagnosis_other
     
     if(this.final_result == '0'){
         finals = 'NEGATIF'
@@ -149,6 +149,8 @@ CaseSchema.methods.JSONExcellOutput = function () {
     stages = (this.stage == 0 ? "Prosess" : "Selesai")    
     birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
     createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
+    diagnosis = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis.toString())
+    diagnosis_other = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis.toString())
     
     return {
        "Kode Kasus": this.id_case,
@@ -169,8 +171,8 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Kewarganegaraan": this.nationality,
        "Negara":(this.nationality == "WNI" ? "Indonesia" : this.nationality_name),
        "Pekerjaan": this.occupation,
-       "Gejala": (this.last_history !== null ? this.last_history.diagnosis_other.toString() : null),
-       "Kondisi Penyerta": (this.last_history !== null ? this.last_history.diagnosis.toString() : null),
+       "Gejala": diagnosis,
+       "Kondisi Penyerta": diagnosis_other,
        "Riwayat": check.historyCheck(this.last_history),
        "Status": this.status,
        "Tahapan":stages,
