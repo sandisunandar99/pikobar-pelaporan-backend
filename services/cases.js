@@ -35,7 +35,7 @@ async function ListCase (query, user, callback) {
     page: query.page,
     limit: query.limit,
     populate: (['last_history','author']),
-    sort: {"id_case":"asc","age":"desc"},
+    sort: [{"id_case":"asc"},{"age":"desc"}],
     leanWithId: true,
     customLabels: myCustomLabels
   };
