@@ -55,7 +55,7 @@ const getAddressStreet = () => {
 }
 
 const getAddressProvinceCode = () => {
-    return '35'
+    return '32'
 }
 
 const getAddressProvinceName = () => {
