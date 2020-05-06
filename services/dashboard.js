@@ -3,6 +3,9 @@ const Mongoose = require('mongoose');
 const Helpers = require('../helpers/dashboardbottom');
 const Case = Mongoose.model('Case');
 const Sql = require('../helpers/sectionnumber');
+const Check = require('../helpers/rolecheck');
+const Filter = require('../helpers/casefilter');
+
 
 const countByGenderAge = async (query, user, callback) => {
   try {
