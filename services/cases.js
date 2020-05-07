@@ -468,14 +468,14 @@ async function importCases (raw_payload, author, pre, callback) {
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
       const verifStatus = author.role === 'faskes' ? ['pending', 'declined'] : ['verified']
-      const districtCases = await Case.find({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
+      const districtCases = await Case.findOne({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
 
       let count = 1
       let casePayload = {}
 
-      if (districtCases.length > 0) {
+      if (districtCases) {
         const startNum = author.role === 'faskes' ? 15 : 12
-        count = (Number(districtCases[0].id_case.substring(startNum)) + 1)
+        count = (Number(districtCases.id_case.substring(startNum)) + 1)
       }
 
       let district = {
