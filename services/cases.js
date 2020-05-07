@@ -383,13 +383,13 @@ async function importCases (raw_payload, author, pre, callback) {
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const districtCases = await Case.find({ address_district_code: code}).sort({id_case: -1})
+      const districtCases = await Case.findOne({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
 
       let count = 1
       let casePayload = {}
 
-      if (districtCases.length > 0) {
-        count = (Number(districtCases[0].id_case.substring(12)) + 1)
+      if (districtCases) {
+        count = (Number(districtCases.id_case.substring(startNum)) + 1)
       }
 
       let district = {
