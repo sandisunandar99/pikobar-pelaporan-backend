@@ -48,6 +48,9 @@ const CaseSchema = new mongoose.Schema({
 
 },{ timestamps:true, usePushEach: true })
 
+CaseSchema.index( { verified_status: 1 } )
+CaseSchema.index( { address_district_code: 1 } )
+
 CaseSchema.plugin(mongoosePaginate)
 CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
 
