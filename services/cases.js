@@ -38,7 +38,6 @@ async function ListCase (query, user, callback) {
     limit: query.limit,
     populate: (['last_history','author']),
     sort: sorts,
-    collation:{ locale: "en" },
     leanWithId: true,
     customLabels: myCustomLabels
   };
