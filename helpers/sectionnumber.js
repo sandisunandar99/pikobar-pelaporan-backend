@@ -146,6 +146,88 @@ const conditionGender = async (user, query) => {
   return genderCondition
 }
 
+const summaryAgregatePerDinkes = (user, query) => {
+
+
+  let queryAgt = [
+    {
+        $match: {
+            $and: [
+                {"delete_status": {"$ne": "deleted"}}
+            ]
+        }
+    },
+    {
+        $group: {
+            _id: {kabkota: '$author_district_code'},
+            odp_proses: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $eq: [ "$stage","0"] }
+                            ] },1,0 ] }},
+            pdp_proses: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $eq: [ "$stage","0"] }
+                            ] },1,0 ] }},
+            otg_proses: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $eq: [ "$stage","0"] }
+                            ] },1,0 ] }},
+            positif_aktif: {$sum: 
+                          { $cond: [ 
+                             { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                {$or:[
+                                        { $eq: ["$final_result",null]},
+                                        { $eq: ["$final_result", ""] },
+                                        { $eq: ["$final_result", 0]}
+                                    ]}
+                            ] },1,0 ] }},
+            positif_sembuh: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                { $eq: [ "$final_result","1"] }
+                            ] },1,0 ] }},
+            positif_meninggal: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                { $eq: [ "$final_result","2"] }
+                            ] },1,0 ] }},
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            kab_kota: {$toUpper: "$_id.kabkota"},
+            odp_proses: 1,
+            pdp_proses: 1,
+            otg_proses: 1,
+            positif_aktif: 1,
+            positif_sembuh: 1,
+            positif_meninggal: 1,
+            total: {$sum: ["$odp_proses" , "$pdp_proses" , "$otg_proses" , "$positif_aktif" , "$positif_sembuh" , "$positif_meninggal"]}
+        }
+    },
+    {
+        $sort: {"kab_kota": -1}
+    },
+  ]
+
+
+  return queryAgt
+}
+
 module.exports = {
-  sqlCondition, conditionAge, conditionGender, conditionConfirmResult
+  sqlCondition, 
+  conditionAge, 
+  conditionGender, 
+  conditionConfirmResult,
+  summaryAgregatePerDinkes
 }
