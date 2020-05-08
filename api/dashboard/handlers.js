@@ -86,6 +86,21 @@ module.exports = (server) => {
                 }
             )
         },
+        /**
+         * GET /api/dashboard/chart-confirm
+         * @param {*} request
+         * @param {*} reply
+         */
+        async tabelAggregateCriteria(request, reply) {
+            server.methods.services.dashboard.summaryAggregateByDinkes(
+                request.query,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(dashboardResponse(result)).code(200);
+                }
+            )
+        },
 
     } //end
 }
