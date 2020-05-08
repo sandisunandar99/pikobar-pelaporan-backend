@@ -51,5 +51,15 @@ module.exports = (server) => {
             },
             handler: handlers.countByConfirm,
         },
+        {
+            method: 'GET',
+            path: '/dashboard/tabel-aggregate-criteria',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard statistik',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.tabelAggregateCriteria,
+        },
 ]
 }
