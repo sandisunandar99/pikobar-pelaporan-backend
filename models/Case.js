@@ -153,7 +153,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
     birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
     createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
     diagnosis = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis.toString())
-    diagnosis_other = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis_other.toString())
+    // diagnosis_other = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis_other.toString())
     
     return {
        "Kode Kasus": this.id_case,
@@ -175,7 +175,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Negara":(this.nationality == "WNI" ? "Indonesia" : this.nationality_name),
        "Pekerjaan": this.occupation,
        "Gejala": diagnosis,
-       "Kondisi Penyerta": diagnosis_other,
+    //    "Kondisi Penyerta": diagnosis_other,
        "Riwayat": check.historyCheck(this.last_history),
        "Status": this.status,
        "Tahapan":stages,
