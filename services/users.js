@@ -191,6 +191,17 @@ const listUserIds = async (user, query, callback) => {
   }
 }
 
+const updateUsersFcmToken = async (id, payload, author, callback) =>{
+  try {
+    const params = { fcm_token: payload.fcm_token }
+    const result = await User.findByIdAndUpdate(id,
+    { $set: params }, { new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
 module.exports = [
   {
     name: 'services.users.checkUser',
@@ -223,6 +234,10 @@ module.exports = [
   {
     name: 'services.users.listUserIds',
     method: listUserIds
+  },
+  {
+    name: 'services.users.updateUsersFcmToken',
+    method: updateUsersFcmToken
   }
 ];
  

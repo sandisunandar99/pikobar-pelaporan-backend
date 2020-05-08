@@ -12,10 +12,14 @@ const History = mongoose.model('History')
 require('../models/User')
 const User = mongoose.model('User')
 
+require('../models/Notification')
+const Notification = mongoose.model('Notification')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
 const Check = require('../helpers/rolecheck')
+const Notif = require('../helpers/notification')
 
 async function ListCase (query, user, callback) {
 
@@ -344,7 +348,9 @@ function createCase (raw_payload, author, pre, callback) {
     history.save().then(last => { // step 2: create dan save historuy baru jangan lupa di ambil object id case
       let last_history = { last_history: last._id }
       x = Object.assign(x, last_history)
-      x.save().then(final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
+      x.save().then(async final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
+
+        await Notif.send(Notification, User, x, author, 'case-created') 
         return callback(null, final)
       })
     })
@@ -457,6 +463,20 @@ async function importCases (raw_payload, author, pre, callback) {
 
   const refHospitals = await Hospital.find()
   
+  /**
+   * # The method used temporarily
+   * Prevent duplicate id_case generated at another import process in the same time  
+   * Explanation:
+   * - When counting cases, the resulting numbers will be the same if other users import simultaneously,
+   *   this causes duplication in the case id.
+   * current todo options:
+   * 1. Make the import process in series can be entered into the queue first
+   * 2. Check the current db model in process *(the current method is compared in 1 millisecond)
+   * 
+   * to remember, this is only a temporary method to prevent :)
+   */
+  promise = delayIfAnotherImportProcessIsRunning(promise)
+
   for (i in dataSheet) {
     
     let item = dataSheet[i]
@@ -544,7 +564,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
       // savedCases.push(savedCase)
   
-      return new Promise(resolve => resolve(savedCase))
+      return new Promise(resolve => resolve())
 
     }).catch((e) => { throw new Error(e) })
   }
@@ -582,6 +602,27 @@ async function healthCheck(payload, callback) {
   } catch (error) {
     return callback(error, null)
   }
+}
+
+/**
+* compare data in 1 millisecond
+* if different means the case is in the process of insertion by another process
+* to remember, this is only a temporary method to prevent :)
+*/
+async function delayIfAnotherImportProcessIsRunning () {
+  const totalOne = await Case.find().countDocuments()
+  promise = delay(100)
+
+  return promise.then(async () => {
+    const totalTwo = await Case.find().countDocuments()
+    if (totalOne !== totalTwo) return delay(10000)
+    
+    return new Promise(resolve => resolve())
+  })
+}
+
+function delay(t) {
+  return new Promise(resolve => setTimeout(resolve.bind(), t))
 }
 
 module.exports = [

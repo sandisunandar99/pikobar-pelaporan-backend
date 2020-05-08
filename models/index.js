@@ -17,7 +17,8 @@ const register = (server, options, next) => {
     require('./History')
     require('./Occupation')
     require('./RdtHistory')
-    require('./LocationTest')
+    require('./LocationTest'),
+    require('./Notification')
 
     server.app.db = {
       link: db.db,
