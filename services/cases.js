@@ -12,10 +12,14 @@ const History = mongoose.model('History')
 require('../models/User')
 const User = mongoose.model('User')
 
+require('../models/Notification')
+const Notification = mongoose.model('Notification')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
 const Check = require('../helpers/rolecheck')
+const Notif = require('../helpers/notification')
 
 async function ListCase (query, user, callback) {
 
@@ -344,7 +348,9 @@ function createCase (raw_payload, author, pre, callback) {
     history.save().then(last => { // step 2: create dan save historuy baru jangan lupa di ambil object id case
       let last_history = { last_history: last._id }
       x = Object.assign(x, last_history)
-      x.save().then(final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
+      x.save().then(async final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
+
+        await Notif.send(Notification, User, x, author, 'case-created') 
         return callback(null, final)
       })
     })

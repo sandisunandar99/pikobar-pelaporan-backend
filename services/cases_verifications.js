@@ -9,6 +9,13 @@ const CaseVerification = mongoose.model('CaseVerification');
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 
+require('../models/User')
+const User = mongoose.model('User')
+
+require('../models/Notification')
+const Notification = mongoose.model('Notification')
+
+const Notif = require('../helpers/notification')
 
 var schedule = require('node-schedule');
 // running task every 1 hours
@@ -66,6 +73,8 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     let item = new CaseVerification(payload)
 
     const caseVerification = await item.save()
+
+    await Notif.send(Notification, User, case_, author, `case-verification-${payload.verified_status}`) 
     
     return callback(null, caseVerification)
   } catch (error) {
