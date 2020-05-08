@@ -5,13 +5,31 @@ const conditionConfirmResult = async (user, query) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
+ 
+    let createdAt = {}
+    if (query.min_date && query.max_date) {
+      let searchRegExp = new RegExp('/', 'g')
+      let min = query.min_date
+      let max = query.max_date
+      let minDate = min.replace(searchRegExp, '-')
+      let maxDate = max.replace(searchRegExp, '-')
+      createdAt = {
+        "createdAt": {
+          "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+          "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+        }
+      }
+    }
+ 
+ 
   const queryConfirm = [
         {
             $match: {
                 $and: [
                     searching,
                     {"delete_status": {"$ne": "deleted"}},
-                    {"status": "POSITIF"}
+                    {"status": "POSITIF"},
+                    createdAt
                 ]
             }
         },
@@ -62,11 +80,28 @@ const sqlCondition = async (user, query, status) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
+  
+  let createdAt = {}
+  if (query.min_date && query.max_date){
+       let searchRegExp = new RegExp('/', 'g')
+       let min = query.min_date
+       let max = query.max_date
+       let minDate = min.replace(searchRegExp, '-')
+       let maxDate = max.replace(searchRegExp, '-')
+       createdAt = {
+           "createdAt" :{
+              "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+              "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+          }}
+  }
+  
+
   const condition = [{
       $match: {
-        $and: [ searching, 
+        $and: [ searching,
                 { "delete_status": { "$ne": "deleted" } },
-                { "status": status }
+                { "status": status },
+                createdAt
               ]
         }
       },

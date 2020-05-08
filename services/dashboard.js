@@ -71,9 +71,15 @@ const countByOdp = async (query, user, callback) => {
     result.forEach((val, key) => {
       get_date.push(new Date(val.date))
     })
-
-    var maxDate = new Date(Math.max.apply(null, get_date));
-    var minDate = new Date(Math.min.apply(null, get_date));
+    
+    
+    if (query.min_date && query.max_date) {
+      var minDate = new Date(query.min_date);
+      var maxDate = new Date(query.max_date);
+    } else {
+      var minDate = new Date(Math.min.apply(null, get_date));
+      var maxDate = new Date(Math.max.apply(null, get_date));
+    }
 
     let date_range = []
     for (let index = minDate; index <= maxDate; index.setDate(index.getDate() + 1)) {
@@ -83,6 +89,7 @@ const countByOdp = async (query, user, callback) => {
       var date = yyyy + "/" + mm + "/" + dd
       date_range.push(date)
     }
+    
 
     let get_result_date = []
     result.forEach((val, key) => {
@@ -158,8 +165,13 @@ const countByPdp = async (query, user, callback) => {
          get_date.push(new Date(val.date))
        })
 
-       var maxDate = new Date(Math.max.apply(null, get_date));
-       var minDate = new Date(Math.min.apply(null, get_date));
+       if (query.min_date && query.max_date) {
+         var minDate = new Date(query.min_date);
+         var maxDate = new Date(query.max_date);
+       } else {
+         var minDate = new Date(Math.min.apply(null, get_date));
+         var maxDate = new Date(Math.max.apply(null, get_date));
+       }
 
        let date_range = []
        for (let index = minDate; index <= maxDate; index.setDate(index.getDate() + 1)) {
@@ -244,8 +256,14 @@ const countByOtg = async (query, user, callback) => {
          get_date.push(new Date(val.date))
        })
 
-       var maxDate = new Date(Math.max.apply(null, get_date));
-       var minDate = new Date(Math.min.apply(null, get_date));
+       if (query.min_date && query.max_date) {
+         var minDate = new Date(query.min_date);
+         var maxDate = new Date(query.max_date);
+       } else {
+         var minDate = new Date(Math.min.apply(null, get_date));
+         var maxDate = new Date(Math.max.apply(null, get_date));
+       }
+
 
        let date_range = []
        for (let index = minDate; index <= maxDate; index.setDate(index.getDate() + 1)) {
@@ -330,8 +348,13 @@ const countByConfirm = async (query, user, callback) => {
       get_date.push(new Date(val.date))
     })
 
-    var maxDate = new Date(Math.max.apply(null, get_date));
-    var minDate = new Date(Math.min.apply(null, get_date));
+    if (query.min_date && query.max_date) {
+      var minDate = new Date(query.min_date);
+      var maxDate = new Date(query.max_date);
+    } else {
+      var minDate = new Date(Math.min.apply(null, get_date));
+      var maxDate = new Date(Math.max.apply(null, get_date));
+    }
 
     let date_range = []
     for (let index = minDate; index <= maxDate; index.setDate(index.getDate() + 1)) {
