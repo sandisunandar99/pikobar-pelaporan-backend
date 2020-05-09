@@ -359,6 +359,11 @@ function createCase (raw_payload, author, pre, callback) {
 
 function updateCase (id, author, payload, callback) {
 
+  /* can't update id_case & verified props from here */
+  delete payload.id_case
+  delete payload.verified_status
+  delete payload.verified_comment
+
   payload.author_district_code = author.code_district_city
   payload.author_district_name = author.name_district_city
 
