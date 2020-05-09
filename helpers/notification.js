@@ -1,7 +1,7 @@
 const fcm = require('./fcm')
 const send = async (Notification, User, referenceCase, author, event) => {
   try {
-    let tag, message, params
+    let tag, message, to
     
     if (event === 'case-created') {
       if (author.role === 'faskes') {
@@ -22,6 +22,8 @@ const send = async (Notification, User, referenceCase, author, event) => {
       message = 'Pengajuan Kasus Yang ditolak Dari faskes' 
       to ='dinkeskota'
     }
+
+    if (!to) return
 
     const recipientIds = await User.find({role: to, code_district_city: author.code_district_city}).select(['_id', 'fcm_token'])
 

@@ -85,15 +85,16 @@ async function createCaseVerification (id, author, pre, payload, callback) {
 async function createCasesVerification (callback) {
   const start = new Date(new Date().getTime() - (24 * 60 * 60 * 1000))
 
-  const verified = await Case.find({
+  const unverifiedCasesFor24Hours = await Case.find({
     verified_status: 'pending',
+    delete_status: { $ne: 'deleted' },
     createdAt: { $lt: start }
   })
 
   let promise = Promise.resolve()
 
-  for (i in verified) {
-    let item = verified[i]
+  for (i in unverifiedCasesFor24Hours) {
+    let item = unverifiedCasesFor24Hours[i]
     promise = promise.then(async () => {
       const id = item._id
       const code = item.address_district_code
@@ -105,13 +106,13 @@ async function createCasesVerification (callback) {
       }
       
       if (item.id_case.substr(0,3) === 'pre') {
-        const districtCases = await Case.find({
+        const districtCases = await Case.findOne({
           address_district_code: code, verified_status: 'verified'
         }).sort({id_case: -1})
 
         let count = 1
-        if (districtCases.length > 0) {
-          count = (Number(districtCases[0].id_case.substring(12)) + 1)
+        if (districtCases) {
+          count = (Number(districtCases.id_case.substring(12)) + 1)
         }
 
         let district = {
