@@ -97,7 +97,7 @@ const checkCaseIsAllowToDelete = server => {
                     status: 422,
                     message: 'Data terverifikasi tidak dapat dihapus!',
                     data: null
-                }).code(200).takeover()
+                }).code(422).takeover()
              }
             return reply(true)
         },
