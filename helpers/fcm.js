@@ -1,32 +1,38 @@
-var admin = require("firebase-admin")
+const admin = require("firebase-admin")
+const config = require('../config/config')
 
 try {
-    console.log('s')
-    var serviceAccount = require("../firebase-service-account.json")
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        databaseURL: "https://pikobar-pelaporan-development.firebaseio.com"
-      })
-      
+        credential: admin.credential.cert(config.firebase),
+        databaseURL: process.env.FIREBASE_DATABASE_URL
+    })
     admin.database.enableLogging(true);
 } catch (e) {}
 
-
 const send = (fcmTokens) => {
 
-    if (!serviceAccount) return
-
-    const registrationTokens = fcmTokens
-    
+    const debug = false
+    const registrationTokens = fcmTokens    
     const message = {
         data: {},
         tokens: registrationTokens,
     }
     
-    admin.messaging().sendMulticast(message)
+    try {
+        admin.messaging().sendMulticast(message)
         .then((response) => {
-            console.log(response.successCount + ' messages were sent successfully')
-        })
+            if (debug) console.log(response.successCount + ' messages were sent successfully')
+            if (response.failureCount > 0) {
+                const failedTokens = [];
+                response.responses.forEach((resp, idx) => {
+                    if (!resp.success) {
+                    failedTokens.push(registrationTokens[idx]);
+                    }
+                });
+                if (debug) console.log('List of tokens that caused failures: ' + failedTokens);
+            }
+        });
+    } catch (e) {}
 }
 
 module.exports = {
