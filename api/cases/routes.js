@@ -16,6 +16,7 @@ module.exports = (server) =>{
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
+    const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
 
 
     return [
@@ -182,7 +183,8 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleDelete,
-                    getCasebyId
+                    getCasebyId,
+                    checkCaseIsAllowToDelete
                 ]
             },
             handler: handlers.DeleteCase

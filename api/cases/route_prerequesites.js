@@ -87,6 +87,23 @@ const getCasebyId = server => {
     }
 }
 
+const checkCaseIsAllowToDelete = server => {
+    return {
+        method: (request, reply) => {
+            let user = request.auth.credentials.user
+            let currentCase = request.preResponses.cases.source
+            if (user.role === 'faskes' && currentCase.verified_status === 'verified') {
+                return reply({
+                    status: 422,
+                    message: 'Data terverifikasi tidak dapat dihapus!',
+                    data: null
+                }).code(200).takeover()
+             }
+            return reply(true)
+        },
+        assign: 'is_delete_allow'
+    }
+}
 
 const checkIfDataNotNull = server =>{
      return {
@@ -219,5 +236,6 @@ module.exports ={
     DataSheetRequest,
     validationBeforeInput,
     checkCaseIsExists,
-    getDetailCase
+    getDetailCase,
+    checkCaseIsAllowToDelete
 }
