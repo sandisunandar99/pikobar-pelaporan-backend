@@ -11,7 +11,7 @@ try {
 
 const send = (fcmTokens) => {
 
-    const debug = false
+    const debug = false //debug purpose
     const registrationTokens = fcmTokens    
     const message = {
         data: {},
