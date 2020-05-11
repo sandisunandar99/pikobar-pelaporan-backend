@@ -11,6 +11,7 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
   try {
     let querySummary = await Sql.summaryAgregatePerDinkes(user, query)
     let result = await Case.aggregate(querySummary)
+    
     let kab_kota = await DistrictCity.find({'kemendagri_provinsi_kode':'32'}) 
 
     let getKabkotaCodeAndName = []
@@ -26,15 +27,31 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         getKabkotaCodeAndName.forEach((val1,key1) =>{
             if (val.kab_kota === val1.kab_kota) {
               combine_data.push({
-                odp_proses:val.odp_proses,
-                pdp_proses:val.pdp_proses,
-                otg_proses:val.otg_proses,
-                positif_aktif:val.positif_aktif,
-                positif_sembuh:val.positif_sembuh,
-                positif_meninggal:val.positif_meninggal,
-                total: val.total,
-                kab_kota: val.kab_kota,
-                kab_kota_name: val1.kab_kota_name
+                kab_kota_name: val1.kab_kota_name,
+                kab_kota_code: val.kab_kota,
+                odp_proses: val.odp_proses,
+                odp_selesai: val.odp_selesai,
+                odp_total: val.odp_total,
+                pdp_proses: val.pdp_proses,
+                pdp_selesai: val.pdp_selesai,
+                pdp_total: val.pdp_total,
+                otg_proses: val.otg_proses,
+                otg_selesai: val.otg_selesai,
+                otg_total: val.otg_total,
+                positif_aktif_proses: val.positif_aktif_proses,
+                positif_aktif_selesai: val.positif_aktif_selesai,
+                positif_aktif_total: val.positif_aktif_total,
+                positif_sembuh_proses: val.positif_sembuh_proses,
+                positif_sembuh_selesai: val.positif_sembuh_selesai,
+                positif_sembuh_total: val.positif_sembuh_total,
+                positif_meninggal_proses: val.positif_meninggal_proses,
+                positif_meninggal_selesai: val.positif_meninggal_selesai,
+                positif_meninggal_total: val.positif_meninggal_total,
+                positif_proses: val.positif_proses,
+                positif_selesai: val.positif_selesai,
+                grand_total: val.grand_total,
+
+
               })
             }
         })
