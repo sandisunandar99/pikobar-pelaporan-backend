@@ -313,6 +313,23 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases/summary-verification
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummaryVerification(request, reply) {
+            server.methods.services.cases.getSummaryVerification(
+                request.query,
+                request.auth.credentials.user,
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }
