@@ -78,7 +78,9 @@ CaseSchema.methods.toJSONFor = function () {
         deletedAt: this.deletedAt,
         author: this.author.JSONCase(),
         last_history: this.last_history,
-        is_test_masif: this.is_test_masif
+        is_test_masif: this.is_test_masif,
+        createdAt : this.createdAt,
+        updatedAt : this.updatedAt
     }
 }
 

@@ -74,10 +74,6 @@ async function ListCase (query, user, callback) {
   if (query.verified_status && query.verified_status.split) {
     const verified_status = query.verified_status.split(',')
     params.verified_status = { $in: verified_status }
-    
-    if (['pending','declined'].some(v => verified_status.includes(v))) {
-      options.sort.createdAt = 'asc'
-    }
   }
   
   if(query.search){
