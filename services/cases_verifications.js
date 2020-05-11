@@ -88,7 +88,7 @@ async function createCasesVerification (callback) {
   const unverifiedCasesFor24Hours = await Case.find({
     verified_status: 'pending',
     delete_status: { $ne: 'deleted' },
-    createdAt: { $lt: start }
+    updatedAt: { $lt: start }
   })
 
   let promise = Promise.resolve()
