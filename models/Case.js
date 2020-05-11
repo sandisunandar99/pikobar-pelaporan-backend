@@ -182,6 +182,7 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Hasil":finals,
        "Lokasi saat ini": (this.last_history !== null ? this.last_history.current_location_address : null),
        "Tanggal Input": createDate,
+       "Catatan Tambahan": (this.last_history !== null ? this.last_history.other_notes : ''),
        "Author": this.author.fullname
     }
 }
