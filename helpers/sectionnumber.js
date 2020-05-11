@@ -183,12 +183,28 @@ const conditionGender = async (user, query) => {
 
 const summaryAgregatePerDinkes = (user, query) => {
 
+   let createdAt = {}
+   if (query.min_date && query.max_date) {
+     let searchRegExp = new RegExp('/', 'g')
+     let min = query.min_date
+     let max = query.max_date
+     let minDate = min.replace(searchRegExp, '-')
+     let maxDate = max.replace(searchRegExp, '-')
+     createdAt = {
+       "createdAt": {
+         "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+         "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+       }
+     }
+   }
+
 
   let queryAgt = [
     {
         $match: {
             $and: [
-                {"delete_status": {"$ne": "deleted"}}
+                {"delete_status": {"$ne": "deleted"}},
+                createdAt
             ]
         }
     },
@@ -201,11 +217,33 @@ const summaryAgregatePerDinkes = (user, query) => {
                                 { $eq: [ "$status", "ODP"] },
                                 { $eq: [ "$stage","0"] }
                             ] },1,0 ] }},
+            odp_selesai: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $eq: [ "$stage","1"] }
+                            ] },1,0 ] }},
+            odp_total: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                            ] },1,0 ] }},
             pdp_proses: {$sum: 
                         { $cond: [ 
                             { $and : [ 
                                 { $eq: [ "$status", "PDP"] },
                                 { $eq: [ "$stage","0"] }
+                            ] },1,0 ] }},
+            pdp_selesai: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $eq: [ "$stage","1"] }
+                            ] },1,0 ] }},
+            pdp_total: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
                             ] },1,0 ] }},
             otg_proses: {$sum: 
                         { $cond: [ 
@@ -213,7 +251,18 @@ const summaryAgregatePerDinkes = (user, query) => {
                                 { $eq: [ "$status", "OTG"] },
                                 { $eq: [ "$stage","0"] }
                             ] },1,0 ] }},
-            positif_aktif: {$sum: 
+            otg_selesai: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $eq: [ "$stage","1"] }
+                            ] },1,0 ] }},
+            otg_total: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                            ] },1,0 ] }},
+            positif_aktif_proses: {$sum: 
                           { $cond: [ 
                              { $and : [ 
                                 { $eq: [ "$status", "POSITIF"] },
@@ -221,19 +270,69 @@ const summaryAgregatePerDinkes = (user, query) => {
                                         { $eq: ["$final_result",null]},
                                         { $eq: ["$final_result", ""] },
                                         { $eq: ["$final_result", 0]}
-                                    ]}
+                                    ]},
+                                { $eq: [ "$stage","0"] }
                             ] },1,0 ] }},
-            positif_sembuh: {$sum: 
+            positif_aktif_selesai: {$sum: 
+                          { $cond: [ 
+                             { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                {$or:[
+                                        { $eq: ["$final_result",null]},
+                                        { $eq: ["$final_result", ""] },
+                                        { $eq: ["$final_result", 0]}
+                                    ]},
+                                { $eq: [ "$stage","1"] }
+                            ] },1,0 ] }},
+            positif_aktif_total: {$sum: 
+                          { $cond: [ 
+                             { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                {$or:[
+                                        { $eq: ["$final_result",null]},
+                                        { $eq: ["$final_result", ""] },
+                                        { $eq: ["$final_result", 0]}
+                                    ]},
+                            ] },1,0 ] }},
+            positif_sembuh_proses: {$sum: 
                         { $cond: [ 
                             { $and : [ 
                                 { $eq: [ "$status", "POSITIF"] },
-                                { $eq: [ "$final_result","1"] }
+                                { $eq: [ "$final_result","1"] },
+                                { $eq: [ "$stage","0"] }
                             ] },1,0 ] }},
-            positif_meninggal: {$sum: 
+            positif_sembuh_selesai: {$sum: 
                         { $cond: [ 
                             { $and : [ 
                                 { $eq: [ "$status", "POSITIF"] },
-                                { $eq: [ "$final_result","2"] }
+                                { $eq: [ "$final_result","1"] },
+                                { $eq: [ "$stage","1"] }
+                            ] },1,0 ] }},
+            positif_sembuh_total: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                { $eq: [ "$final_result","1"] },
+                            ] },1,0 ] }},
+            positif_meninggal_proses: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                { $eq: [ "$final_result","2"] },
+                                { $eq: [ "$stage","0"] }
+                            ] },1,0 ] }},
+            positif_meninggal_selesai: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                { $eq: [ "$final_result","2"] },
+                                { $eq: [ "$stage","1"] }
+                            ] },1,0 ] }},
+            positif_meninggal_total: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "POSITIF"] },
+                                { $eq: [ "$final_result","2"] },
                             ] },1,0 ] }},
         }
     },
@@ -242,16 +341,30 @@ const summaryAgregatePerDinkes = (user, query) => {
             _id: 0,
             kab_kota: {$toUpper: "$_id.kabkota"},
             odp_proses: 1,
+            odp_selesai: 1,
+            odp_total: 1,
             pdp_proses: 1,
+            pdp_selesai: 1,
+            pdp_total: 1,
             otg_proses: 1,
-            positif_aktif: 1,
-            positif_sembuh: 1,
-            positif_meninggal: 1,
-            total: {$sum: ["$odp_proses" , "$pdp_proses" , "$otg_proses" , "$positif_aktif" , "$positif_sembuh" , "$positif_meninggal"]}
+            otg_selesai: 1,
+            otg_total: 1,
+            positif_aktif_proses: 1,
+            positif_aktif_selesai: 1,
+            positif_aktif_total: 1,
+            positif_sembuh_proses: 1,
+            positif_sembuh_selesai: 1,
+            positif_sembuh_total: 1,
+            positif_meninggal_proses: 1,
+            positif_meninggal_selesai: 1,
+            positif_meninggal_total: 1,
+            positif_proses: {$sum:["$positif_aktif_proses","$positif_sembuh_proses","$positif_meninggal_proses"]},
+            positif_selesai: {$sum:["$positif_aktif_selesai","$positif_sembuh_selesai","$positif_meninggal_selesai"]},
+            grand_total: {$sum: ["$odp_total" , "$pdp_total" , "$otg_total" , "$positif_aktif_total" , "$positif_sembuh_total" , "$positif_meninggal_total"]}
         }
     },
     {
-        $sort: {"kab_kota": -1}
+        $sort: {"kab_kota": 1}
     },
   ]
 
