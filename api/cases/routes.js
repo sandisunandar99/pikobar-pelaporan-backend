@@ -280,6 +280,20 @@ module.exports = (server) =>{
             },
             handler: handlers.CreateCaseVerification
         },
+        // Get case's summary of verifications
+        {
+            method: 'GET',
+            path: '/cases-summary-verification',
+            config: {
+                auth: 'jwt',
+                description: 'Get a case verification summary',
+                tags: ['api', 'cases.summary.verification'],
+                pre: [
+                    CheckRoleView
+                ]
+            },
+            handler: handlers.GetCaseSummaryVerification
+        }
     ]
 
 }

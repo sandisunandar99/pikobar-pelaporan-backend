@@ -46,7 +46,7 @@ const register = (server, options, next) => {
       tags: ['api', 'status']
     },
     handler: (request, reply) => {
-      return reply({status: `TEST UP in ${Math.floor(process.uptime())}`})
+      return reply({status: `UP in ${Math.floor(process.uptime())}`})
     }
   })
 
