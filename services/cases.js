@@ -625,27 +625,6 @@ async function importCases (raw_payload, author, pre, callback) {
     .catch(err => callback(err, null))
 }
 
-/**
-* compare data in 1 millisecond
-* if different means the case is in the process of insertion by another process
-* to remember, this is only a temporary method to prevent :)
-*/
-async function delayIfAnotherImportProcessIsRunning () {
-  const totalOne = await Case.find().countDocuments()
-  promise = delay(100)
-
-  return promise.then(async () => {
-    const totalTwo = await Case.find().countDocuments()
-    if (totalOne !== totalTwo) return delay(10000)
-
-    return new Promise(resolve => resolve())
-  })
-}
-
-function delay(t) {
-  return new Promise(resolve => setTimeout(resolve.bind(), t))
-}
-
 function softDeleteCase(cases,deletedBy, payload, callback) {
    let date = new Date()
    let dates = {
