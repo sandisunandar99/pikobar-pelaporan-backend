@@ -667,7 +667,7 @@ async function delayIfAnotherImportProcessIsRunning () {
   return promise.then(async () => {
     const totalTwo = await Case.find().countDocuments()
     if (totalOne !== totalTwo) return delay(10000)
-    
+
     return new Promise(resolve => resolve())
   })
 }
