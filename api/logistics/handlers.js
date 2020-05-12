@@ -23,31 +23,37 @@ module.exports = (server) => {
             let payload = request.payload
             let user = request.auth.credentials.user
 
-            payload['user_id'] = user._id
-
-            // fill with hospital data
-            payload['master_faskes_id'] = null
-            payload['agency_type'] = null
-            payload['agency_name'] = null
+            payload['user_id'] = user._id.toString()
+            // adjust attachment field to upload using multipart/form-data post scheme
+            payload.letter_file = {
+                value: payload.letter_file._data, 
+                options: { 
+                    filename: payload.letter_file.hapi.filename,
+                    contentType: payload.letter_file.hapi.headers['content-type'],
+                },
+            }
+            payload.applicant_file = {
+                value: payload.applicant_file._data, 
+                options: { 
+                    filename: payload.applicant_file.hapi.filename,
+                    contentType: payload.applicant_file.hapi.headers['content-type'],
+                },
+            }
             
             request_url = base_url + '/api/v1/logistic-request'
-            request_module.post(
-              request_url,
-              {
-                json: payload,
-              },
-              (err, res, body) => {
-                  if (err) 
-                      return reply(replyHelper.constructErrorResponse(err)).code(422)
+            let options = {
+                url: request_url,
+                formData: payload,
+            }
+            request_module.post(options, function (err, res, body) {
+                if (err) 
+                    return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                  if (res.statusCode >=300)
-                      return reply(body).code(422)
+                if (res.statusCode >=300)
+                    return reply(body).code(422)
 
-                  return reply(
-                      constructLogisticsResponse(body)
-                  ).code(200)
-              }
-            )
+                return reply(body).code(200)
+            })
         },
 
     }//end
