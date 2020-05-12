@@ -103,6 +103,7 @@
     },
     "messages": {
         "unverified_template": "Template Kasus Yang diimport tidak dikenali, Silahkan download template terbaru",
-        "version_out_of_date": "Versi template tidak didukung, Silahkan download template terbaru"
+        "version_out_of_date": "Versi template tidak didukung, Silahkan download template terbaru",
+        "invalid_date_format": "harus dalam format (tttt-bb-hh)"
     }
 }

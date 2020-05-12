@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
+const { label, messages } = require('../../../helpers/casesheet/casesheetconfig.json')
 
 // --------------------------------------------------
 //    Schema - Input Validations
@@ -72,7 +73,7 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     id_case_related: Joi.string().allow('', null),
     name_case_related: Joi.string().allow('', null),
     name: Joi.string().required(),
-    birth_date: Joi.date().allow('', null),
+    birth_date: Joi.date().allow('', null).error(() => `"${label.birth_date}" ${messages.invalid_date_format}`),
     age: Joi.number().required(),
     gender: Joi.string().required(),
     address_street: Joi.string().allow('', null),
@@ -94,14 +95,14 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     diagnosis_other: Joi.string().allow('', null),
     is_went_abroad: Joi.boolean(),
     visited_country: Joi.string().allow('', null),
-    return_date: Joi.date().allow('', null),
+    return_date: Joi.date().allow('', null).error(() => `"${label.return_date}" ${messages.invalid_date_format}`),
     is_went_other_city: Joi.boolean(),
     visited_city: Joi.string().allow('', null),
     is_contact_with_positive: Joi.boolean(),
     history_notes: Joi.string().allow('', null),
     is_sample_taken: Joi.boolean(),
     report_source: Joi.string().allow('', null),
-    first_symptom_date: Joi.date().allow('', null),
+    first_symptom_date: Joi.date().allow('', null).error(() => `"${label.first_symptom_date}" ${messages.invalid_date_format}`),
     other_notes: Joi.string().allow('', null),
     current_location_type: Joi.string().required(),
     current_location_address: Joi.string().allow('', null),
