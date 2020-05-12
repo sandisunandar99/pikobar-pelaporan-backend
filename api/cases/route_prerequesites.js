@@ -79,7 +79,7 @@ const getCasebyId = server => {
         method: (request, reply) => {
              let id = request.params.id
              server.methods.services.cases.getById(id, (err, item) => {
-                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                  return reply(item)
              })
         },

@@ -169,7 +169,8 @@ module.exports = (server) =>{
                 description: 'show a specific cases details',
                 tags: ['api', 'cases'],
                 pre: [
-                    CheckRoleUpdate
+                    CheckRoleUpdate,
+                    getCasebyId
                 ]
             },
             handler: handlers.UpdateCase

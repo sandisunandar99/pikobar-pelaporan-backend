@@ -159,10 +159,11 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async UpdateCase(request, reply){
+            let pre = request.pre.cases
             let payload = request.payload
             let id = request.params.id
             let author = request.auth.credentials.user
-            server.methods.services.cases.update(id, author, payload, (err, result) => {
+            server.methods.services.cases.update(id, pre, author, payload, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(result, request)

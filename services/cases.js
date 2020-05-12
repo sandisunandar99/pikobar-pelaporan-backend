@@ -403,7 +403,7 @@ function createCase (raw_payload, author, pre, callback) {
    }).catch(err => callback(err, null))
 }
 
-function updateCase (id, author, payload, callback) {
+function updateCase (id, pre, author, payload, callback) {
 
   /* can't update id_case & verified props from here */
   delete payload.id_case
@@ -413,7 +413,10 @@ function updateCase (id, author, payload, callback) {
   payload.author_district_code = author.code_district_city
   payload.author_district_name = author.name_district_city
 
-  Case.findOneAndUpdate({ _id: id}, { $set: payload }, { new: true })
+  const options = { new: true }
+  if (pre.verified_status !== 'verified') options.timestamps = false
+
+  Case.findOneAndUpdate({ _id: id}, { $set: payload }, options)
   .then(result => {
     return callback(null, result);
   }).catch(err => {

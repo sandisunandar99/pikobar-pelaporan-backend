@@ -67,8 +67,8 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     }, { new: true })
 
     // insert verification logs
-    payload.verifier = author
-    payload.case = case_
+    payload.verifier = author._id
+    payload.case = case_._id
 
     let item = new CaseVerification(payload)
 
