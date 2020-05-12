@@ -22,8 +22,54 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
       })
     })
     
+
+    let sum_odp_proses = 0
+    let sum_odp_selesai = 0
+    let sum_odp_total = 0
+    let sum_pdp_proses = 0
+    let sum_pdp_selesai = 0
+    let sum_pdp_total = 0
+    let sum_otg_proses = 0
+    let sum_otg_selesai = 0
+    let sum_otg_total = 0
+    let sum_positif_aktif_proses = 0
+    let sum_positif_aktif_selesai = 0
+    let sum_positif_aktif_total = 0
+    let sum_positif_sembuh_proses = 0
+    let sum_positif_sembuh_selesai = 0
+    let sum_positif_sembuh_total = 0
+    let sum_positif_meninggal_proses = 0
+    let sum_positif_meninggal_selesai = 0
+    let sum_positif_meninggal_total = 0
+    let sum_positif_proses = 0
+    let sum_positif_selesai = 0
+    let sum_grand_total = 0
+
     let combine_data = []
     result.forEach((val, key) =>{
+
+        sum_odp_proses += val.odp_proses
+        sum_odp_selesai += val.odp_selesai
+        sum_odp_total += val.odp_total
+        sum_pdp_proses += val.pdp_proses
+        sum_pdp_selesai += val.pdp_selesai
+        sum_pdp_total += val.pdp_total
+        sum_otg_proses += val.otg_proses
+        sum_otg_selesai += val.otg_selesai
+        sum_otg_total += val.otg_total
+        sum_positif_aktif_proses += val.positif_aktif_proses
+        sum_positif_aktif_selesai += val.positif_aktif_selesai
+        sum_positif_aktif_total += val.positif_aktif_total
+        sum_positif_sembuh_proses += val.positif_sembuh_proses
+        sum_positif_sembuh_selesai += val.positif_sembuh_selesai
+        sum_positif_sembuh_total += val.positif_sembuh_total
+        sum_positif_meninggal_proses += val.positif_meninggal_proses
+        sum_positif_meninggal_selesai += val.positif_meninggal_selesai
+        sum_positif_meninggal_total += val.positif_meninggal_total
+        sum_positif_proses += val.positif_proses
+        sum_positif_selesai += val.positif_selesai
+        sum_grand_total += val.grand_total
+        
         getKabkotaCodeAndName.forEach((val1,key1) =>{
             if (val.kab_kota === val1.kab_kota) {
               combine_data.push({
@@ -50,15 +96,39 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                 positif_proses: val.positif_proses,
                 positif_selesai: val.positif_selesai,
                 grand_total: val.grand_total,
-
-
               })
             }
         })
     })
+    
+    let output ={
+      summary : combine_data,
+      total: {
+        sum_odp_proses: sum_odp_proses,
+        sum_odp_selesai: sum_odp_selesai,
+        sum_odp_total: sum_odp_total,
+        sum_pdp_proses: sum_pdp_proses,
+        sum_pdp_selesai: sum_pdp_selesai,
+        sum_pdp_total: sum_pdp_total,
+        sum_otg_proses: sum_otg_proses,
+        sum_otg_selesai: sum_otg_selesai,
+        sum_otg_total: sum_otg_total,
+        sum_positif_aktif_proses: sum_positif_aktif_proses,
+        sum_positif_aktif_selesai: sum_positif_aktif_selesai,
+        sum_positif_aktif_total: sum_positif_aktif_total,
+        sum_positif_sembuh_proses: sum_positif_sembuh_proses,
+        sum_positif_sembuh_selesai: sum_positif_sembuh_selesai,
+        sum_positif_sembuh_total: sum_positif_sembuh_total,
+        sum_positif_meninggal_proses: sum_positif_meninggal_proses,
+        sum_positif_meninggal_selesai: sum_positif_meninggal_selesai,
+        sum_positif_meninggal_total: sum_positif_meninggal_total,
+        sum_positif_proses: sum_positif_proses,
+        sum_positif_selesai: sum_positif_selesai,
+        sum_grand_total: sum_grand_total,
+      }
+    }
   
-  
-    return callback(null, combine_data)
+    return callback(null, output)
   } catch (error) {
     callback(error, null)
   }
