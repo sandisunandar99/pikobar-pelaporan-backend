@@ -4,7 +4,7 @@ module.exports = (server) =>{
     return [
         {
             method: 'POST',
-            path: '/logistic-request',
+            path: '/logistics/requests',
             config: {
                 auth: 'jwt',
                 description: 'register logistic request',
