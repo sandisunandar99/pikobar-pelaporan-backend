@@ -14,7 +14,7 @@ module.exports = (server) => {
 
     return {
         /**
-         * POST /api/logistic-request
+         * POST /api/logistics/requests
          * @param {*} request
          * @param {*} reply
          */
@@ -49,10 +49,89 @@ module.exports = (server) => {
                 if (err) 
                     return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                if (res.statusCode >=300)
-                    return reply(body).code(422)
+                let res_body = JSON.parse(body)
 
-                return reply(body).code(200)
+                if (res.statusCode >=300)
+                    return reply(res_body).code(422)
+
+                return reply(res_body).code(200)
+            })
+        },
+
+        /**
+         * GET /api/logistics/products
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListLogisticProducts(request, reply){
+            let base_url = process.env.URL_API_LOGISTIC
+            let query = request.query
+            
+            request_url = base_url + '/api/v1/landing-page-registration/products'
+            let options = {
+                url: request_url,
+                qs: query,
+            }
+            request_module.get(options, function (err, res, body) {
+                if (err) 
+                    return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                let res_body = JSON.parse(body)
+
+                if (res.statusCode >=300)
+                    return reply(res_body).code(422)
+
+                return reply(res_body).code(200)
+            })
+        },
+
+        /**
+         * GET /api/logistics/product-units/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListLogisticProductUnits(request, reply){
+            let base_url = process.env.URL_API_LOGISTIC
+            let id = request.params.id
+
+            request_url = base_url + '/api/v1/landing-page-registration/product-unit/' + id
+            request_module.get(request_url, function (err, res, body) {
+                if (err) 
+                    return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                let res_body = JSON.parse(body)
+
+                if (res.statusCode >=300)
+                    return reply(res_body).code(422)
+
+                return reply(res_body).code(200)
+            })
+        },
+
+        /**
+         * GET /api/logistics/faskes-types
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListFaskesType(request, reply){
+            let base_url = process.env.URL_API_LOGISTIC
+            let query = request.query
+            
+            request_url = base_url + '/api/v1/master-faskes-type'
+            let options = {
+                url: request_url,
+                qs: query,
+            }
+            request_module.get(options, function (err, res, body) {
+                if (err) 
+                    return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                let res_body = JSON.parse(body)
+
+                if (res.statusCode >=300)
+                    return reply(res_body).code(422)
+
+                return reply(res_body).code(200)
             })
         },
 
