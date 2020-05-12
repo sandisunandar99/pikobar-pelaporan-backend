@@ -45,6 +45,7 @@ const register = (server, options, next) => {
   server.register(require('./country'));
   server.register(require('./dashboard'));
   server.register(require('./logistics'));
+  server.register(require('./map'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
