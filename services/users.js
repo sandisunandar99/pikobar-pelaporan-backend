@@ -1,7 +1,9 @@
 require('../models/User');
+require('../models/Hospital');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const User = mongoose.model('User');
+const Hospital = mongoose.model('Hospital');
 const Check = require('../helpers/rolecheck');
 const Helper = require('../helpers/custom');
 
@@ -102,6 +104,17 @@ const checkUser = async (query, callback) => {
     check = {};
   }
   callback(null, check);
+}
+
+const getFaskesOfUser = async (user, callback) => {
+  if (user.role != 'faskes' || !user.hasOwnProperty('faskes_id')) {
+      let err = { message: "This user has no faskes data ascociated with it" }
+      callback(err, null)
+  } else {
+      const res = await Hospital.find(user.faskes_id)
+
+      callback(null, res)
+  }
 }
 
 const createUser = async (payload, callback) => {
@@ -238,6 +251,10 @@ module.exports = [
   {
     name: 'services.users.updateUsersFcmToken',
     method: updateUsersFcmToken
+  },
+  {
+    name: 'services.users.getFaskesOfUser',
+    method: getFaskesOfUser
   }
 ];
  

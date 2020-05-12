@@ -81,6 +81,19 @@ module.exports = (server) => {
       },
       handler: handlers.getCurrentUser
     },
+    // Get faskes of current user
+    {
+      method: 'GET',
+      path: '/users/faskes',
+      config: {
+        auth: 'jwt',
+        validate: inputValidations.GetCurrentPayload,
+        response: outputValidations.AuthOutputValidationConfig,
+        description: 'Get faskes data of current user',
+        tags: ['api', 'users'],
+      },
+      handler: handlers.getFaskesOfCurrentUser
+    },
     // Update user
     {
       method: 'PUT',

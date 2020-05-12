@@ -78,6 +78,18 @@ module.exports = (server) => {
       return reply(constructUserResponse(request.auth.credentials.user))
     },
     /**
+     * GET /api/users/faskes
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getFaskesOfCurrentUser (request, reply) {
+      server.methods.services.users.getFaskesOfUser(
+        request.auth.credentials.user, (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      });
+    },
+    /**
      * DELETE /api/users/{id}
      * @param {*} request
      * @param {*} reply
