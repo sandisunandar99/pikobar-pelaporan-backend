@@ -374,6 +374,20 @@ async function importCases (raw_payload, author, pre, callback) {
   let promise = Promise.resolve()
 
   const refHospitals = await Hospital.find()
+
+  /**
+   * # The method used temporarily
+   * Prevent duplicate id_case generated at another import process in the same time  
+   * Explanation:
+   * - When counting cases, the resulting numbers will be the same if other users import simultaneously,
+   *   this causes duplication in the case id.
+   * current todo options:
+   * 1. Make the import process in series can be entered into the queue first
+   * 2. Check the current db model in process *(the current method is compared in 1 millisecond)
+   * 
+   * to remember, this is only a temporary method to prevent :)
+   */
+  promise = delayIfAnotherImportProcessIsRunning(promise)
   
   for (i in dataSheet) {
     
@@ -383,13 +397,13 @@ async function importCases (raw_payload, author, pre, callback) {
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const districtCases = await Case.find({ address_district_code: code}).sort({id_case: -1})
+      const districtCases = await Case.findOne({ address_district_code: code }).sort({id_case: -1})
 
       let count = 1
       let casePayload = {}
 
-      if (districtCases.length > 0) {
-        count = (Number(districtCases[0].id_case.substring(12)) + 1)
+      if (districtCases) {
+        count = (Number(districtCases.id_case.substring(12)) + 1)
       }
 
       let district = {
@@ -461,7 +475,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
       // savedCases.push(savedCase)
   
-      return new Promise(resolve => resolve(savedCase))
+      return new Promise(resolve => resolve())
 
     }).catch((e) => { throw new Error(e) })
   }
@@ -487,6 +501,26 @@ function softDeleteCase(cases,deletedBy, payload, callback) {
 
 } 
 
+/**
+* compare data in 1 millisecond
+* if different means the case is in the process of insertion by another process
+* to remember, this is only a temporary method to prevent :)
+*/
+async function delayIfAnotherImportProcessIsRunning () {
+  const totalOne = await Case.find().countDocuments()
+  promise = delay(100)
+
+  return promise.then(async () => {
+    const totalTwo = await Case.find().countDocuments()
+    if (totalOne !== totalTwo) return delay(10000)
+
+    return new Promise(resolve => resolve())
+  })
+}
+
+function delay(t) {
+  return new Promise(resolve => setTimeout(resolve.bind(), t))
+}
 
 module.exports = [
   {

@@ -2,11 +2,11 @@ const caseSheetExtraction = async (request) => {
     const dir = './upload/'
     const conf = require('./casesheetconfig.json')
     const caseSheet = require('./casesheet')
-    const readXlsxFile = require('read-excel-file/node')
+    const xlsx = require('node-xlsx')
     
     const uploaded = await handleFileUpload(request.payload.file)
   
-    let dataSheet = await readXlsxFile(dir + uploaded.filename)
+    let dataSheet = (await xlsx.parse(dir + uploaded.filename))[0]['data']
 
     const version = `VERSION ${conf.version}`
     const verfiedTemplate = conf.verified_template
