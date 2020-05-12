@@ -44,7 +44,7 @@ module.exports = (server) => {
             server.methods.services.cases.create(
                 payload,
                 request.auth.credentials.user,
-                request.pre.count_case,
+                request.pre,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
@@ -250,6 +250,79 @@ module.exports = (server) => {
         async GetCaseDetailByNik(request, reply) {
             let nik = request.params.nik
             server.methods.services.cases.getByNik(nik, (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
+
+        /**
+         * GET /api/cases-healthcheck
+         * @param {*} request
+         * @param {*} reply
+         */
+        async HealthCheck(request, reply) {
+            server.methods.services.cases.healthcheck(
+                request.query,
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * GET /api/cases/{id}/verifications
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseVerifications(request, reply){
+            server.methods.services.casesVerifications.get(
+                request.params.id,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * PUT /api/cases/{id}/verifications
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateCaseVerification(request, reply){
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+
+            server.methods.services.casesVerifications.create(
+                id,
+                author,
+                request.pre.count_case,
+                payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * GET /api/cases/summary-verification
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummaryVerification(request, reply) {
+            server.methods.services.cases.getSummaryVerification(
+                request.query,
+                request.auth.credentials.user,
+                (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(item, request)

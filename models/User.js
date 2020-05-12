@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema({
   address_province_name: { type: String, default:"Jawa Barat"},
   hash: String,
   salt: String,
+  fcm_token: String,
   delete_status: { type: String, default:null},
   deletedAt: { type: Date, default:null},
   deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null},

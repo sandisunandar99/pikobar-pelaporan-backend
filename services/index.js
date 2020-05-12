@@ -3,6 +3,7 @@ const register = (server, options, next) => {
       require('./users'),
       require('./areas'),
       require('./cases'),
+      require('./cases_verifications'),
       require('./histories'),
       require('./occupations'),
       require('./rdt'),
@@ -10,6 +11,7 @@ const register = (server, options, next) => {
       require('./rdt_histories'),
       require('./country'),
       require('./dashboard'),
+      require('./notifications')
     );
     server.method(services)
     return next()

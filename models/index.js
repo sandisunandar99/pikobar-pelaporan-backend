@@ -13,10 +13,12 @@ const register = (server, options, next) => {
     require('./SubDistrict')
     require('./Village')
     require('./Case')
+    require('./CaseVerification')
     require('./History')
     require('./Occupation')
     require('./RdtHistory')
-    require('./LocationTest')
+    require('./LocationTest'),
+    require('./Notification')
 
     server.app.db = {
       link: db.db,
