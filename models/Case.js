@@ -42,7 +42,7 @@ const CaseSchema = new mongoose.Schema({
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    verified_status: String,
+    verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
     is_test_masif: {type: Boolean, default: false}
 
@@ -78,7 +78,9 @@ CaseSchema.methods.toJSONFor = function () {
         deletedAt: this.deletedAt,
         author: this.author.JSONCase(),
         last_history: this.last_history,
-        is_test_masif: this.is_test_masif
+        is_test_masif: this.is_test_masif,
+        createdAt : this.createdAt,
+        updatedAt : this.updatedAt
     }
 }
 
@@ -137,7 +139,7 @@ function convertDate(dates){
 }
 
 CaseSchema.methods.JSONExcellOutput = function () {
-    let finals,stages,birthDate,createDate
+    let finals,stages,birthDate,createDate,diagnosis,diagnosis_other
     
     if(this.final_result == '0'){
         finals = 'NEGATIF'
@@ -152,6 +154,8 @@ CaseSchema.methods.JSONExcellOutput = function () {
     stages = (this.stage == 0 ? "Prosess" : "Selesai")    
     birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
     createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
+    diagnosis = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis.toString())
+    diagnosis_other = (this.last_history.diseases > 1 ? "" : this.last_history.diseases.toString())
     
     return {
        "Kode Kasus": this.id_case,
@@ -163,18 +167,24 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Tanggal Lahir": birthDate,
        "Usia": this.age,
        "Jenis Kelamin": this.gender,
-       "Alamat Tempat Tinggal": `${this.address_street}, Kelurahan ${this.address_village_name}, Kecamatan ${this.address_subdistrict_name}, ${this.address_district_name}, Jawa Barat`,
+       "Provinsi": "Jawa Barat",
+       "Kota": this.address_district_name,
+       "Kecamatan": this.address_subdistrict_name,
+       "Kelurahan": this.address_village_name,
+       "Alamat detail": `${this.address_street}`,
        "No Telp": this.phone_number,
        "Kewarganegaraan": this.nationality,
        "Negara":(this.nationality == "WNI" ? "Indonesia" : this.nationality_name),
        "Pekerjaan": this.occupation,
-       "Gejala": (this.last_history !== null ? this.last_history.diagnosis.toString() : null),
+       "Gejala": diagnosis,
+       "Kondisi Penyerta": diagnosis_other,
        "Riwayat": check.historyCheck(this.last_history),
        "Status": this.status,
        "Tahapan":stages,
        "Hasil":finals,
        "Lokasi saat ini": (this.last_history !== null ? this.last_history.current_location_address : null),
        "Tanggal Input": createDate,
+       "Catatan Tambahan": (this.last_history !== null ? this.last_history.other_notes : ''),
        "Author": this.author.fullname
     }
 }

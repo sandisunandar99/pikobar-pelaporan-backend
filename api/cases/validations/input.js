@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
+const { label, messages } = require('../../../helpers/casesheet/casesheetconfig.json')
 
 // --------------------------------------------------
 //    Schema - Input Validations
@@ -20,6 +21,11 @@ const CaseUpdatePayload = Joi.object().keys({
     periode_end: Joi.date().optional(),
     respondent_target: Joi.number().optional(),
     status: Joi.string().optional()
+})
+
+const CaseVerifyPayload = Joi.object().keys({
+    verified_status: Joi.string().valid('pending','verified','declined').required(),
+    verified_comment: Joi.string().allow('', null).optional()
 })
 
 const CaseParamsValidations = {
@@ -46,7 +52,9 @@ const CaseQueryValidations = {
         status: Joi.string().empty('', null).default('').description('search data by status'),
         final_result: Joi.string().empty('', null).default('').description('search data by final_result'),
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
-        end_date: Joi.string().empty('', null).default('').description('search data by test date')
+        end_date: Joi.string().empty('', null).default('').description('search data by test date'),
+        author: Joi.string().empty('', null).default('').description('filter by author'),
+        verified_status: Joi.string().empty('', null).default('').description('filter by verified status')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -65,7 +73,7 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     id_case_related: Joi.string().allow('', null),
     name_case_related: Joi.string().allow('', null),
     name: Joi.string().required(),
-    birth_date: Joi.date().allow('', null),
+    birth_date: Joi.date().allow('', null).error(() => `"${label.birth_date}" ${messages.invalid_date_format}`),
     age: Joi.number().required(),
     gender: Joi.string().required(),
     address_street: Joi.string().allow('', null),
@@ -87,14 +95,14 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     diagnosis_other: Joi.string().allow('', null),
     is_went_abroad: Joi.boolean(),
     visited_country: Joi.string().allow('', null),
-    return_date: Joi.date().allow('', null),
+    return_date: Joi.date().allow('', null).error(() => `"${label.return_date}" ${messages.invalid_date_format}`),
     is_went_other_city: Joi.boolean(),
     visited_city: Joi.string().allow('', null),
     is_contact_with_positive: Joi.boolean(),
     history_notes: Joi.string().allow('', null),
     is_sample_taken: Joi.boolean(),
     report_source: Joi.string().allow('', null),
-    first_symptom_date: Joi.date().allow('', null),
+    first_symptom_date: Joi.date().allow('', null).error(() => `"${label.first_symptom_date}" ${messages.invalid_date_format}`),
     other_notes: Joi.string().allow('', null),
     current_location_type: Joi.string().required(),
     current_location_address: Joi.string().allow('', null),
@@ -133,6 +141,13 @@ const CaseImportPayloadValidations = {
     failAction: validateOptions.failAction
 }
 
+const CaseVerifyPayloadValidations = Object.assign({
+    payload: CaseVerifyPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, CaseParamsValidations)
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
@@ -140,5 +155,6 @@ module.exports = {
     CaseUpdatePayloadValidations,
     CaseDeletePayloadValidations,
     CaseImportPayloadValidations,
-    caseSchemaValidation
+    caseSchemaValidation,
+    CaseVerifyPayloadValidations
 }
