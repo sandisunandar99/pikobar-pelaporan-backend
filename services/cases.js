@@ -397,8 +397,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
       const code = item.address_district_code
       const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const verifStatus = author.role === 'faskes' ? ['pending', 'declined'] : ['verified']
-      const districtCases = await Case.findOne({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
+      const districtCases = await Case.findOne({ address_district_code: code }).sort({id_case: -1})
 
       let count = 1
       let casePayload = {}
