@@ -2,9 +2,9 @@
   "name": "hapi-api",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "Api backend crowdsource apps",
+  "description": "Api backend pikobar apps",
   "bugs": {
-    "url": "https://gitlab.com/jdsteam/crowdsource/survey-backend/issues"
+    "url": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend/issues"
   },
   "main": "server.js",
   "scripts": {
@@ -13,16 +13,18 @@
     "start:server": "nodemon server.js"
   },
   "author": "Sandi Sunandar",
-  "homepage": "https://gitlab.com/jdsteam/crowdsource/survey-backend#readme",
+  "homepage": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend#readme",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/jdsteam/crowdsource/survey-backend.git"
+    "url": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend.git"
   },
   "keywords": [
     "hapi",
     "boilerplate",
-    "crowdsource"
+    "covid 19",
+    "Pikobar",
+    "jawa barat"
   ],
   "dependencies": {
     "ajv": "^6.12.0",
@@ -33,6 +35,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "fast-csv": "^4.1.3",
+    "firebase-admin": "^8.12.0",
     "glob": "^7.1.6",
     "glue": "^4.1.0",
     "good": "^7.2.0",
@@ -50,8 +53,9 @@
     "mongoose": "^5.8.10",
     "mongoose-paginate-v2": "^1.3.6",
     "mongoose-unique-validator": "^2.0.3",
+    "node-schedule": "^1.3.2",
     "node-xlsx": "^0.15.0",
-    "read-excel-file": "^4.0.6",
+    "pusher": "^3.0.1",
     "slug": "^2.1.1",
     "url-crypt": "^1.2.1"
   },

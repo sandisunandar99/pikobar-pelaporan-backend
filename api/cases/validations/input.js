@@ -23,6 +23,11 @@ const CaseUpdatePayload = Joi.object().keys({
     status: Joi.string().optional()
 })
 
+const CaseVerifyPayload = Joi.object().keys({
+    verified_status: Joi.string().valid('pending','verified','declined').required(),
+    verified_comment: Joi.string().allow('', null).optional()
+})
+
 const CaseParamsValidations = {
     params: {
         id: Joi.string().required()
@@ -47,7 +52,9 @@ const CaseQueryValidations = {
         status: Joi.string().empty('', null).default('').description('search data by status'),
         final_result: Joi.string().empty('', null).default('').description('search data by final_result'),
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
-        end_date: Joi.string().empty('', null).default('').description('search data by test date')
+        end_date: Joi.string().empty('', null).default('').description('search data by test date'),
+        author: Joi.string().empty('', null).default('').description('filter by author'),
+        verified_status: Joi.string().empty('', null).default('').description('filter by verified status')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -134,6 +141,13 @@ const CaseImportPayloadValidations = {
     failAction: validateOptions.failAction
 }
 
+const CaseVerifyPayloadValidations = Object.assign({
+    payload: CaseVerifyPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, CaseParamsValidations)
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
@@ -141,5 +155,6 @@ module.exports = {
     CaseUpdatePayloadValidations,
     CaseDeletePayloadValidations,
     CaseImportPayloadValidations,
-    caseSchemaValidation
+    caseSchemaValidation,
+    CaseVerifyPayloadValidations
 }

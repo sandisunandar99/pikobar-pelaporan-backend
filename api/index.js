@@ -24,6 +24,17 @@ const register = (server, options, next) => {
     return reply.continue()
   }
 
+  const format = (seconds) => {
+    const pad = (s) => {
+      return (s < 10 ? '0' : '') + s;
+    }
+    var hours = Math.floor(seconds / (60*60));
+    var minutes = Math.floor(seconds % (60*60) / 60);
+    var seconds = Math.floor(seconds % 60);
+  
+    return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+  }
+
   server.register(require('./users'))
   server.register(require('./areas'))
   server.register(require('./cases'))
@@ -33,6 +44,8 @@ const register = (server, options, next) => {
   server.register(require('./category'))
   server.register(require('./country'));
   server.register(require('./dashboard'));
+  server.register(require('./logistics'));
+  server.register(require('./map'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
@@ -46,7 +59,7 @@ const register = (server, options, next) => {
       tags: ['api', 'status']
     },
     handler: (request, reply) => {
-      return reply({status: `UP in ${Math.floor(process.uptime())}`})
+      return reply({status: `UP in ${format(require('os').uptime())}`})
     }
   })
 

@@ -1,7 +1,9 @@
 require('../models/User');
+require('../models/Hospital');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const User = mongoose.model('User');
+const Hospital = mongoose.model('Hospital');
 const Check = require('../helpers/rolecheck');
 const Helper = require('../helpers/custom');
 
@@ -25,8 +27,24 @@ const listUser = async (user, query, callback) => {
   };
 
   let result_search;
-  let params = {};
-  params = Check.userByRole(params,user);
+  let params = Check.userByRole({}, user);
+
+  if(query.role){
+    params.role = query.role;
+  }
+
+  if(user.role == "dinkesprov" || user.role == "superadmin"){
+    if(query.code_district_city){
+      params.code_district_city = query.code_district_city;
+    }
+  }
+  if(query.address_village_code){
+    params.address_village_code = query.address_village_code;
+  }
+  if(query.address_subdistrict_code){
+    params.address_subdistrict_code = query.address_subdistrict_code;
+  }
+
   if(query.search){
     var search_params = [
       { username : new RegExp(query.search,"i") },
@@ -86,6 +104,17 @@ const checkUser = async (query, callback) => {
     check = {};
   }
   callback(null, check);
+}
+
+const getFaskesOfUser = async (user, callback) => {
+  if (user.role != 'faskes' || !user.hasOwnProperty('faskes_id')) {
+      let err = { message: "This user has no faskes data ascociated with it" }
+      callback(err, null)
+  } else {
+      const res = await Hospital.find(user.faskes_id)
+
+      callback(null, res)
+  }
 }
 
 const createUser = async (payload, callback) => {
@@ -152,6 +181,40 @@ const updateUsers = async (id, pay, category, author, callback) =>{
   }
 }
 
+const listUserIds = async (user, query, callback) => {
+  const params = {}
+  
+  if(query.search){
+    params.fullname = new RegExp(query.search, "i")
+  }
+
+  if(query.code_district_city){
+    params.code_district_city = query.code_district_city
+  }
+
+  if(query.role){
+    params.role = query.role
+  }
+
+  try {
+    const users = await User.find(params).select('fullname')
+    return callback(null, users.map(users => users.JSONCase()))
+  } catch (err) {
+    callback(err, null)
+  }
+}
+
+const updateUsersFcmToken = async (id, payload, author, callback) =>{
+  try {
+    const params = { fcm_token: payload.fcm_token }
+    const result = await User.findByIdAndUpdate(id,
+    { $set: params }, { new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
 module.exports = [
   {
     name: 'services.users.checkUser',
@@ -180,6 +243,18 @@ module.exports = [
   {
     name: 'services.users.updateUsers',
     method: updateUsers
+  },
+  {
+    name: 'services.users.listUserIds',
+    method: listUserIds
+  },
+  {
+    name: 'services.users.updateUsersFcmToken',
+    method: updateUsersFcmToken
+  },
+  {
+    name: 'services.users.getFaskesOfUser',
+    method: getFaskesOfUser
   }
 ];
  

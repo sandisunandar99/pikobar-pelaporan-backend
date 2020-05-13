@@ -7,6 +7,8 @@ const HistorySchema = new mongoose.Schema({
     final_result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
     diagnosis : Array,
     diagnosis_other : String,
+    diseases : Array, // Kondisi/Penyakit penyerta
+    diseases_other : String,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
     is_went_abroad : Boolean,
