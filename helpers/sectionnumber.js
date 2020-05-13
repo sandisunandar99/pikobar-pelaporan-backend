@@ -28,6 +28,7 @@ const conditionConfirmResult = async (user, query) => {
                 $and: [
                     searching,
                     {"delete_status": {"$ne": "deleted"}},
+                    {"verified_status": "verified"},
                     {"status": "POSITIF"},
                     createdAt
                 ]
@@ -100,6 +101,7 @@ const sqlCondition = async (user, query, status) => {
       $match: {
         $and: [ searching,
                 { "delete_status": { "$ne": "deleted" } },
+                {"verified_status": "verified"},
                 { "status": status },
                 createdAt
               ]
@@ -148,8 +150,12 @@ const conditionAge = async (user, query) => {
   const searching = Object.assign(search, filter);
   const ageCondtion = [
     {$match: { 
-      $and: [searching, {"delete_status": {"$ne": "deleted"}}, {"status":"POSITIF", 
-      "final_result" : { "$in": [null,"",0] }}]
+      $and: [
+        searching, 
+        {"delete_status": {"$ne": "deleted"}}, 
+        {"verified_status": "verified"},
+        {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}
+      ]
     }},
     {$bucket:
     {
@@ -173,11 +179,16 @@ const conditionGender = async (user, query) => {
   const searching = Object.assign(search, filter);
   const genderCondition = [
     { $match: { 
-      $and: [ searching, {"delete_status": {"$ne": "deleted"}}, 
-      {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}]
+      $and: [ 
+        searching, 
+        {"delete_status": {"$ne": "deleted"}},
+        {"verified_status": "verified"},
+        {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}
+      ]
     }},
     { $group: { _id: "$gender", "total": { $sum: 1 }}}
   ];
+
   return genderCondition
 }
 
@@ -204,6 +215,7 @@ const summaryAgregatePerDinkes = (user, query) => {
         $match: {
             $and: [
                 {"delete_status": {"$ne": "deleted"}},
+                {"verified_status": "verified"},
                 createdAt
             ]
         }
