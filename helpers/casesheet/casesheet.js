@@ -122,7 +122,9 @@ const getStatus = () => {
 const getStage = () => {
     if (!dt[conf.cell.stage]) return undefined
     let stage = _toString(dt[conf.cell.stage])
-    return stage === 'Selesai' ? '1' : '0'
+    if (stage === 'Proses') return '0'
+    else if (stage === 'Selesai') return '1'
+    else return ''
 }
 
 const getFinalResult = () => {
