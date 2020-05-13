@@ -46,13 +46,16 @@ const conditionConfirmResult = async (user, query) => {
         {
             $group: { 
                 _id: {createdAt: "$createdAt"},
-                positif : {$sum: 
-                           { $cond: [ 
-                             { $or : [ 
-                                { $eq: ["$final_result", ""] },
-                                { $eq: ["$final_result", 0] },
-                                { $eq: ["$final_result", null] }
-                            ] },1,0 ] }},
+                // positif : {$sum: 
+                //            { $cond: [ 
+                //              { $or : [ 
+                //                 { $eq: ["$final_result", ""] },
+                //                 { $eq: ["$final_result", 0] },
+                //                 { $eq: ["$final_result", null] }
+                //             ] },1,0 ] }},
+                positif_1: {$sum: { $cond: { if: { $eq: ["$final_result", null] }, then: 1, else:0  }}},
+                positif_2: {$sum: { $cond: { if: { $eq: ["$final_result", ""] }, then: 1, else:0  }}},
+                positif_3: {$sum: { $cond: { if: { $eq: ["$final_result", 0] }, then: 1, else:0  }}},
                 sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
                 meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}},
             }
@@ -65,7 +68,7 @@ const conditionConfirmResult = async (user, query) => {
         {
             $project: {
                 _id: 0,
-                positif: 1,
+                positif: {$sum: ["$positif_1","$positif_2","$positif_3",]},
                 sembuh: 1,
                 meninggal: 1,
                 total: {$sum: ["$positif","$sembuh", "$meninggal"]},
