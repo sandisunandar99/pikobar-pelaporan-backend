@@ -11,7 +11,8 @@ const register = (server, options, next) => {
       require('./rdt_histories'),
       require('./country'),
       require('./dashboard'),
-      require('./notifications')
+      require('./notifications'),
+      require('./map')
     );
     server.method(services)
     return next()
