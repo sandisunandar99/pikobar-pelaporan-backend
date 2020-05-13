@@ -10,7 +10,7 @@ const listMap = async (query, user, callback) => {
         const search = Check.countByRole(user);
         const filter = await Filter.filterCase(user, query);
         const searching = Object.assign(search, filter);
-        const result = Case.find(searching).where(conditions).ne("deleted")
+        const result = await Case.find(searching).where("delete_status").ne("deleted");
         callback(null, result);
     } catch (error) {
         callback(error, null);
@@ -19,7 +19,7 @@ const listMap = async (query, user, callback) => {
 
 module.exports = [
     {
-        name: 'services.map.list',
+        name: 'services.map.listMap',
         method: listMap
     }
 ];

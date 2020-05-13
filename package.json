@@ -2,9 +2,9 @@
   "name": "hapi-api",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "Api backend crowdsource apps",
+  "description": "Api backend pikobar apps",
   "bugs": {
-    "url": "https://gitlab.com/jdsteam/crowdsource/survey-backend/issues"
+    "url": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend/issues"
   },
   "main": "server.js",
   "scripts": {
@@ -13,16 +13,18 @@
     "start:server": "nodemon server.js"
   },
   "author": "Sandi Sunandar",
-  "homepage": "https://gitlab.com/jdsteam/crowdsource/survey-backend#readme",
+  "homepage": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend#readme",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/jdsteam/crowdsource/survey-backend.git"
+    "url": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend.git"
   },
   "keywords": [
     "hapi",
     "boilerplate",
-    "crowdsource"
+    "covid 19",
+    "Pikobar",
+    "jawa barat"
   ],
   "dependencies": {
     "ajv": "^6.12.0",
