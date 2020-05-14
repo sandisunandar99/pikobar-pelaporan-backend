@@ -48,7 +48,7 @@ const conditionConfirmResult = async (user, query) => {
                 _id: {createdAt: "$createdAt"},
                 positif_1: {$sum: { $cond: { if: { $eq: ["$final_result", null] }, then: 1, else:0  }}},
                 positif_2: {$sum: { $cond: { if: { $eq: ["$final_result", ""] }, then: 1, else:0  }}},
-                positif_3: {$sum: { $cond: { if: { $eq: ["$final_result", 0] }, then: 1, else:0  }}},
+                positif_3: {$sum: { $cond: { if: { $eq: ["$final_result", "0"] }, then: 1, else:0  }}},
                 sembuh : {$sum: {$cond: { if: { $eq: ["$final_result",'1'] }, then: 1, else: 0 }}},
                 meninggal : {$sum: {$cond: { if: { $eq: ["$final_result",'2'] }, then: 1, else: 0 }}},
             }
@@ -150,7 +150,7 @@ const conditionAge = async (user, query) => {
         searching, 
         {"delete_status": {"$ne": "deleted"}}, 
         {"verified_status": "verified"},
-        {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}
+        {"status":"POSITIF", "final_result" : { "$in": [null,"","0"] }}
       ]
     }},
     {$bucket:
@@ -179,7 +179,7 @@ const conditionGender = async (user, query) => {
         searching, 
         {"delete_status": {"$ne": "deleted"}},
         {"verified_status": "verified"},
-        {"status":"POSITIF", "final_result" : { "$in": [null,"",0] }}
+        {"status":"POSITIF", "final_result" : { "$in": [null,"","0"] }}
       ]
     }},
     { $group: { _id: "$gender", "total": { $sum: 1 }}}
@@ -213,6 +213,7 @@ const summaryAgregatePerDinkes = (user, query) => {
                 {"delete_status": {"$ne": "deleted"}},
                 {"verified_status": "verified"},
                 createdAt
+                // { "createdAt": {"$gte": ISODate("2020-05-11"), "$lt": ISODate("2020-05-12")}},
             ]
         }
     },
@@ -270,38 +271,80 @@ const summaryAgregatePerDinkes = (user, query) => {
                             { $and : [ 
                                 { $eq: [ "$status", "OTG"] },
                             ] },1,0 ] }},
-            positif_aktif_proses: {$sum: 
-                          { $cond: [ 
-                             { $and : [ 
-                                { $eq: [ "$status", "POSITIF"] },
-                                {$or:[
-                                        { $eq: ["$final_result",null]},
-                                        { $eq: ["$final_result", ""] },
-                                        { $eq: ["$final_result", 0]}
-                                    ]},
-                                { $eq: [ "$stage","0"] }
-                            ] },1,0 ] }},
-            positif_aktif_selesai: {$sum: 
-                          { $cond: [ 
-                             { $and : [ 
-                                { $eq: [ "$status", "POSITIF"] },
-                                {$or:[
-                                        { $eq: ["$final_result",null]},
-                                        { $eq: ["$final_result", ""] },
-                                        { $eq: ["$final_result", 0]}
-                                    ]},
-                                { $eq: [ "$stage","1"] }
-                            ] },1,0 ] }},
-            positif_aktif_total: {$sum: 
-                          { $cond: [ 
-                             { $and : [ 
-                                { $eq: [ "$status", "POSITIF"] },
-                                {$or:[
-                                        { $eq: ["$final_result",null]},
-                                        { $eq: ["$final_result", ""] },
-                                        { $eq: ["$final_result", 0]}
-                                    ]},
-                            ] },1,0 ] }},
+            // positif_aktif_proses: {$sum: 
+            //               { $cond: [ 
+            //                  { $and : [ 
+            //                     { $eq: [ "$status", "POSITIF"] },
+            //                     {$or:[
+            //                             { $eq: ["$final_result",null]},
+            //                             { $eq: ["$final_result", ""] },
+            //                             { $eq: ["$final_result", 0]}
+            //                         ]},
+            //                     { $eq: [ "$stage","0"] }
+            //                 ] },1,0 ] }},
+            positif_aktif_proses_1: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result", null]},
+                                        {$eq: ["$stage","0"]}
+                                    ]}, 1,0]}},
+            positif_aktif_proses_2: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result", ""]},
+                                        {$eq: ["$stage","0"]}
+                                    ]}, 1,0]}},
+            positif_aktif_proses_3: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result", "0"]},
+                                        {$eq: ["$stage","0"]}
+                                    ]}, 1,0]}},
+            // positif_aktif_selesai: {$sum: 
+            //               { $cond: [ 
+            //                  { $and : [ 
+            //                     { $eq: [ "$status", "POSITIF"] },
+            //                     {$or:[
+            //                             { $eq: ["$final_result",null]},
+            //                             { $eq: ["$final_result", ""] },
+            //                             { $eq: ["$final_result", 0]}
+            //                         ]},
+            //                     { $eq: [ "$stage","1"] }
+            //                 ] },1,0 ] }},
+            positif_aktif_selesai_1: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result",null]},
+                                        {$eq: ["$stage","1"]},
+                                    ]}, 1,0]}},
+            positif_aktif_selesai_2: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result",""]},
+                                        {$eq: ["$stage","1"]},
+                                    ]}, 1,0]}},
+            positif_aktif_selesai_3: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result","0"]},
+                                        {$eq: ["$stage","1"]},
+                                    ]}, 1,0]}},
+            // positif_aktif_total: {$sum: 
+            //               { $cond: [ 
+            //                  { $and : [ 
+            //                     { $eq: [ "$status", "POSITIF"] },
+            //                     {$or:[
+            //                             { $eq: ["$final_result",null]},
+            //                             { $eq: ["$final_result", ""] },
+            //                             { $eq: ["$final_result", "0"]}
+            //                         ]},
+            //                 ] },1,0 ] }},
+            positif_aktif_total_1: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result","0"]},
+                                    ]}, 1,0]}},
+            positif_aktif_total_2: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result",""]},
+                                    ]}, 1,0]}},
+            positif_aktif_total_3: {$sum: {$cond: [{$and: [
+                                        {$eq: [ "$status", "POSITIF"] },
+                                        {$eq: ["$final_result", null]},
+                                    ]}, 1,0]}},
             positif_sembuh_proses: {$sum: 
                         { $cond: [ 
                             { $and : [ 
@@ -357,24 +400,24 @@ const summaryAgregatePerDinkes = (user, query) => {
             otg_proses: 1,
             otg_selesai: 1,
             otg_total: 1,
-            positif_aktif_proses: 1,
-            positif_aktif_selesai: 1,
-            positif_aktif_total: 1,
             positif_sembuh_proses: 1,
             positif_sembuh_selesai: 1,
             positif_sembuh_total: 1,
             positif_meninggal_proses: 1,
             positif_meninggal_selesai: 1,
             positif_meninggal_total: 1,
-            positif_proses: {$sum:["$positif_aktif_proses","$positif_sembuh_proses","$positif_meninggal_proses"]},
-            positif_selesai: {$sum:["$positif_aktif_selesai","$positif_sembuh_selesai","$positif_meninggal_selesai"]},
+            positif_aktif_proses: {$sum: ["$positif_aktif_proses_1", "$positif_aktif_proses_2", "$positif_aktif_proses_3"]},
+            positif_aktif_selesai: {$sum: ["$positif_aktif_selesai_1","$positif_aktif_selesai_2","$positif_aktif_selesai_3"]},
+            positif_aktif_total: {$sum: ["$positif_aktif_total_1", "$positif_aktif_total_2", "$positif_aktif_total_3"]},
+            positif_proses: {$sum:["$positif_aktif_proses_1", "$positif_aktif_proses_2", "$positif_aktif_proses_3","$positif_sembuh_proses","$positif_meninggal_proses"]},
+            positif_selesai: {$sum:["$positif_aktif_selesai_1","$positif_aktif_selesai_2","$positif_aktif_selesai_3","$positif_sembuh_selesai","$positif_meninggal_selesai"]},
             grand_total: {$sum: ["$odp_total" , "$pdp_total" , "$otg_total" , "$positif_aktif_total" , "$positif_sembuh_total" , "$positif_meninggal_total"]}
         }
     },
     {
         $sort: {"kab_kota": 1}
     },
-  ]
+]
 
 
   return queryAgt
