@@ -372,7 +372,10 @@ function createCase (raw_payload, author, pre, callback) {
   }
 
   let insert_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
+
+  if (!insert_id_case.hasOwnProperty('id_case') || [null, ""].includes(insert_id_case['id_case']) ) {
       insert_id_case = Object.assign(raw_payload, {id_case})
+  }
   
   insert_id_case.author_district_code = author.code_district_city
   insert_id_case.author_district_name = author.name_district_city
