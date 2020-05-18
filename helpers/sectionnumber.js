@@ -148,7 +148,8 @@ const conditionAge = async (user, query) => {
   const ageCondtion = [
     {$match: { 
       $and: [
-        searching, 
+        searching,
+        {"gender":gender},
         {"delete_status": {"$ne": "deleted"}}, 
         {"verified_status": "verified"},
         {"status":"POSITIF", "final_result" : { "$in": [null,"","0"] }}
@@ -159,12 +160,15 @@ const conditionAge = async (user, query) => {
         "range": {
            $concat: [
               { $cond: [{$lte: ["$age",0]}, "Unknown", ""]}, 
-              { $cond: [{$and:[ {$gt:["$age", 0 ]}, {$lt: ["$age", 18]}]}, "Under 18", ""] },
-              { $cond: [{$and:[ {$gte:["$age",18]}, {$lt:["$age", 25]}]}, "18 - 24", ""]},
-              { $cond: [{$and:[ {$gte:["$age",25]}, {$lt:["$age", 31]}]}, "25 - 30", ""]},
-              { $cond: [{$and:[ {$gte:["$age",31]}, {$lt:["$age", 41]}]}, "31 - 40", ""]},
-              { $cond: [{$and:[ {$gte:["$age",41]}, {$lt:["$age", 51]}]}, "41 - 50", ""]},
-              { $cond: [{$gte:["$age",51]}, "Over 50", ""]}
+              { $cond: [{$and:[ {$gt:["$age", 0 ]}, {$lt: ["$age", 5]}]}, "bawah_5", ""] },
+              { $cond: [{$and:[ {$gte:["$age",6]}, {$lt:["$age", 20]}]}, "6_19", ""]},
+              { $cond: [{$and:[ {$gte:["$age",20]}, {$lt:["$age", 30]}]}, "20_29", ""]},
+              { $cond: [{$and:[ {$gte:["$age",30]}, {$lt:["$age", 40]}]}, "30_39", ""]},
+              { $cond: [{$and:[ {$gte:["$age",40]}, {$lt:["$age", 50]}]}, "40_49", ""]},
+              { $cond: [{$and:[ {$gte:["$age",50]}, {$lt:["$age", 60]}]}, "50_59", ""]},
+              { $cond: [{$and:[ {$gte:["$age",60]}, {$lt:["$age", 70]}]}, "60_69", ""]},
+              { $cond: [{$and:[ {$gte:["$age",70]}, {$lt:["$age", 50]}]}, "70_79", ""]},
+              { $cond: [{$gte:["$age",80]}, "atas_80", ""]}
            ]
         }  
       }    
