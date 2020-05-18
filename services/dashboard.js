@@ -137,12 +137,14 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
 
 const countByGenderAge = async (query, user, callback) => {
   try {
-    const conditionAge = await Sql.conditionAge(user, query);
+    const conditionAgeMale = await Sql.conditionAge(user, query, "L");
+    const conditionAgeFemale = await Sql.conditionAge(user, query, "P");
     const conditionGender = await Sql.conditionGender(user, query);
-    const ageGroup = await Case.aggregate(conditionAge);
+    const ageGroupMale = await Case.aggregate(conditionAgeMale);
+    const ageGroupFemale = await Case.aggregate(conditionAgeFemale);
     const genderGroup = await Case.aggregate(conditionGender);
-    const results = await Helpers.filterJson(ageGroup, genderGroup);
-    callback(null,genderGroup);
+    const results = await Helpers.filterJson(ageGroupMale, ageGroupFemale, genderGroup);
+    callback(null,results);
   } catch (error) {
     callback(error, null);
   }

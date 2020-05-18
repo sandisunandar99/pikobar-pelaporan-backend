@@ -1,4 +1,4 @@
-const filterJson = async (ageGroup, genderGroup) => {
+const filterJson = async (ageGroupMale, ageGroupFemale, genderGroup) => {
 
     const countGroupGender = genderGroup.reduce((obj, item) => (
         obj[item._id] = item.total, obj) 
@@ -11,26 +11,10 @@ const filterJson = async (ageGroup, genderGroup) => {
         },
         chart_by_age: {
             "laki_laki":{
-                "bawah_5":1,
-                "6_19":1,
-                "20_29":1,
-                "30_39":1,
-                "40_49":1,
-                "50_59":1,
-                "60_69":1,
-                "70_79":1,
-                "atas_80":1,
+                ageGroupMale
             },
             "perempuan":{
-                "bawah_5":1,
-                "6_19":1,
-                "20_29":1,
-                "30_39":1,
-                "40_49":1,
-                "50_59":1,
-                "60_69":1,
-                "70_79":1,
-                "atas_80":1,
+                ageGroupFemale
             }
         }
     }
