@@ -38,7 +38,7 @@ const CaseSchema = new mongoose.Schema({
     author_district_name : { type: String},
     stage: String,
     status: String,
-    final_result: String,
+    final_result: {type: String, default: null},
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
