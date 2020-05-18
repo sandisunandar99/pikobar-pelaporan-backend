@@ -142,8 +142,7 @@ const countByGenderAge = async (query, user, callback) => {
     const ageGroup = await Case.aggregate(conditionAge);
     const genderGroup = await Case.aggregate(conditionGender);
     const results = await Helpers.filterJson(ageGroup, genderGroup);
-    
-    callback(null,results);
+    callback(null,genderGroup);
   } catch (error) {
     callback(error, null);
   }

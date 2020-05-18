@@ -144,6 +144,7 @@ const conditionAge = async (user, query) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
+  
   const ageCondtion = [
     {$match: { 
       $and: [
@@ -153,18 +154,30 @@ const conditionAge = async (user, query) => {
         {"status":"POSITIF", "final_result" : { "$in": [null,"","0"] }}
       ]
     }},
-    {$bucket:
     {
-      groupBy: "$age", 
-      boundaries: [0,10,20,30,40,50,60,70,80,90,100], 
-      default: "other", 
-      output : {
-        "total": {$sum: 1},
-        "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "L" ] }, then: 1, else: 0 }}},
-        "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "P" ] }, then: 1, else: 0 }}} }
+      $project: {    
+        "range": {
+           $concat: [
+              { $cond: [{$lte: ["$age",0]}, "Unknown", ""]}, 
+              { $cond: [{$and:[ {$gt:["$age", 0 ]}, {$lt: ["$age", 18]}]}, "Under 18", ""] },
+              { $cond: [{$and:[ {$gte:["$age",18]}, {$lt:["$age", 25]}]}, "18 - 24", ""]},
+              { $cond: [{$and:[ {$gte:["$age",25]}, {$lt:["$age", 31]}]}, "25 - 30", ""]},
+              { $cond: [{$and:[ {$gte:["$age",31]}, {$lt:["$age", 41]}]}, "31 - 40", ""]},
+              { $cond: [{$and:[ {$gte:["$age",41]}, {$lt:["$age", 51]}]}, "41 - 50", ""]},
+              { $cond: [{$gte:["$age",51]}, "Over 50", ""]}
+           ]
+        }  
+      }    
+    },
+    {
+      $group: { 
+        "_id" : "$range", 
+        count: { 
+          $sum: 1
+        } 
       }
-    }
-  ];
+    }     
+    ];
 
   return ageCondtion
 }
