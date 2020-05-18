@@ -81,6 +81,19 @@ module.exports = (server) => {
       },
       handler: handlers.getCurrentUser
     },
+    // Get faskes of current user
+    {
+      method: 'GET',
+      path: '/users/faskes',
+      config: {
+        auth: 'jwt',
+        validate: inputValidations.GetCurrentPayload,
+        response: outputValidations.AuthOutputValidationConfig,
+        description: 'Get faskes data of current user',
+        tags: ['api', 'users'],
+      },
+      handler: handlers.getFaskesOfCurrentUser
+    },
     // Update user
     {
       method: 'PUT',
@@ -152,6 +165,59 @@ module.exports = (server) => {
         tags: ['api', 'users'],
       },
       handler: handlers.loginUser
-    }
+    },
+    // Get case name and id
+    {
+      method: 'GET',
+      path: '/users-listid',
+      config: {
+        auth: 'jwt',
+        description: 'Get user fullname and id',
+        tags: ['api', 'users']
+      },
+      handler: handlers.getListUserIds
+    },
+    // Update fcm token 
+    {
+      method: 'PUT',
+      path: '/users/{id}/fcm-token',
+      config: {
+        auth: 'jwt',
+        description: 'update user fcm token',
+        tags: ['api', 'users'],
+        pre: [
+          CheckRoleUpdate
+        ]
+      },
+      handler: handlers.updateUsersFcmToken
+    },
+    // Get user notifications
+    {
+      method: 'GET',
+      path: '/users/{id}/notifications',
+      config: {
+        auth: 'jwt',
+        description: 'Get user notifications by user id',
+        tags: ['api', 'users'],
+          pre: [
+            CheckRoleView
+          ]
+      },
+      handler: handlers.getUserNotifications
+    },
+    // Get user notifications detail
+    {
+      method: 'GET',
+      path: '/users/{id}/notifications/{notifId}',
+      config: {
+        auth: 'jwt',
+        description: 'Get user notifications detail',
+        tags: ['api', 'users'],
+          pre: [
+            CheckRoleView
+          ]
+      },
+      handler: handlers.getUserNotification
+    },
   ]
 }

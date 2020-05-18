@@ -78,6 +78,18 @@ module.exports = (server) => {
       return reply(constructUserResponse(request.auth.credentials.user))
     },
     /**
+     * GET /api/users/faskes
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getFaskesOfCurrentUser (request, reply) {
+      server.methods.services.users.getFaskesOfUser(
+        request.auth.credentials.user, (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      });
+    },
+    /**
      * DELETE /api/users/{id}
      * @param {*} request
      * @param {*} reply
@@ -161,6 +173,57 @@ module.exports = (server) => {
         }
 
         return reply(constructUserResponse(user))
+      });
+    },
+    /**
+     * GET /api/users-listid
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getListUserIds (request, reply) {
+      server.methods.services.users.listUserIds(
+        request.auth.credentials.user,
+        request.query, (err, listUserIds) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        return reply(constructUsersResponse(listUserIds))
+      })
+    },
+    /**
+     * PUT /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async updateUsersFcmToken (request, reply) {
+      server.methods.services.users.updateUsersFcmToken(
+        request.params.id, request.payload,
+        request.auth.credentials.user._id,
+        (err, listUser) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(listUser));
+      })
+    },
+    /**
+     * GET /api/users/{id}/notifications
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getUserNotifications (request, reply) {
+      server.methods.services.notifications.get(
+        request.params.id, (err, res) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(res));
+      });
+    },
+    /**
+     * GET /api/users/{id}/notifications/{notifId}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getUserNotification (request, reply) {
+      server.methods.services.notifications.show(
+        request.params.id, request.params.notifId, (err, res) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(res));
       });
     }
   }

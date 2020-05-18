@@ -764,13 +764,14 @@ function sendMessagesSMS(rdt) {
   // console.log(rdt.test_location);
   // console.log(rdt.test_date);
   // console.log(rdt.test_method);
-  
+  let name = rdt.name
+  let split_name = name.split(" ")
   let params = {
     username: process.env.SMS_USERNAME,
     key: process.env.SMS_KEY,
     number: '6281223953113',
     // number: '6285223407000',
-    message: "Test \n kirim \n sms \n input RDT",
+    message: "Halo Sdr/i " + split_name[0] + ", hasil test anda sudah keluar. \nSilahkan cek hasilnya pada link berikut http://bit.ly/ikutRDT",
   }
 
 
@@ -843,6 +844,8 @@ function sendMessagesWA(rdt) {
   // console.log(rdt.test_date);
   // console.log(rdt.test_method);
 
+  let name = rdt.name
+  let split_name = name.split(" ")
   let hp = rdt.phone_number
   let substr = hp.substring(0,1)
   let substr_blk = hp.substring(1)
@@ -857,7 +860,7 @@ function sendMessagesWA(rdt) {
   let body = JSON.stringify({   
       // phone:6285223407000,
       phone: 6281223953113,
-      body:"test \nkirim Wa \ninput RTD"
+      body: "Halo Sdr/i " + split_name[0] + ", hasil test anda sudah keluar. \nSilahkan cek hasilnya pada link berikut http://bit.ly/ikutRDT"
   })
 
   var options = {
