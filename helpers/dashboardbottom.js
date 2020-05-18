@@ -9,14 +9,8 @@ const filterJson = async (ageGroupMale, ageGroupFemale, genderGroup) => {
             "L": (countGroupGender.L ? countGroupGender.L : 0),
             "P": (countGroupGender.P ? countGroupGender.P : 0),
         },
-        chart_by_age: {
-            "laki_laki":{
-                ageGroupMale
-            },
-            "perempuan":{
-                ageGroupFemale
-            }
-        }
+        ageGroupMale,
+        ageGroupFemale,
     }
 
     return respon
