@@ -7,10 +7,10 @@ const validationBeforeInput = server => {
                 return reply(request.auth.credentials.user.code_district_city)
             } else {
                 return reply({
-                    status: 403,
+                    status: 422,
                     message: 'Anda tidak dapat melakukan input kasus di luar wilayah anda.!',
                     data: null
-                }).code(403).takeover()
+                }).code(422).takeover()
             } 
         },
         assign: 'validation_before_input'
