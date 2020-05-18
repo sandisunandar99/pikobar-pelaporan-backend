@@ -140,7 +140,7 @@ const sqlCondition = async (user, query, status) => {
   return condition
 }
 
-const conditionAge = async (user, query) => {
+const conditionAge = async (user, query, gender) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
