@@ -170,6 +170,8 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleUpdate,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict,
                     getCasebyId
                 ]
             },
