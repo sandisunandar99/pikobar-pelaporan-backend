@@ -4,8 +4,6 @@ const Helpers = require('../helpers/dashboardbottom');
 const Case = Mongoose.model('Case');
 const DistrictCity = Mongoose.model('Districtcity')
 const Sql = require('../helpers/sectionnumber');
-const Check = require('../helpers/rolecheck');
-const Filter = require('../helpers/casefilter');
 
 const summaryAggregateByDinkes = async (query, user, callback) =>{
   try {
