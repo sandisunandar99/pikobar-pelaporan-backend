@@ -3,6 +3,7 @@ const Mongoose = require('mongoose');
 const Helpers = require('../helpers/dashboardbottom');
 const Case = Mongoose.model('Case');
 const DistrictCity = Mongoose.model('Districtcity')
+const SubDistrict = Mongoose.model('SubDistrict')
 const Sql = require('../helpers/sectionnumber');
 const Check = require('../helpers/rolecheck');
 const Filter = require('../helpers/casefilter');
@@ -11,17 +12,28 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
   try {
     let querySummary = await Sql.summaryAgregatePerDinkes(user, query)
     let result = await Case.aggregate(querySummary)
-    
-    let kab_kota = await DistrictCity.find({'kemendagri_provinsi_kode':'32'}) 
 
     let getKabkotaCodeAndName = []
-    kab_kota.forEach((val, key)=>{
-      getKabkotaCodeAndName.push({
-        kab_kota: val.kemendagri_kabupaten_kode,
-        kab_kota_name: val.kemendagri_kabupaten_nama
-      })
-    })
-    
+   
+    if (user.role ==="dinkeskota") {
+       let kab_kota = await SubDistrict.find({'kemendagri_kabupaten_kode': user.code_district_city})
+         kab_kota.forEach((val, key) => {
+           getKabkotaCodeAndName.push({
+             kab_kota: val.kemendagri_kecamatan_kode,
+             kab_kota_name: val.kemendagri_kecamatan_nama
+           })
+         })
+    } else if (user.role === "dinkesprov" || user.role === "superadmin") {
+       let kab_kota = await DistrictCity.find({'kemendagri_provinsi_kode':'32'})
+        kab_kota.forEach((val, key) => {
+          getKabkotaCodeAndName.push({
+            kab_kota: val.kemendagri_kabupaten_kode,
+            kab_kota_name: val.kemendagri_kabupaten_nama
+          })
+        })
+    }
+
+
 
     let sum_odp_proses = 0
     let sum_odp_selesai = 0
