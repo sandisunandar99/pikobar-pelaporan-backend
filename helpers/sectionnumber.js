@@ -228,7 +228,7 @@ const conditionGender = async (user, query) => {
   return genderCondition
 }
 
-const summaryAgregatePerDinkes = (user, query) => {
+const summaryAgregatePerDinkes = async (user, query) => {  
 
    let createdAt = {}
    if (query.min_date && query.max_date) {
@@ -245,21 +245,30 @@ const summaryAgregatePerDinkes = (user, query) => {
      }
    }
 
+   let groupBy ={}
+   let author ={}
+   if (user.role ==="dinkeskota") {
+     groupBy = {kabkota: '$address_subdistrict_code'}
+     author = { author_district_code: user.code_district_city}
+    } else if (user.role === "dinkesprov" || user.role === "superadmin") {
+      groupBy = {kabkota: '$author_district_code'}
+   }
+
 
   let queryAgt = [
     {
         $match: {
             $and: [
+                author,
                 {"delete_status": {"$ne": "deleted"}},
                 {"verified_status": "verified"},
-                createdAt
-                // { "createdAt": {"$gte": ISODate("2020-05-11"), "$lt": ISODate("2020-05-12")}},
+                createdAt,
             ]
         }
     },
     {
         $group: {
-            _id: {kabkota: '$author_district_code'},
+            _id: groupBy,
             odp_proses: {$sum: 
                         { $cond: [ 
                             { $and : [ 
