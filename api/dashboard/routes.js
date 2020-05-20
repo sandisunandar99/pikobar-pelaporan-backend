@@ -1,5 +1,6 @@
 module.exports = (server) => {
-    const handlers = require('./handlers')(server)
+    const handlers = require('./handlers')(server);
+    const inputValidations = require('./validations/input');
     return [
         {
             method: 'GET',
@@ -7,6 +8,7 @@ module.exports = (server) => {
             config: {
                 auth: 'jwt',
                 description: 'show dashboard statistik',
+                validate: inputValidations.dashboardValidation,
                 tags: ['api', 'dashboard statistik'],
             },
             handler: handlers.countGenderAge,
