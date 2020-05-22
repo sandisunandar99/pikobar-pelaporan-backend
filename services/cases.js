@@ -684,12 +684,8 @@ async function healthCheck(payload, callback) {
 }
 
 function epidemiologicalInvestigationForm (detailCase, callback) {
-  const docDefinition = {
-    content: [
-      'Epidemiological investigation Form is Under Construction',
-    ]
-  }
-  return callback (null, docDefinition)
+  const pdfmaker = require('../helpers/pdfmaker')
+  return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 
 /**

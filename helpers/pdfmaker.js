@@ -28,6 +28,25 @@ const generate = (docDefinition, filePath) => {
   })
 }
 
+const epidemiologicalInvestigationsForm = (data) => {
+  const layout = require('../helpers/pdftemplate/layouts/epidemiological-investigation')
+  const components = {
+    patientIdentity: require('../helpers/pdftemplate/components/epidemiological-investigation/patient-identity')
+  }
+  const docDefinition = {
+      content: [
+        layout.header,
+        layout.subheader,
+        components.patientIdentity.render(data)
+      ],
+      styles: layout.styles,
+      defaultStyle: layout.defaultStyle
+    }
+
+    return docDefinition
+}
+
 module.exports = {
-  generate
+  generate,
+  epidemiologicalInvestigationsForm
 }
