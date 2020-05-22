@@ -149,17 +149,17 @@ const conditionAge = async (user, query, gender) => {
     const splits = query.status.split('-');
     if(splits[0] == "POSITIF"){
       queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else if(query.status == "all"){
+      queryStrings = {};
     }else{
       queryStrings = {"status": splits[0], "stage": splits[1]}
     }
-  }else if(query.status == "all"){
-    queryStrings = {};
   }else{
     queryStrings = {"status": "POSITIF", 
       "final_result" : { "$in": [null,"","0"] }
     };
   }
-  
+
   const ageCondtion = [
     {$match: { 
       $and: [
@@ -210,11 +210,11 @@ const conditionGender = async (user, query) => {
     const splits = query.status.split('-');
     if(splits[0] == "POSITIF"){
       queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else if(query.status == "all"){
+      queryStrings = {};
     }else{
       queryStrings = {"status": splits[0], "stage": splits[1]}
     }
-  }else if(query.status == "all"){
-    queryStrings = {};
   }else{
     queryStrings = {"status": "POSITIF", 
       "final_result" : { "$in": [null,"","0"] }
