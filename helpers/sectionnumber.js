@@ -144,6 +144,21 @@ const conditionAge = async (user, query, gender) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
+  let queryStrings;
+  if(query.status){
+    const splits = query.status.split('-');
+    if(splits[0] == "POSITIF"){
+      queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else{
+      queryStrings = {"status": splits[0], "stage": splits[1]}
+    }
+  }else if(query.status == "all"){
+    queryStrings = {};
+  }else{
+    queryStrings = {"status": "POSITIF", 
+      "final_result" : { "$in": [null,"","0"] }
+    };
+  }
   
   const ageCondtion = [
     {$match: { 
@@ -152,7 +167,7 @@ const conditionAge = async (user, query, gender) => {
         {"gender":gender},
         {"delete_status": {"$ne": "deleted"}}, 
         {"verified_status": "verified"},
-        {"status":"POSITIF", "final_result" : { "$in": [null,"","0"] }}
+        queryStrings,
       ]
     }},
     {
@@ -190,13 +205,28 @@ const conditionGender = async (user, query) => {
   const search = Check.countByRole(user);
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
+  let queryStrings;
+  if(query.status){
+    const splits = query.status.split('-');
+    if(splits[0] == "POSITIF"){
+      queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else{
+      queryStrings = {"status": splits[0], "stage": splits[1]}
+    }
+  }else if(query.status == "all"){
+    queryStrings = {};
+  }else{
+    queryStrings = {"status": "POSITIF", 
+      "final_result" : { "$in": [null,"","0"] }
+    };
+  }
   const genderCondition = [
     { $match: { 
       $and: [ 
         searching, 
         {"delete_status": {"$ne": "deleted"}},
         {"verified_status": "verified"},
-        {"status":"POSITIF", "final_result" : { "$in": [null,"","0"] }}
+        queryStrings
       ]
     }},
     { $group: { _id: "$gender", "total": { $sum: 1 }}}
