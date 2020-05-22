@@ -683,6 +683,15 @@ async function healthCheck(payload, callback) {
   }
 }
 
+function epidemiologicalInvestigationForm (detailCase, callback) {
+  const docDefinition = {
+    content: [
+      'Epidemiological investigation Form is Under Construction',
+    ]
+  }
+  return callback (null, docDefinition)
+}
+
 /**
 * compare data in 1 millisecond
 * if different means the case is in the process of insertion by another process
@@ -769,5 +778,9 @@ module.exports = [
     name: 'services.cases.healthcheck',
     method: healthCheck,
   },
+  {
+    name: 'services.cases.epidemiologicalInvestigationForm',
+    method: epidemiologicalInvestigationForm
+  }
 ];
 
