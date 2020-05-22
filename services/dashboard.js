@@ -541,6 +541,130 @@ const countByConfirm = async (query, user, callback) => {
   }
 }
 
+const lapHarianExport = async (query, user, callback) => {
+  try {
+    let querySummary = await Sql.summaryAgregatePerDinkes(user, query)
+    let result = await Case.aggregate(querySummary)
+
+    let getKabkotaCodeAndName = []
+   
+    if (user.role ==="dinkeskota") {
+      //  let kab_kota = await SubDistrict.find({'kemendagri_kabupaten_kode': user.code_district_city})
+        let name_group ="Kecamatan"
+        let kab_kota = await SubDistrict.find()
+         kab_kota.forEach((val, key) => {
+           getKabkotaCodeAndName.push({
+             kab_kota: val.kemendagri_kecamatan_kode,
+             kab_kota_name: val.kemendagri_kecamatan_nama
+           })
+         })
+    } else if (user.role === "dinkesprov" || user.role === "superadmin") {
+        let name_group = "Kabupaten/Kota"
+        let kab_kota = await DistrictCity.find({'kemendagri_provinsi_kode':'32'})
+        kab_kota.forEach((val, key) => {
+          getKabkotaCodeAndName.push({
+            kab_kota: val.kemendagri_kabupaten_kode,
+            kab_kota_name: val.kemendagri_kabupaten_nama
+          })
+        })
+    }
+
+
+    let combine_data = []
+    result.forEach((val, key) =>{
+
+        getKabkotaCodeAndName.forEach((val1,key1) =>{
+            if (val.kab_kota === val1.kab_kota) {
+              if (user.role === "dinkeskota") {
+                  combine_data.push({
+                    Kecamatan: val1.kab_kota_name,
+                    odp_proses: val.odp_proses,
+                    odp_selesai: val.odp_selesai,
+                    odp_total: val.odp_total,
+                    pdp_proses: val.pdp_proses,
+                    pdp_selesai: val.pdp_selesai,
+                    pdp_total: val.pdp_total,
+                    otg_proses: val.otg_proses,
+                    otg_selesai: val.otg_selesai,
+                    otg_total: val.otg_total,
+                    positif_aktif_proses: val.positif_aktif_proses,
+                    positif_aktif_selesai: val.positif_aktif_selesai,
+                    positif_aktif_total: val.positif_aktif_total,
+                    positif_sembuh_proses: val.positif_sembuh_proses,
+                    positif_sembuh_selesai: val.positif_sembuh_selesai,
+                    positif_sembuh_total: val.positif_sembuh_total,
+                    positif_meninggal_proses: val.positif_meninggal_proses,
+                    positif_meninggal_selesai: val.positif_meninggal_selesai,
+                    positif_meninggal_total: val.positif_meninggal_total,
+                    positif_proses: val.positif_proses,
+                    positif_selesai: val.positif_selesai,
+                    grand_total: val.grand_total,
+                  })
+              } else if (user.role === "dinkesprov" || user.role === "superadmin") {
+                  combine_data.push({
+                    Kabupaten_kota: val1.kab_kota_name,
+                    odp_proses: val.odp_proses,
+                    odp_selesai: val.odp_selesai,
+                    odp_total: val.odp_total,
+                    pdp_proses: val.pdp_proses,
+                    pdp_selesai: val.pdp_selesai,
+                    pdp_total: val.pdp_total,
+                    otg_proses: val.otg_proses,
+                    otg_selesai: val.otg_selesai,
+                    otg_total: val.otg_total,
+                    positif_aktif_proses: val.positif_aktif_proses,
+                    positif_aktif_selesai: val.positif_aktif_selesai,
+                    positif_aktif_total: val.positif_aktif_total,
+                    positif_sembuh_proses: val.positif_sembuh_proses,
+                    positif_sembuh_selesai: val.positif_sembuh_selesai,
+                    positif_sembuh_total: val.positif_sembuh_total,
+                    positif_meninggal_proses: val.positif_meninggal_proses,
+                    positif_meninggal_selesai: val.positif_meninggal_selesai,
+                    positif_meninggal_total: val.positif_meninggal_total,
+                    positif_proses: val.positif_proses,
+                    positif_selesai: val.positif_selesai,
+                    grand_total: val.grand_total,
+                  })
+              }
+
+            }
+        })
+    })
+    
+    // let output ={
+    //   summary : combine_data,
+    //   total: {
+    //     sum_odp_proses: sum_odp_proses,
+    //     sum_odp_selesai: sum_odp_selesai,
+    //     sum_odp_total: sum_odp_total,
+    //     sum_pdp_proses: sum_pdp_proses,
+    //     sum_pdp_selesai: sum_pdp_selesai,
+    //     sum_pdp_total: sum_pdp_total,
+    //     sum_otg_proses: sum_otg_proses,
+    //     sum_otg_selesai: sum_otg_selesai,
+    //     sum_otg_total: sum_otg_total,
+    //     sum_positif_aktif_proses: sum_positif_aktif_proses,
+    //     sum_positif_aktif_selesai: sum_positif_aktif_selesai,
+    //     sum_positif_aktif_total: sum_positif_aktif_total,
+    //     sum_positif_sembuh_proses: sum_positif_sembuh_proses,
+    //     sum_positif_sembuh_selesai: sum_positif_sembuh_selesai,
+    //     sum_positif_sembuh_total: sum_positif_sembuh_total,
+    //     sum_positif_meninggal_proses: sum_positif_meninggal_proses,
+    //     sum_positif_meninggal_selesai: sum_positif_meninggal_selesai,
+    //     sum_positif_meninggal_total: sum_positif_meninggal_total,
+    //     sum_positif_proses: sum_positif_proses,
+    //     sum_positif_selesai: sum_positif_selesai,
+    //     sum_grand_total: sum_grand_total,
+    //   }
+    // }
+  
+    return callback(null, combine_data)
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
+
 
 module.exports = [
   {
@@ -567,4 +691,8 @@ module.exports = [
     name: "services.dashboard.summaryAggregateByDinkes",
     method: summaryAggregateByDinkes
   },
+  {
+    name: "services.dashboard.lapHarianExport",
+    method: lapHarianExport
+  }
 ]
