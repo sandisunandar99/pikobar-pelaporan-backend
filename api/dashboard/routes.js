@@ -63,5 +63,15 @@ module.exports = (server) => {
             },
             handler: handlers.tabelAggregateCriteria,
         },
+        {
+            method: 'GET',
+            path: '/dashboard/tabel-aggregate-criteria-export',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard statistik',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.tableLapHarianExport,
+        },
 ]
 }
