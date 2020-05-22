@@ -146,6 +146,13 @@ const conditionAge = async (user, query, gender) => {
   const searching = Object.assign(search, filter);
   let queryStrings;
   if(query.status){
+    const splits = query.status.split('-');
+    if(splits[0] == "POSITIF"){
+      queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else{
+      queryStrings = {"status": splits[0], "stage": splits[1]}
+    }
+  }else if(query.status == "all"){
     queryStrings = {};
   }else{
     queryStrings = {"status": "POSITIF", 
