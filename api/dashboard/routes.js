@@ -8,7 +8,6 @@ module.exports = (server) => {
             config: {
                 auth: 'jwt',
                 description: 'show dashboard statistik',
-                validate: inputValidations.dashboardValidation,
                 tags: ['api', 'dashboard statistik'],
             },
             handler: handlers.countGenderAge,
