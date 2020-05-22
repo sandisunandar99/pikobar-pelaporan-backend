@@ -16,7 +16,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let getKabkotaCodeAndName = []
    
     if (user.role ==="dinkeskota") {
-       let kab_kota = await SubDistrict.find({'kemendagri_kabupaten_kode': user.code_district_city})
+      //  let kab_kota = await SubDistrict.find({'kemendagri_kabupaten_kode': user.code_district_city})
+       let kab_kota = await SubDistrict.find()
          kab_kota.forEach((val, key) => {
            getKabkotaCodeAndName.push({
              kab_kota: val.kemendagri_kecamatan_kode,
