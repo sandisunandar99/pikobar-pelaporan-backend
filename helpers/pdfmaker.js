@@ -31,13 +31,15 @@ const generate = (docDefinition, filePath) => {
 const epidemiologicalInvestigationsForm = (data) => {
   const layout = require('../helpers/pdftemplate/layouts/epidemiological-investigation')
   const components = {
-    patientIdentity: require('../helpers/pdftemplate/components/epidemiological-investigation/patient-identity')
+    patientIdentity: require('../helpers/pdftemplate/components/epidemiological-investigation/patient-identity'),
+    clinicalInformation: require('../helpers/pdftemplate/components/epidemiological-investigation/clinical-information')
   }
   const docDefinition = {
       content: [
         layout.header,
         layout.subheader,
-        components.patientIdentity.render(data)
+        components.patientIdentity.render(data),
+        components.clinicalInformation.render(data)
       ],
       styles: layout.styles,
       defaultStyle: layout.defaultStyle

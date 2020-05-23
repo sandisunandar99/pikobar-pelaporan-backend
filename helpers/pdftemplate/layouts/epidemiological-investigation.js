@@ -37,7 +37,10 @@ const layout = {
           margin: [0, 10, 0, 0],
         },
         tableExample: {
-          margin: [0, 5, 0, 15]
+          margin: [0, 5, 0, 0]
+        },
+        tableClinical: {
+          margin: [0, 0, 0, 15]
         },
         tableOpacityExample: {
           margin: [0, 5, 0, 15],
