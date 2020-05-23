@@ -1,5 +1,6 @@
 const components = {
-  symptoms: require('./symptoms')
+  symptoms: require('./symptoms'),
+  diseases: require('./diseases')
 }
 
 const render = (data) => {
@@ -20,7 +21,16 @@ const render = (data) => {
             borderColor: ['black', 'white', 'black', 'black'],  
           },{},{},{}
         ],
-        components.symptoms.render(data)
+        components.symptoms.render(data),
+        [
+          {
+            text: 'Kondisi Penyerta',
+            style: 'tableSubHeader',
+            colSpan: 4,
+            alignment: 'left'
+          },{},{},{}
+        ],
+        components.diseases.render(data)
       ],
     }
   }

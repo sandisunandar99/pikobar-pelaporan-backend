@@ -25,7 +25,7 @@ const render = (data) => {
             { text: ``, border: [] },
           ],
           [
-            { text: `Demam ${data.last_history.diagnosis.join(',')}`, border: [] },
+            { text: `Demam`, border: [] },
             { text: `: ___ °C  [${isTrue('demam')}] Riwayat Demam `, border: [] },
             { text: `Lemah (malaise)`, border: [] },
             { text: `: [${isTrue('lemah (malaise)')}] Ya   [${isFalse('lemah (malaise')}] Tdk  [  ] Tdk tahu `, border: [] },
@@ -56,7 +56,7 @@ const render = (data) => {
           ],
           [
             { text: `Sakit Kepala`, border: [] },
-            { text: `: [${isTrue('sakit kepala')}] Ya   [${isTrue('sakit kepala')}] Tdk  [  ] Tdk tahu `, border: [] },
+            { text: `: [${isTrue('sakit kepala')}] Ya   [${isFalse('sakit kepala')}] Tdk  [  ] Tdk tahu `, border: [] },
             { text: `Lainnya (sebutkan)`, border: [] },
             { text: `: ${data.last_history.diagnosis_other}`, border: [] },
           ],

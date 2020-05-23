@@ -52,6 +52,11 @@ const layout = {
           fontSize: 12,
           color: 'black',
           fillColor: '#e6e6e6'
+        },
+        tableSubHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black'
         }
       },
       defaultStyle: {
