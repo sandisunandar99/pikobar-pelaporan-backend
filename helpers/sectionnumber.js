@@ -145,11 +145,11 @@ const conditionAge = async (user, query, gender) => {
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
   let queryStrings;
-  if(query.status){
-    const splits = query.status.split('-');
+  if(query.status_patient){
+    const splits = query.status_patient.split('-');
     if(splits[0] == "POSITIF"){
       queryStrings = {"status": splits[0], "final_result": splits[1]}
-    }else if(query.status == "all"){
+    }else if(query.status_patient == "all"){
       queryStrings = {};
     }else{
       queryStrings = {"status": splits[0], "stage": splits[1]}
@@ -159,7 +159,6 @@ const conditionAge = async (user, query, gender) => {
       "final_result" : { "$in": [null,"","0"] }
     };
   }
-
   const ageCondtion = [
     {$match: { 
       $and: [
@@ -206,11 +205,11 @@ const conditionGender = async (user, query) => {
   const filter = await Filter.filterCase(user, query);
   const searching = Object.assign(search, filter);
   let queryStrings;
-  if(query.status){
-    const splits = query.status.split('-');
+  if(query.status_patient){
+    const splits = query.status_patient.split('-');
     if(splits[0] == "POSITIF"){
       queryStrings = {"status": splits[0], "final_result": splits[1]}
-    }else if(query.status == "all"){
+    }else if(query.status_patient == "all"){
       queryStrings = {};
     }else{
       queryStrings = {"status": splits[0], "stage": splits[1]}
