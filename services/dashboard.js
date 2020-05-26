@@ -10,7 +10,6 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
   try {
     let querySummary = await Sql.summaryAgregatePerDinkes(user, query)
     let result = await Case.aggregate(querySummary)
-
     let getKabkotaCodeAndName = []
    
     if (user.role ==="dinkeskota") {
@@ -37,23 +36,37 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_odp_proses = 0
     let sum_odp_selesai = 0
     let sum_odp_total = 0
+    let sum_odp_lakilaki = 0
+    let sum_odp_perempuan = 0
     let sum_pdp_proses = 0
     let sum_pdp_selesai = 0
     let sum_pdp_total = 0
+    let sum_pdp_lakilaki = 0
+    let sum_pdp_perempuan = 0
     let sum_otg_proses = 0
     let sum_otg_selesai = 0
     let sum_otg_total = 0
+    let sum_otg_lakilaki = 0
+    let sum_otg_perempuan = 0
     let sum_positif_aktif_proses = 0
     let sum_positif_aktif_selesai = 0
     let sum_positif_aktif_total = 0
+    let sum_positif_aktif_lakilaki = 0
+    let sum_positif_aktif_perempuan = 0
     let sum_positif_sembuh_proses = 0
     let sum_positif_sembuh_selesai = 0
     let sum_positif_sembuh_total = 0
+    let sum_positif_sembuh_lakilaki = 0
+    let sum_positif_sembuh_perempuan = 0
     let sum_positif_meninggal_proses = 0
     let sum_positif_meninggal_selesai = 0
     let sum_positif_meninggal_total = 0
-    let sum_positif_proses = 0
-    let sum_positif_selesai = 0
+    let sum_positif_meninggal_lakilaki = 0
+    let sum_positif_meninggal_perempuan = 0
+    // let sum_positif_proses = 0
+    // let sum_positif_selesai = 0
+    let sum_wni_total = 0
+    let sum_wna_total = 0
     let sum_grand_total = 0
 
     let combine_data = []
@@ -62,23 +75,37 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_odp_proses += val.odp_proses
         sum_odp_selesai += val.odp_selesai
         sum_odp_total += val.odp_total
+        sum_odp_lakilaki += val.odp_lakilaki 
+        sum_odp_perempuan += val.odp_perempuan
         sum_pdp_proses += val.pdp_proses
         sum_pdp_selesai += val.pdp_selesai
         sum_pdp_total += val.pdp_total
+        sum_pdp_lakilaki += val.pdp_lakilaki
+        sum_pdp_perempuan += val.pdp_perempuan
         sum_otg_proses += val.otg_proses
         sum_otg_selesai += val.otg_selesai
         sum_otg_total += val.otg_total
+        sum_otg_lakilaki += val.otg_lakilaki
+        sum_otg_perempuan += val.otg_perempuan
         sum_positif_aktif_proses += val.positif_aktif_proses
         sum_positif_aktif_selesai += val.positif_aktif_selesai
         sum_positif_aktif_total += val.positif_aktif_total
+        sum_positif_aktif_lakilaki += val.positif_aktif_lakilaki
+        sum_positif_aktif_perempuan += val.positif_aktif_perempuan
         sum_positif_sembuh_proses += val.positif_sembuh_proses
         sum_positif_sembuh_selesai += val.positif_sembuh_selesai
         sum_positif_sembuh_total += val.positif_sembuh_total
+        sum_positif_sembuh_lakilaki += val.positif_sembuh_lakilaki
+        sum_positif_sembuh_perempuan += val.positif_sembuh_perempuan
         sum_positif_meninggal_proses += val.positif_meninggal_proses
         sum_positif_meninggal_selesai += val.positif_meninggal_selesai
         sum_positif_meninggal_total += val.positif_meninggal_total
-        sum_positif_proses += val.positif_proses
-        sum_positif_selesai += val.positif_selesai
+        sum_positif_meninggal_lakilaki += val.positif_meninggal_lakilaki
+        sum_positif_meninggal_perempuan += val.positif_meninggal_perempuan
+        // sum_positif_proses += val.positif_proses
+        // sum_positif_selesai += val.positif_selesai
+        sum_wni_total += val.wni_total
+        sum_wna_total += val.wna_total
         sum_grand_total += val.grand_total
         
         getKabkotaCodeAndName.forEach((val1,key1) =>{
@@ -89,23 +116,49 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                 odp_proses: val.odp_proses,
                 odp_selesai: val.odp_selesai,
                 odp_total: val.odp_total,
+                odp_by_gender: {
+                    laki_laki: val.odp_lakilaki,
+                    perempuan: val.odp_perempuan,
+                }, 
                 pdp_proses: val.pdp_proses,
                 pdp_selesai: val.pdp_selesai,
                 pdp_total: val.pdp_total,
+                pdp_by_gender: {
+                  laki_laki: val.pdp_lakilaki,
+                  perempuan: val.pdp_perempuan,
+                },
                 otg_proses: val.otg_proses,
                 otg_selesai: val.otg_selesai,
                 otg_total: val.otg_total,
+                otg_by_gender: {
+                  laki_laki: val.otg_lakilaki,
+                  perempuan: val.otg_perempuan,
+                },
                 positif_aktif_proses: val.positif_aktif_proses,
                 positif_aktif_selesai: val.positif_aktif_selesai,
                 positif_aktif_total: val.positif_aktif_total,
+                positif_aktif_by_gender: {
+                  laki_laki: val.positif_aktif_lakilaki,
+                  perempuan: val.positif_aktif_perempuan,
+                },
                 positif_sembuh_proses: val.positif_sembuh_proses,
                 positif_sembuh_selesai: val.positif_sembuh_selesai,
                 positif_sembuh_total: val.positif_sembuh_total,
+                positif_sembuh_by_gender: {
+                   laki_laki: val.positif_sembuh_lakilaki,
+                   perempuan: val.positif_sembuh_perempuan,
+                },
                 positif_meninggal_proses: val.positif_meninggal_proses,
                 positif_meninggal_selesai: val.positif_meninggal_selesai,
                 positif_meninggal_total: val.positif_meninggal_total,
-                positif_proses: val.positif_proses,
-                positif_selesai: val.positif_selesai,
+                positif_meninggal_by_gender: {
+                  laki_laki: val.positif_meninggal_lakilaki,
+                  perempuan: val.positif_meninggal_perempuan,
+                },
+                // positif_proses: val.positif_proses,
+                // positif_selesai: val.positif_selesai,
+                wni_total: val.wni_total,
+                wna_total: val.wna_total,
                 grand_total: val.grand_total,
               })
             }
@@ -115,27 +168,53 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let output ={
       summary : combine_data,
       total: {
-        sum_odp_proses: sum_odp_proses,
-        sum_odp_selesai: sum_odp_selesai,
-        sum_odp_total: sum_odp_total,
-        sum_pdp_proses: sum_pdp_proses,
-        sum_pdp_selesai: sum_pdp_selesai,
-        sum_pdp_total: sum_pdp_total,
-        sum_otg_proses: sum_otg_proses,
-        sum_otg_selesai: sum_otg_selesai,
-        sum_otg_total: sum_otg_total,
-        sum_positif_aktif_proses: sum_positif_aktif_proses,
-        sum_positif_aktif_selesai: sum_positif_aktif_selesai,
-        sum_positif_aktif_total: sum_positif_aktif_total,
-        sum_positif_sembuh_proses: sum_positif_sembuh_proses,
-        sum_positif_sembuh_selesai: sum_positif_sembuh_selesai,
-        sum_positif_sembuh_total: sum_positif_sembuh_total,
-        sum_positif_meninggal_proses: sum_positif_meninggal_proses,
-        sum_positif_meninggal_selesai: sum_positif_meninggal_selesai,
-        sum_positif_meninggal_total: sum_positif_meninggal_total,
-        sum_positif_proses: sum_positif_proses,
-        sum_positif_selesai: sum_positif_selesai,
-        sum_grand_total: sum_grand_total,
+        odp_proses: sum_odp_proses,
+        odp_selesai: sum_odp_selesai,
+        odp_total: sum_odp_total,
+        odp_by_gender: {
+          laki_laki: sum_odp_lakilaki,
+          perempuan: sum_odp_perempuan
+        },
+        pdp_proses: sum_pdp_proses,
+        pdp_selesai: sum_pdp_selesai,
+        pdp_total: sum_pdp_total,
+        pdp_by_gender: {
+          laki_laki: sum_pdp_lakilaki,
+          perempuan: sum_pdp_perempuan
+        },
+        otg_proses: sum_otg_proses,
+        otg_selesai: sum_otg_selesai,
+        otg_total: sum_otg_total,
+        otg_by_gender: {
+          laki_laki: sum_otg_lakilaki,
+          perempuan: sum_otg_perempuan
+        },
+        positif_aktif_proses: sum_positif_aktif_proses,
+        positif_aktif_selesai: sum_positif_aktif_selesai,
+        positif_aktif_total: sum_positif_aktif_total,
+        positif_aktif_by_gender: {
+          laki_laki: sum_positif_aktif_lakilaki,
+          perempuan: sum_positif_aktif_perempuan
+        },
+        positif_sembuh_proses: sum_positif_sembuh_proses,
+        positif_sembuh_selesai: sum_positif_sembuh_selesai,
+        positif_sembuh_total: sum_positif_sembuh_total,
+        positif_sembuh_by_gender: {
+          laki_laki: sum_positif_sembuh_lakilaki,
+          perempuan: sum_positif_sembuh_perempuan
+        },
+        positif_meninggal_proses: sum_positif_meninggal_proses,
+        positif_meninggal_selesai: sum_positif_meninggal_selesai,
+        positif_meninggal_total: sum_positif_meninggal_total,
+        positif_meninggal_by_gender: {
+          laki_laki: sum_positif_meninggal_lakilaki,
+          perempuan: sum_positif_meninggal_perempuan
+        },
+        // positif_proses: sum_positif_proses,
+        // positif_selesai: sum_positif_selesai,
+        wni_total : sum_wni_total,
+        wna_total : sum_wna_total,
+        grand_total: sum_grand_total,
       }
     }
   
