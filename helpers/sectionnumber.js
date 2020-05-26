@@ -147,8 +147,10 @@ const conditionAge = async (user, query, gender) => {
   let queryStrings;
   if(query.status_patient){
     const splits = query.status_patient.split('-');
-    if(splits[0] == "POSITIF"){
+    if(splits[0] == "POSITIF" && splits[1] !== "2"){
       queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else if(splits[0] == "POSITIF" && splits[1] == "2"){
+      queryStrings = {"status": splits[0]}
     }else if(query.status_patient == "all"){
       queryStrings = {};
     }else{
@@ -207,8 +209,10 @@ const conditionGender = async (user, query) => {
   let queryStrings;
   if(query.status_patient){
     const splits = query.status_patient.split('-');
-    if(splits[0] == "POSITIF"){
+    if(splits[0] == "POSITIF" && splits[1] !== "2"){
       queryStrings = {"status": splits[0], "final_result": splits[1]}
+    }else if(splits[0] == "POSITIF" && splits[1] == "2"){
+      queryStrings = {"status": splits[0]}
     }else if(query.status_patient == "all"){
       queryStrings = {};
     }else{
