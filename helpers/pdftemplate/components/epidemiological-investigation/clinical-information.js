@@ -1,9 +1,17 @@
 const components = {
   symptoms: require('./symptoms'),
-  diseases: require('./diseases')
+  diseases: require('./diseases'),
+  treatment: require('./treatment')
 }
 
 const render = (data) => {
+  const isLocationTrue = (value) => {
+    return  data.last_history.current_location_type === value ? '√' : '  '
+  }
+
+  const isLocationFalse = (value) => {
+    return  data.last_history.current_location_type !== value ? '√' : '  '
+  }
   
   return {
     style: 'tableClinical',
@@ -30,7 +38,29 @@ const render = (data) => {
             alignment: 'left'
           },{},{},{}
         ],
-        components.diseases.render(data)
+        components.diseases.render(data),
+        [
+          {
+            text: 'Apakah pasien dirawat di rumah sakit' + `: [${isLocationTrue('RS')}] Ya   [${isLocationFalse('RS')}] Tdk`,
+            colSpan: 4,
+            alignment: 'left'
+          },{},{},{}
+        ],
+        components.treatment.render(data),
+        [
+          {
+            text: 'Jika ada, nama-nama RS sebelumnya : ...\n.',
+            colSpan: 4,
+            alignment: 'left'
+          },{},{},{}
+        ],
+        [
+          {
+            text: 'Status pasien terakhir : [  ] Sembuh    [  ] Masih Sakit   [  ] Meninggal, tgl: ...',
+            colSpan: 4,
+            alignment: 'left'
+          },{},{},{}
+        ],
       ],
     }
   }

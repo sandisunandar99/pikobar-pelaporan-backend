@@ -21,8 +21,8 @@ const render = (data) => {
           [
             { text: `Hamil`, border: [] },
             { text: `: [${isTrue('hamil')}] Ya   [${isFalse('hamil')}] Tdk`, border: [] },
-            { text: `Gannguan imunologi`, border: [] },
-            { text: `: [${isTrue('gannguan imunologi')}] Ya   [${isFalse('gannguan imunologi')}] Tdk`, border: [] },
+            { text: `Gangguan imunologi`, border: [] },
+            { text: `: [${isTrue('gangguan imunologi')}] Ya   [${isFalse('gangguan imunologi')}] Tdk`, border: [] },
           ],
           [
             { text: `Diabetes`, border: [] },

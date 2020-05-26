@@ -27,7 +27,24 @@ const layout = {
             ]
         }
     ],
+    footnoteSectionOne: [
+      {
+        margin: [10, -5, 0, 0],
+        text: '*) Diisi sesuai dengan defenisi operasional (lihat pedoman)'
+      },
+      {
+        style: 'footnote',
+        text: '**) Nomor ID (pasien) : (kode kota/kab permendagri <3 digit nomor urut)'
+      },
+      {
+        style: 'footnote',
+        text: '***) Oksigenasi membran ekstrakorporea'
+      },
+    ],
     styles: {
+        footnote: {
+          margin: [10, 0, 0, 0]
+        },
         header: {
           fontSize: 13,
           bold: true,

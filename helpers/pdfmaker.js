@@ -39,7 +39,8 @@ const epidemiologicalInvestigationsForm = (data) => {
         layout.header,
         layout.subheader,
         components.patientIdentity.render(data),
-        components.clinicalInformation.render(data)
+        components.clinicalInformation.render(data),
+        layout.footnoteSectionOne
       ],
       styles: layout.styles,
       defaultStyle: layout.defaultStyle
