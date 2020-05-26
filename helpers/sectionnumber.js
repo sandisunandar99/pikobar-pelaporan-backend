@@ -181,7 +181,7 @@ const conditionAge = async (user, query, gender) => {
               { $cond: [{$and:[ {$gte:["$age",40]}, {$lt:["$age", 50]}]}, "40_49", ""]},
               { $cond: [{$and:[ {$gte:["$age",50]}, {$lt:["$age", 60]}]}, "50_59", ""]},
               { $cond: [{$and:[ {$gte:["$age",60]}, {$lt:["$age", 70]}]}, "60_69", ""]},
-              { $cond: [{$and:[ {$gte:["$age",70]}, {$lt:["$age", 50]}]}, "70_79", ""]},
+              { $cond: [{$and:[ {$gte:["$age",70]}, {$lt:["$age", 80]}]}, "70_79", ""]},
               { $cond: [{$gte:["$age",80]}, "atas_80", ""]}
            ]
         }  
@@ -268,6 +268,7 @@ const summaryAgregatePerDinkes = async (user, query) => {
                 author,
                 {"delete_status": {"$ne": "deleted"}},
                 {"verified_status": "verified"},
+                {"author_district_code": "32.71"},
                 createdAt,
             ]
         }
@@ -304,6 +305,68 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                 { $eq: [ "$status", "ODP"] },
                                 { $eq: [ "$gender", "P"] },
                             ] },1,0 ] }},
+            odp_age_bawah_5: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gt: ["$age", 0]},
+                                { $lt: ["$age", 5]}
+                            ] },1,0 ] }},
+            odp_age_6_19: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 6]},
+                                { $lt: ["$age", 20]}
+                            ] },1,0 ] }},
+            odp_age_20_29: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 20]},
+                                { $lt: ["$age", 30]}
+                            ] },1,0 ] }},
+            odp_age_30_39: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 30]},
+                                { $lt: ["$age", 40]}
+                            ] },1,0 ] }},
+            odp_age_40_49: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 40]},
+                                { $lt: ["$age", 50]}
+                            ] },1,0 ] }},
+            odp_age_50_59: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 50]},
+                                { $lt: ["$age", 60]}
+                            ] },1,0 ] }},
+            odp_age_60_69: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 60]},
+                                { $lt: ["$age", 70]}
+                            ] },1,0 ] }},
+            odp_age_70_79: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 70]},
+                                { $lt: ["$age", 80]}
+                            ] },1,0 ] }},
+            odp_age_atas_80: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $gte: ["$age", 80]}
+                            ] },1,0 ] }},
             pdp_proses: {$sum: 
                         { $cond: [ 
                             { $and : [ 
@@ -332,6 +395,68 @@ const summaryAgregatePerDinkes = async (user, query) => {
                             { $and : [ 
                                 { $eq: [ "$status", "PDP"] },
                                 { $eq: [ "$gender", "P"] },
+                            ] },1,0 ] }},
+            pdp_age_bawah_5: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gt: ["$age", 0]},
+                                { $lt: ["$age", 5]}
+                            ] },1,0 ] }},
+            pdp_age_6_19: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 6]},
+                                { $lt: ["$age", 20]}
+                            ] },1,0 ] }},
+            pdp_age_20_29: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 20]},
+                                { $lt: ["$age", 30]}
+                            ] },1,0 ] }},
+            pdp_age_30_39: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 30]},
+                                { $lt: ["$age", 40]}
+                            ] },1,0 ] }},
+            pdp_age_40_49: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 40]},
+                                { $lt: ["$age", 50]}
+                            ] },1,0 ] }},
+            pdp_age_50_59: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 50]},
+                                { $lt: ["$age", 60]}
+                            ] },1,0 ] }},
+            pdp_age_60_69: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 60]},
+                                { $lt: ["$age", 70]}
+                            ] },1,0 ] }},
+            pdp_age_70_79: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 70]},
+                                { $lt: ["$age", 80]}
+                            ] },1,0 ] }},
+            pdp_age_atas_80: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $gte: ["$age", 80]}
                             ] },1,0 ] }},
             otg_proses: {$sum: 
                         { $cond: [ 
@@ -362,17 +487,68 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                 { $eq: [ "$status", "OTG"] },
                                 { $eq: [ "$gender", "P"] },
                             ] },1,0 ] }},
-            // positif_aktif_proses: {$sum: 
-            //               { $cond: [ 
-            //                  { $and : [ 
-            //                     { $eq: [ "$status", "POSITIF"] },
-            //                     {$or:[
-            //                             { $eq: ["$final_result",null]},
-            //                             { $eq: ["$final_result", ""] },
-            //                             { $eq: ["$final_result", 0]}
-            //                         ]},
-            //                     { $eq: [ "$stage","0"] }
-            //                 ] },1,0 ] }},
+            otg_age_bawah_5: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gt: ["$age", 0]},
+                                { $lt: ["$age", 5]}
+                            ] },1,0 ] }},
+            otg_age_6_19: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 6]},
+                                { $lt: ["$age", 20]}
+                            ] },1,0 ] }},
+            otg_age_20_29: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 20]},
+                                { $lt: ["$age", 30]}
+                            ] },1,0 ] }},
+            otg_age_30_39: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 30]},
+                                { $lt: ["$age", 40]}
+                            ] },1,0 ] }},
+            otg_age_40_49: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 40]},
+                                { $lt: ["$age", 50]}
+                            ] },1,0 ] }},
+            otg_age_50_59: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 50]},
+                                { $lt: ["$age", 60]}
+                            ] },1,0 ] }},
+            otg_age_60_69: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 60]},
+                                { $lt: ["$age", 70]}
+                            ] },1,0 ] }},
+            otg_age_70_79: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 70]},
+                                { $lt: ["$age", 80]}
+                            ] },1,0 ] }},
+            otg_age_atas_80: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $gte: ["$age", 80]}
+                            ] },1,0 ] }},
             positif_aktif_proses_1: {$sum: {$cond: [{$and: [
                                         {$eq: [ "$status", "POSITIF"] },
                                         {$eq: ["$final_result", null]},
@@ -388,17 +564,6 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                         {$eq: ["$final_result", "0"]},
                                         {$eq: ["$stage","0"]}
                                     ]}, 1,0]}},
-            // positif_aktif_selesai: {$sum: 
-            //               { $cond: [ 
-            //                  { $and : [ 
-            //                     { $eq: [ "$status", "POSITIF"] },
-            //                     {$or:[
-            //                             { $eq: ["$final_result",null]},
-            //                             { $eq: ["$final_result", ""] },
-            //                             { $eq: ["$final_result", 0]}
-            //                         ]},
-            //                     { $eq: [ "$stage","1"] }
-            //                 ] },1,0 ] }},
             positif_aktif_selesai_1: {$sum: {$cond: [{$and: [
                                         {$eq: [ "$status", "POSITIF"] },
                                         {$eq: ["$final_result",null]},
@@ -414,16 +579,6 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                         {$eq: ["$final_result","0"]},
                                         {$eq: ["$stage","1"]},
                                     ]}, 1,0]}},
-            // positif_aktif_total: {$sum: 
-            //               { $cond: [ 
-            //                  { $and : [ 
-            //                     { $eq: [ "$status", "POSITIF"] },
-            //                     {$or:[
-            //                             { $eq: ["$final_result",null]},
-            //                             { $eq: ["$final_result", ""] },
-            //                             { $eq: ["$final_result", "0"]}
-            //                         ]},
-            //                 ] },1,0 ] }},
             positif_aktif_total_1: {$sum: {$cond: [{$and: [
                                         {$eq: [ "$status", "POSITIF"] },
                                         {$eq: ["$final_result","0"]},
@@ -555,16 +710,43 @@ const summaryAgregatePerDinkes = async (user, query) => {
             odp_total: 1,
             odp_lakilaki: 1,
             odp_perempuan: 1,
+              odp_age_bawah_5: 1,
+              odp_age_6_19: 1,
+              odp_age_20_29: 1,
+              odp_age_30_39: 1,
+              odp_age_40_49: 1,
+              odp_age_50_59: 1,
+              odp_age_60_69: 1,
+              odp_age_70_79: 1,
+              odp_age_atas_80: 1,
             pdp_proses: 1,
             pdp_selesai: 1,
             pdp_total: 1,
             pdp_lakilaki: 1,
             pdp_perempuan: 1,
+              pdp_age_bawah_5: 1,
+              pdp_age_6_19: 1,
+              pdp_age_20_29: 1,
+              pdp_age_30_39: 1,
+              pdp_age_40_49: 1,
+              pdp_age_50_59: 1,
+              pdp_age_60_69: 1,
+              pdp_age_70_79: 1,
+              pdp_age_atas_80: 1,
             otg_proses: 1,
             otg_selesai: 1,
             otg_total: 1,
             otg_lakilaki: 1,
             otg_perempuan: 1,
+              otg_age_bawah_5: 1,
+              otg_age_6_19: 1,
+              otg_age_20_29: 1,
+              otg_age_30_39: 1,
+              otg_age_40_49: 1,
+              otg_age_50_59: 1,
+              otg_age_60_69: 1,
+              otg_age_70_79: 1,
+              otg_age_atas_80: 1,
             positif_aktif_proses: {$sum: ["$positif_aktif_proses_1", "$positif_aktif_proses_2", "$positif_aktif_proses_3"]},
             positif_aktif_selesai: {$sum: ["$positif_aktif_selesai_1","$positif_aktif_selesai_2","$positif_aktif_selesai_3"]},
             positif_aktif_total: {$sum: ["$positif_aktif_total_1", "$positif_aktif_total_2", "$positif_aktif_total_3"]},
