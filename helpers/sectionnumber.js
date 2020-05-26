@@ -155,7 +155,7 @@ const conditionAge = async (user, query, gender) => {
       queryStrings = {"status": splits[0], "stage": splits[1]}
     }
   }else{
-    queryStrings = {"status": "POSITIF", 
+    queryStrings = {"status": "POSITIF", "stage": "0",
       "final_result" : { "$in": [null,"","0"] }
     };
   }
@@ -215,7 +215,7 @@ const conditionGender = async (user, query) => {
       queryStrings = {"status": splits[0], "stage": splits[1]}
     }
   }else{
-    queryStrings = {"status": "POSITIF", 
+    queryStrings = {"status": "POSITIF", "stage": "0",
       "final_result" : { "$in": [null,"","0"] }
     };
   }
