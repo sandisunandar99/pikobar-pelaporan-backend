@@ -36,7 +36,8 @@ const epidemiologicalInvestigationsForm = (data) => {
     inspectionInformation: require('../helpers/pdftemplate/components/epidemiological-investigation/inspection-information'),
     contactTracing: require('./pdftemplate/components/epidemiological-investigation/contact-tracing'),
     contactTracingAdvanced: require('./pdftemplate/components/epidemiological-investigation/contact-tracing-advanced'),
-    closeContactList: require('./pdftemplate/components/epidemiological-investigation/CloseContactList'),
+    closeContactList: require('./pdftemplate/components/epidemiological-investigation/close-contact-list'),
+    patientNotes: require('./pdftemplate/components/epidemiological-investigation/patient-notes'),
   }
   const docDefinition = {
       content: [
@@ -48,6 +49,8 @@ const epidemiologicalInvestigationsForm = (data) => {
         components.contactTracing.render(data),
         components.contactTracingAdvanced.render(data),
         components.closeContactList.render(data),
+        components.patientNotes.render(data),
+        layout.footer,
       ],
       styles: layout.styles,
       defaultStyle: layout.defaultStyle

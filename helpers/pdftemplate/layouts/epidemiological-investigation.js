@@ -41,9 +41,42 @@ const layout = {
         text: '***) Oksigenasi membran ekstrakorporea'
       },
     ],
+    footer: [
+      {
+        style: 'footer',
+        margin: [10, 10, 0, 0],
+        bold: true,
+        text: 'KETERANGAN'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '- Diisi sesuai dengan defenisi operasional (lihat pedoman)'
+      },
+      {
+        style: 'footer',
+        margin: [10, 10, 0, 0],
+        bold: true,
+        text: 'INSTRUKSI'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '- Semua pernyataan dalam formulir ini harus diisi, tidak boleh ada pertanyaan apapun yang kosong/tidak terjawab'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '- Untuk pertanyaan dengan pilihan jawaban "Ya/Tidak/Tidak Tahu", pilih salah satu jawaban saja'
+      },
+    ],
     styles: {
         footnote: {
+          fontSize: 9,
           margin: [10, 0, 0, 0]
+        },
+        footer: {
+          fontSize: 9
         },
         header: {
           fontSize: 13,
