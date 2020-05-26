@@ -197,7 +197,7 @@ async function getCaseSummaryFinal (query, user, callback) {
     }
   }
 
-  const searchingPositif = {status:"POSITIF", final_result : { $in: [0,"",null] }}
+  const searchingPositif = {status:"POSITIF", "stage": 0, final_result : { $in: [0,"",null] }}
   const searchingSembuh = {status:"POSITIF",final_result:1}
   const searchingMeninggal = {status:"POSITIF",final_result:2}
   
