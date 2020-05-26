@@ -32,14 +32,16 @@ const epidemiologicalInvestigationsForm = (data) => {
   const layout = require('../helpers/pdftemplate/layouts/epidemiological-investigation')
   const components = {
     patientIdentity: require('../helpers/pdftemplate/components/epidemiological-investigation/patient-identity'),
-    clinicalInformation: require('../helpers/pdftemplate/components/epidemiological-investigation/clinical-information')
+    clinicalInformation: require('../helpers/pdftemplate/components/epidemiological-investigation/clinical-information'),
+    inspectionInformation: require('../helpers/pdftemplate/components/epidemiological-investigation/inspection-information'),
   }
   const docDefinition = {
       content: [
         layout.header,
         layout.subheader,
         components.patientIdentity.render(data),
-        components.clinicalInformation.render(data)
+        components.clinicalInformation.render(data),
+        components.inspectionInformation.render(data),
       ],
       styles: layout.styles,
       defaultStyle: layout.defaultStyle

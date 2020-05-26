@@ -74,6 +74,12 @@ const layout = {
           bold: true,
           fontSize: 12,
           color: 'black'
+        },
+        tableColumnSubHeader: {
+          bold: true,
+          fontSize: 10,
+          color: 'black',
+          fillColor: '#e6e6e6'
         }
       },
       defaultStyle: {
