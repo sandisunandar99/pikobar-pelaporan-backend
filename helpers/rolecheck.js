@@ -38,6 +38,7 @@ const userByRole = (params, user) => {
 }
 
 const listByRole = (user, params, search_params, schema, conditions) => {
+  params.verified_status = "verified";
   let result_search
   if (search_params == null) {
     if(user.role == "dinkeskota"){
