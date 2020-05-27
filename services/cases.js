@@ -683,8 +683,10 @@ async function healthCheck(payload, callback) {
   }
 }
 
-function epidemiologicalInvestigationForm (detailCase, callback) {
+async function epidemiologicalInvestigationForm (detailCase, callback) {
   const pdfmaker = require('../helpers/pdfmaker')
+  const histories = await History.find({ case: detailCase._id })
+  Object.assign(detailCase, { histories: histories })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 

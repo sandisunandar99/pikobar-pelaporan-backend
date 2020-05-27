@@ -3,7 +3,37 @@ const components = {
 }
 
 const render = (data) => {
-  
+  const buildVisitedPlaces = (place) => {
+    let visitedPlaces = [], visitedPlacesDoc = []
+    for (i in data.histories) {
+      const visitedPlace = data.histories[i][place]
+      if (visitedPlaces.includes(visitedPlace) || !visitedPlace) continue
+
+      visitedPlaces.push(visitedPlace)
+      visitedPlacesDoc.push([
+          { text: visitedPlace },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+      ])
+    }
+
+    if (!visitedPlaces.length) {
+      for (let i = 0;  i < 2; i++) {
+        visitedPlacesDoc.push([
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+      ])
+      }
+    }
+
+    return visitedPlacesDoc
+  }
+
   return [
     {
       // margin: [0, -15, 0, 0],
@@ -44,20 +74,7 @@ const render = (data) => {
             { text: 'Tgl kontak pertama', style: 'tableColumnSubHeader'  },
             { text: 'Tgl kontak terakhir', style: 'tableColumnSubHeader'  },
           ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
+          ...buildVisitedPlaces('contact_pdp'),
           [
             {
               // border: ['black', '','','black'],
@@ -80,20 +97,7 @@ const render = (data) => {
             { text: 'Tgl kontak pertama', style: 'tableColumnSubHeader'  },
             { text: 'Tgl kontak terakhir', style: 'tableColumnSubHeader'  },
           ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
+          ...buildVisitedPlaces('contact_odp'),
           [
             {
               text: 'Apakah pasien termasuk cluster ISPA berat (demam dan  pneumonia membutuhkan perawatan Rumah Sakit) yang tidak diketahui peyebabnya dimana kasus COVID-19 diperiksa?',

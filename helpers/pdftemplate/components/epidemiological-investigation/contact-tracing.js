@@ -1,9 +1,42 @@
-const components = {
-  diseases: require('./diseases'),
-}
-
 const render = (data) => {
+
+  const isTrue = (value) => {
+    return data.last_history[value] ? '√' : '  '
+  }
   
+  const isFalse = (value) => {
+    return !data.last_history[value] ? '√' : '  '
+  }
+
+  const buildVisitedPlaces = (place) => {
+    let visitedPlaces = [], visitedPlacesDoc = []
+    for (i in data.histories) {
+      const visitedPlace = data.histories[i][place]
+      if (visitedPlaces.includes(visitedPlace) || !visitedPlace) continue
+
+      visitedPlaces.push(visitedPlace)
+      visitedPlacesDoc.push([
+          { text: visitedPlace },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+      ])
+    }
+
+    if (!visitedPlaces.length) {
+      for (let i = 0;  i < 2; i++) {
+        visitedPlacesDoc.push([
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+      ])
+      }
+    }
+
+    return visitedPlacesDoc
+  }
+
   return [
     {
       style: 'tableClinical',
@@ -30,7 +63,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isTrue('is_went_abroad')}] Ya   [${isFalse('is_went_abroad')}] Tdk  [  ] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
@@ -41,18 +74,7 @@ const render = (data) => {
             { text: 'Tgl Perjalanan', style: 'tableColumnSubHeader'  },
             { text: 'Tgl tiba di Indonesia', style: 'tableColumnSubHeader'  },
           ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
+          ...buildVisitedPlaces('visited_country'),
           [
             {
               border: ['black', 'black','','black'],
@@ -63,7 +85,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isTrue('is_went_other_city')}] Ya   [${isFalse('is_went_other_city')}] Tdk  [  ] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
@@ -74,18 +96,7 @@ const render = (data) => {
             { text: 'Tgl Perjalanan', style: 'tableColumnSubHeader'  },
             { text: 'Tgl tiba di tempat sekarang', style: 'tableColumnSubHeader'  },
           ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
+          ...buildVisitedPlaces('visited_city'),
           [
             {
               border: ['black', 'black','','black'],
@@ -107,18 +118,7 @@ const render = (data) => {
             { text: 'Provinsi/Negara', style: 'tableColumnSubHeader'  },
             { text: 'Tgl Kunjungan', style: 'tableColumnSubHeader'  },
           ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
+          ...buildVisitedPlaces('visited_hospital'),
           [
             {
               border: ['black', 'black','','black'],
@@ -140,18 +140,7 @@ const render = (data) => {
             { text: 'Provinsi/Negara', style: 'tableColumnSubHeader'  },
             { text: 'Tgl Kunjungan', style: 'tableColumnSubHeader'  },
           ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
-          [
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-            { text: '-' },
-          ],
+          ...buildVisitedPlaces('visited_market'),
         ],
       }
     },
