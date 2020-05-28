@@ -197,9 +197,9 @@ async function getCaseSummaryFinal (query, user, callback) {
     }
   }
 
-  const searchingPositif = {status:"POSITIF", "stage": "0", final_result : { $in: [0,"",null] }}
-  const searchingSembuh = {status:"POSITIF",final_result:"1"}
-  const searchingMeninggal = {status:"POSITIF",final_result:"2"}
+  const searchingPositif = {status:"POSITIF", final_result : { $in: [0,"",null] }}
+  const searchingSembuh = {status:"POSITIF",final_result:1}
+  const searchingMeninggal = {status:"POSITIF",final_result:2}
   
   try {
     const positif = await Case.find(Object.assign(searching,searchingPositif))
@@ -683,6 +683,13 @@ async function healthCheck(payload, callback) {
   }
 }
 
+async function epidemiologicalInvestigationForm (detailCase, callback) {
+  const pdfmaker = require('../helpers/pdfmaker')
+  const histories = await History.find({ case: detailCase._id })
+  Object.assign(detailCase, { histories: histories })
+  return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
+}
+
 /**
 * compare data in 1 millisecond
 * if different means the case is in the process of insertion by another process
@@ -769,5 +776,9 @@ module.exports = [
     name: 'services.cases.healthcheck',
     method: healthCheck,
   },
+  {
+    name: 'services.cases.epidemiologicalInvestigationForm',
+    method: epidemiologicalInvestigationForm
+  }
 ];
 
