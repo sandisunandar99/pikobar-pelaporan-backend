@@ -264,9 +264,6 @@ const summaryAgregatePerDinkes = async (user, query) => {
       groupBy = {kabkota: '$author_district_code'}
    }
 
-   console.log(groupBy);
-   console.log(author);
-   
 
   let queryAgt = [
     {
