@@ -460,7 +460,6 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                   })
               } 
             
-
             
            }//endif
         })
