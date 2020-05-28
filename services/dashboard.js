@@ -318,6 +318,29 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                     positif_meninggal_perempuan: val.positif_meninggal_perempuan,
                     grand_total: val.grand_total,
                   })
+              } else if (query.filter === "criteria") {
+                  combine_data.push({
+                     kotkabkec: val1.kab_kota_name,
+                     odp_proses: val.odp_proses,
+                     odp_selesai: val.odp_selesai,
+                     odp_total: val.odp_total,
+                     pdp_proses: val.pdp_proses,
+                     pdp_selesai: val.pdp_selesai,
+                     pdp_total: val.pdp_total,
+                     otg_proses: val.otg_proses,
+                     otg_selesai: val.otg_selesai,
+                     otg_total: val.otg_total,
+                     positif_aktif_proses: val.positif_aktif_proses,
+                     positif_aktif_selesai: val.positif_aktif_selesai,
+                     positif_aktif_total: val.positif_aktif_total,
+                     positif_sembuh_proses: val.positif_sembuh_proses,
+                     positif_sembuh_selesai: val.positif_sembuh_selesai,
+                     positif_sembuh_total: val.positif_sembuh_total,
+                     positif_meninggal_proses: val.positif_meninggal_proses,
+                     positif_meninggal_selesai: val.positif_meninggal_selesai,
+                     positif_meninggal_total: val.positif_meninggal_total,
+                     grand_total: val.grand_total,
+                  })     
               } else{
                   combine_data.push({
                     kotkabkec: val1.kab_kota_name,
@@ -525,6 +548,32 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         positif_meninggal_perempuan: sum_positif_meninggal_perempuan,
         grand_total: sum_grand_total,
       }
+    } else if (query.filter === "citeria") {
+       total = {
+         odp_proses: sum_odp_proses,
+         odp_selesai: sum_odp_selesai,
+         odp_total: sum_odp_total,
+         pdp_proses: sum_pdp_proses,
+         pdp_selesai: sum_pdp_selesai,
+         pdp_total: sum_pdp_total,
+         otg_proses: sum_otg_proses,
+         otg_selesai: sum_otg_selesai,
+         otg_total: sum_otg_total,
+         positif_aktif_proses: sum_positif_aktif_proses,
+         positif_aktif_selesai: sum_positif_aktif_selesai,
+         positif_aktif_total: sum_positif_aktif_total,
+         positif_sembuh_proses: sum_positif_sembuh_proses,
+         positif_sembuh_selesai: sum_positif_sembuh_selesai,
+         positif_sembuh_total: sum_positif_sembuh_total,
+         positif_meninggal_proses: sum_positif_meninggal_proses,
+         positif_meninggal_selesai: sum_positif_meninggal_selesai,
+         positif_meninggal_total: sum_positif_meninggal_total,
+         // positif_proses: sum_positif_proses,
+         // positif_selesai: sum_positif_selesai,
+         wni_total: sum_wni_total,
+         wna_total: sum_wna_total,
+         grand_total: sum_grand_total,
+       }
     } else {
        total = {
          odp_proses: sum_odp_proses,
