@@ -239,22 +239,23 @@ const conditionGender = async (user, query) => {
 }
 
 const summaryAgregatePerDinkes = async (user, query) => {  
-
+  
    let createdAt = {}
-   if (query.min_date && query.max_date) {
+   if (query.min_date) {
      let searchRegExp = new RegExp('/', 'g')
+    //  let max = query.max_date
+    //  let maxDate = max.replace(searchRegExp, '-')
      let min = query.min_date
-     let max = query.max_date
      let minDate = min.replace(searchRegExp, '-')
-     let maxDate = max.replace(searchRegExp, '-')
      createdAt = {
        "createdAt": {
          "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
-         "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
-       }
+         "$lt": new Date(new Date(minDate).setHours(23, 59, 59))
+        }
      }
    }
 
+   
    let groupBy ={}
    let author ={}
    if (user.role ==="dinkeskota") {
@@ -263,7 +264,7 @@ const summaryAgregatePerDinkes = async (user, query) => {
     } else if (user.role === "dinkesprov" || user.role === "superadmin") {
       groupBy = {kabkota: '$author_district_code'}
    }
-
+   
 
   let queryAgt = [
     {

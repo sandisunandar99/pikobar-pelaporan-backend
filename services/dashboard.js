@@ -547,7 +547,7 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         positif_meninggal_perempuan: sum_positif_meninggal_perempuan,
         grand_total: sum_grand_total,
       }
-    } else if (query.filter === "citeria") {
+    } else if (query.filter === "criteria") {
        total = {
          odp_proses: sum_odp_proses,
          odp_selesai: sum_odp_selesai,
