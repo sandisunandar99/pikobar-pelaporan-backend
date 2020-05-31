@@ -167,11 +167,11 @@ const updateUsers = async (id, pay, category, author, callback) =>{
       payloads.deletedAt = date.toISOString();
       payloads.deletedBy = author;
     }
-    if(typeof payload.password !== "undefined"){
-      payload.salt = crypto.randomBytes(16).toString('hex');
-      payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
-      payload.password = Helper.setPwd(payload.password);
-    }
+    // if(typeof payload.password !== "undefined"){
+    //   payload.salt = crypto.randomBytes(16).toString('hex');
+    //   payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
+    //   payload.password = Helper.setPwd(payload.password);
+    // }
     const params = Object.assign(payload,payloads);
     const result = await User.findByIdAndUpdate(id,
     { $set: params }, { new: true });
