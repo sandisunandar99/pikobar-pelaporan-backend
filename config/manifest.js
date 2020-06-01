@@ -38,7 +38,7 @@ const manifest = {
           noSniff: true
         },
         cors: {
-          // origin: ["http://52.74.74.33:3536","http://localhost:8080"], 
+          // origin: ["http://localhost:8080"], 
           origin: ["*"], 
           headers: [
             "Origin", 
