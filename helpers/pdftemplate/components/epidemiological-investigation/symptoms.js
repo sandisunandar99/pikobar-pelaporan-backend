@@ -62,7 +62,7 @@ const render = (data) => {
             { text: `Sakit Kepala`, border: [] },
             { text: `: [${isTrue('sakit kepala')}] Ya   [${isFalse('sakit kepala')}] Tdk  [  ] Tdk tahu `, border: [] },
             { text: `Lainnya (sebutkan)`, border: [] },
-            { text: `: ${data.last_history.diagnosis_other}`, border: [] },
+            { text: `: ${data.last_history.diagnosis_other || '-' }`, border: [] },
           ],
         ],
       },
