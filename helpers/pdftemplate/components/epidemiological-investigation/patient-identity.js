@@ -48,7 +48,7 @@ const render = (data) => {
               borderColor: ['black', 'black', 'white', 'black']
             },
             {
-              text: `: ${data.id_case}`,
+              text: `: ${data.id_case.toUpperCase()}`,
               borderColor: ['white', 'black', 'black', 'black']
             },
             '',''
@@ -69,11 +69,11 @@ const render = (data) => {
             { text: `Umur: ${data.age || 0 } tahun, ${ageInMonths < 12 ? ageInMonths : ageInMonths%12 } bulan` },
             { text: `${data.gender === 'L' ? '[√]' : '[  ]'} Laki-laki
               ${data.gender === 'P' ? '[√]' : '[  ]'} Perempuan` },
-            { text: 'Pekerjaan:' + data.occupation },
+            { text: 'Pekerjaan: ' + (data.occupation || '-') },
           ],
           [
             { text: `Alamat Jalan/Blok`, borderColor: ['black', 'black', 'white', 'white']},
-            { text: `: ${data.address_street}`, borderColor: ['white', 'black', 'white', 'white'] },
+            { text: `: ${data.address_street || '-' }`, borderColor: ['white', 'black', 'white', 'white'] },
             { text: `Kecamatan`, borderColor: ['white', 'black', 'white', 'white'] },
             { text: `: ${data.address_subdistrict_name}` },
           ],
@@ -87,7 +87,7 @@ const render = (data) => {
             { text: `\t\t Desa/Kelurahan`, borderColor: ['black', 'white', 'white', 'black'] },
             { text: `: ${data.address_village_name}`, borderColor: ['black', 'white', 'white', 'black'] },
             { text: `Telepon/Hp`, borderColor: ['black', 'white', 'white', 'black'] },
-            { text: `: ${data.phone_number}`, borderColor: ['black', 'white', 'black', 'black'] },
+            { text: `: ${data.phone_number || '-' }`, borderColor: ['black', 'white', 'black', 'black'] },
           ],
         ],
       },

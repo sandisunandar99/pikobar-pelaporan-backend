@@ -15,19 +15,19 @@ const render = (data) => {
           [
             { text: 'Bila Ya,', border: [] },
             { text: 'Nama RS terakhir', border: [] },
-            { colspan: 2, text: hospitalName, border: [] },
+            { colspan: 2, text: `: ${hospitalName || '-' }`, border: [] },
             { text: '', border: [] },
           ],
           [
             { text: '', border: [] },
             { text: 'Tanggal masuk RS terakhir', border: [] },
-            { text: '.....', border: [] },
+            { text: ': .....', border: [] },
             { text: '', border: [] },
           ],
           [
             { text: '', border: [] },
             { text: 'Ruang rawat', border: [] },
-            { text: '.....', border: [] },
+            { text: ': .....', border: [] },
             { text: '', border: [] },
           ],
           [
