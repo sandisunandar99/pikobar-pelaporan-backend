@@ -1,5 +1,6 @@
 const moment = require('moment')
 const render = (data) => {
+  const ageInMonths = moment().diff(data.birth_date, 'months') || 0
   return {
       style: 'tableExample',
       color: '#444',
@@ -64,8 +65,8 @@ const render = (data) => {
             '',''
           ],
           [
-            { text: `Tgl lahir: ${moment(data.birth_date).format('YYYY/MM/DD')}` },
-            { text: `Umur: ${data.age} tahun: - bulan: -` },
+            { text: `Tgl lahir: ${data.birth_date ? moment(data.birth_date).format('YYYY/MM/DD') : '-' }` },
+            { text: `Umur: ${data.age || 0 } tahun, ${ageInMonths < 12 ? ageInMonths : ageInMonths%12 } bulan` },
             { text: `${data.gender === 'L' ? '[√]' : '[  ]'} Laki-laki
               ${data.gender === 'P' ? '[√]' : '[  ]'} Perempuan` },
             { text: 'Pekerjaan:' + data.occupation },

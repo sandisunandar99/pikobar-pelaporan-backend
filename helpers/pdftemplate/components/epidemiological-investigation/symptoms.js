@@ -12,6 +12,10 @@ const render = (data) => {
     return !symptoms.includes(value) ? '√' : '  '
   }
 
+  const isFever = () => {
+    return symptoms.includes('suhu tubuh >= 38 °c')
+  }
+
   return [
     {
       colSpan: 4,
@@ -26,9 +30,9 @@ const render = (data) => {
           ],
           [
             { text: `Demam`, border: [] },
-            { text: `: ___ °C  [${isTrue('demam')}] Riwayat Demam `, border: [] },
+            { text: `: ${isFever() ? '≥38' : '___' } °C [${isFever() ? '√' : '  '}] Riwayat Demam `, border: [] },
             { text: `Lemah (malaise)`, border: [] },
-            { text: `: [${isTrue('lemah (malaise)')}] Ya   [${isFalse('lemah (malaise')}] Tdk  [  ] Tdk tahu `, border: [] },
+            { text: `: [${isTrue('lemah (malaise)')}] Ya   [${isFalse('lemah (malaise)')}] Tdk  [  ] Tdk tahu `, border: [] },
           ],
           [
             { text: `Batuk`, border: [] },
@@ -40,7 +44,7 @@ const render = (data) => {
             { text: `Pilek`, border: [] },
             { text: `: [${isTrue('pilek')}] Ya   [${isFalse('pilek')}] Tdk  [  ] Tdk tahu `, border: [] },
             { text: `Mual atau muntah`, border: [] },
-            { text: `: [${isTrue('mual dan muntah')}] Ya   [${isFalse('mual dan muntah')}] Tdk  [  ] Tdk tahu `, border: [] },
+            { text: `: [${isTrue('mual atau muntah')}] Ya   [${isFalse('mual atau muntah')}] Tdk  [  ] Tdk tahu `, border: [] },
           ],
           [
             { text: `Sakit tenggorokan`, border: [] },
@@ -50,7 +54,7 @@ const render = (data) => {
           ],
           [
             { text: `Sesak napas`, border: [] },
-            { text: `: [${isTrue('sesak napan')}] Ya   [${isFalse('sesak napan')}] Tdk  [  ] Tdk tahu `, border: [] },
+            { text: `: [${isTrue('sesak napas')}] Ya   [${isFalse('sesak napas')}] Tdk  [  ] Tdk tahu `, border: [] },
             { text: `Diare`, border: [] },
             { text: `: [${isTrue('diare')}] Ya   [${isFalse('diare')}] Tdk  [  ] Tdk tahu `, border: [] },
           ],
