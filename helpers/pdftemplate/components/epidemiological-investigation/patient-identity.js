@@ -38,8 +38,8 @@ const render = (data) => {
               rowSpan: 3,
               text: `${data.status === 'PDP' ? '[√]' : '[  ]'} Pasien dalam pengawasan
                 ${data.status === 'ODP' ? '[√]' : '[  ]'} Orang Dalam Pemantauan
-                [  ] Kasus Probabel
-                [  ] Kasus Konfirmasi`,
+                ${data.status === 'OTG' ? '[√]' : '[  ]'} Orang Tanpa Gejala
+                ${data.status === 'POSITIF' ? '[√]' : '[  ]'} Positif`,
             }
           ],
           [
