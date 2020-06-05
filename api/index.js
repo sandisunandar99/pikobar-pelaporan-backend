@@ -59,7 +59,7 @@ const register = (server, options, next) => {
       tags: ['api', 'status']
     },
     handler: (request, reply) => {
-      return reply({status: `UP in ${format(require('os').uptime())}`})
+      return reply({status: `UP in: ${format(require('os').uptime())}`})
     }
   })
 
