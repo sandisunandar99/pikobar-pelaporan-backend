@@ -10,6 +10,13 @@ conf.auth = {
   verifyOptions: { algorithms: [ 'HS256' ] }
 };
 
+conf.authKeycloak = {
+  secret: process.env.KEYCLOAK_PEM,
+  tokenType: 'Bearer',
+  algorithm: 'RS256',
+  verifyOptions: { algorithms: [ 'RS256' ] }
+};
+
 conf.database = {
   uri: process.env.MONGO_DB_URI,
   options: {
