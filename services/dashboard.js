@@ -1204,19 +1204,35 @@ const lapHarianExport = async (query, user, callback) => {
 
         getKabkotaCodeAndName.forEach((val1,key1) =>{
             if (val.kab_kota === val1.kab_kota) {
-                combine_data.push({
-                  kotkabkec: val1.kab_kota_name,
-                  odp_proses: val.odp_proses,
-                  odp_selesai: val.odp_selesai,
-                  pdp_proses: val.pdp_proses,
-                  pdp_selesai: val.pdp_selesai,
-                  otg_proses: val.otg_proses,
-                  otg_selesai: val.otg_selesai,
-                  positif_aktif_proses: val.positif_aktif_proses,
-                  positif_sembuh_selesai: val.positif_sembuh_selesai,
-                  positif_meninggal_selesai: val.positif_meninggal_selesai,
-                  grand_total: val.grand_total,
-                })
+                if (user.role ==="dinkeskota") {
+                    combine_data.push({
+                      kecamatan: val1.kab_kota_name,
+                      odp_proses: val.odp_proses,
+                      odp_selesai: val.odp_selesai,
+                      pdp_proses: val.pdp_proses,
+                      pdp_selesai: val.pdp_selesai,
+                      otg_proses: val.otg_proses,
+                      otg_selesai: val.otg_selesai,
+                      positif_aktif_proses: val.positif_aktif_proses,
+                      positif_sembuh_selesai: val.positif_sembuh_selesai,
+                      positif_meninggal_selesai: val.positif_meninggal_selesai,
+                      grand_total: val.grand_total,
+                    })
+                } else if (user.role === "dinkesprov" || user.role === "superadmin") {
+                    combine_data.push({
+                      "kab/kota": val1.kab_kota_name,
+                      odp_proses: val.odp_proses,
+                      odp_selesai: val.odp_selesai,
+                      pdp_proses: val.pdp_proses,
+                      pdp_selesai: val.pdp_selesai,
+                      otg_proses: val.otg_proses,
+                      otg_selesai: val.otg_selesai,
+                      positif_aktif_proses: val.positif_aktif_proses,
+                      positif_sembuh_selesai: val.positif_sembuh_selesai,
+                      positif_meninggal_selesai: val.positif_meninggal_selesai,
+                      grand_total: val.grand_total,
+                    })
+                }
             }
         })
     })
