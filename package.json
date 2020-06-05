@@ -9,7 +9,7 @@
   "main": "server.js",
   "scripts": {
     "test": "./node_modules/lab/bin/lab -v",
-    "start": "node server.js --max-old-space-size=2048",
+    "start": "node --max-old-space-size=2048 server.js",
     "start:server": "nodemon server.js"
   },
   "author": "Sandi Sunandar",
