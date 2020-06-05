@@ -14,6 +14,14 @@ const render = (data) => {
   const isLocationFalse = (value) => {
     return  data.last_history.current_location_type !== value ? '√' : '  '
   }
+
+  const isFinalResult = (value) => {
+    if (!value) return '  '
+    if (data.last_history.stage === "1")
+      return data.last_history.final_result === value ? '√' : '  '
+    else
+      return '  '
+  }
   
   return [
     {
@@ -59,7 +67,7 @@ const render = (data) => {
           ],
           [
             {
-              text: 'Status pasien terakhir : [  ] Sembuh    [  ] Masih Sakit   [  ] Meninggal, tgl: ...',
+              text: `Status pasien terakhir : [${isFinalResult("1")}] Sembuh    [${isFinalResult(null)}] Masih Sakit   [${isFinalResult("2")}] Meninggal, tgl: -`,
               colSpan: 4,
               alignment: 'left'
             },{},{},{}
