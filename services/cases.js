@@ -15,6 +15,9 @@ const User = mongoose.model('User')
 require('../models/Notification')
 const Notification = mongoose.model('Notification')
 
+require('../models/CaseReference')
+const CaseReference = mongoose.model('CaseReference')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
@@ -23,6 +26,7 @@ const Notif = require('../helpers/notification')
 
 async function ListCase (query, user, callback) {
 
+  let caseReferences = []
   const myCustomLabels = {
     totalDocs: 'itemCount',
     docs: 'itemsList',
@@ -76,6 +80,12 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
   
+  if (user.role === "faskes") {
+    const refStatus = query.reference_status || 'referenced'
+    caseReferences = await CaseReference.find({ reference_hospital: user.hospital_id, reference_status: refStatus }).select('case')
+    caseReferences = caseReferences.map(obj => obj.case)
+  }
+
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
@@ -88,9 +98,9 @@ async function ListCase (query, user, callback) {
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
-    var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseReferences)
   } else {
-    var result_search = Check.listByRole(user, params, null,Case,"delete_status")
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseReferences)
   }
 
   Case.paginate(result_search, options).then(function(results){

@@ -349,6 +349,45 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases/{id}/references
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseReferences(request, reply){
+            server.methods.services.casesReferences.get(
+                request.params.id,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * PUT /api/cases/{id}/references
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateCaseReference(request, reply){
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+
+            server.methods.services.casesReferences.create(
+                id,
+                author,
+                request.pre.count_case,
+                payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }

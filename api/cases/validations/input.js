@@ -28,6 +28,12 @@ const CaseVerifyPayload = Joi.object().keys({
     verified_comment: Joi.string().allow('', null).optional()
 })
 
+const CaseReferPayload = Joi.object().keys({
+    reference_status: Joi.string().valid('pending','referenced','declined').required(),
+    reference_comment: Joi.string().allow('', null).optional(),
+    reference_hospital: Joi.string().required()
+})
+
 const CaseParamsValidations = {
     params: {
         id: Joi.string().required()
@@ -148,6 +154,13 @@ const CaseVerifyPayloadValidations = Object.assign({
     failAction: validateOptions.failAction
 }, CaseParamsValidations)
 
+const CaseReferPayloadValidations = Object.assign({
+    payload: CaseReferPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, CaseParamsValidations)
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
@@ -156,5 +169,6 @@ module.exports = {
     CaseDeletePayloadValidations,
     CaseImportPayloadValidations,
     caseSchemaValidation,
-    CaseVerifyPayloadValidations
+    CaseVerifyPayloadValidations,
+    CaseReferPayloadValidations
 }

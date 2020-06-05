@@ -312,6 +312,35 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetCaseSummaryVerification
+        },
+        // get case referral
+        {
+            method: 'GET',
+            path: '/cases/{id}/references',
+            config: {
+                auth: 'jwt',
+                description: 'Get case references',
+                tags: ['api', 'cases.references'],
+                pre: [
+                    CheckRoleView,
+                ]
+            },
+            handler: handlers.GetCaseReferences
+        },
+        // create reference
+        {
+            method: 'POST',
+            path: '/cases/{id}/references',
+            config: {
+                auth: 'jwt',
+                description: 'Create case references',
+                tags: ['api', 'cases.references'],
+                validate: inputValidations.CaseReferPayloadValidations,
+                pre: [
+                    CheckRoleCreate
+                ]
+            },
+            handler: handlers.CreateCaseReference
         }
     ]
 
