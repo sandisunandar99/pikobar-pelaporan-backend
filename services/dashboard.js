@@ -33,13 +33,15 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         })
     }
 
-
+    // console.log(result);
 
     let sum_odp_proses = 0
     let sum_odp_selesai = 0
     let sum_odp_total = 0
     let sum_odp_lakilaki = 0
     let sum_odp_perempuan = 0
+    let sum_odp_wni = 0
+    let sum_odp_wna = 0
     let sum_odp_age_bawah_5 = 0
     let sum_odp_age_6_19 = 0
     let sum_odp_age_20_29 = 0
@@ -56,6 +58,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_pdp_total = 0
     let sum_pdp_lakilaki = 0
     let sum_pdp_perempuan = 0
+    let sum_pdp_wni = 0
+    let sum_pdp_wna = 0
     let sum_pdp_age_bawah_5 = 0
     let sum_pdp_age_6_19 = 0
     let sum_pdp_age_20_29 = 0
@@ -71,6 +75,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_otg_total = 0
     let sum_otg_lakilaki = 0
     let sum_otg_perempuan = 0
+    let sum_otg_wni = 0
+    let sum_otg_wna = 0
     let sum_otg_age_bawah_5 = 0
     let sum_otg_age_6_19 = 0
     let sum_otg_age_20_29 = 0
@@ -86,6 +92,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_positif_aktif_total = 0
     let sum_positif_aktif_lakilaki = 0
     let sum_positif_aktif_perempuan = 0
+    let sum_positif_aktif_wni = 0
+    let sum_positif_aktif_wna = 0
     let sum_positif_aktif_bawah_5 = 0
     let sum_positif_aktif_6_19 = 0
     let sum_positif_aktif_20_29 = 0
@@ -102,6 +110,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_positif_sembuh_total = 0
     let sum_positif_sembuh_lakilaki = 0
     let sum_positif_sembuh_perempuan = 0
+    let sum_positif_sembuh_wni = 0
+    let sum_positif_sembuh_wna = 0
     let sum_positif_sembuh_bawah_5 = 0
     let sum_positif_sembuh_6_19 = 0
     let sum_positif_sembuh_20_29 = 0
@@ -117,6 +127,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_positif_meninggal_total = 0
     let sum_positif_meninggal_lakilaki = 0
     let sum_positif_meninggal_perempuan = 0
+    let sum_positif_meninggal_wni = 0
+    let sum_positif_meninggal_wna = 0
     let sum_positif_meninggal_bawah_5 = 0
     let sum_positif_meninggal_6_19 = 0
     let sum_positif_meninggal_20_29 = 0
@@ -141,6 +153,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_odp_total += val.odp_total
         sum_odp_lakilaki += val.odp_lakilaki 
         sum_odp_perempuan += val.odp_perempuan
+        sum_odp_wni += val.odp_wni
+        sum_odp_wna += val.odp_wna
         sum_odp_age_bawah_5 += val.odp_age_bawah_5
         sum_odp_age_6_19 += val.odp_age_6_19
         sum_odp_age_20_29 += val.odp_age_20_29
@@ -156,6 +170,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_pdp_total += val.pdp_total
         sum_pdp_lakilaki += val.pdp_lakilaki
         sum_pdp_perempuan += val.pdp_perempuan
+        sum_pdp_wni += val.pdp_wni
+        sum_pdp_wna += val.pdp_wna
         sum_pdp_age_bawah_5 += val.pdp_age_bawah_5
         sum_pdp_age_6_19 += val.pdp_age_6_19
         sum_pdp_age_20_29 += val.pdp_age_20_29
@@ -171,6 +187,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_otg_total += val.otg_total
         sum_otg_lakilaki += val.otg_lakilaki
         sum_otg_perempuan += val.otg_perempuan
+        sum_otg_wni += val.otg_wni
+        sum_otg_wna += val.otg_wna
         sum_otg_age_bawah_5 += val.otg_age_bawah_5
         sum_otg_age_6_19 += val.otg_age_6_19
         sum_otg_age_20_29 += val.otg_age_20_29
@@ -186,6 +204,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_positif_aktif_total += val.positif_aktif_total
         sum_positif_aktif_lakilaki += val.positif_aktif_lakilaki
         sum_positif_aktif_perempuan += val.positif_aktif_perempuan
+        sum_positif_aktif_wni += val.positif_aktif_wni
+        sum_positif_aktif_wna += val.positif_aktif_wna
         sum_positif_aktif_bawah_5 += val.positif_aktif_bawah_5
         sum_positif_aktif_6_19 += val.positif_aktif_6_19
         sum_positif_aktif_20_29 += val.positif_aktif_20_29
@@ -201,6 +221,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_positif_sembuh_total += val.positif_sembuh_total
         sum_positif_sembuh_lakilaki += val.positif_sembuh_lakilaki
         sum_positif_sembuh_perempuan += val.positif_sembuh_perempuan
+        sum_positif_sembuh_wni += val.positif_sembuh_wni
+        sum_positif_sembuh_wna += val.positif_sembuh_wna
         sum_positif_sembuh_bawah_5 += val.positif_sembuh_bawah_5
         sum_positif_sembuh_6_19 += val.positif_sembuh_6_19
         sum_positif_sembuh_20_29 += val.positif_sembuh_20_29
@@ -216,6 +238,8 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_positif_meninggal_total += val.positif_meninggal_total
         sum_positif_meninggal_lakilaki += val.positif_meninggal_lakilaki
         sum_positif_meninggal_perempuan += val.positif_meninggal_perempuan
+        sum_positif_meninggal_wni += val.positif_meninggal_wni
+        sum_positif_meninggal_wna += val.positif_meninggal_wna
         sum_positif_meninggal_bawah_5 += val.positif_meninggal_bawah_5
         sum_positif_meninggal_6_19 += val.positif_meninggal_6_19
         sum_positif_meninggal_20_29 += val.positif_meninggal_20_29
@@ -351,6 +375,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                       laki_laki: val.odp_lakilaki,
                       perempuan: val.odp_perempuan,
                     },
+                    odp_by_nationality: {
+                      wni: val.odp_wni,
+                      wna: val.odp_wna
+                    },
                     odp_by_usia: {
                       bawah_5: val.odp_age_bawah_5,
                       "6_19": val.odp_age_6_19,
@@ -368,6 +396,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                     pdp_by_gender: {
                       laki_laki: val.pdp_lakilaki,
                       perempuan: val.pdp_perempuan,
+                    },
+                    pdp_by_nationality: {
+                       wni: val.pdp_wni,
+                       wna: val.pdp_wna
                     },
                     pdp_by_usia: {
                       bawah_5: val.pdp_age_bawah_5,
@@ -387,6 +419,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                       laki_laki: val.otg_lakilaki,
                       perempuan: val.otg_perempuan,
                     },
+                    otg_by_nationality: {
+                       wni: val.otg_wni,
+                       wna: val.otg_wna
+                    },
                     otg_by_usia: {
                       bawah_5: val.otg_age_bawah_5,
                       "6_19": val.otg_age_6_19,
@@ -404,6 +440,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                     positif_aktif_by_gender: {
                       laki_laki: val.positif_aktif_lakilaki,
                       perempuan: val.positif_aktif_perempuan,
+                    },
+                    positif_aktif_by_nationality: {
+                      wni: val.positif_aktif_wni,
+                      wna: val.positif_aktif_wna
                     },
                     positif_aktif_by_usia: {
                       bawah_5: val.positif_aktif_bawah_5,
@@ -423,6 +463,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                       laki_laki: val.positif_sembuh_lakilaki,
                       perempuan: val.positif_sembuh_perempuan,
                     },
+                    positif_sembuh_by_nationality: {
+                       wni: val.positif_sembuh_wni,
+                       wna: val.positif_sembuh_wna
+                    },
                     positif_sembuh_by_usia: {
                       bawah_5: val.positif_sembuh_bawah_5,
                       "6_19": val.positif_sembuh_6_19,
@@ -440,6 +484,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                     positif_meninggal_by_gender: {
                       laki_laki: val.positif_meninggal_lakilaki,
                       perempuan: val.positif_meninggal_perempuan,
+                    },
+                    positif_meninggal_by_nationality: {
+                       wni: val.positif_meninggal_wni,
+                       wna: val.positif_meninggal_wna
                     },
                     positif_meninggal_by_usia: {
                       bawah_5: val.positif_meninggal_bawah_5,
@@ -582,6 +630,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
            laki_laki: sum_odp_lakilaki,
            perempuan: sum_odp_perempuan
          },
+         odp_by_nationality: {
+           wni: sum_odp_wni,
+           wna: sum_odp_wna
+         },
          odp_by_usia: {
            bawah_5: sum_odp_age_bawah_5,
            "6_19": sum_odp_age_6_19,
@@ -599,6 +651,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
          pdp_by_gender: {
            laki_laki: sum_pdp_lakilaki,
            perempuan: sum_pdp_perempuan
+         },
+         pdp_by_nationality: {
+           wni: sum_pdp_wni,
+           wna: sum_pdp_wna
          },
          pdp_by_usia: {
            bawah_5: sum_pdp_age_bawah_5,
@@ -618,6 +674,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
            laki_laki: sum_otg_lakilaki,
            perempuan: sum_otg_perempuan
          },
+         otg_by_nationality: {
+           wni: sum_otg_wni,
+           wna: sum_otg_wna
+         },
          otg_by_usia: {
            bawah_5: sum_otg_age_bawah_5,
            "6_19": sum_otg_age_6_19,
@@ -636,6 +696,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
            laki_laki: sum_positif_aktif_lakilaki,
            perempuan: sum_positif_aktif_perempuan
          },
+         positif_aktif_by_nationality: {
+            wni: sum_positif_aktif_wni,
+            wna: sum_positif_aktif_wna
+          },
          positif_aktif_by_usia: {
            bawah_5: sum_positif_aktif_bawah_5,
            "6_19": sum_positif_aktif_6_19,
@@ -654,6 +718,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
            laki_laki: sum_positif_sembuh_lakilaki,
            perempuan: sum_positif_sembuh_perempuan
          },
+         positif_sembuh_by_nationality: {
+           wni: sum_positif_sembuh_wni,
+           wna: sum_positif_sembuh_wna
+         },
          positif_sembuh_by_usia: {
            bawah_5: sum_positif_sembuh_bawah_5,
            "6_19": sum_positif_sembuh_6_19,
@@ -671,6 +739,10 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
          positif_meninggal_by_gender: {
            laki_laki: sum_positif_meninggal_lakilaki,
            perempuan: sum_positif_meninggal_perempuan
+         },
+         positif_meninggal_by_nationality: {
+           wni: sum_positif_meninggal_wni,
+           wna: sum_positif_meninggal_wna
          },
          positif_meninggal_by_usia: {
            bawah_5: sum_positif_meninggal_bawah_5,

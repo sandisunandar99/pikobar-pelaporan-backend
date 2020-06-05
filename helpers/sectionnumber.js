@@ -309,6 +309,20 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                 { $eq: [ "$status", "ODP"] },
                                 { $eq: [ "$gender", "P"] },
                             ] },1,0 ] }},
+            odp_wni: {
+                    $sum:
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            odp_wna: {
+                    $sum:
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "ODP"] },
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
             odp_age_bawah_5: {$sum: 
                         { $cond: [ 
                             { $and : [ 
@@ -400,6 +414,20 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                 { $eq: [ "$status", "PDP"] },
                                 { $eq: [ "$gender", "P"] },
                             ] },1,0 ] }},
+            pdp_wni: {
+                    $sum:
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            pdp_wna: {
+                    $sum:
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "PDP"] },
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
             pdp_age_bawah_5: {$sum: 
                         { $cond: [ 
                             { $and : [ 
@@ -490,6 +518,20 @@ const summaryAgregatePerDinkes = async (user, query) => {
                             { $and : [ 
                                 { $eq: [ "$status", "OTG"] },
                                 { $eq: [ "$gender", "P"] },
+                            ] },1,0 ] }},
+            otg_wni: {
+                    $sum:
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            otg_wna: {
+                    $sum:
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$status", "OTG"] },
+                                { $eq: [ "$nationality", "WNA"] },
                             ] },1,0 ] }},
             otg_age_bawah_5: {$sum: 
                         { $cond: [ 
@@ -625,6 +667,48 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                         {$eq: ["$final_result", null]},
                                         {$eq: [ "$gender", "P"] },
                                     ]}, 1,0]}},
+            positif_aktif_wni_1: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result","0"]},
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            positif_aktif_wni_2: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result",""]},
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            positif_aktif_wni_3: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result", null]},
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            positif_aktif_wna_1: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result","0"]},
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
+            positif_aktif_wna_2: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result",""]},
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
+            positif_aktif_wna_3: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result", null]},
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
             positif_aktif_1_bawah_5: {$sum: {$cond: [{$and: [
                                         {$eq: [ "$status", "POSITIF"] },
                                         {$eq: ["$final_result","0"]},
@@ -818,6 +902,20 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                 { $eq: [ "$final_result","1"] },
                                 {$eq: [ "$gender", "P"] },
                             ] },1,0 ] }},
+            positif_sembuh_wni: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result", "1"]},
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            positif_sembuh_wna: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result","1"]},
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
             positif_sembuh_bawah_5: {$sum: 
                         { $cond: [ 
                             { $and : [ 
@@ -923,6 +1021,20 @@ const summaryAgregatePerDinkes = async (user, query) => {
                                 { $eq: [ "$final_result","2"] },
                                 {$eq: [ "$gender", "P"] },
                             ] },1,0 ] }},
+            positif_meninggal_wni: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result", "2"]},
+                                { $eq: [ "$nationality", "WNI"] },
+                            ] },1,0 ] }},
+            positif_meninggal_wna: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                {$eq: [ "$status", "POSITIF"] },
+                                {$eq: ["$final_result","2"]},
+                                { $eq: [ "$nationality", "WNA"] },
+                            ] },1,0 ] }},
             positif_meninggal_bawah_5: {$sum: 
                         { $cond: [ 
                             { $and : [ 
@@ -1015,6 +1127,8 @@ const summaryAgregatePerDinkes = async (user, query) => {
             odp_total: 1,
             odp_lakilaki: 1,
             odp_perempuan: 1,
+                    odp_wni: 1,
+                    odp_wna: 1,
               odp_age_bawah_5: 1,
               odp_age_6_19: 1,
               odp_age_20_29: 1,
@@ -1029,6 +1143,8 @@ const summaryAgregatePerDinkes = async (user, query) => {
             pdp_total: 1,
             pdp_lakilaki: 1,
             pdp_perempuan: 1,
+                    pdp_wni: 1,
+                    pdp_wna: 1,
               pdp_age_bawah_5: 1,
               pdp_age_6_19: 1,
               pdp_age_20_29: 1,
@@ -1043,6 +1159,8 @@ const summaryAgregatePerDinkes = async (user, query) => {
             otg_total: 1,
             otg_lakilaki: 1,
             otg_perempuan: 1,
+                    otg_wni: 1,
+                    otg_wna: 1,
               otg_age_bawah_5: 1,
               otg_age_6_19: 1,
               otg_age_20_29: 1,
@@ -1057,6 +1175,8 @@ const summaryAgregatePerDinkes = async (user, query) => {
             positif_aktif_total: {$sum: ["$positif_aktif_total_1", "$positif_aktif_total_2", "$positif_aktif_total_3"]},
             positif_aktif_lakilaki: {$sum: ["$positif_aktif_1_lakilaki", "$positif_aktif_2_lakilaki", "$positif_aktif_3_lakilaki"]},
             positif_aktif_perempuan: {$sum: ["$positif_aktif_1_perempuan", "$positif_aktif_2_perempuan", "$positif_aktif_3_perempuan"]},
+                    positif_aktif_wni: {$sum: ["$positif_aktif_wni_1", "$positif_aktif_wni_2", "$positif_aktif_wni_3"]},
+                    positif_aktif_wna: {$sum: ["$positif_aktif_wna_1", "$positif_aktif_wna_2", "$positif_aktif_wna_3"]},
               positif_aktif_bawah_5: {$sum: ["$positif_aktif_1_bawah_5", "$positif_aktif_2_bawah_5", "$positif_aktif_3_bawah_5"]}, 
               positif_aktif_6_19: {$sum: ["$positif_aktif_1_6_19", "$positif_aktif_2_6_19", "$positif_aktif_3_6_19"]}, 
               positif_aktif_20_29: {$sum: ["$positif_aktif_1_20_29", "$positif_aktif_2_20_29", "$positif_aktif_3_20_29"]}, 
@@ -1071,6 +1191,8 @@ const summaryAgregatePerDinkes = async (user, query) => {
             positif_sembuh_total: 1,
             positif_sembuh_lakilaki: 1,
             positif_sembuh_perempuan: 1,
+                    positif_sembuh_wni: 1,
+                    positif_sembuh_wna: 1,
               positif_sembuh_bawah_5: 1,
               positif_sembuh_6_19: 1,
               positif_sembuh_20_29: 1,
@@ -1085,6 +1207,8 @@ const summaryAgregatePerDinkes = async (user, query) => {
             positif_meninggal_total: 1,
             positif_meninggal_lakilaki: 1,
             positif_meninggal_perempuan: 1, 
+                    positif_meninggal_wni: 1,
+                    positif_meninggal_wna: 1,
               positif_meninggal_bawah_5: 1,
               positif_meninggal_6_19: 1,
               positif_meninggal_20_29: 1,
