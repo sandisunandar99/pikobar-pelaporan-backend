@@ -15,4 +15,4 @@ RUN npm install && npm install -g nodemon
 EXPOSE 3333
 
 # ENTRYPOINT [ "nodemon", "server.js" ]
-CMD [ "npm" ,"start","-s"]
+CMD [ "npm" ,"start"]
