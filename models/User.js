@@ -27,6 +27,7 @@ const UserSchema = new mongoose.Schema({
   delete_status: { type: String, default:null},
   deletedAt: { type: Date, default:null},
   deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null},
+  hospital_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital' ,default:null},
 }, {timestamps: true})
 
 UserSchema.plugin(uniqueValidator, {
