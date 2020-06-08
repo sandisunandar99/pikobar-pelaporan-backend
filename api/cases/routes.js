@@ -47,7 +47,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleCreate,
-                    validationBeforeInput,
+                    // validationBeforeInput, // sementara jangan di pake karena untuk integrasu API,
                     countCaseByDistrict,
                     countCasePendingByDistrict,
                     // checkCaseIsExists, // sementara jangan di pake karena cek nik
