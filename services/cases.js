@@ -15,8 +15,8 @@ const User = mongoose.model('User')
 require('../models/Notification')
 const Notification = mongoose.model('Notification')
 
-require('../models/CaseReference')
-const CaseReference = mongoose.model('CaseReference')
+require('../models/CaseTransfer')
+const CaseTransfer = mongoose.model('CaseTransfer')
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
@@ -26,7 +26,7 @@ const Notif = require('../helpers/notification')
 
 async function ListCase (query, user, callback) {
 
-  let caseReferences = []
+  let caseTransfers = []
   const myCustomLabels = {
     totalDocs: 'itemCount',
     docs: 'itemsList',
@@ -80,10 +80,13 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
   
-  if (user.role === "faskes") {
-    const refStatus = query.reference_status || 'referenced'
-    caseReferences = await CaseReference.find({ reference_hospital: user.hospital_id, reference_status: refStatus }).select('case')
-    caseReferences = caseReferences.map(obj => obj.case)
+  if (user.role === "faskes" && query.transfer_status) {
+    params.transfer_status = query.transfer_status
+    caseTransfers = await CaseTransfer.find({
+      transfer_hospital_id: user.hospital_id,
+      transfer_status: query.transfer_status
+    }).select('case_id')
+    caseTransfers = caseTransfers.map(obj => obj.case_id)
   }
 
   if(query.search){
@@ -98,9 +101,9 @@ async function ListCase (query, user, callback) {
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
-    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseReferences)
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseTransfers)
   } else {
-    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseReferences)
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseTransfers)
   }
 
   Case.paginate(result_search, options).then(function(results){

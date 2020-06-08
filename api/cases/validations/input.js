@@ -28,10 +28,10 @@ const CaseVerifyPayload = Joi.object().keys({
     verified_comment: Joi.string().allow('', null).optional()
 })
 
-const CaseReferPayload = Joi.object().keys({
-    reference_status: Joi.string().valid('pending','referenced','declined').required(),
-    reference_comment: Joi.string().allow('', null).optional(),
-    reference_hospital: Joi.string().required()
+const CaseTransferPayload = Joi.object().keys({
+    transfer_status: Joi.string().valid('pending','transferred','declined').required(),
+    transfer_comment: Joi.string().allow('', null).optional(),
+    transfer_hospital_id: Joi.string().required()
 })
 
 const CaseParamsValidations = {
@@ -60,7 +60,8 @@ const CaseQueryValidations = {
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
         end_date: Joi.string().empty('', null).default('').description('search data by test date'),
         author: Joi.string().empty('', null).default('').description('filter by author'),
-        verified_status: Joi.string().empty('', null).default('').description('filter by verified status')
+        verified_status: Joi.string().empty('', null).default('').description('filter by verified status'),
+        transfer_status: Joi.string().optional().valid('pending', 'declined', 'transferred').description('filter by transfer status')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -154,8 +155,8 @@ const CaseVerifyPayloadValidations = Object.assign({
     failAction: validateOptions.failAction
 }, CaseParamsValidations)
 
-const CaseReferPayloadValidations = Object.assign({
-    payload: CaseReferPayload,
+const CaseTransferPayloadValidations = Object.assign({
+    payload: CaseTransferPayload,
     headers: HeadersPayLoad,
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -170,5 +171,5 @@ module.exports = {
     CaseImportPayloadValidations,
     caseSchemaValidation,
     CaseVerifyPayloadValidations,
-    CaseReferPayloadValidations
+    CaseTransferPayloadValidations
 }

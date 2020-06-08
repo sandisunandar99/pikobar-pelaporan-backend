@@ -44,6 +44,7 @@ const CaseSchema = new mongoose.Schema({
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
+    transfer_status: { type: String, lowercase: true, default: null },
     is_test_masif: {type: Boolean, default: false}
 
 },{ timestamps:true, usePushEach: true })
@@ -73,6 +74,7 @@ CaseSchema.methods.toJSONFor = function () {
         status: this.status,
         verified_status: this.verified_status,
         verified_comment: this.verified_comment,
+        transfer_status: this.transfer_status || null,
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,

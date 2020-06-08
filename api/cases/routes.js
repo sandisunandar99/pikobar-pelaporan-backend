@@ -313,34 +313,51 @@ module.exports = (server) =>{
             },
             handler: handlers.GetCaseSummaryVerification
         },
-        // get case referral
+        // Create new case & transfer
         {
-            method: 'GET',
-            path: '/cases/{id}/references',
+            method: 'POST',
+            path: '/cases-transfer',
             config: {
                 auth: 'jwt',
-                description: 'Get case references',
-                tags: ['api', 'cases.references'],
+                description: 'create new cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleCreate,
+                    validationBeforeInput,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict
+                ]
+            },
+            handler: handlers.CreateNewCaseTransfer
+        },
+        // get case transfers
+        {
+            method: 'GET',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Get case transfers',
+                tags: ['api', 'cases.transfers'],
                 pre: [
                     CheckRoleView,
                 ]
             },
-            handler: handlers.GetCaseReferences
+            handler: handlers.GetCaseTransfers
         },
-        // create reference
+        // create case transfer
         {
             method: 'POST',
-            path: '/cases/{id}/references',
+            path: '/cases/{id}/transfers',
             config: {
                 auth: 'jwt',
-                description: 'Create case references',
-                tags: ['api', 'cases.references'],
-                validate: inputValidations.CaseReferPayloadValidations,
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseTransferPayloadValidations,
                 pre: [
                     CheckRoleCreate
                 ]
             },
-            handler: handlers.CreateCaseReference
+            handler: handlers.CreateCaseTransfer
         }
     ]
 
