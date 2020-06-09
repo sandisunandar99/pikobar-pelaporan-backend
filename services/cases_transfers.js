@@ -11,7 +11,7 @@ async function getCasetransfers (caseId, callback) {
   try {
 
     let transfers = await CaseTransfer
-      .find({ case_id: caseId })
+      .find({ transfer_case_id: caseId })
       .populate('createdBy')
       .sort({ createdAt: 'desc'})
 
@@ -23,16 +23,33 @@ async function getCasetransfers (caseId, callback) {
   }
 }
 
-async function createCaseTransfer (id, author, payload, callback) {
+async function createCaseTransfer (caseId, author, payload, callback) {
   try {
 
+    // insert transfer logs
+    payload.transfer_from_unit_id = author.unit_id
+
+    if (payload.transfer_status === 'transferred') {
+
+      const caseTransfer = await CaseTransfer.findOne({
+        transfer_case_id: caseId,
+        transfer_to_unit_id: author.unit_id,
+        transfer_status: 'pending'
+      })
+
+      payload.transfer_from_unit_id = caseTransfer.transfer_from_unit_id
+      payload.transfer_to_unit_id = caseTransfer.transfer_to_unit_id 
+    }
+
     // update case transfer status
-    await Case.findOneAndUpdate({ _id: id}, {
-      $set: { transfer_status: payload.transfer_status }
+    await Case.findOneAndUpdate({ _id: caseId}, {
+      $set: {
+        transfer_status: payload.transfer_status,
+        transfer_to_unit_id: payload.transfer_to_unit_id      
+      }
     })
 
-    // insert transfer logs
-    payload.case_id = id
+    payload.transfer_case_id = caseId
     payload.createdBy = author._id
 
     const item = new CaseTransfer(payload)

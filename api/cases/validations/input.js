@@ -31,7 +31,7 @@ const CaseVerifyPayload = Joi.object().keys({
 const CaseTransferPayload = Joi.object().keys({
     transfer_status: Joi.string().valid('pending','transferred','declined').required(),
     transfer_comment: Joi.string().allow('', null).optional(),
-    transfer_hospital_id: Joi.string().required()
+    transfer_to_unit_id: Joi.string().allow('', null).optional(),
 })
 
 const CaseParamsValidations = {
