@@ -6,6 +6,117 @@ const Case = mongoose.model('Case');
 require('../models/CaseTransfer');
 const CaseTransfer = mongoose.model('CaseTransfer');
 
+const myCustomLabels = {
+  totalDocs: 'itemCount',
+  docs: 'itemsList',
+  limit: 'perPage',
+  page: 'currentPage',
+  meta: '_meta'
+};
+
+
+async function ListCase (query, user, callback) {
+  let params = {}
+  let filterStatus = {}
+
+  if (query.search) {
+    params.$or = [
+      { id_case : new RegExp(query.search || '',"i") },
+      { name: new RegExp(query.search || '', "i") },
+      { nik: new RegExp(query.search || '', "i") }
+    ]
+  }
+
+  if (query.transfer_status) {
+    filterStatus = { $eq: ["$transfer_status", query.transfer_status] }
+  }
+
+  const dbQuery = [
+    { $match: params },
+    { $lookup:
+      {
+        from: 'casetransfers',
+        let: { caseId: "$_id", status: "pending" },
+        pipeline: [
+           { $match:
+              { $expr:
+                 { $and:
+                    [
+                      { $eq: [ "$transfer_case_id",  "$$caseId" ] },
+                      { $eq: [ "$transfer_from_unit_id",  user.unit_id ] },
+                      filterStatus
+                    ]
+                 },
+              }
+           },
+           { $sort: {createdAt: -1} },
+           { $limit : 1 }
+        ],
+        as: "caseTransfer"
+      },
+    },
+    { $lookup:
+      {
+        from: 'users',
+        localField: "author",
+        foreignField: "_id",
+        as: "author"
+      },
+    },
+    { "$addFields": {
+      "author": {
+        "$map": {
+          "input": "$author",
+          "as": "auth",
+          "in": {
+            "_id": "$$auth._id",
+            "username": "$$auth.username",
+            "fullname": "$$auth.fullname",
+            "code_district_city": "$$auth.code_district_city",
+            "name_district_city": "$$auth.name_district_city"
+          }
+        } 
+      }  
+    }},
+    { $unwind: "$author" },
+    { $lookup:
+      {
+        from: 'histories',
+        localField: "last_history",
+        foreignField: "_id",
+        as: "last_history"
+      },
+    },
+    { $unwind: "$last_history" },
+    { $unwind: "$caseTransfer" }
+  ]
+
+  try {
+    const aggregate = Case.aggregate(dbQuery)
+
+    const results = await Case.aggregatePaginate(aggregate,
+    {
+      page: query.page || 1,
+      limit: query.limit || 3,
+      customLabels: myCustomLabels
+    })
+    
+    const response = {
+      cases: results.itemsList.map(c => {
+        delete c.caseTransfer
+        return c
+      }),
+      _meta: (() => {
+        delete results.itemsList
+        return results
+      })()
+    }
+
+    callback(null, response)
+  } catch (error) {
+    callback(null, error)
+  }
+}
 
 async function getCasetransfers (caseId, callback) {
   try {
@@ -63,6 +174,10 @@ async function createCaseTransfer (caseId, author, payload, callback) {
 }
 
 module.exports = [
+  {
+    name: 'services.casesTransfers.list',
+    method: ListCase
+  },
   {
     name: 'services.casesTransfers.get',
     method: getCasetransfers

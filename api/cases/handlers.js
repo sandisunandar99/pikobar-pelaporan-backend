@@ -350,6 +350,25 @@ module.exports = (server) => {
         },
 
         /**
+         * GET /api/cases-transfer
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCaseTransfer(request, reply){
+            let query = request.query
+
+            server.methods.services.casesTransfers.list(
+                query, 
+                request.auth.credentials.user,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result,request)
+                ).code(200)
+            })
+        },
+
+        /**
          * POST /api/cases-transfer
          * @param {*} request
          * @param {*} reply

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+
 const check = require("../helpers/historycheck")
 var uniqueValidator = require('mongoose-unique-validator')
 
@@ -54,6 +56,7 @@ CaseSchema.index( { verified_status: 1 } )
 CaseSchema.index( { address_district_code: 1 } )
 
 CaseSchema.plugin(mongoosePaginate)
+CaseSchema.plugin(aggregatePaginate);
 CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
 
 
@@ -79,7 +82,7 @@ CaseSchema.methods.toJSONFor = function () {
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,
-        author: this.author.JSONCase(),
+        // author: this.author.JSONCase(),
         last_history: this.last_history,
         is_test_masif: this.is_test_masif,
         createdAt : this.createdAt,

@@ -313,6 +313,23 @@ module.exports = (server) =>{
             },
             handler: handlers.GetCaseSummaryVerification
         },
+        // Get list case transfer
+        {
+            method: 'GET',
+            path: '/cases-transfer',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all cases',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseQueryValidations,
+                // response: outputValidations.ListCaseOutputValidationsConfig,
+                pre: [
+                    CheckRoleView,
+                    // checkIfDataNotNull
+                ]
+            },
+            handler: handlers.ListCaseTransfer
+        },
         // Create new case & transfer
         {
             method: 'POST',
