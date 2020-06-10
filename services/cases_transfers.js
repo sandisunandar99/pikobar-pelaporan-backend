@@ -15,7 +15,7 @@ const myCustomLabels = {
 };
 
 
-async function ListCase (query, user, callback) {
+async function ListCase (query, user, type, callback) {
   let params = {}
   let filterStatus = {}
 
@@ -28,7 +28,13 @@ async function ListCase (query, user, callback) {
   }
 
   if (query.transfer_status) {
-    filterStatus = { $eq: ["$transfer_status", query.transfer_status] }
+    // filterStatus = { $eq: ["$transfer_status", query.transfer_status] }
+    params.transfer_status = query.transfer_status
+  }
+
+  let filterBy = '$transfer_from_unit_id'
+  if (type == 'in') {
+    filterBy = '$transfer_to_unit_id'
   }
 
   const dbQuery = [
@@ -43,8 +49,7 @@ async function ListCase (query, user, callback) {
                  { $and:
                     [
                       { $eq: [ "$transfer_case_id",  "$$caseId" ] },
-                      { $eq: [ "$transfer_from_unit_id",  user.unit_id ] },
-                      filterStatus
+                      { $eq: [ filterBy,  user.unit_id ] },
                     ]
                  },
               }
@@ -135,33 +140,84 @@ async function getCasetransfers (caseId, callback) {
 }
 
 async function createCaseTransfer (caseId, author, payload, callback) {
+
+  function getCaseTransfer(params) {
+    return CaseTransfer.findOne(params).sort({ createdAt: -1 })
+  }
+
+  // TODO CLEAN UP
   try {
+    
+    let status = payload.transfer_status
+    let to_unit_id= payload.transfer_to_unit_id
+    let to_unit_name = payload.transfer_to_unit_name
+
+    
 
     // insert transfer logs
     payload.transfer_from_unit_id = author.unit_id
+    payload.transfer_from_unit_name = author.unit_name
 
     if (payload.transfer_status === 'transferred') {
 
-      const caseTransfer = await CaseTransfer.findOne({
+      const caseTransfer = await getCaseTransfer({
         transfer_case_id: caseId,
         transfer_to_unit_id: author.unit_id,
         transfer_status: 'pending'
       })
 
       payload.transfer_from_unit_id = caseTransfer.transfer_from_unit_id
-      payload.transfer_to_unit_id = caseTransfer.transfer_to_unit_id 
+      payload.transfer_from_unit_name = caseTransfer.transfer_from_unit_name
+
+      payload.transfer_to_unit_id = caseTransfer.transfer_to_unit_id
+      payload.transfer_to_unit_name = caseTransfer.transfer_to_unit_name 
+      to_unit_id = caseTransfer.transfer_to_unit_id
+      to_unit_name = caseTransfer.transfer_to_unit_name
+
+    } else if (payload.transfer_status === 'aborted') {
+
+      status = null
+      to_unit_id = null
+      to_unit_name = null
+
+      const latestTransferred = await getCaseTransfer({
+        transfer_case_id: caseId,
+        transfer_from_unit_id: { $ne: author.unit_id },
+        transfer_status: 'transferred'
+      })
+
+      const latestAbortTransfer = await getCaseTransfer({
+        transfer_case_id: caseId,
+        transfer_from_unit_id:  author.unit_id,
+      })
+
+      if (latestTransferred) {
+        status = latestTransferred.transfer_status
+        to_unit_id = latestTransferred.transfer_to_unit_id
+        to_unit_name = latestTransferred.transfer_to_unit_name
+      }
+
+      payload.transfer_from_unit_id = author.unit_id
+      payload.transfer_from_unit_name = author.unit_name
+
+      payload.transfer_to_unit_id = latestAbortTransfer.transfer_to_unit_id 
+      payload.transfer_to_unit_name = latestAbortTransfer.transfer_to_unit_name
+
     }
 
     // update case transfer status
     await Case.findOneAndUpdate({ _id: caseId}, {
       $set: {
-        transfer_status: payload.transfer_status,
-        transfer_to_unit_id: payload.transfer_to_unit_id      
+        transfer_status: status,
+        transfer_to_unit_id: to_unit_id,
+        transfer_to_unit_name: to_unit_name,      
       }
     })
 
-    payload.transfer_case_id = caseId
-    payload.createdBy = author._id
+    Object.assign(payload, {
+      transfer_case_id: caseId,
+      createdBy: author._id
+    })
 
     const item = new CaseTransfer(payload)
 

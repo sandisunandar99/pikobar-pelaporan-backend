@@ -4,8 +4,10 @@ const CaseTransferSchema = new mongoose.Schema({
     transfer_comment: String,
     transfer_status : { type: String, lowercase: true, required: [true, "can't be blank"]},
     transfer_case_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
-    transfer_from_unit_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital', required: [true, "can't be blank"]},
-    transfer_to_unit_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital', required: [true, "can't be blank"]},
+    transfer_from_unit_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', required: [true, "can't be blank"]},
+    transfer_from_unit_name : { type: String, required: [true, "can't be blank"]},
+    transfer_to_unit_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', required: [true, "can't be blank"]},
+    transfer_to_unit_name : { type: String, required: [true, "can't be blank"]},
     createdBy : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps : true });
 
@@ -19,7 +21,9 @@ CaseTransferSchema.methods.toJSONFor = function () {
         transfer_status : this.transfer_status,
         transfer_case_id: this.transfer_case_id,
         transfer_from_unit_id: this.transfer_from_unit_id,
+        transfer_from_unit_name: this.transfer_from_unit_id,
         transfer_to_unit_id: this.transfer_to_unit_id,
+        transfer_to_unit_name: this.transfer_to_unit_name,
         createdBy: this.createdBy ? this.createdBy.JSONCase() : null,
         createdAt : this.createdAt
     }

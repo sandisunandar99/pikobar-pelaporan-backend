@@ -356,10 +356,12 @@ module.exports = (server) => {
          */
         async ListCaseTransfer(request, reply){
             let query = request.query
+            let type = request.params.type
 
             server.methods.services.casesTransfers.list(
                 query, 
                 request.auth.credentials.user,
+                type,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(

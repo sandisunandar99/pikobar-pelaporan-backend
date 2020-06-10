@@ -316,7 +316,7 @@ module.exports = (server) =>{
         // Get list case transfer
         {
             method: 'GET',
-            path: '/cases-transfer',
+            path: '/cases-transfer/{type}',
             config: {
                 auth: 'jwt',
                 description: 'show list of all cases',
