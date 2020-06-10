@@ -598,7 +598,6 @@ function FormSelectIdCase(query, user, callback) {
 
   if (query.address_district_code) {
     params.author_district_code = query.address_district_code;
-    params.author = new ObjectId(user._id);
   }
 
   Case.find(params)
