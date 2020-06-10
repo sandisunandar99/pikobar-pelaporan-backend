@@ -601,9 +601,9 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
   }
 
   Case.find(params)
-    .and({
-      status: 'ODP'
-    })
+    // .and({
+    //   status: 'ODP'
+    // })
     .where('delete_status')
     .ne('deleted')
     .or([{name: new RegExp(query.search, "i")},
@@ -690,9 +690,9 @@ function seacrhFromExternal(address_district_code, search, callback) {
 function seacrhFromInternal(query, callback) {
 
   Case.findOne({address_district_code:query.address_district_code})
-       .and({
-        status: 'ODP'
-      })
+      //  .and({
+      //   status: 'ODP'
+      // })
       .where('delete_status')
       .ne('deleted')
       .or([
