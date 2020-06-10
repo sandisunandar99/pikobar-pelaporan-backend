@@ -44,7 +44,7 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre:[
                     searchIdcasefromInternal,
-                    searchIdcasefromExternal
+                    // searchIdcasefromExternal
                 ]
             },
             handler: handlers.GetListIdCaseDetail
