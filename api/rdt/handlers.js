@@ -152,7 +152,7 @@ module.exports = (server) => {
             server.methods.services.rdt.FormSelectIdCase(
                 query,
                 request.auth.credentials.user,
-                request.pre.data_pendaftaran,
+                // request.pre.data_pendaftaran,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
