@@ -13,7 +13,8 @@ const register = (server, options, next) => {
       require('./country'),
       require('./dashboard'),
       require('./notifications'),
-      require('./map')
+      require('./map'),
+      require('./unit'),
     );
     server.method(services)
     return next()

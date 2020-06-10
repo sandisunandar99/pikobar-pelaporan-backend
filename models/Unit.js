@@ -11,7 +11,10 @@ const UnitSchema = new mongoose.Schema({
     description: String,
     kemendagri_kabupaten_kode: String,
     kemendagri_kecamatan_kode: String,
-    kemendagri_kelurahan_kode: String
+    kemendagri_kelurahan_kode: String,
+    delete_status: String,
+    deletedAt: Date,
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 })
 
 UnitSchema.methods.toJSONFor = function () {  
