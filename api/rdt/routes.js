@@ -29,9 +29,9 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list id_case for form',
                 tags: ['api', 'rdt'],
-                pre: [
-                    getDataExternal
-                ]
+                // pre: [
+                //     getDataExternal
+                // ]
             },
             handler: handlers.GetListIdCase
         },
