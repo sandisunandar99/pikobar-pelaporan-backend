@@ -294,8 +294,9 @@ function createRdt (payload, author, pre, callback) {
             rdt_history.save((err, item) => {
               if (err) return callback(err, null);
               
-              sendMessagesSMS(rdt)
-              sendMessagesWA(rdt)
+              //TODO: for send sms and whatsap message efter input test result
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
 
               return callback(null, rdt);
             });
