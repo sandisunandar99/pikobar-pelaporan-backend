@@ -147,7 +147,7 @@ const updateUser = (user, payload, callback) => {
     address_subdistrict_name: payload.address_subdistrict_name ? payload.address_subdistrict_name : user.address_subdistrict_name,
     address_village_code: payload.address_village_code ? payload.address_village_code : user.address_village_code,
     address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name,
-    hospital_id: payload.hospital_id ? payload.hospital_id : user.hospital_id
+    unit_id: payload.unit_id ? payload.unit_id : user.unit_id
   }
   
   user = Object.assign(user, users);
