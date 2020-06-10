@@ -29,7 +29,7 @@ async function ListCase (query, user, callback) {
     limit: 'perPage',
     page: 'currentPage',
     meta: '_meta'
-  };
+  };  
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
   
