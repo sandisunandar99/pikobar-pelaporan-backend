@@ -169,7 +169,7 @@ module.exports = (server) => {
         async GetListIdCaseDetail(request, reply) {
             server.methods.services.rdt.FormSelectIdCaseDetail(
                 request.pre.search_internal,
-                request.pre.search_external,
+                // request.pre.search_external,
                 request.auth.credentials.user,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
