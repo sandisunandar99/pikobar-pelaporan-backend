@@ -591,7 +591,7 @@ function getCaseByidcase(idcase,callback) {
 
 }
 
-function FormSelectIdCase(query, user, data_pendaftaran, callback) {
+function FormSelectIdCase(query, user, callback) {
 
   let params = new Object();
 
@@ -612,8 +612,8 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
     .exec()
     .then(x => {
       let res = x.map(res => res.JSONFormCase())
-      let concat = res.concat(data_pendaftaran)
-      return callback(null, concat)
+      // let concat = res.concat(data_pendaftaran)
+      return callback(null, res)
     })
     .catch(err => callback(err, null))
 }
