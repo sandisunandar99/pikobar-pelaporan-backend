@@ -10,3 +10,6 @@ typings
 .npm
 /data
 /upload/
+
+Dockerfile
+docker-compose.yml
