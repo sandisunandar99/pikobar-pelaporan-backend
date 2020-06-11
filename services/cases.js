@@ -430,11 +430,11 @@ function updateCase (id, pre, author, payload, callback) {
   payload.author_district_name = author.name_district_city
 
   // Regenerate id_case if district code address is changed.
-  if (payload.address_district_code !== pre.cases.address_district_code) {
+  if (payload.address_district_code && (payload.address_district_code !== pre.cases.address_district_code)) {
     let date = new Date().getFullYear().toString()
     let id_case
-  
-    if (author.role === 'faskes') {
+
+    if (pre.cases.verified_status !== 'verified') {
       id_case = "precovid-"
       id_case += pre.count_case_pending.dinkes_code
       id_case += date.substr(2, 2)
