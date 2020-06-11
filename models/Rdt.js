@@ -10,6 +10,7 @@ const RdtSchema = new mongoose.Schema({
     mechanism: String,
     id_case : {type : String},
     nik : {type : String},
+    note_nik: {type: String},
     name : {type : String},
     gender : {type : String},
     
@@ -21,6 +22,7 @@ const RdtSchema = new mongoose.Schema({
     address_village_name : {type : String},
     address_detail: String,
     phone_number : {type : String},
+    note_phone_number: {type: String},
 
     birth_date : {type : String},
     age : {type : String},
@@ -46,7 +48,10 @@ const RdtSchema = new mongoose.Schema({
     test_address_detail: String,
     test_note : {type : String},
     test_date: Date,
-    
+
+    swab_count: Number, 
+    lab: String,
+
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     author_district_code : { type:String},
     author_district_name : { type: String},

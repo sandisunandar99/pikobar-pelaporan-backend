@@ -4,11 +4,13 @@ require('../models/DistrictCity')
 require('../models/SubDistrict')
 require('../models/Village')
 require('../models/Hospital')
+require('../models/Lab')
 
 const Districtcity = mongoose.model('Districtcity')
 const SubDistrict = mongoose.model('SubDistrict')
 const Village = mongoose.model('Village')
 const Hospital = mongoose.model('Hospital')
+const Lab = mongoose.model('Lab')
 
 
 function getDistrictCity(request, callback) {
@@ -112,6 +114,21 @@ function getHospital(query, callback) {
 
 }
 
+function getLab(query, callback) {
+  var params = new Object();
+
+  if (query.search) {
+    params.lab_name = new RegExp(query.search, "i")
+  }
+
+  Lab.find(params)
+    .exec()
+    .then(res => {
+      let result = res.map(q => q.toJSONFor())
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
 
 module.exports = [
   {
@@ -137,5 +154,9 @@ module.exports = [
   {
     name: 'services.areas.getHospital',
     method: getHospital
+  },
+  {
+    name: 'services.areas.getLab',
+    method: getLab
   }
 ]
