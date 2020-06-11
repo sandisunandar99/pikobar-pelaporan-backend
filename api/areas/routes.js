@@ -75,6 +75,18 @@ module.exports = (server) =>{
                 // response: outputValidations
             },
             handler: handlers.Hospital
+        },
+        {
+            method: 'GET',
+            path: '/areas/lab',
+            config: {
+                auth: 'jwt',
+                description: 'get lab in west java',
+                tags: ['api', 'areas'],
+                // validate: inputValidations,
+                // response: outputValidations
+            },
+            handler: handlers.Lab
         }
     ]
 
