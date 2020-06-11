@@ -218,7 +218,7 @@ function GetRdtHistoryByRdtId (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function createRdt (payload, author, pre, callback) {
+function createRdt(query, payload, author, pre, callback) {
 
   // find existing Rdt by nik & phone_number
   Rdt.findOne({ nik: payload.nik })
@@ -262,7 +262,7 @@ function createRdt (payload, author, pre, callback) {
           code_tool_tester += pre.count_rdt.count
 
           let id_case
-          if (payload.final_result === "POSITIF") {
+          if (query.source_data === "external") {
                   id_case = "COVID-"
                   id_case += pre.count_case.dinkes_code
                   id_case += date.substr(2, 2)
@@ -570,7 +570,6 @@ function getCodeDinkes(code, callback) {
                  return callback(null, result)
               })
 }
-
 
 function getCaseByidcase(idcase,callback) {
 
