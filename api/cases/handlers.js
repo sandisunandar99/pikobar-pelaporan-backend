@@ -159,7 +159,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async UpdateCase(request, reply){
-            let pre = request.pre.cases
+            let pre = request.pre
             let payload = request.payload
             let id = request.params.id
             let author = request.auth.credentials.user

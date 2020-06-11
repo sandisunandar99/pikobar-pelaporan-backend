@@ -416,8 +416,30 @@ function updateCase (id, pre, author, payload, callback) {
   payload.author_district_code = author.code_district_city
   payload.author_district_name = author.name_district_city
 
+  // Regenerate id_case if district code address is changed.
+  if (payload.address_district_code && (payload.address_district_code !== pre.cases.address_district_code)) {
+    let date = new Date().getFullYear().toString()
+    let id_case
+
+    if (pre.cases.verified_status !== 'verified') {
+      id_case = "precovid-"
+      id_case += pre.count_case_pending.dinkes_code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
+      id_case += pre.count_case_pending.count_pasien 
+    } else {
+      id_case = "covid-"
+      id_case += pre.count_case.dinkes_code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+      id_case += pre.count_case.count_pasien
+    }
+
+    payload.id_case = id_case
+  }
+
   const options = { new: true }
-  if (pre.verified_status !== 'verified') options.timestamps = false
+  if (pre.cases.verified_status !== 'verified') options.timestamps = false
 
   Case.findOneAndUpdate({ _id: id}, { $set: payload }, options)
   .then(result => {
