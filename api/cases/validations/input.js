@@ -32,6 +32,7 @@ const CaseTransferPayload = Joi.object().keys({
     transfer_status: Joi.string().valid('pending','transferred','declined').required(),
     transfer_comment: Joi.string().allow('', null).optional(),
     transfer_to_unit_id: Joi.string().allow('', null).optional(),
+    transfer_to_unit_name: Joi.string().allow('', null).optional()
 })
 
 const CaseParamsValidations = {
