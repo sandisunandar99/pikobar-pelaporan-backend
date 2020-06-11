@@ -10,6 +10,7 @@ const RdtSchema = new mongoose.Schema({
     mechanism: String,
     id_case : {type : String},
     nik : {type : String},
+    note_nik: {type: String},
     name : {type : String},
     gender : {type : String},
     
@@ -21,6 +22,7 @@ const RdtSchema = new mongoose.Schema({
     address_village_name : {type : String},
     address_detail: String,
     phone_number : {type : String},
+    note_phone_number: {type: String},
 
     birth_date : {type : String},
     age : {type : String},
