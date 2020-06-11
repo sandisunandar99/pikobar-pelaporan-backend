@@ -114,6 +114,23 @@ module.exports = (server) => {
                     ).code(200)
                 }
             )
+        },
+
+        /**
+         * GET /api/surveys/{id}/quetions
+         * @param {*} request
+         * @param {*} reply
+         */
+        async Lab(request, reply) {
+            server.methods.services.areas.getLab(
+                request.query,
+                (err, hospital) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructAreasResponse(hospital)
+                    ).code(200)
+                }
+            )
         }
 
     }//end

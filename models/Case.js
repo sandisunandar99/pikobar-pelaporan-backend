@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+
 const check = require("../helpers/historycheck")
 var uniqueValidator = require('mongoose-unique-validator')
 
@@ -44,6 +46,8 @@ const CaseSchema = new mongoose.Schema({
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
+    transfer_status: { type: String, lowercase: true, default: null },
+    transfer_to_unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     is_test_masif: {type: Boolean, default: false}
 
 },{ timestamps:true, usePushEach: true })
@@ -52,6 +56,7 @@ CaseSchema.index( { verified_status: 1 } )
 CaseSchema.index( { address_district_code: 1 } )
 
 CaseSchema.plugin(mongoosePaginate)
+CaseSchema.plugin(aggregatePaginate);
 CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
 
 
@@ -73,10 +78,11 @@ CaseSchema.methods.toJSONFor = function () {
         status: this.status,
         verified_status: this.verified_status,
         verified_comment: this.verified_comment,
+        transfer_status: this.transfer_status || null,
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,
-        author: this.author.JSONCase(),
+        // author: this.author.JSONCase(),
         last_history: this.last_history,
         is_test_masif: this.is_test_masif,
         createdAt : this.createdAt,
@@ -86,12 +92,13 @@ CaseSchema.methods.toJSONFor = function () {
 
 
 CaseSchema.methods.JSONFormCase = function () {
-    let covid = this.id_case
+    let covid = this.id_case 
     let nik = this.nik === null || this.nik === undefined ? "-" : this.nik
     return {
         display: this.name + '/'+nik+'/'+this.phone_number,
         id_case: this.id_case,
-        id: this._id
+        id: this._id,
+        last_status: this.status
     }
 }
 

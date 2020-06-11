@@ -294,8 +294,9 @@ function createRdt (payload, author, pre, callback) {
             rdt_history.save((err, item) => {
               if (err) return callback(err, null);
               
-              sendMessagesSMS(rdt)
-              sendMessagesWA(rdt)
+              //TODO: for send sms and whatsap message efter input test result
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
 
               return callback(null, rdt);
             });
@@ -591,19 +592,18 @@ function getCaseByidcase(idcase,callback) {
 
 }
 
-function FormSelectIdCase(query, user, data_pendaftaran, callback) {
+function FormSelectIdCase(query, user, callback) {
 
   let params = new Object();
 
   if (query.address_district_code) {
-    params.address_district_code = query.address_district_code;
-    params.author = new ObjectId(user._id);
+    params.author_district_code = query.address_district_code;
   }
 
   Case.find(params)
-    .and({
-      status: 'ODP'
-    })
+    // .and({
+    //   status: 'ODP'
+    // })
     .where('delete_status')
     .ne('deleted')
     .or([{name: new RegExp(query.search, "i")},
@@ -612,8 +612,8 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
     .exec()
     .then(x => {
       let res = x.map(res => res.JSONFormCase())
-      let concat = res.concat(data_pendaftaran)
-      return callback(null, concat)
+      // let concat = res.concat(data_pendaftaran)
+      return callback(null, res)
     })
     .catch(err => callback(err, null))
 }
@@ -649,12 +649,14 @@ function getDatafromExternal(address_district_code, search, callback) {
    });
 }
 
-function FormSelectIdCaseDetail(search_internal, search_external, user, callback) {
-    if (search_internal === null || search_internal=== undefined) {
-      return callback(null, search_external)
-    }else{
-      return callback(null, search_internal.JSONSeacrhOutput())
-    }
+function FormSelectIdCaseDetail(search_internal, user, callback) {
+    // if (search_internal === null || search_internal=== undefined) {
+    //   return callback(null, search_external)
+    // }else{
+    //   return callback(null, search_internal.JSONSeacrhOutput())
+    // }
+    return callback(null, search_internal.JSONSeacrhOutput())
+    
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
@@ -687,12 +689,12 @@ function seacrhFromExternal(address_district_code, search, callback) {
     });
 }
 
-function seacrhFromInternal(query, callback) {
+function seacrhFromInternal(query, callback) { 
 
   Case.findOne({address_district_code:query.address_district_code})
-       .and({
-        status: 'ODP'
-      })
+      //  .and({
+      //   status: 'ODP'
+      // })
       .where('delete_status')
       .ne('deleted')
       .or([
@@ -704,8 +706,7 @@ function seacrhFromInternal(query, callback) {
       .then(res =>{
           // let result = res.JSONSeacrhOutput()
           return callback(null, res)
-      })
-      .catch()
+      }).catch(err => callback(err, null))
 }
 
 function getRegisteredUser(search_external, user, callback) {   

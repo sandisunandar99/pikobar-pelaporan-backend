@@ -1,5 +1,6 @@
 module.exports = (server) => {
-    const handlers = require('./handlers')(server)
+    const handlers = require('./handlers')(server);
+    const inputValidations = require('./validations/input');
     return [
         {
             method: 'GET',
@@ -60,6 +61,16 @@ module.exports = (server) => {
                 tags: ['api', 'dashboard statistik'],
             },
             handler: handlers.tabelAggregateCriteria,
+        },
+        {
+            method: 'GET',
+            path: '/dashboard/tabel-aggregate-criteria-export',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard statistik',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.tableLapHarianExport,
         },
 ]
 }
