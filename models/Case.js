@@ -44,7 +44,8 @@ const CaseSchema = new mongoose.Schema({
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
-    is_test_masif: {type: Boolean, default: false}
+    is_test_masif: {type: Boolean, default: false},
+    input_source: String,
 
 },{ timestamps:true, usePushEach: true })
 
