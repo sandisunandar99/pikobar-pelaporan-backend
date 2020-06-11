@@ -15,6 +15,9 @@ const User = mongoose.model('User')
 require('../models/Notification')
 const Notification = mongoose.model('Notification')
 
+require('../models/CaseTransfer')
+const CaseTransfer = mongoose.model('CaseTransfer')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
@@ -23,6 +26,7 @@ const Notif = require('../helpers/notification')
 
 async function ListCase (query, user, callback) {
 
+  let caseTransfers = []
   const myCustomLabels = {
     totalDocs: 'itemCount',
     docs: 'itemsList',
@@ -76,6 +80,15 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
   
+  if (user.role === "faskes" && query.transfer_status) {
+    params.transfer_status = query.transfer_status
+    caseTransfers = await CaseTransfer.find({
+      transfer_hospital_id: user.hospital_id,
+      transfer_status: query.transfer_status
+    }).select('case_id')
+    caseTransfers = caseTransfers.map(obj => obj.case_id)
+  }
+
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
@@ -88,9 +101,9 @@ async function ListCase (query, user, callback) {
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
-    var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseTransfers)
   } else {
-    var result_search = Check.listByRole(user, params, null,Case,"delete_status")
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseTransfers)
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -278,16 +291,16 @@ async function getCaseSummary (query, user, callback) {
       });
       
       // OTG 
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       return callback(null, result)
     })
@@ -417,11 +430,11 @@ function updateCase (id, pre, author, payload, callback) {
   payload.author_district_name = author.name_district_city
 
   // Regenerate id_case if district code address is changed.
-  if (payload.address_district_code !== pre.cases.address_district_code) {
+  if (payload.address_district_code && (payload.address_district_code !== pre.cases.address_district_code)) {
     let date = new Date().getFullYear().toString()
     let id_case
-  
-    if (author.role === 'faskes') {
+
+    if (pre.cases.verified_status !== 'verified') {
       id_case = "precovid-"
       id_case += pre.count_case_pending.dinkes_code
       id_case += date.substr(2, 2)

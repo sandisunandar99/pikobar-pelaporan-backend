@@ -349,6 +349,95 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases-transfer
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCaseTransfer(request, reply){
+            let query = request.query
+
+            server.methods.services.casesTransfers.list(
+                query, 
+                request.auth.credentials.user,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result,request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * POST /api/cases-transfer
+         * @param {*} request
+         * @param {*} reply
+         */
+        CreateNewCaseTransfer(request, reply) {
+            let payload = request.payload
+            let author = request.auth.credentials.user
+            let results
+            server.methods.services.cases.create(
+                payload,
+                author,
+                request.pre,
+                async (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                results = result
+                payload.transfer_status = 'pending'
+                server.methods.services.casesTransfers.create(
+                    result._id,
+                    author,
+                    payload,
+                    (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    results.transfer_status = result.transfer_status
+                    return reply(
+                        constructCasesResponse(results, request)
+                    ).code(200)
+                })
+            })
+        },
+
+        /**
+         * GET /api/cases/{id}/transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseTransfers(request, reply){
+            server.methods.services.casesTransfers.get(
+                request.params.id,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * PUT /api/cases/{id}/transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateCaseTransfer(request, reply){
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+
+            server.methods.services.casesTransfers.create(
+                id,
+                author,
+                payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }

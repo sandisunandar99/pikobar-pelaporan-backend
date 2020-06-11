@@ -47,7 +47,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleCreate,
-                    // validationBeforeInput, // sementara jangan di pake karena untuk integrasu API,
+                    // validationBeforeInput, // sementara jangan di pake karena untuk integrasi API,
                     countCaseByDistrict,
                     countCasePendingByDistrict,
                     // checkCaseIsExists, // sementara jangan di pake karena cek nik
@@ -312,6 +312,69 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetCaseSummaryVerification
+        },
+        // Get list case transfer
+        {
+            method: 'GET',
+            path: '/cases-transfer',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all cases',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseQueryValidations,
+                // response: outputValidations.ListCaseOutputValidationsConfig,
+                pre: [
+                    CheckRoleView,
+                    // checkIfDataNotNull
+                ]
+            },
+            handler: handlers.ListCaseTransfer
+        },
+        // Create new case & transfer
+        {
+            method: 'POST',
+            path: '/cases-transfer',
+            config: {
+                auth: 'jwt',
+                description: 'create new cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleCreate,
+                    validationBeforeInput,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict
+                ]
+            },
+            handler: handlers.CreateNewCaseTransfer
+        },
+        // get case transfers
+        {
+            method: 'GET',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Get case transfers',
+                tags: ['api', 'cases.transfers'],
+                pre: [
+                    CheckRoleView,
+                ]
+            },
+            handler: handlers.GetCaseTransfers
+        },
+        // create case transfer
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseTransferPayloadValidations,
+                pre: [
+                    CheckRoleCreate
+                ]
+            },
+            handler: handlers.CreateCaseTransfer
         }
     ]
 

@@ -13,14 +13,16 @@ const register = (server, options, next) => {
     require('./SubDistrict')
     require('./Village')
     require('./Case')
+    require('./CaseTransfer')
     require('./CaseVerification')
     require('./History')
     require('./Occupation')
     require('./RdtHistory')
     require('./LocationTest'),
-    require('./Notification')
+    require('./Notification'),
+    require('./Unit'),
     require('./Lab')
-
+    
     server.app.db = {
       link: db.db,
       User: db.model('User'),
@@ -33,6 +35,7 @@ const register = (server, options, next) => {
       Occupation: db.model('Occupation'),
       RdtHistory: db.model('RdtHistory'),
       LocationTest: db.model('LocationTest'),
+      Unit: db.model('Unit'),
       LocationTest: db.model('Lab')
     };
 
