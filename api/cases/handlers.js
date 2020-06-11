@@ -375,7 +375,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        CreateNewCaseTransfer(request, reply) {
+        CreateCaseAndTransfer(request, reply) {
             let payload = request.payload
             let author = request.auth.credentials.user
             let results
@@ -384,6 +384,37 @@ module.exports = (server) => {
                 author,
                 request.pre,
                 async (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                results = result
+                payload.transfer_status = 'pending'
+                server.methods.services.casesTransfers.create(
+                    result._id,
+                    author,
+                    payload,
+                    (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    results.transfer_status = result.transfer_status
+                    return reply(
+                        constructCasesResponse(results, request)
+                    ).code(200)
+                })
+            })
+        },
+
+        /**
+         * PUT /api/cases-transfer/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async UpdateCaseAndTransfer(request, reply){
+            console.log('sss')
+            let pre = request.pre
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+            server.methods.services.cases.update(id, pre, author, payload,
+            async (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
                 results = result

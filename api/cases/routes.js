@@ -345,7 +345,24 @@ module.exports = (server) =>{
                     countCasePendingByDistrict
                 ]
             },
-            handler: handlers.CreateNewCaseTransfer
+            handler: handlers.CreateCaseAndTransfer
+        },
+        // Update case
+        {
+            method: 'PUT',
+            path: '/cases-transfer/{id}',
+            config: {
+                auth: 'jwt',
+                description: 'update cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleUpdate,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict,
+                    getCasebyId
+                ]
+            },
+            handler: handlers.UpdateCaseAndTransfer
         },
         // get case transfers
         {

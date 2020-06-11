@@ -32,9 +32,10 @@ async function ListCase (query, user, type, callback) {
     params.transfer_status = query.transfer_status
   }
 
-  let filterBy = '$transfer_from_unit_id'
   if (type == 'in') {
-    filterBy = '$transfer_to_unit_id'
+    params.transfer_to_unit_id = user.unit_id
+  } else {
+    params.transfer_from_unit_id = user.unit_id
   }
 
   const dbQuery = [
@@ -42,14 +43,13 @@ async function ListCase (query, user, type, callback) {
     { $lookup:
       {
         from: 'casetransfers',
-        let: { caseId: "$_id", status: "pending" },
+        let: { caseId: "$_id" },
         pipeline: [
            { $match:
               { $expr:
                  { $and:
                     [
                       { $eq: [ "$transfer_case_id",  "$$caseId" ] },
-                      { $eq: [ filterBy,  user.unit_id ] },
                     ]
                  },
               }
@@ -108,7 +108,7 @@ async function ListCase (query, user, type, callback) {
     
     const response = {
       cases: results.itemsList.map(c => {
-        delete c.caseTransfer
+        // delete c.caseTransfer
         return c
       }),
       _meta: (() => {
