@@ -160,6 +160,22 @@ module.exports = (server) =>{
             handler: handlers.ListCaseExport
         },
 
+        // Export Case to epidemiological investigation Form (PDF)
+        {
+            method: 'GET',
+            path: '/cases/{id}/export-to-pe-form',
+            config: {
+                auth: 'jwt',
+                description: 'Export Case to epidemiological investigation Form',
+                tags: ['api', 'epidemiological.investigation.form'],
+                pre: [
+                    CheckRoleView,
+                    getCasebyId
+                ]
+            },
+            handler: handlers.EpidemiologicalInvestigationForm
+        },
+
         // Update case
         {
             method: 'PUT',
@@ -296,6 +312,69 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetCaseSummaryVerification
+        },
+        // Get list case transfer
+        {
+            method: 'GET',
+            path: '/cases-transfer',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all cases',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseQueryValidations,
+                // response: outputValidations.ListCaseOutputValidationsConfig,
+                pre: [
+                    CheckRoleView,
+                    // checkIfDataNotNull
+                ]
+            },
+            handler: handlers.ListCaseTransfer
+        },
+        // Create new case & transfer
+        {
+            method: 'POST',
+            path: '/cases-transfer',
+            config: {
+                auth: 'jwt',
+                description: 'create new cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleCreate,
+                    validationBeforeInput,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict
+                ]
+            },
+            handler: handlers.CreateNewCaseTransfer
+        },
+        // get case transfers
+        {
+            method: 'GET',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Get case transfers',
+                tags: ['api', 'cases.transfers'],
+                pre: [
+                    CheckRoleView,
+                ]
+            },
+            handler: handlers.GetCaseTransfers
+        },
+        // create case transfer
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseTransferPayloadValidations,
+                pre: [
+                    CheckRoleCreate
+                ]
+            },
+            handler: handlers.CreateCaseTransfer
         }
     ]
 

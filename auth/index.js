@@ -16,7 +16,7 @@ const register = (server, options, next) => {
       return callback(null, true, {
         user
       });
-    });
+    }).populate('unit_id');
   }; 
 
   server.auth.strategy('jwt', 'jwt', {
