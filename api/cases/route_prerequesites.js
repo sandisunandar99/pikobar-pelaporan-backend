@@ -48,7 +48,7 @@ const countCaseByDistrict = server =>{
                 request.payload.address_district_code,
                 (err, count) => {
                     if (err) {
-                        return reply(replyHelper.constructErrorResponse(err)).takeover()
+                        return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                     }
                     return reply(count)
                 })
@@ -64,7 +64,7 @@ const countCasePendingByDistrict = server =>{
                 request.payload.address_district_code,
                 (err, count) => {
                     if (err) {
-                        return reply(replyHelper.constructErrorResponse(err)).takeover()
+                        return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                     }
                     return reply(count)
                 })
