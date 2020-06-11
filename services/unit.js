@@ -22,13 +22,7 @@ const listUnitById = async (id, callback) => {
 }
 
 const createUnit = async (payload, user, callback) => {
-  try {
-    payload.createdBy = user._id;
-    const result = await Unit.create(payload);
-    callback(null, result);
-  } catch (error) {
-    callback(error, null);
-  } 
+  callback(payload)
 }
 
 const updateUnit = async (pay, id, category, author, callback) => {

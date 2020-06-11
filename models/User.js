@@ -51,7 +51,6 @@ UserSchema.methods.generateJWT = function () {
   return jwt.sign({
     id: this._id,
     username: this.username,
-    unit_id : this.unit_id,
     exp: parseInt(exp.getTime() / 1000)
   }, config.auth.secret, {algorithm: config.auth.algorithm})
 }
@@ -65,6 +64,8 @@ UserSchema.methods.toAuthJSON = function () {
     role: this.role,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
+    unit_id : this.unit_id._id,
+    unit_name : this.unit_id.name,
     token: this.generateJWT()
   }
 }

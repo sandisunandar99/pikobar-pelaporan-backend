@@ -10,6 +10,6 @@ const UnitSchema = new mongoose.Schema({
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-});
+},{timestamps: true});
 
 module.exports = mongoose.model('Unit', UnitSchema);

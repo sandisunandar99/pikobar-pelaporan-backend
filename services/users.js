@@ -91,7 +91,7 @@ const getUserByUsername = (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
     return callback(null, user);
-  });
+  }).populate('unit_id');
 }
 
 const checkUser = async (query, callback) => {

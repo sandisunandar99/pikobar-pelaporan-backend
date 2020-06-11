@@ -16,6 +16,8 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async createUnit(request,reply){
+            console.log(request.auth.credentials.user);
+            
             server.methods.services.unit.create(request.payload,
                 request.auth.credentials.user,
                 (err, result) => {
