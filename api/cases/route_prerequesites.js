@@ -44,6 +44,11 @@ const checkCaseIsExists = server => {
 const countCaseByDistrict = server =>{
     return {
         method: (request, reply) => {
+            if (request.route.method === 'put' && request.route.path === '/api/cases/{id}') {
+                if (!request.payload.address_district_code)
+                    return reply()
+            }
+
             server.methods.services.cases.getCountByDistrict(
                 request.payload.address_district_code,
                 (err, count) => {
@@ -60,6 +65,11 @@ const countCaseByDistrict = server =>{
 const countCasePendingByDistrict = server =>{
     return {
         method: (request, reply) => {
+            if (request.route.method === 'put' && request.route.path === '/api/cases/{id}') {
+                if (!request.payload.address_district_code)
+                    return reply()
+            }
+
             server.methods.services.cases.getCountPendingByDistrict(
                 request.payload.address_district_code,
                 (err, count) => {

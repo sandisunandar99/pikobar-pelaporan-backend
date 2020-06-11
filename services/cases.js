@@ -417,7 +417,7 @@ function updateCase (id, pre, author, payload, callback) {
   payload.author_district_name = author.name_district_city
 
   // Regenerate id_case if district code address is changed.
-  if (payload.address_district_code !== pre.cases.address_district_code) {
+  if (payload.address_district_code && (payload.address_district_code !== pre.cases.address_district_code)) {
     let date = new Date().getFullYear().toString()
     let id_case
 
