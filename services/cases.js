@@ -421,7 +421,7 @@ function updateCase (id, pre, author, payload, callback) {
     let date = new Date().getFullYear().toString()
     let id_case
 
-    if (author.role === 'faskes') {
+    if (pre.cases.verified_status !== 'verified') {
       id_case = "precovid-"
       id_case += pre.count_case_pending.dinkes_code
       id_case += date.substr(2, 2)
