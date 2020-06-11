@@ -278,16 +278,16 @@ async function getCaseSummary (query, user, callback) {
       });
       
       // OTG 
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':new RegExp(0,"i")}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':new RegExp(1,"i")}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':new RegExp(0,"i")}, {'stage':new RegExp("0","i")}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
+      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':new RegExp(1,"i")}, {'stage':new RegExp("1","i")}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':new RegExp(0,"i")}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':new RegExp(1,"i")}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':new RegExp(0,"i")}, {'stage':new RegExp("0","i")}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':new RegExp(1,"i")}, {'stage':new RegExp("1","i")}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':new RegExp(0,"i")}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':new RegExp(1,"i")}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':new RegExp(0,"i")}, {'stage':new RegExp("0","i")}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
+      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':new RegExp(1,"i")}, {'stage':new RegExp("1","i")}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
       return callback(null, result)
     })
