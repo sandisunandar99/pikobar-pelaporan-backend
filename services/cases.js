@@ -26,7 +26,6 @@ const Notif = require('../helpers/notification')
 
 async function ListCase (query, user, callback) {
 
-  let caseTransfers = []
   const myCustomLabels = {
     totalDocs: 'itemCount',
     docs: 'itemsList',
@@ -80,13 +79,11 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
   
-  if (user.role === "faskes" && query.transfer_status) {
-    params.transfer_status = query.transfer_status
-    caseTransfers = await CaseTransfer.find({
-      transfer_hospital_id: user.hospital_id,
-      transfer_status: query.transfer_status
-    }).select('case_id')
-    caseTransfers = caseTransfers.map(obj => obj.case_id)
+  // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
+  let caseAuthors = []
+  if (user.role === "faskes") {
+    caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
+    caseAuthors = caseAuthors.map(obj => obj._id)
   }
 
   if(query.search){
@@ -101,9 +98,9 @@ async function ListCase (query, user, callback) {
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
-    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseTransfers)
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseAuthors)
   } else {
-    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseTransfers)
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -616,6 +613,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
       casePayload.author_district_code = author.code_district_city
       casePayload.author_district_name = author.name_district_city
+      casePayload.input_source = 'import-data-sheets'
 
       casePayload = new Case(Object.assign(casePayload, {author}))
 

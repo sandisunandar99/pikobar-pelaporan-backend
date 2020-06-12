@@ -29,14 +29,26 @@ const CaseVerifyPayload = Joi.object().keys({
 })
 
 const CaseTransferPayload = Joi.object().keys({
-    transfer_status: Joi.string().valid('pending','transferred','declined').required(),
-    transfer_comment: Joi.string().allow('', null).optional(),
-    transfer_to_unit_id: Joi.string().allow('', null).optional(),
+    transfer_to_unit_id: Joi.string().required(),
+    transfer_to_unit_name: Joi.string().required(),
+    transfer_comment: Joi.string().allow('', null).optional().default(null),
+})
+
+const CaseTransferActionPayload = Joi.object().keys({
+    transfer_comment: Joi.string().allow('', null).optional().default(null),
 })
 
 const CaseParamsValidations = {
     params: {
         id: Joi.string().required()
+    }
+}
+
+const TransferActionParamsValidations = {
+    params: {
+        id: Joi.string().required(),
+        transferId: Joi.string().required(),
+        action: Joi.string().valid('approve','decline','abort').required(),
     }
 }
 
@@ -61,7 +73,7 @@ const CaseQueryValidations = {
         end_date: Joi.string().empty('', null).default('').description('search data by test date'),
         author: Joi.string().empty('', null).default('').description('filter by author'),
         verified_status: Joi.string().empty('', null).default('').description('filter by verified status'),
-        transfer_status: Joi.string().optional().valid('pending', 'declined', 'transferred').description('filter by transfer status')
+        transfer_status: Joi.string().optional().valid('pending', 'declined', 'approved').description('filter by transfer status')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -162,6 +174,13 @@ const CaseTransferPayloadValidations = Object.assign({
     failAction: validateOptions.failAction
 }, CaseParamsValidations)
 
+const CaseTransferActPayloadValidations = Object.assign({
+    payload: CaseTransferActionPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, TransferActionParamsValidations)
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
@@ -171,5 +190,6 @@ module.exports = {
     CaseImportPayloadValidations,
     caseSchemaValidation,
     CaseVerifyPayloadValidations,
-    CaseTransferPayloadValidations
+    CaseTransferPayloadValidations,
+    CaseTransferActPayloadValidations
 }
