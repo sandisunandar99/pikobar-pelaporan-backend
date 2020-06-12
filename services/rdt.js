@@ -29,7 +29,7 @@ function ListRdt (query, user, callback) {
     meta: '_meta'
   };
 
-  const sorts = (query.sort ? JSON.parse(query.sort) : {_id:"desc"})
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
 
   const options = {
     page: query.page,
@@ -57,13 +57,13 @@ function ListRdt (query, user, callback) {
   if(query.test_address_district_code){
     params.test_address_district_code = query.test_address_district_code;
   }
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      searching.address_district_code = query.address_district_code;
-    }
-  }
+   if (user.role == "dinkesprov" || user.role == "superadmin") {
+     if (query.address_district_code) {
+       params.address_district_code = query.address_district_code;
+     }
+   }
   if(user.role == "dinkeskota"){
-    params.author = new ObjectId(user._id);
+    // params.author = new ObjectId(user._id);
     params.author_district_code = user.code_district_city;
   }
 
@@ -101,7 +101,7 @@ function getRdtById (id, callback) {
     .populate('author')
     .exec()
     .then(rdt => {
-        return callback(null, rdt)
+        return callback(null, rdt.toJSONFor())
     })
     .catch(err => callback(err, null));
 }
@@ -218,7 +218,7 @@ function GetRdtHistoryByRdtId (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function createRdt (payload, author, pre, callback) {
+function createRdt(query, payload, author, pre, callback) {
 
   // find existing Rdt by nik & phone_number
   Rdt.findOne({ nik: payload.nik })
@@ -229,7 +229,22 @@ function createRdt (payload, author, pre, callback) {
           // if rdt found, update rdt
           payload.author_district_code = author.code_district_city
           payload.author_district_name = author.name_district_city
-        
+          
+          let pcr_count = rdt.pcr_count
+          let rdt_count = rdt.rdt_count
+
+          if (payload.tool_tester === "PCR") {
+            pcr_count += 1
+          } else {
+            rdt_count += 1
+          }
+
+          let count_test_tool ={
+              pcr_count: pcr_count,
+              rdt_count: rdt_count
+          }
+
+          payload = Object.assign(payload, count_test_tool)
           rdt = Object.assign(rdt, payload);
 
           if (rdt.address_district_code === author.code_district_city) {
@@ -237,7 +252,7 @@ function createRdt (payload, author, pre, callback) {
           }
 
         } else {
-          // if rdt found, create new rdt
+          // if rdt not found, create new rdt
           
           // "code_test": "PST-100012000001"
           // "code_tool_tester": "RDT-10012000001",
@@ -251,9 +266,13 @@ function createRdt (payload, author, pre, callback) {
               code_test += pre.count_rdt.count
 
           let code_tool_tester
+          let pcr_count = 0
+          let rdt_count = 0
           if (payload.tool_tester === "PCR") {
+            pcr_count += 1
             code_tool_tester = "PCR-"
           }else{
+            rdt_count += 1
             code_tool_tester = "RDT-"
           }
           code_tool_tester += pre.code_dinkes.code
@@ -262,7 +281,7 @@ function createRdt (payload, author, pre, callback) {
           code_tool_tester += pre.count_rdt.count
 
           let id_case
-          if (payload.final_result === "POSITIF") {
+          if (query.source_data === "external") {
                   id_case = "COVID-"
                   id_case += pre.count_case.dinkes_code
                   id_case += date.substr(2, 2)
@@ -275,7 +294,9 @@ function createRdt (payload, author, pre, callback) {
             code_tool_tester: code_tool_tester,
             id_case: id_case,
             author_district_code: author.code_district_city,
-            author_district_name: author.name_district_city
+            author_district_name: author.name_district_city,
+            rdt_count: rdt_count,
+            pcr_count: pcr_count
           }
 
           let rdt = new Rdt(Object.assign(code, payload))
@@ -294,8 +315,9 @@ function createRdt (payload, author, pre, callback) {
             rdt_history.save((err, item) => {
               if (err) return callback(err, null);
               
-              sendMessagesSMS(rdt)
-              sendMessagesWA(rdt)
+              //TODO: for send sms and whatsap message efter input test result
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
 
               return callback(null, rdt);
             });
@@ -471,12 +493,38 @@ function updateRdt (id, payload, author, callback) {
   payload.author_district_name = author.name_district_city
   
   Rdt.findOne({ _id: id}).then(rdt_item => {
-     rdt_item = Object.assign(rdt_item, payload);
 
-     rdt_item.save((err, res) => {
-       if (err) return callback(err, null);
-       return callback(null, rdt_item);
-     });
+    let rdt_count = rdt_item.rdt_count
+    let pcr_count = rdt_item.pcr_count
+
+    if (rdt_item.tool_tester === payload.tool_tester) {
+      rdt_count = rdt_item.rdt_count
+      pcr_count = rdt_item.pcr_count
+    } else if (rdt_item.tool_tester === "RDT" && payload.tool_tester === "PCR") {
+      rdt_count = (rdt_item.rdt_count -1)
+      pcr_count = (rdt_item.pcr_count +1)
+    } else if (rdt_item.tool_tester === "PCR" && payload.tool_tester === "RDT") {
+      rdt_count = (rdt_item.rdt_count +1)
+      pcr_count = (rdt_item.pcr_count -1)
+    }
+
+    // console.log("payload = "+payload.tool_tester);
+    // console.log("tool_tester = "+rdt_item.tool_tester);
+    // console.log("data PCR = "+rdt_item.pcr_count+" data RDT = "+rdt_item.rdt_count);
+    // console.log("data PCR NOW= " + pcr_count + " data RDT NOW= " + rdt_count);
+    
+    let tool ={
+      rdt_count: rdt_count,
+      pcr_count: pcr_count
+    }
+
+    payload = Object.assign(payload, tool)
+    rdt_item = Object.assign(rdt_item, payload);
+
+    //  rdt_item.save((err, res) => {
+    //    if (err) return callback(err, null);
+    //    return callback(null, rdt_item);
+    //  });
   }).catch(err => callback(err, null))
 }
 
@@ -570,7 +618,6 @@ function getCodeDinkes(code, callback) {
               })
 }
 
-
 function getCaseByidcase(idcase,callback) {
 
   let param = {
@@ -591,19 +638,18 @@ function getCaseByidcase(idcase,callback) {
 
 }
 
-function FormSelectIdCase(query, user, data_pendaftaran, callback) {
+function FormSelectIdCase(query, user, callback) {
 
   let params = new Object();
 
   if (query.address_district_code) {
-    params.address_district_code = query.address_district_code;
-    params.author = new ObjectId(user._id);
+    params.author_district_code = query.address_district_code;
   }
 
   Case.find(params)
-    .and({
-      status: 'ODP'
-    })
+    // .and({
+    //   status: 'ODP'
+    // })
     .where('delete_status')
     .ne('deleted')
     .or([{name: new RegExp(query.search, "i")},
@@ -612,8 +658,8 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
     .exec()
     .then(x => {
       let res = x.map(res => res.JSONFormCase())
-      let concat = res.concat(data_pendaftaran)
-      return callback(null, concat)
+      // let concat = res.concat(data_pendaftaran)
+      return callback(null, res)
     })
     .catch(err => callback(err, null))
 }
@@ -649,12 +695,14 @@ function getDatafromExternal(address_district_code, search, callback) {
    });
 }
 
-function FormSelectIdCaseDetail(search_internal, search_external, user, callback) {
-    if (search_internal === null || search_internal=== undefined) {
-      return callback(null, search_external)
-    }else{
-      return callback(null, search_internal.JSONSeacrhOutput())
-    }
+function FormSelectIdCaseDetail(search_internal, user, callback) {
+    // if (search_internal === null || search_internal=== undefined) {
+    //   return callback(null, search_external)
+    // }else{
+    //   return callback(null, search_internal.JSONSeacrhOutput())
+    // }
+    return callback(null, search_internal.JSONSeacrhOutput())
+    
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
@@ -687,12 +735,12 @@ function seacrhFromExternal(address_district_code, search, callback) {
     });
 }
 
-function seacrhFromInternal(query, callback) {
+function seacrhFromInternal(query, callback) { 
 
   Case.findOne({address_district_code:query.address_district_code})
-       .and({
-        status: 'ODP'
-      })
+      //  .and({
+      //   status: 'ODP'
+      // })
       .where('delete_status')
       .ne('deleted')
       .or([
@@ -704,8 +752,7 @@ function seacrhFromInternal(query, callback) {
       .then(res =>{
           // let result = res.JSONSeacrhOutput()
           return callback(null, res)
-      })
-      .catch()
+      }).catch(err => callback(err, null))
 }
 
 function getRegisteredUser(search_external, user, callback) {   

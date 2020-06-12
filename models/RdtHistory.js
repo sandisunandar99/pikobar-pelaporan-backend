@@ -6,8 +6,8 @@ const RdtHistorySchema = new mongoose.Schema({
     final_result : {type : String},
     tool_tester: String,
     code_tool_tester: String, // code alat pas tes ex: (RDT / TCR)
-    test_method: String,
     sampling_type: String, // Jenis pengambilan sampel: Vena / Kapiler
+    test_method: String,
     
     test_location_type: String,
     test_location: String,
@@ -19,9 +19,14 @@ const RdtHistorySchema = new mongoose.Schema({
     test_address_village_code : {type : String},
     test_address_village_name : {type : String},
     test_address_detail: String,
-
     test_note : {type : String},
     test_date: Date,
+
+    rdt_count: {type: Number, default: 0},
+    pcr_count: {type: Number, default: 0}, 
+    swab_count: {type: Number, default: 0}, 
+    lab: String,
+
 
 }, { timestamps : true });
 
@@ -43,9 +48,13 @@ RdtHistorySchema.methods.toJSONFor = function () {
         test_address_village_code : this.test_address_village_code,
         test_address_village_name : this.test_address_village_name,
         test_address_detail: this.test_address_detail,
-
         test_note : this.test_note,
         test_date: this.test_date,
+
+        rdt_count : this.rdt_count,
+        pcr_count : this.pcr_count,
+        swab_count : this.swab_count,
+        lab : this.lab
     }
 }
 

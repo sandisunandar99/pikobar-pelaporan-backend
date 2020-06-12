@@ -17,6 +17,10 @@ module.exports = (server) =>{
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
     const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
+    const getTransferCasebyId = require('./route_prerequesites').getTransferCasebyId(server)
+    const CheckCaseIsAllowToTransfer = require('./route_prerequesites').CheckCaseIsAllowToTransfer(server)
+    const CheckIsTransferActionIsAllow = require('./route_prerequesites').CheckIsTransferActionIsAllow(server)
+    const CheckCredentialUnitIsExist = require('./route_prerequesites').CheckCredentialUnitIsExist(server)
 
 
     return [
@@ -160,6 +164,22 @@ module.exports = (server) =>{
             handler: handlers.ListCaseExport
         },
 
+        // Export Case to epidemiological investigation Form (PDF)
+        {
+            method: 'GET',
+            path: '/cases/{id}/export-to-pe-form',
+            config: {
+                auth: 'jwt',
+                description: 'Export Case to epidemiological investigation Form',
+                tags: ['api', 'epidemiological.investigation.form'],
+                pre: [
+                    CheckRoleView,
+                    getCasebyId
+                ]
+            },
+            handler: handlers.EpidemiologicalInvestigationForm
+        },
+
         // Update case
         {
             method: 'PUT',
@@ -296,7 +316,113 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetCaseSummaryVerification
-        }
+        },
+        // Get list case transfer
+        {
+            method: 'GET',
+            path: '/cases-transfer/{type}',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all cases',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseQueryValidations,
+                // response: outputValidations.ListCaseOutputValidationsConfig,
+                pre: [
+                    CheckRoleView,
+                    CheckCredentialUnitIsExist,
+                    // checkIfDataNotNull
+                ]
+            },
+            handler: handlers.ListCaseTransfer
+        },
+        // Create new case & transfer
+        {
+            method: 'POST',
+            path: '/cases-transfer',
+            config: {
+                auth: 'jwt',
+                description: 'create new cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
+                    validationBeforeInput,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict
+                ]
+            },
+            handler: handlers.CreateCaseAndTransfer
+        },
+        // get case transfers
+        {
+            method: 'GET',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Get case transfers',
+                tags: ['api', 'cases.transfers'],
+                pre: [
+                    CheckRoleView,
+                    CheckCredentialUnitIsExist,
+                ]
+            },
+            handler: handlers.GetCaseTransfers
+        },
+        // create case transfer
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers',
+            config: {
+                auth: 'jwt',
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseTransferPayloadValidations,
+                pre: [
+                    CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
+                    getCasebyId,
+                    CheckCaseIsAllowToTransfer,
+                ]
+            },
+            handler: handlers.CreateCaseTransfer
+        },
+        // Update case
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers/{transferId}/revise',
+            config: {
+                auth: 'jwt',
+                description: 'update cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleUpdate,
+                    CheckCredentialUnitIsExist,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict,
+                    getTransferCasebyId,
+                    getCasebyId,
+                ]
+            },
+            handler: handlers.UpdateCaseAndTransfer
+        },
+        // create case transfer
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers/{transferId}/{action}',
+            config: {
+                auth: 'jwt',
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseTransferActPayloadValidations,
+                pre: [
+                    CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
+                    CheckIsTransferActionIsAllow,
+                    getTransferCasebyId
+                ]
+            },
+            handler: handlers.ProcessCaseTransfer
+        },
     ]
 
 }

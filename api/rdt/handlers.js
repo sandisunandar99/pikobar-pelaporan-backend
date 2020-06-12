@@ -39,7 +39,9 @@ module.exports = (server) => {
          */
         async CreateRdt(request, reply){
             let payload = request.payload
+            let query  = request.query
             server.methods.services.rdt.create(
+                query,
                 payload,
                 request.auth.credentials.user,
                 request.pre,
@@ -152,7 +154,7 @@ module.exports = (server) => {
             server.methods.services.rdt.FormSelectIdCase(
                 query,
                 request.auth.credentials.user,
-                request.pre.data_pendaftaran,
+                // request.pre.data_pendaftaran,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -169,7 +171,7 @@ module.exports = (server) => {
         async GetListIdCaseDetail(request, reply) {
             server.methods.services.rdt.FormSelectIdCaseDetail(
                 request.pre.search_internal,
-                request.pre.search_external,
+                // request.pre.search_external,
                 request.auth.credentials.user,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

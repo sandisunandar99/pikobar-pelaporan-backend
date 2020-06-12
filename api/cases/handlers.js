@@ -1,3 +1,4 @@
+const pdfmaker = require('../../helpers/pdfmaker')
 const replyHelper = require('../helpers')
 const json2xls = require('json2xls');
 const moment = require('moment')
@@ -210,6 +211,23 @@ module.exports = (server) => {
             })
         },
         /**
+         * GET /api/cases/{id}/pdf
+         * @param {*} request
+         * @param {*} reply
+         */
+        async EpidemiologicalInvestigationForm(request, reply){
+            const detailCase = request.pre.cases
+            const caseName = detailCase.name.replace(/\s/g, '-')
+            server.methods.services.cases.epidemiologicalInvestigationForm(
+                detailCase,
+                async (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                const fileName = `FORMULIR-PE-${caseName}-${moment().format("YYYY-MM-DD-HH-mm")}.pdf`
+                const pdfFile = await pdfmaker.generate(result, fileName)
+                return reply(pdfFile).header('Content-Disposition', 'attachment; filename='+fileName)
+            })
+        },
+        /**
          * POST /api/cases-import
          * @param {*} request
          * @param {*} reply
@@ -327,6 +345,150 @@ module.exports = (server) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * GET /api/cases-transfer
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCaseTransfer(request, reply){
+            let query = request.query
+            let type = request.params.type
+
+            server.methods.services.casesTransfers.list(
+                query, 
+                request.auth.credentials.user,
+                type,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result,request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * POST /api/cases-transfer
+         * @param {*} request
+         * @param {*} reply
+         */
+        CreateCaseAndTransfer(request, reply) {
+            let payload = request.payload
+            let author = request.auth.credentials.user
+            server.methods.services.cases.create(
+                payload,
+                author,
+                request.pre,
+                async (err, resultCase) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                server.methods.services.casesTransfers.processTransfer(
+                    request.params.transferId,
+                    resultCase._id,
+                    'pending',
+                    request.auth.credentials.user,
+                    request.payload,
+                    (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCasesResponse({
+                            ...result._doc,
+                            case: resultCase
+                        }, request)
+                    ).code(200)
+                })
+            })
+        },
+
+        /**
+         * PUT /api/cases-transfer/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async UpdateCaseAndTransfer(request, reply){
+            let pre = request.pre
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+            server.methods.services.cases.update(id, pre, author, payload,
+            async (err, resultCase) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                server.methods.services.casesTransfers.processTransfer(
+                    request.params.transferId,
+                    pre.transfer_case.transfer_case_id,
+                    'pending',
+                    request.auth.credentials.user,
+                    request.payload,
+                    (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCasesResponse({
+                            ...result._doc,
+                            case: resultCase
+                        }, request)
+                    ).code(200)
+                })
+            })
+        },
+
+        /**
+         * GET /api/cases/{id}/transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseTransfers(request, reply){
+            server.methods.services.casesTransfers.get(
+                request.params.id,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * PUT /api/cases/{id}/transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateCaseTransfer(request, reply){
+            let payload = request.payload
+            let id = request.params.id
+            let author = request.auth.credentials.user
+
+            server.methods.services.casesTransfers.create(
+                id,
+                author,
+                payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * POST /api/cases/{id}/transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ProcessCaseTransfer(request, reply){
+            server.methods.services.casesTransfers.processTransfer(
+                request.params.transferId,
+                request.pre.transfer_case.transfer_case_id,
+                request.params.action,
+                request.auth.credentials.user,
+                request.payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
                 ).code(200)
             })
         },

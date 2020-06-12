@@ -24,9 +24,10 @@ const UserSchema = new mongoose.Schema({
   hash: String,
   salt: String,
   fcm_token: String,
+  unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' ,default:null},
   delete_status: { type: String, default:null},
   deletedAt: { type: Date, default:null},
-  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null},
+  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null}
 }, {timestamps: true})
 
 UserSchema.plugin(uniqueValidator, {
@@ -62,6 +63,7 @@ UserSchema.methods.toAuthJSON = function () {
     role: this.role,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
+    unit_id : this.unit_id,
     token: this.generateJWT()
   }
 }
@@ -79,6 +81,7 @@ UserSchema.methods.toJSONFor = function () {
     address_street: this.address_street,
     address_village_name: this.address_village_name,
     address_subdistrict_name: this.address_subdistrict_name,
+    unit_id : this.unit_id,
   }
 }
 
