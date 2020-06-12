@@ -49,7 +49,7 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
     }else {
       params.$or = [
         { author: { $in: caseAuthors }, transfer_status: null },
-        { transfer_to_unit_id: new ObjectId(user.unit_id), transfer_status: 'approved' }
+        { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
       ]
       // params.author_district_code = user.code_district_city;
       result_search = schema.find(params).where(conditions).ne("deleted")
@@ -63,7 +63,7 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
     }else {
       params.$or = [
         { author: { $in: caseAuthors }, transfer_status: null },
-        { transfer_to_unit_id: new ObjectId(user.unit_id), transfer_status: 'approved' }
+        { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
       ]
       // params.author_district_code = user.code_district_city;
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")

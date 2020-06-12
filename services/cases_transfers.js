@@ -26,9 +26,9 @@ async function ListCase (query, user, type, callback) {
   }
 
   if (type == 'in') {
-    params.transfer_to_unit_id = user.unit_id
+    params.transfer_to_unit_id = user.unit_id._id
   } else {
-    params.transfer_from_unit_id = user.unit_id
+    params.transfer_from_unit_id = user.unit_id._id
   }
 
   if (query.search) {
@@ -124,8 +124,8 @@ async function createCaseTransfer (caseId, author, payload, callback) {
   try {
     // insert transfer logs
     payload.transfer_status = 'pending'
-    payload.transfer_from_unit_id = author.unit_id
-    payload.transfer_from_unit_name = author.unit_name
+    payload.transfer_from_unit_id = author.unit_id._id
+    payload.transfer_from_unit_name = author.unit_id.name
 
     // update case transfer status
     const a = await Case.findOneAndUpdate({ _id: caseId}, {
@@ -183,8 +183,8 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
       }
     } else {
       transferCasePayload = {
-        transfer_from_unit_id: author.unit_id,
-        transfer_from_unit_name: author.unit_name,
+        transfer_from_unit_id: author.unit_id._id,
+        transfer_from_unit_name: author.unit_id.name,
         transfer_comment: payload.transfer_comment || null,
         transfer_case_id: caseId,
         createdBy: author._id
@@ -206,7 +206,7 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
       casePayload.transfer_to_unit_name = null
       const latestTransferredApproved = await CaseTransfer.findOne({
         transfer_case_id: caseId,
-        transfer_from_unit_id: { $ne: author.unit_id },
+        transfer_from_unit_id: { $ne: author.unit_id._id },
         transfer_status: 'approved'
       })
 

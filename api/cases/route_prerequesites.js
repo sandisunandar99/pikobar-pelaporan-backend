@@ -21,7 +21,7 @@ const CheckCredentialUnitIsExist = server => {
     return {
         method: (request, reply) => {
             let user = request.auth.credentials.user
-            if (user.unit_id && user.unit_name) {
+            if (user.unit_id) {
                 return reply()
             } else {
                 return reply({
