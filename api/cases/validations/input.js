@@ -52,6 +52,13 @@ const TransferActionParamsValidations = {
     }
 }
 
+const TransferCaseListParamValidations = {
+    params: {
+        type: Joi.string().valid('in','out').required(),
+    },
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}
 
 // --------------------------------------------------
 //    Config - Input Validations
@@ -191,5 +198,6 @@ module.exports = {
     caseSchemaValidation,
     CaseVerifyPayloadValidations,
     CaseTransferPayloadValidations,
-    CaseTransferActPayloadValidations
+    CaseTransferActPayloadValidations,
+    TransferCaseListParamValidations,
 }
