@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const UnitSchema = new mongoose.Schema({
     unit_level: Number,
@@ -12,4 +13,5 @@ const UnitSchema = new mongoose.Schema({
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },{timestamps: true});
 
+UnitSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('Unit', UnitSchema);

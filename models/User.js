@@ -82,6 +82,7 @@ UserSchema.methods.toJSONFor = function () {
     address_street: this.address_street,
     address_village_name: this.address_village_name,
     address_subdistrict_name: this.address_subdistrict_name,
+    unit_id : this.unit_id,
   }
 }
 

@@ -21,6 +21,7 @@ const listUser = async (user, query, callback) => {
   const options = {
     page: query.page,
     limit: query.limit,
+    populate: (['unit_id']),
     sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels,
