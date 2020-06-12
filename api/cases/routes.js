@@ -17,6 +17,10 @@ module.exports = (server) =>{
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
     const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
+    const getTransferCasebyId = require('./route_prerequesites').getTransferCasebyId(server)
+    const CheckCaseIsAllowToTransfer = require('./route_prerequesites').CheckCaseIsAllowToTransfer(server)
+    const CheckIsTransferActionIsAllow = require('./route_prerequesites').CheckIsTransferActionIsAllow(server)
+    const CheckCredentialUnitIsExist = require('./route_prerequesites').CheckCredentialUnitIsExist(server)
 
 
     return [
@@ -316,7 +320,7 @@ module.exports = (server) =>{
         // Get list case transfer
         {
             method: 'GET',
-            path: '/cases-transfer',
+            path: '/cases-transfer/{type}',
             config: {
                 auth: 'jwt',
                 description: 'show list of all cases',
@@ -325,6 +329,7 @@ module.exports = (server) =>{
                 // response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
                     CheckRoleView,
+                    CheckCredentialUnitIsExist,
                     // checkIfDataNotNull
                 ]
             },
@@ -340,12 +345,13 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
                     validationBeforeInput,
                     countCaseByDistrict,
                     countCasePendingByDistrict
                 ]
             },
-            handler: handlers.CreateNewCaseTransfer
+            handler: handlers.CreateCaseAndTransfer
         },
         // get case transfers
         {
@@ -357,6 +363,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.transfers'],
                 pre: [
                     CheckRoleView,
+                    CheckCredentialUnitIsExist,
                 ]
             },
             handler: handlers.GetCaseTransfers
@@ -371,11 +378,51 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.transfers'],
                 validate: inputValidations.CaseTransferPayloadValidations,
                 pre: [
-                    CheckRoleCreate
+                    CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
+                    getCasebyId,
+                    CheckCaseIsAllowToTransfer,
                 ]
             },
             handler: handlers.CreateCaseTransfer
-        }
+        },
+        // Update case
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers/{transferId}/revise',
+            config: {
+                auth: 'jwt',
+                description: 'update cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleUpdate,
+                    CheckCredentialUnitIsExist,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict,
+                    getTransferCasebyId,
+                    getCasebyId,
+                ]
+            },
+            handler: handlers.UpdateCaseAndTransfer
+        },
+        // create case transfer
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers/{transferId}/{action}',
+            config: {
+                auth: 'jwt',
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                validate: inputValidations.CaseTransferActPayloadValidations,
+                pre: [
+                    CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
+                    CheckIsTransferActionIsAllow,
+                    getTransferCasebyId
+                ]
+            },
+            handler: handlers.ProcessCaseTransfer
+        },
     ]
 
 }

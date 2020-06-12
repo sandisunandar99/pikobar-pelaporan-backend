@@ -25,6 +25,7 @@ const UserSchema = new mongoose.Schema({
   salt: String,
   fcm_token: String,
   unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' ,default:null},
+  unit_name: String,
   delete_status: { type: String, default:null},
   deletedAt: { type: Date, default:null},
   deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null},
