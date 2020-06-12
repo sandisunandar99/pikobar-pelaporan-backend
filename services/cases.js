@@ -35,7 +35,7 @@ async function ListCase (query, user, callback) {
     meta: '_meta'
   };  
 
-  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
   
   const options = {
     page: query.page,
