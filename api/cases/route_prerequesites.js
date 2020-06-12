@@ -46,7 +46,14 @@ const checkCaseIsExists = server => {
 
                 let message
                 message = `NIK ${nik} atas nama ${result.name} `
-                message += `Sudah terdata di laporan kasus oleh ${author}`
+
+                if (result.transfer_to_unit_name && result.transfer_status !== 'approved' ) {
+                    message += `Sedang dalam proses rujukan ke ${result.transfer_to_unit_name}`
+                } else if (result.transfer_to_unit_name && result.transfer_status === 'approved') {
+                    message += `Sudah terdata di laporan kasus ${result.transfer_to_unit_name}`
+                } else {
+                    message += `Sudah terdata di laporan kasus ${author}`
+                }
 
                 return reply({
                     status: 409,

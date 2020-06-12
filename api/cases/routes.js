@@ -346,6 +346,7 @@ module.exports = (server) =>{
                 pre: [
                     CheckRoleCreate,
                     CheckCredentialUnitIsExist,
+                    checkCaseIsExists,
                     validationBeforeInput,
                     countCaseByDistrict,
                     countCasePendingByDistrict
