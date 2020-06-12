@@ -3,10 +3,42 @@ const mongoose = require('mongoose');
 require('../models/Unit');
 const Unit = mongoose.model('Unit');
 
-const listUnit = async (callback) => {
+const listUnit = async (query, callback) => {
     try {
-        const result = await Unit.find().populate('createdBy');
-        callback(null, result);
+        const myCustomLabels = {
+            totalDocs: 'itemCount',
+            docs: 'itemsList',
+            limit: 'perPage',
+            page: 'currentPage',
+            meta: '_meta'
+        };
+        const sorts = (query.sort == "desc" ? { createdAt: "desc" } : JSON.parse(query.sort))
+        const options = {
+            page: query.page,
+            limit: query.limit,
+            populate: (['createdBy']),
+            sort: sorts,
+            leanWithId: true,
+            customLabels: myCustomLabels
+        };
+        let params = {};
+        if(query.unit_type){
+            params.unit_type = query.unit_type;
+        }
+        let search_params;
+        if(query.search){ 
+            search_params = [
+                { unit_level : new RegExp(query.search,"i") },
+                { unit_code: new RegExp(query.search, "i") },
+                { unit_type: new RegExp(query.search, "i") },
+                { name: new RegExp(query.search, "i") }
+            ];
+        }else{
+            search_params = {};
+        }
+        const result = Unit.find(params).or(search_params).where('delete_status').ne('deleted');
+        const paginateResult = await Unit.paginate(result, options);
+        callback(null, paginateResult);
     } catch (error) {
         callback(error, null);
     }
@@ -44,8 +76,6 @@ const updateUnit = async (pay, id, category, author, callback) => {
         const params = Object.assign(payload, payloads);
         const result = await Unit.findByIdAndUpdate(id,
             { $set: params }, { new: true });
-        console.log(id);
-
         callback(null, result);
     } catch (error) {
         callback(error, null);
