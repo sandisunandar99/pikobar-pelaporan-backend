@@ -229,7 +229,22 @@ function createRdt(query, payload, author, pre, callback) {
           // if rdt found, update rdt
           payload.author_district_code = author.code_district_city
           payload.author_district_name = author.name_district_city
-        
+          
+          let pcr_count = rdt.pcr_count
+          let rdt_count = rdt.rdt_count
+
+          if (payload.tool_tester === "PCR") {
+            pcr_count += 1
+          } else {
+            rdt_count += 1
+          }
+
+          let count_test_tool ={
+              pcr_count: pcr_count,
+              rdt_count: rdt_count
+          }
+
+          payload = Object.assign(payload, count_test_tool)
           rdt = Object.assign(rdt, payload);
 
           if (rdt.address_district_code === author.code_district_city) {
@@ -237,7 +252,7 @@ function createRdt(query, payload, author, pre, callback) {
           }
 
         } else {
-          // if rdt found, create new rdt
+          // if rdt not found, create new rdt
           
           // "code_test": "PST-100012000001"
           // "code_tool_tester": "RDT-10012000001",
@@ -251,9 +266,13 @@ function createRdt(query, payload, author, pre, callback) {
               code_test += pre.count_rdt.count
 
           let code_tool_tester
+          let pcr_count = 0
+          let rdt_count = 0
           if (payload.tool_tester === "PCR") {
+            pcr_count += 1
             code_tool_tester = "PCR-"
           }else{
+            rdt_count += 1
             code_tool_tester = "RDT-"
           }
           code_tool_tester += pre.code_dinkes.code
@@ -275,7 +294,9 @@ function createRdt(query, payload, author, pre, callback) {
             code_tool_tester: code_tool_tester,
             id_case: id_case,
             author_district_code: author.code_district_city,
-            author_district_name: author.name_district_city
+            author_district_name: author.name_district_city,
+            rdt_count: rdt_count,
+            pcr_count: pcr_count
           }
 
           let rdt = new Rdt(Object.assign(code, payload))
