@@ -603,6 +603,7 @@ async function importCases (raw_payload, author, pre, callback) {
 
       casePayload.author_district_code = author.code_district_city
       casePayload.author_district_name = author.name_district_city
+      casePayload.input_source = 'import-data-sheets'
 
       casePayload = new Case(Object.assign(casePayload, {author}))
 
