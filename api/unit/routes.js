@@ -26,6 +26,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list unit',
                 tags: ['api', 'unit'],
+                validate: inputValidations.UnitQueryValidations,
                 pre: [ CheckRoleView ]
             },
             handler: handlers.getUnit

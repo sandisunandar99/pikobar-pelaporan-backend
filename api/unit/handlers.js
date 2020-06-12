@@ -27,7 +27,7 @@ module.exports = (server) => {
             )
         },
         async getUnit(request,reply){
-            server.methods.services.unit.read((err, result) => {
+            server.methods.services.unit.read(request.query, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructUnitResponse(result,request)

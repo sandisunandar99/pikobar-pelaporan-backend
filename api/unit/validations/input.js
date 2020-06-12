@@ -19,6 +19,19 @@ const postPayload = {
   failAction: validateOptions.failAction
 }
 
+const UnitQueryValidations = {
+  query: {
+      limit: Joi.number().integer().empty('', 10).default(10).description('limit result set'),
+      offset: Joi.number().integer().default(0).description('number of record to skip'),
+      page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
+      sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
+      search: Joi.string().empty('', null).default('').description('search data'),
+      unit_type: Joi.string().empty('', null).default('').description('unit_type'),
+  },
+  options: validateOptions.options,
+  failAction: validateOptions.failAction
+}
+
 const GetCurrentPayload = {
   headers: HeadersPayLoad,
   options: validateOptions.options,
@@ -27,5 +40,6 @@ const GetCurrentPayload = {
 
 module.exports = {
   GetCurrentPayload,
+  UnitQueryValidations,
   postPayload,
 }
