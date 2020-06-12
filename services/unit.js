@@ -28,7 +28,6 @@ const listUnit = async (query, callback) => {
         let search_params;
         if(query.search){ 
             search_params = [
-                { unit_level : new RegExp(query.search,"i") },
                 { unit_code: new RegExp(query.search, "i") },
                 { unit_type: new RegExp(query.search, "i") },
                 { name: new RegExp(query.search, "i") }
