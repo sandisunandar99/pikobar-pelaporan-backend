@@ -283,10 +283,10 @@ function createRdt(query, payload, author, pre, callback) {
           let id_case
           if (query.source_data === "external") {
                   id_case = "COVID-"
-                  id_case += pre.count_case.dinkes_code
+                  id_case += pre.code_dinkes.code
                   id_case += date.substr(2, 2)
-                  id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
-                  id_case += pre.count_case.count_pasien
+                  id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
+                  id_case += pre.count_rdt.count
           }
 
           let code = {
@@ -296,7 +296,8 @@ function createRdt(query, payload, author, pre, callback) {
             author_district_code: author.code_district_city,
             author_district_name: author.name_district_city,
             rdt_count: rdt_count,
-            pcr_count: pcr_count
+            pcr_count: pcr_count,
+            source_data: query.source_data
           }
 
           let rdt = new Rdt(Object.assign(code, payload))
@@ -318,6 +319,10 @@ function createRdt(query, payload, author, pre, callback) {
               //TODO: for send sms and whatsap message efter input test result
               // sendMessagesSMS(rdt)
               // sendMessagesWA(rdt)
+
+              let last_history = {last_history: item._id}
+              rdt = Object.assign(rdt, last_history)
+              rdt.save()
 
               return callback(null, rdt);
             });
@@ -508,11 +513,6 @@ function updateRdt (id, payload, author, callback) {
       pcr_count = (rdt_item.pcr_count -1)
     }
 
-    // console.log("payload = "+payload.tool_tester);
-    // console.log("tool_tester = "+rdt_item.tool_tester);
-    // console.log("data PCR = "+rdt_item.pcr_count+" data RDT = "+rdt_item.rdt_count);
-    // console.log("data PCR NOW= " + pcr_count + " data RDT NOW= " + rdt_count);
-    
     let tool ={
       rdt_count: rdt_count,
       pcr_count: pcr_count
@@ -521,10 +521,14 @@ function updateRdt (id, payload, author, callback) {
     payload = Object.assign(payload, tool)
     rdt_item = Object.assign(rdt_item, payload);
 
-    //  rdt_item.save((err, res) => {
-    //    if (err) return callback(err, null);
-    //    return callback(null, rdt_item);
-    //  });
+    rdt_item.save((err, res) => {
+       if (err) return callback(err, null)
+       RdtHistory.findByIdAndUpdate(rdt_item.last_history, { $set: payload }, { new: true }, (err, result) =>{
+         if (err) console.log(err);
+       })
+       return callback(null, rdt_item)
+    })
+
   }).catch(err => callback(err, null))
 }
 
