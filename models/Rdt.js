@@ -49,7 +49,9 @@ const RdtSchema = new mongoose.Schema({
     test_note : {type : String},
     test_date: Date,
 
-    swab_count: Number, 
+    rdt_count: {type: Number, default: 0},
+    pcr_count: {type: Number, default: 0}, 
+    swab_count: {type: Number, default: 0}, 
     lab: String,
 
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
