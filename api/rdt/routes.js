@@ -101,7 +101,7 @@ module.exports = (server) =>{
                     CheckRoleCreate,
                     validationBeforeInput,
                     countRdtCode,
-                    countCaseByDistrict,
+                    // countCaseByDistrict,
                     getCodeDinkes
                 ]
             },
