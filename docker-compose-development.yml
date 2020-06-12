@@ -12,6 +12,12 @@ services:
       networks:
         - gateway 
       restart: always
+      logging:
+        driver: "awslogs"
+        options:
+           awslogs-region: "ap-southeast-1"
+           awslogs-group: "pikobar-pelaporan"
+           awslogs-stream: "backend-pikobar-development"
 
 networks:
    gateway:
