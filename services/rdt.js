@@ -29,8 +29,8 @@ function ListRdt (query, user, callback) {
     meta: '_meta'
   };
 
-  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
-  
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
+
   const options = {
     page: query.page,
     limit: query.limit,
@@ -101,7 +101,7 @@ function getRdtById (id, callback) {
     .populate('author')
     .exec()
     .then(rdt => {
-        return callback(null, rdt)
+        return callback(null, rdt.toJSONFor())
     })
     .catch(err => callback(err, null));
 }
@@ -493,12 +493,38 @@ function updateRdt (id, payload, author, callback) {
   payload.author_district_name = author.name_district_city
   
   Rdt.findOne({ _id: id}).then(rdt_item => {
-     rdt_item = Object.assign(rdt_item, payload);
 
-     rdt_item.save((err, res) => {
-       if (err) return callback(err, null);
-       return callback(null, rdt_item);
-     });
+    let rdt_count = rdt_item.rdt_count
+    let pcr_count = rdt_item.pcr_count
+
+    if (rdt_item.tool_tester === payload.tool_tester) {
+      rdt_count = rdt_item.rdt_count
+      pcr_count = rdt_item.pcr_count
+    } else if (rdt_item.tool_tester === "RDT" && payload.tool_tester === "PCR") {
+      rdt_count = (rdt_item.rdt_count -1)
+      pcr_count = (rdt_item.pcr_count +1)
+    } else if (rdt_item.tool_tester === "PCR" && payload.tool_tester === "RDT") {
+      rdt_count = (rdt_item.rdt_count +1)
+      pcr_count = (rdt_item.pcr_count -1)
+    }
+
+    // console.log("payload = "+payload.tool_tester);
+    // console.log("tool_tester = "+rdt_item.tool_tester);
+    // console.log("data PCR = "+rdt_item.pcr_count+" data RDT = "+rdt_item.rdt_count);
+    // console.log("data PCR NOW= " + pcr_count + " data RDT NOW= " + rdt_count);
+    
+    let tool ={
+      rdt_count: rdt_count,
+      pcr_count: pcr_count
+    }
+
+    payload = Object.assign(payload, tool)
+    rdt_item = Object.assign(rdt_item, payload);
+
+    //  rdt_item.save((err, res) => {
+    //    if (err) return callback(err, null);
+    //    return callback(null, rdt_item);
+    //  });
   }).catch(err => callback(err, null))
 }
 
