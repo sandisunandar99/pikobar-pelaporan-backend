@@ -18,6 +18,7 @@ module.exports = (server) =>{
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
     const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
     const getTransferCasebyId = require('./route_prerequesites').getTransferCasebyId(server)
+    const CheckCaseIsAllowToTransfer = require('./route_prerequesites').CheckCaseIsAllowToTransfer(server)
 
 
     return [
@@ -372,7 +373,9 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.transfers'],
                 validate: inputValidations.CaseTransferPayloadValidations,
                 pre: [
-                    CheckRoleCreate
+                    CheckRoleCreate,
+                    getCasebyId,
+                    CheckCaseIsAllowToTransfer,
                 ]
             },
             handler: handlers.CreateCaseTransfer

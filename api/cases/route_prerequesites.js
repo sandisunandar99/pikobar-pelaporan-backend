@@ -241,6 +241,39 @@ const getTransferCasebyId = server => {
     }
 }
 
+const CheckCaseIsAllowToTransfer = server => {
+    return {
+        method: (request, reply) => {
+            const params = {
+                transfer_case_id: request.params.id,
+            }
+
+            let currentCase = request.preResponses.cases.source
+            if (currentCase.verified_status !== 'verified') {
+                return reply({
+                    status: 422,
+                    message: 'Data Kasus belum terverifikasi oleh Dinkes!',
+                    data: null
+                }).code(422).takeover()
+             }
+
+            server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+
+                if (!result || !['pending', 'declined'].includes(result.transfer_status)) return reply(result)                
+
+                const msg = "Rujukan sudah ada dan sedang menunggu persetujuan dari " + result.transfer_to_unit_name
+                return reply({
+                    status: 409,
+                    message: msg,
+                    data: null
+                }).code(409).takeover()
+            })
+        },
+        assign: 'is_delete_allow'
+    }
+}
+
 module.exports ={
     countCaseByDistrict,
     countCasePendingByDistrict,
@@ -252,4 +285,5 @@ module.exports ={
     getDetailCase,
     checkCaseIsAllowToDelete,
     getTransferCasebyId,
+    CheckCaseIsAllowToTransfer
 }

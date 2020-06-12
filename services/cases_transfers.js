@@ -246,6 +246,14 @@ function getTransferCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
+function getLastTransferCase (params, callback) {
+  CaseTransfer.findOne(params)
+    .sort({createdAt: -1})
+    .exec()
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
 module.exports = [
   {
     name: 'services.casesTransfers.list',
@@ -262,6 +270,10 @@ module.exports = [
   {
     name: 'services.casesTransfers.getById',
     method: getTransferCaseById
+  },
+  {
+    name: 'services.casesTransfers.getLastTransferCase',
+    method: getLastTransferCase
   },
   {
     name: 'services.casesTransfers.processTransfer',
