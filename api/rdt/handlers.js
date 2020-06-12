@@ -39,7 +39,9 @@ module.exports = (server) => {
          */
         async CreateRdt(request, reply){
             let payload = request.payload
+            let query  = request.query
             server.methods.services.rdt.create(
+                query,
                 payload,
                 request.auth.credentials.user,
                 request.pre,

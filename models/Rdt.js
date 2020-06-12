@@ -49,7 +49,9 @@ const RdtSchema = new mongoose.Schema({
     test_note : {type : String},
     test_date: Date,
 
-    swab_count: Number, 
+    rdt_count: {type: Number, default: 0},
+    pcr_count: {type: Number, default: 0}, 
+    swab_count: {type: Number, default: 0}, 
     lab: String,
 
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -68,52 +70,59 @@ RdtSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.
 
 RdtSchema.methods.toJSONFor = function () {
     return {
-    _id : this._id,
-    code_test : this.code_test, // code peserta (PST) tergantung alat tes yang di pilih
-    
-    category: this.category,
-    target: this.target,
-    mechanism: this.mechanism,
-    id_case : this.id_case,
-    nik : this.nik,
-    name : this.name,
-    gender : this.gender,
-    
-    address_district_code : this.address_district_code,
-    address_district_name : this.address_district_name,
-    address_subdistrict_code : this.address_subdistrict_code,
-    address_subdistrict_name : this.address_subdistrict_name,
-    address_village_code : this.address_village_code,
-    address_village_name : this.address_village_name ,
-    address_detail: this.address_detail ,
-    phone_number : this.phone_number ,
+        _id : this._id,
+        code_test : this.code_test, // code peserta (PST) tergantung alat tes yang di pilih
+        
+        category: this.category,
+        target: this.target,
+        mechanism: this.mechanism,
+        id_case : this.id_case,
+        nik : this.nik,
+        note_nik: thisnote_nik,
+        name : this.name,
+        gender : this.gender,
+        
+        address_district_code : this.address_district_code,
+        address_district_name : this.address_district_name,
+        address_subdistrict_code : this.address_subdistrict_code,
+        address_subdistrict_name : this.address_subdistrict_name,
+        address_village_code : this.address_village_code,
+        address_village_name : this.address_village_name ,
+        address_detail: this.address_detail ,
+        phone_number : this.phone_number ,
+        note_phone_number: this.note_phone_number,
 
-    birth_date : this.birth_date,
-    age : this.age,
+        birth_date : this.birth_date,
+        age : this.age,
 
-    nationality: this.nationality ,
-    nationality_name: this.nationality_name ,
+        nationality: this.nationality ,
+        nationality_name: this.nationality_name ,
 
-    final_result: this.final_result ,
-    tool_teste: this.tool_teste ,
-    code_tool_tester: this.code_tool_tester , // code alat pas tes ex (RDT / TCR)
-    test_method: this.test_method,
-    sampling_type: this.sampling_type, 
-    
-    test_location :this.test_location ,
-    test_other_location :this.test_other_location ,
-    test_address_district_code :this.test_address_district_code ,
-    test_address_district_name :this.test_address_district_name ,
-    test_address_subdistrict_code :this.test_address_subdistrict_code ,
-    test_address_subdistrict_name :this.test_address_subdistrict_name ,
-    test_address_village_code :this.test_address_village_code ,
-    test_address_village_name :this.test_address_village_name ,
-    test_address_detail :this.test_address_detail ,
-    test_note :this.test_note ,
-    test_date :this.test_date ,
-    
-    status :this.status ,
-    author: this.author.JSONCase()
+        final_result: this.final_result ,
+        tool_teste: this.tool_teste ,
+        code_tool_tester: this.code_tool_tester , // code alat pas tes ex (RDT / TCR)
+        test_method: this.test_method,
+        sampling_type: this.sampling_type, 
+        
+        test_location :this.test_location ,
+        test_other_location :this.test_other_location ,
+        test_address_district_code :this.test_address_district_code ,
+        test_address_district_name :this.test_address_district_name ,
+        test_address_subdistrict_code :this.test_address_subdistrict_code ,
+        test_address_subdistrict_name :this.test_address_subdistrict_name ,
+        test_address_village_code :this.test_address_village_code ,
+        test_address_village_name :this.test_address_village_name ,
+        test_address_detail :this.test_address_detail ,
+        test_note :this.test_note ,
+        test_date :this.test_date ,
+        
+        rdt_count : this.rdt_count,
+        pcr_count : this.pcr_count,
+        swab_count : this.swab_count,
+        lab : this.lab,
+
+        status :this.status ,
+        author: this.author.JSONCase()
     }
 }
 

@@ -82,7 +82,7 @@ CaseSchema.methods.toJSONFor = function () {
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,
-        // author: this.author.JSONCase(),
+        author: this.author.JSONCase(),
         last_history: this.last_history,
         is_test_masif: this.is_test_masif,
         createdAt : this.createdAt,
@@ -98,7 +98,8 @@ CaseSchema.methods.JSONFormCase = function () {
         display: this.name + '/'+nik+'/'+this.phone_number,
         id_case: this.id_case,
         id: this._id,
-        last_status: this.status
+        last_status: this.status,
+        source_data: "internal"
     }
 }
 
