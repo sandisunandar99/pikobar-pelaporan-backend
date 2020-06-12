@@ -78,7 +78,7 @@ RdtSchema.methods.toJSONFor = function () {
         mechanism: this.mechanism,
         id_case : this.id_case,
         nik : this.nik,
-        note_nik: thisnote_nik,
+        note_nik: this.note_nik,
         name : this.name,
         gender : this.gender,
         
