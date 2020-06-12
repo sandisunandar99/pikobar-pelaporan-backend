@@ -49,7 +49,8 @@ const CaseSchema = new mongoose.Schema({
     transfer_status: { type: String, lowercase: true, default: null },
     transfer_to_unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     transfer_to_unit_name: String,
-    is_test_masif: {type: Boolean, default: false}
+    is_test_masif: {type: Boolean, default: false},
+    input_source: String,
 
 },{ timestamps:true, usePushEach: true })
 
