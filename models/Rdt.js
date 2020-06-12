@@ -58,6 +58,9 @@ const RdtSchema = new mongoose.Schema({
     author_district_code : { type:String},
     author_district_name : { type: String},
     
+    source_data: {type: String},
+
+    last_history: { type: mongoose.Schema.Types.ObjectId, ref: 'RdtHistory' },
     status : {type : String},
     deletedAt: Date,
     deletedBy:{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }
