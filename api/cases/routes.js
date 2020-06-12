@@ -17,6 +17,7 @@ module.exports = (server) =>{
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
     const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
+    const getTransferCasebyId = require('./route_prerequesites').getTransferCasebyId(server)
 
 
     return [
@@ -347,23 +348,6 @@ module.exports = (server) =>{
             },
             handler: handlers.CreateCaseAndTransfer
         },
-        // Update case
-        {
-            method: 'PUT',
-            path: '/cases-transfer/{id}',
-            config: {
-                auth: 'jwt',
-                description: 'update cases transfer',
-                tags: ['api', 'cases'],
-                pre: [
-                    CheckRoleUpdate,
-                    countCaseByDistrict,
-                    countCasePendingByDistrict,
-                    getCasebyId
-                ]
-            },
-            handler: handlers.UpdateCaseAndTransfer
-        },
         // get case transfers
         {
             method: 'GET',
@@ -392,7 +376,41 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.CreateCaseTransfer
-        }
+        },
+        // Update case
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers/{transferId}/revise',
+            config: {
+                auth: 'jwt',
+                description: 'update cases transfer',
+                tags: ['api', 'cases'],
+                pre: [
+                    CheckRoleUpdate,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict,
+                    getTransferCasebyId,
+                    getCasebyId,
+                ]
+            },
+            handler: handlers.UpdateCaseAndTransfer
+        },
+        // create case transfer
+        {
+            method: 'POST',
+            path: '/cases/{id}/transfers/{transferId}/{action}',
+            config: {
+                auth: 'jwt',
+                description: 'Create case transfers',
+                tags: ['api', 'cases.transfers'],
+                // validate: inputValidations.CaseTransferPayloadValidations,
+                pre: [
+                    CheckRoleCreate,
+                    getTransferCasebyId
+                ]
+            },
+            handler: handlers.ProcessCaseTransfer
+        },
     ]
 
 }

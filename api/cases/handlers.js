@@ -378,25 +378,26 @@ module.exports = (server) => {
         CreateCaseAndTransfer(request, reply) {
             let payload = request.payload
             let author = request.auth.credentials.user
-            let results
             server.methods.services.cases.create(
                 payload,
                 author,
                 request.pre,
-                async (err, result) => {
+                async (err, resultCase) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                results = result
-                payload.transfer_status = 'pending'
-                server.methods.services.casesTransfers.create(
-                    result._id,
-                    author,
-                    payload,
+                server.methods.services.casesTransfers.processTransfer(
+                    request.params.transferId,
+                    resultCase._id,
+                    'pending',
+                    request.auth.credentials.user,
+                    request.payload,
                     (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    results.transfer_status = result.transfer_status
                     return reply(
-                        constructCasesResponse(results, request)
+                        constructCasesResponse({
+                            ...result._doc,
+                            case: resultCase
+                        }, request)
                     ).code(200)
                 })
             })
@@ -408,26 +409,27 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async UpdateCaseAndTransfer(request, reply){
-            console.log('sss')
             let pre = request.pre
             let payload = request.payload
             let id = request.params.id
             let author = request.auth.credentials.user
             server.methods.services.cases.update(id, pre, author, payload,
-            async (err, result) => {
+            async (err, resultCase) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                results = result
-                payload.transfer_status = 'pending'
-                server.methods.services.casesTransfers.create(
-                    result._id,
-                    author,
-                    payload,
+                server.methods.services.casesTransfers.processTransfer(
+                    request.params.transferId,
+                    pre.transfer_case.transfer_case_id,
+                    'pending',
+                    request.auth.credentials.user,
+                    request.payload,
                     (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    results.transfer_status = result.transfer_status
                     return reply(
-                        constructCasesResponse(results, request)
+                        constructCasesResponse({
+                            ...result._doc,
+                            case: resultCase
+                        }, request)
                     ).code(200)
                 })
             })
@@ -463,6 +465,26 @@ module.exports = (server) => {
                 id,
                 author,
                 payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(result, request)
+                ).code(200)
+            })
+        },
+
+        /**
+         * POST /api/cases/{id}/transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ProcessCaseTransfer(request, reply){
+            server.methods.services.casesTransfers.processTransfer(
+                request.params.transferId,
+                request.pre.transfer_case.transfer_case_id,
+                request.params.action,
+                request.auth.credentials.user,
+                request.payload,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(

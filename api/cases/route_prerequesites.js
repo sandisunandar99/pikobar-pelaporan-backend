@@ -228,6 +228,19 @@ const getDetailCase = server => {
     }
 }
 
+const getTransferCasebyId = server => {
+    return {
+        method: (request, reply) => {
+             let id = request.params.transferId
+             server.methods.services.casesTransfers.getById(id, (err, item) => {
+                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                 return reply(item)
+             })
+        },
+        assign: 'transfer_case'
+    }
+}
+
 module.exports ={
     countCaseByDistrict,
     countCasePendingByDistrict,
@@ -237,5 +250,6 @@ module.exports ={
     validationBeforeInput,
     checkCaseIsExists,
     getDetailCase,
-    checkCaseIsAllowToDelete
+    checkCaseIsAllowToDelete,
+    getTransferCasebyId,
 }
