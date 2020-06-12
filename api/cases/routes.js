@@ -19,6 +19,7 @@ module.exports = (server) =>{
     const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
     const getTransferCasebyId = require('./route_prerequesites').getTransferCasebyId(server)
     const CheckCaseIsAllowToTransfer = require('./route_prerequesites').CheckCaseIsAllowToTransfer(server)
+    const CheckIsTransferActionIsAllow = require('./route_prerequesites').CheckIsTransferActionIsAllow(server)
 
 
     return [
@@ -406,9 +407,10 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'Create case transfers',
                 tags: ['api', 'cases.transfers'],
-                // validate: inputValidations.CaseTransferPayloadValidations,
+                validate: inputValidations.CaseTransferActPayloadValidations,
                 pre: [
                     CheckRoleCreate,
+                    CheckIsTransferActionIsAllow,
                     getTransferCasebyId
                 ]
             },

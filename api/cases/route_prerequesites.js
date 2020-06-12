@@ -270,7 +270,34 @@ const CheckCaseIsAllowToTransfer = server => {
                 }).code(409).takeover()
             })
         },
-        assign: 'is_delete_allow'
+        assign: 'is_case_allow_to_transfer'
+    }
+}
+
+const CheckIsTransferActionIsAllow = server => {
+    return {
+        method: (request, reply) => {
+            const params = {
+                transfer_case_id: request.params.id,
+            }
+            server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                
+                let action = 'aborted'
+                if (request.params.action === 'approve') action = 'approved'
+                else if (request.params.action === 'decline') action = 'declined'
+
+                if (result && action !== result.transfer_status) return reply(result)                
+
+                const msg = request.params.action + ' is already in process!'
+                return reply({
+                    status: 409,
+                    message: msg,
+                    data: null
+                }).code(409).takeover()
+            })
+        },
+        assign: 'is_case_allow_to_action'
     }
 }
 
@@ -285,5 +312,6 @@ module.exports ={
     getDetailCase,
     checkCaseIsAllowToDelete,
     getTransferCasebyId,
-    CheckCaseIsAllowToTransfer
+    CheckCaseIsAllowToTransfer,
+    CheckIsTransferActionIsAllow
 }
