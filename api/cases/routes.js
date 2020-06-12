@@ -20,6 +20,7 @@ module.exports = (server) =>{
     const getTransferCasebyId = require('./route_prerequesites').getTransferCasebyId(server)
     const CheckCaseIsAllowToTransfer = require('./route_prerequesites').CheckCaseIsAllowToTransfer(server)
     const CheckIsTransferActionIsAllow = require('./route_prerequesites').CheckIsTransferActionIsAllow(server)
+    const CheckCredentialUnitIsExist = require('./route_prerequesites').CheckCredentialUnitIsExist(server)
 
 
     return [
@@ -328,6 +329,7 @@ module.exports = (server) =>{
                 // response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
                     CheckRoleView,
+                    CheckCredentialUnitIsExist,
                     // checkIfDataNotNull
                 ]
             },
@@ -343,6 +345,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
                     validationBeforeInput,
                     countCaseByDistrict,
                     countCasePendingByDistrict
@@ -360,6 +363,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.transfers'],
                 pre: [
                     CheckRoleView,
+                    CheckCredentialUnitIsExist,
                 ]
             },
             handler: handlers.GetCaseTransfers
@@ -375,6 +379,7 @@ module.exports = (server) =>{
                 validate: inputValidations.CaseTransferPayloadValidations,
                 pre: [
                     CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
                     getCasebyId,
                     CheckCaseIsAllowToTransfer,
                 ]
@@ -391,6 +396,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases'],
                 pre: [
                     CheckRoleUpdate,
+                    CheckCredentialUnitIsExist,
                     countCaseByDistrict,
                     countCasePendingByDistrict,
                     getTransferCasebyId,
@@ -410,6 +416,7 @@ module.exports = (server) =>{
                 validate: inputValidations.CaseTransferActPayloadValidations,
                 pre: [
                     CheckRoleCreate,
+                    CheckCredentialUnitIsExist,
                     CheckIsTransferActionIsAllow,
                     getTransferCasebyId
                 ]

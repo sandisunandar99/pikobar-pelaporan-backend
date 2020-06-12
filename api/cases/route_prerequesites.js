@@ -17,6 +17,24 @@ const validationBeforeInput = server => {
     }
 }
 
+const CheckCredentialUnitIsExist = server => {
+    return {
+        method: (request, reply) => {
+            let user = request.auth.credentials.user
+            if (user.unit_id && user.unit_name) {
+                return reply()
+            } else {
+                return reply({
+                    status: 422,
+                    message: 'Anda tidak memiliki akses unit, silahkah edit profil user unit!',
+                    data: null
+                }).code(422).takeover()
+            }
+        },
+        assign: 'check_credential_unit_is_exist'
+    }
+}
+
 const checkCaseIsExists = server => {
     return {
         method: (request, reply) => {
@@ -313,5 +331,6 @@ module.exports ={
     checkCaseIsAllowToDelete,
     getTransferCasebyId,
     CheckCaseIsAllowToTransfer,
-    CheckIsTransferActionIsAllow
+    CheckIsTransferActionIsAllow,
+    CheckCredentialUnitIsExist,
 }
