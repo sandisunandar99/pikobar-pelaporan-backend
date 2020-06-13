@@ -325,12 +325,10 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list of all cases',
                 tags: ['api', 'cases.transfers'],
-                validate: inputValidations.CaseQueryValidations,
-                // response: outputValidations.ListCaseOutputValidationsConfig,
+                validate: inputValidations.TransferCaseListParamValidations,
                 pre: [
                     CheckRoleView,
                     CheckCredentialUnitIsExist,
-                    // checkIfDataNotNull
                 ]
             },
             handler: handlers.ListCaseTransfer
@@ -346,6 +344,7 @@ module.exports = (server) =>{
                 pre: [
                     CheckRoleCreate,
                     CheckCredentialUnitIsExist,
+                    checkCaseIsExists,
                     validationBeforeInput,
                     countCaseByDistrict,
                     countCasePendingByDistrict

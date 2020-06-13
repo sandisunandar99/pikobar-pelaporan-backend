@@ -17,10 +17,9 @@ const myCustomLabels = {
 
 async function ListCase (query, user, type, callback) {
 
-  let params = {}
   let search = {}
+  let params = { is_hospital_case_last_status: true }
   
-  params.is_hospital_case_last_status = true
   if (query.transfer_status) {
     params.transfer_status = query.transfer_status
   }
@@ -39,21 +38,22 @@ async function ListCase (query, user, type, callback) {
     ]
   }
 
-  let joinParams = []
-
   const dbQuery = [
     { $match: params },
     { $lookup:
       {
         from: 'cases',
-        let: { transferCaseId: "$transfer_case_id", tounit_id: "$transfer_to_unit_id", status: "$transfer_status" },
+        let: {
+          transferCaseId: "$transfer_case_id",
+          tounit_id: "$transfer_to_unit_id",
+          status: "$transfer_status"
+        },
         pipeline: [
           { $match:
               { $expr:
                 { $and:
                     [
-                      { $eq: [ "$_id",  "$$transferCaseId" ] },
-                      ...joinParams
+                      { $eq: [ "$_id",  "$$transferCaseId" ] }
                     ],
                 },
                 ...search
@@ -64,8 +64,7 @@ async function ListCase (query, user, type, callback) {
       },
     },
     { $sort: {createdAt: - 1} },
-    // { $match: params },
-    // { $unwind: "$case" },
+    { $unwind: "$case" },
     {
       $group:
       {
@@ -73,9 +72,7 @@ async function ListCase (query, user, type, callback) {
         data: { $first: "$$ROOT" }
       }
     },
-    // // // { $unwind: "$data" },
     { $replaceRoot: { newRoot: "$data" } },
-    // { $match: params },
     { $sort: {createdAt: - 1} },
   ]
   
