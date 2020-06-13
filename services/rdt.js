@@ -17,7 +17,9 @@ const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
-const url = require('url')
+const url = require('url');
+const { object } = require('joi');
+const { log } = require('console');
 
 function ListRdt (query, user, callback) {
 
@@ -101,7 +103,7 @@ function getRdtById (id, callback) {
     .populate('author')
     .exec()
     .then(rdt => {
-        return callback(null, rdt.toJSONFor())
+        return callback(null, rdt)
     })
     .catch(err => callback(err, null));
 }
@@ -583,31 +585,20 @@ function getCountByDistrict(code, callback) {
 }
 
 
-function softDeleteRdt(rdt, cases,  deletedBy, callback) {
+function softDeleteRdt(rdt, deletedBy, callback) {
     let date = new Date()
-   
-    if (cases !== null) {
-      let dates_case = {
-        delete_status: 'deleted',
-        deletedAt: date.toISOString()
-      }
-      let param_case = Object.assign({deletedBy}, dates_case)
-        cases = Object.assign(cases, param_case)
-        cases.save((err, item) => {
-          if (err) return callback(err, null)
-        })
-    }
-
     let dates = {
       status: 'deleted',
       deletedAt: date.toISOString()
     }
     let param = Object.assign({deletedBy}, dates)
     rdt = Object.assign(rdt, param)
+    
     rdt.save((err, item) => {
       if (err) return callback(err, null)
       return callback(null, item)
     })
+    
 }
 
 function getCodeDinkes(code, callback) {
