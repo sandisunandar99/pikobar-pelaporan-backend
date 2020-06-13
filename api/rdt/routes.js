@@ -173,8 +173,8 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleDelete,
-                    getRdtbyId,
-                    getCasebyIdcase
+                    getRdtbyId
+                    // getCasebyIdcase
                 ]
             },
             handler: handlers.DeleteRdt
