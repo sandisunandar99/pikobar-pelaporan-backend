@@ -235,6 +235,45 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
   }
 }
 
+async function geTransferCaseSummary (query, type, user, callback) {
+  let params = { is_hospital_case_last_status: true }
+
+  if (type == 'in') {
+    params.transfer_to_unit_id = user.unit_id._id
+  } else {
+    params.transfer_from_unit_id = user.unit_id._id
+  }
+
+  const dbQuery = [
+    { $match: params },
+    { $group: { _id: "$transfer_status", total: {$sum: 1}} }
+  ]
+  
+  let result =  {
+    'PENDING': 0, 
+    'DECLINED': 0,
+    'APPROVED': 0
+  }
+
+  CaseTransfer.aggregate(dbQuery).exec().then(async item => {
+
+      item.forEach(function(item){
+        if (item['_id'] == 'pending') {
+          result.PENDING = item['total']
+        }
+        if (item['_id'] == 'declined') {
+          result.DECLINED = item['total']
+        }
+        if (item['_id'] == 'approved') {
+          result.APPROVED = item['total']
+        }
+      })
+
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
 function getTransferCaseById (id, callback) {
   CaseTransfer.findOne({_id: id})
     .exec()
@@ -274,6 +313,10 @@ module.exports = [
   {
     name: 'services.casesTransfers.processTransfer',
     method: processTransfer
+  },
+  {
+    name: 'services.casesTransfers.geTransferCaseSummary',
+    method: geTransferCaseSummary
   },
 ];
 

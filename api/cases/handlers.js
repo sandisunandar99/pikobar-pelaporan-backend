@@ -493,6 +493,24 @@ module.exports = (server) => {
             })
         },
 
+        /**
+         * GET /api/cases/summary-transfers
+         * @param {*} request
+         * @param {*} reply
+         */
+        async GetCaseSummaryTransfer(request, reply) {
+            server.methods.services.casesTransfers.geTransferCaseSummary(
+                request.query,
+                request.params.type,
+                request.auth.credentials.user,
+                (err, item) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesResponse(item, request)
+                ).code(200)
+            })
+        },
+
     }//end
 
 }
