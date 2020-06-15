@@ -393,18 +393,18 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                      otg_proses: val.otg_proses,
                      otg_selesai: val.otg_selesai,
                      otg_total: val.otg_total,
-                     positif_aktif_proses: val.positif_aktif_proses,
-                     positif_aktif_selesai: val.positif_aktif_selesai,
-                     positif_aktif_total: val.positif_aktif_total,
-                     positif_sembuh_proses: val.positif_sembuh_proses,
-                     positif_sembuh_selesai: val.positif_sembuh_selesai,
-                     positif_sembuh_total: val.positif_sembuh_total,
-                     positif_meninggal_proses: val.positif_meninggal_proses,
-                     positif_meninggal_selesai: val.positif_meninggal_selesai,
-                     positif_meninggal_total: val.positif_meninggal_total,
-                    // positif_proses : val.positif_proses,
-                    // positif_selesai : val.positif_selesai,
-                    // positif_total : val.positif_total,
+                    //  positif_aktif_proses: val.positif_aktif_proses,
+                    //  positif_aktif_selesai: val.positif_aktif_selesai,
+                    //  positif_aktif_total: val.positif_aktif_total,
+                    //  positif_sembuh_proses: val.positif_sembuh_proses,
+                    //  positif_sembuh_selesai: val.positif_sembuh_selesai,
+                    //  positif_sembuh_total: val.positif_sembuh_total,
+                    //  positif_meninggal_proses: val.positif_meninggal_proses,
+                    //  positif_meninggal_selesai: val.positif_meninggal_selesai,
+                    //  positif_meninggal_total: val.positif_meninggal_total,
+                    positif_proses : val.positif_proses,
+                    positif_selesai : val.positif_selesai,
+                    positif_total : val.positif_total,
                     grand_total: val.grand_total,
                   })     
               } else{
@@ -476,95 +476,96 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                       "70_79": val.otg_age_70_79,
                       atas_80: val.otg_age_atas_80,
                     },
-                    // positif_aktif_proses: val.positif_aktif_proses,
-                    // positif_aktif_selesai: val.positif_aktif_selesai,
-                    // positif_aktif_total: val.positif_aktif_total,
-                    // positif_aktif_by_gender: {
-                    //   laki_laki: val.positif_aktif_lakilaki,
-                    //   perempuan: val.positif_aktif_perempuan,
+                    positif_aktif_proses: val.positif_aktif_proses,
+                    positif_aktif_selesai: val.positif_aktif_selesai,
+                    positif_aktif_total: val.positif_aktif_total,
+                    positif_aktif_by_gender: {
+                      laki_laki: val.positif_aktif_lakilaki,
+                      perempuan: val.positif_aktif_perempuan,
+                    },
+                    positif_aktif_by_nationality: {
+                      wni: val.positif_aktif_wni,
+                      wna: val.positif_aktif_wna
+                    },
+                    positif_aktif_by_usia: {
+                      bawah_5: val.positif_aktif_bawah_5,
+                      "6_19": val.positif_aktif_6_19,
+                      "20_29": val.positif_aktif_20_29,
+                      "30_39": val.positif_aktif_30_39,
+                      "40_49": val.positif_aktif_40_49,
+                      "50_59": val.positif_aktif_50_59,
+                      "60_69": val.positif_aktif_60_69,
+                      "70_79": val.positif_aktif_70_79,
+                      atas_80: val.positif_aktif_atas_80,
+                    },
+                    positif_sembuh_proses: val.positif_sembuh_proses,
+                    positif_sembuh_selesai: val.positif_sembuh_selesai,
+                    positif_sembuh_total: val.positif_sembuh_total,
+                    positif_sembuh_by_gender: {
+                      laki_laki: val.positif_sembuh_lakilaki,
+                      perempuan: val.positif_sembuh_perempuan,
+                    },
+                    positif_sembuh_by_nationality: {
+                       wni: val.positif_sembuh_wni,
+                       wna: val.positif_sembuh_wna
+                    },
+                    positif_sembuh_by_usia: {
+                      bawah_5: val.positif_sembuh_bawah_5,
+                      "6_19": val.positif_sembuh_6_19,
+                      "20_29": val.positif_sembuh_20_29,
+                      "30_39": val.positif_sembuh_30_39,
+                      "40_49": val.positif_sembuh_40_49,
+                      "50_59": val.positif_sembuh_50_59,
+                      "60_69": val.positif_sembuh_60_69,
+                      "70_79": val.positif_sembuh_70_79,
+                      atas_80: val.positif_sembuh_atas_80,
+                    },
+                    positif_meninggal_proses: val.positif_meninggal_proses,
+                    positif_meninggal_selesai: val.positif_meninggal_selesai,
+                    positif_meninggal_total: val.positif_meninggal_total,
+                    positif_meninggal_by_gender: {
+                      laki_laki: val.positif_meninggal_lakilaki,
+                      perempuan: val.positif_meninggal_perempuan,
+                    },
+                    positif_meninggal_by_nationality: {
+                       wni: val.positif_meninggal_wni,
+                       wna: val.positif_meninggal_wna
+                    },
+                    positif_meninggal_by_usia: {
+                      bawah_5: val.positif_meninggal_bawah_5,
+                      "6_19": val.positif_meninggal_6_19,
+                      "20_29": val.positif_meninggal_20_29,
+                      "30_39": val.positif_meninggal_30_39,
+                      "40_49": val.positif_meninggal_40_49,
+                      "50_59": val.positif_meninggal_50_59,
+                      "60_69": val.positif_meninggal_60_69,
+                      "70_79": val.positif_meninggal_70_79,
+                      atas_80: val.positif_meninggal_atas_80,
+                    },
+
+                    // positif_proses: val.positif_proses,
+                    // positif_selesai: val.positif_selesai,
+                    // positif_total: val.positif_total,
+                    // positif_by_gender: {
+                    //   laki_laki: val.positif_lakilaki,
+                    //   perempuan: val.positif_perempuan,
                     // },
-                    // positif_aktif_by_nationality: {
-                    //   wni: val.positif_aktif_wni,
-                    //   wna: val.positif_aktif_wna
+                    // positif_by_nationality: {
+                    //   wni: val.positif_wni,
+                    //   wna: val.positif_wna
                     // },
-                    // positif_aktif_by_usia: {
-                    //   bawah_5: val.positif_aktif_bawah_5,
-                    //   "6_19": val.positif_aktif_6_19,
-                    //   "20_29": val.positif_aktif_20_29,
-                    //   "30_39": val.positif_aktif_30_39,
-                    //   "40_49": val.positif_aktif_40_49,
-                    //   "50_59": val.positif_aktif_50_59,
-                    //   "60_69": val.positif_aktif_60_69,
-                    //   "70_79": val.positif_aktif_70_79,
-                    //   atas_80: val.positif_aktif_atas_80,
-                    // },
-                    // positif_sembuh_proses: val.positif_sembuh_proses,
-                    // positif_sembuh_selesai: val.positif_sembuh_selesai,
-                    // positif_sembuh_total: val.positif_sembuh_total,
-                    // positif_sembuh_by_gender: {
-                    //   laki_laki: val.positif_sembuh_lakilaki,
-                    //   perempuan: val.positif_sembuh_perempuan,
-                    // },
-                    // positif_sembuh_by_nationality: {
-                    //    wni: val.positif_sembuh_wni,
-                    //    wna: val.positif_sembuh_wna
-                    // },
-                    // positif_sembuh_by_usia: {
-                    //   bawah_5: val.positif_sembuh_bawah_5,
-                    //   "6_19": val.positif_sembuh_6_19,
-                    //   "20_29": val.positif_sembuh_20_29,
-                    //   "30_39": val.positif_sembuh_30_39,
-                    //   "40_49": val.positif_sembuh_40_49,
-                    //   "50_59": val.positif_sembuh_50_59,
-                    //   "60_69": val.positif_sembuh_60_69,
-                    //   "70_79": val.positif_sembuh_70_79,
-                    //   atas_80: val.positif_sembuh_atas_80,
-                    // },
-                    // positif_meninggal_proses: val.positif_meninggal_proses,
-                    // positif_meninggal_selesai: val.positif_meninggal_selesai,
-                    // positif_meninggal_total: val.positif_meninggal_total,
-                    // positif_meninggal_by_gender: {
-                    //   laki_laki: val.positif_meninggal_lakilaki,
-                    //   perempuan: val.positif_meninggal_perempuan,
-                    // },
-                    // positif_meninggal_by_nationality: {
-                    //    wni: val.positif_meninggal_wni,
-                    //    wna: val.positif_meninggal_wna
-                    // },
-                    // positif_meninggal_by_usia: {
-                    //   bawah_5: val.positif_meninggal_bawah_5,
-                    //   "6_19": val.positif_meninggal_6_19,
-                    //   "20_29": val.positif_meninggal_20_29,
-                    //   "30_39": val.positif_meninggal_30_39,
-                    //   "40_49": val.positif_meninggal_40_49,
-                    //   "50_59": val.positif_meninggal_50_59,
-                    //   "60_69": val.positif_meninggal_60_69,
-                    //   "70_79": val.positif_meninggal_70_79,
-                    //   atas_80: val.positif_meninggal_atas_80,
+                    // positif_by_usia: {
+                    //   bawah_5: val.positif_bawah_5,
+                    //   "6_19": val.positif_6_19,
+                    //   "20_29": val.positif_20_29,
+                    //   "30_39": val.positif_30_39,
+                    //   "40_49": val.positif_40_49,
+                    //   "50_59": val.positif_50_59,
+                    //   "60_69": val.positif_60_69,
+                    //   "70_79": val.positif_70_79,
+                    //   atas_80: val.positif_atas_80,
                     // },
 
-                    positif_proses: val.positif_proses,
-                    positif_selesai: val.positif_selesai,
-                    positif_total: val.positif_total,
-                    positif_by_gender: {
-                      laki_laki: val.positif_lakilaki,
-                      perempuan: val.positif_perempuan,
-                    },
-                    positif_by_nationality: {
-                      wni: val.positif_wni,
-                      wna: val.positif_wna
-                    },
-                    positif_by_usia: {
-                      bawah_5: val.positif_bawah_5,
-                      "6_19": val.positif_6_19,
-                      "20_29": val.positif_20_29,
-                      "30_39": val.positif_30_39,
-                      "40_49": val.positif_40_49,
-                      "50_59": val.positif_50_59,
-                      "60_69": val.positif_60_69,
-                      "70_79": val.positif_70_79,
-                      atas_80: val.positif_atas_80,
-                    },
                     wni_total: val.wni_total,
                     wna_total: val.wna_total,
                     grand_total: val.grand_total,
@@ -764,103 +765,103 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
            "70_79": sum_otg_age_70_79,
            atas_80: sum_otg_age_atas_80,
          },
-        //  positif_aktif_proses: sum_positif_aktif_proses,
-        //  positif_aktif_selesai: sum_positif_aktif_selesai,
-        //  positif_aktif_total: sum_positif_aktif_total,
-        //  positif_aktif_by_gender: {
-        //    laki_laki: sum_positif_aktif_lakilaki,
-        //    perempuan: sum_positif_aktif_perempuan
-        //  },
-        //  positif_aktif_by_nationality: {
-        //     wni: sum_positif_aktif_wni,
-        //     wna: sum_positif_aktif_wna
-        //   },
-        //  positif_aktif_by_usia: {
-        //    bawah_5: sum_positif_aktif_bawah_5,
-        //    "6_19": sum_positif_aktif_6_19,
-        //    "20_29": sum_positif_aktif_20_29,
-        //    "30_39": sum_positif_aktif_30_39,
-        //    "40_49": sum_positif_aktif_40_49,
-        //    "50_59": sum_positif_aktif_50_59,
-        //    "60_69": sum_positif_aktif_60_69,
-        //    "70_79": sum_positif_aktif_70_79,
-        //    atas_80: sum_positif_aktif_atas_80,
-        //  },
-        //  positif_sembuh_proses: sum_positif_sembuh_proses,
-        //  positif_sembuh_selesai: sum_positif_sembuh_selesai,
-        //  positif_sembuh_total: sum_positif_sembuh_total,
-        //  positif_sembuh_by_gender: {
-        //    laki_laki: sum_positif_sembuh_lakilaki,
-        //    perempuan: sum_positif_sembuh_perempuan
-        //  },
-        //  positif_sembuh_by_nationality: {
-        //    wni: sum_positif_sembuh_wni,
-        //    wna: sum_positif_sembuh_wna
-        //  },
-        //  positif_sembuh_by_usia: {
-        //    bawah_5: sum_positif_sembuh_bawah_5,
-        //    "6_19": sum_positif_sembuh_6_19,
-        //    "20_29": sum_positif_sembuh_20_29,
-        //    "30_39": sum_positif_sembuh_30_39,
-        //    "40_49": sum_positif_sembuh_40_49,
-        //    "50_59": sum_positif_sembuh_50_59,
-        //    "60_69": sum_positif_sembuh_60_69,
-        //    "70_79": sum_positif_sembuh_70_79,
-        //    atas_80: sum_positif_sembuh_atas_80,
-        //  },
-        //  positif_meninggal_proses: sum_positif_meninggal_proses,
-        //  positif_meninggal_selesai: sum_positif_meninggal_selesai,
-        //  positif_meninggal_total: sum_positif_meninggal_total,
-        //  positif_meninggal_by_gender: {
-        //    laki_laki: sum_positif_meninggal_lakilaki,
-        //    perempuan: sum_positif_meninggal_perempuan
-        //  },
-        //  positif_meninggal_by_nationality: {
-        //    wni: sum_positif_meninggal_wni,
-        //    wna: sum_positif_meninggal_wna
-        //  },
-        //  positif_meninggal_by_usia: {
-        //    bawah_5: sum_positif_meninggal_bawah_5,
-        //    "6_19": sum_positif_meninggal_6_19,
-        //    "20_29": sum_positif_meninggal_20_29,
-        //    "30_39": sum_positif_meninggal_30_39,
-        //    "40_49": sum_positif_meninggal_40_49,
-        //    "50_59": sum_positif_meninggal_50_59,
-        //    "60_69": sum_positif_meninggal_60_69,
-        //    "70_79": sum_positif_meninggal_70_79,
-        //    atas_80: sum_positif_meninggal_atas_80,
-        //  },
-         //  positif_aktif_proses: sum_positif_aktif_proses,
-         //  positif_aktif_selesai: sum_positif_aktif_selesai,
-         //  positif_aktif_total: sum_positif_aktif_total,
-         //  positif_aktif_by_gender: {
-         //    laki_laki: sum_positif_aktif_lakilaki,
-         //    perempuan: sum_positif_aktif_perempuan
-         //  },
+         positif_aktif_proses: sum_positif_aktif_proses,
+         positif_aktif_selesai: sum_positif_aktif_selesai,
+         positif_aktif_total: sum_positif_aktif_total,
+         positif_aktif_by_gender: {
+           laki_laki: sum_positif_aktif_lakilaki,
+           perempuan: sum_positif_aktif_perempuan
+         },
+         positif_aktif_by_nationality: {
+            wni: sum_positif_aktif_wni,
+            wna: sum_positif_aktif_wna
+          },
+         positif_aktif_by_usia: {
+           bawah_5: sum_positif_aktif_bawah_5,
+           "6_19": sum_positif_aktif_6_19,
+           "20_29": sum_positif_aktif_20_29,
+           "30_39": sum_positif_aktif_30_39,
+           "40_49": sum_positif_aktif_40_49,
+           "50_59": sum_positif_aktif_50_59,
+           "60_69": sum_positif_aktif_60_69,
+           "70_79": sum_positif_aktif_70_79,
+           atas_80: sum_positif_aktif_atas_80,
+         },
+         positif_sembuh_proses: sum_positif_sembuh_proses,
+         positif_sembuh_selesai: sum_positif_sembuh_selesai,
+         positif_sembuh_total: sum_positif_sembuh_total,
+         positif_sembuh_by_gender: {
+           laki_laki: sum_positif_sembuh_lakilaki,
+           perempuan: sum_positif_sembuh_perempuan
+         },
+         positif_sembuh_by_nationality: {
+           wni: sum_positif_sembuh_wni,
+           wna: sum_positif_sembuh_wna
+         },
+         positif_sembuh_by_usia: {
+           bawah_5: sum_positif_sembuh_bawah_5,
+           "6_19": sum_positif_sembuh_6_19,
+           "20_29": sum_positif_sembuh_20_29,
+           "30_39": sum_positif_sembuh_30_39,
+           "40_49": sum_positif_sembuh_40_49,
+           "50_59": sum_positif_sembuh_50_59,
+           "60_69": sum_positif_sembuh_60_69,
+           "70_79": sum_positif_sembuh_70_79,
+           atas_80: sum_positif_sembuh_atas_80,
+         },
+         positif_meninggal_proses: sum_positif_meninggal_proses,
+         positif_meninggal_selesai: sum_positif_meninggal_selesai,
+         positif_meninggal_total: sum_positif_meninggal_total,
+         positif_meninggal_by_gender: {
+           laki_laki: sum_positif_meninggal_lakilaki,
+           perempuan: sum_positif_meninggal_perempuan
+         },
+         positif_meninggal_by_nationality: {
+           wni: sum_positif_meninggal_wni,
+           wna: sum_positif_meninggal_wna
+         },
+         positif_meninggal_by_usia: {
+           bawah_5: sum_positif_meninggal_bawah_5,
+           "6_19": sum_positif_meninggal_6_19,
+           "20_29": sum_positif_meninggal_20_29,
+           "30_39": sum_positif_meninggal_30_39,
+           "40_49": sum_positif_meninggal_40_49,
+           "50_59": sum_positif_meninggal_50_59,
+           "60_69": sum_positif_meninggal_60_69,
+           "70_79": sum_positif_meninggal_70_79,
+           atas_80: sum_positif_meninggal_atas_80,
+         },
+          positif_aktif_proses: sum_positif_aktif_proses,
+          positif_aktif_selesai: sum_positif_aktif_selesai,
+          positif_aktif_total: sum_positif_aktif_total,
+          positif_aktif_by_gender: {
+            laki_laki: sum_positif_aktif_lakilaki,
+            perempuan: sum_positif_aktif_perempuan
+          },
 
-        
-          positif_proses: sum_positif_proses,
-          positif_selesai: sum_positif_selesai,
-          positif_total: sum_positif_total,
-          positif_by_gender: {
-            laki_laki: sum_positif_lakilaki,
-            perempuan: sum_positif_perempuan
-          },
-          positif_by_nationality: {
-             wni: sum_positif_wni,
-             wna: sum_positif_wna
-           },
-          positif_by_usia: {
-            bawah_5: sum_positif_bawah_5,
-            "6_19": sum_positif_6_19,
-            "20_29": sum_positif_20_29,
-            "30_39": sum_positif_30_39,
-            "40_49": sum_positif_40_49,
-            "50_59": sum_positif_50_59,
-            "60_69": sum_positif_60_69,
-            "70_79": sum_positif_70_79,
-            atas_80: sum_positif_atas_80,
-          },
+          // positif_proses: sum_positif_proses,
+          // positif_selesai: sum_positif_selesai,
+          // positif_total: sum_positif_total,
+          // positif_by_gender: {
+          //   laki_laki: sum_positif_lakilaki,
+          //   perempuan: sum_positif_perempuan
+          // },
+          // positif_by_nationality: {
+          //    wni: sum_positif_wni,
+          //    wna: sum_positif_wna
+          //  },
+          // positif_by_usia: {
+          //   bawah_5: sum_positif_bawah_5,
+          //   "6_19": sum_positif_6_19,
+          //   "20_29": sum_positif_20_29,
+          //   "30_39": sum_positif_30_39,
+          //   "40_49": sum_positif_40_49,
+          //   "50_59": sum_positif_50_59,
+          //   "60_69": sum_positif_60_69,
+          //   "70_79": sum_positif_70_79,
+          //   atas_80: sum_positif_atas_80,
+          // },
+
          wni_total: sum_wni_total,
          wna_total: sum_wna_total,
          grand_total: sum_grand_total,
