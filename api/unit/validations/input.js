@@ -27,6 +27,7 @@ const UnitQueryValidations = {
       sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
       search: Joi.string().empty('', null).default('').description('search data'),
       unit_type: Joi.string().empty('', null).default('').description('unit_type'),
+      code_district_code: Joi.string().empty('', null).default('').description('code_district_code'),
   },
   options: validateOptions.options,
   failAction: validateOptions.failAction
