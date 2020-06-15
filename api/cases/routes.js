@@ -432,7 +432,8 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.summary.transfers'],
                 validate: inputValidations.TransferCaseListParamValidations,
                 pre: [
-                    CheckRoleView
+                    CheckRoleView,
+                    CheckCredentialUnitIsExist,
                 ]
             },
             handler: handlers.GetCaseSummaryTransfer
