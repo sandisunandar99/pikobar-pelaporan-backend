@@ -543,28 +543,28 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                       atas_80: val.positif_meninggal_atas_80,
                     },
 
-                    // positif_proses: val.positif_proses,
-                    // positif_selesai: val.positif_selesai,
-                    // positif_total: val.positif_total,
-                    // positif_by_gender: {
-                    //   laki_laki: val.positif_lakilaki,
-                    //   perempuan: val.positif_perempuan,
-                    // },
-                    // positif_by_nationality: {
-                    //   wni: val.positif_wni,
-                    //   wna: val.positif_wna
-                    // },
-                    // positif_by_usia: {
-                    //   bawah_5: val.positif_bawah_5,
-                    //   "6_19": val.positif_6_19,
-                    //   "20_29": val.positif_20_29,
-                    //   "30_39": val.positif_30_39,
-                    //   "40_49": val.positif_40_49,
-                    //   "50_59": val.positif_50_59,
-                    //   "60_69": val.positif_60_69,
-                    //   "70_79": val.positif_70_79,
-                    //   atas_80: val.positif_atas_80,
-                    // },
+                    positif_proses: val.positif_proses,
+                    positif_selesai: val.positif_selesai,
+                    positif_total: val.positif_total,
+                    positif_by_gender: {
+                      laki_laki: val.positif_lakilaki,
+                      perempuan: val.positif_perempuan,
+                    },
+                    positif_by_nationality: {
+                      wni: val.positif_wni,
+                      wna: val.positif_wna
+                    },
+                    positif_by_usia: {
+                      bawah_5: val.positif_bawah_5,
+                      "6_19": val.positif_6_19,
+                      "20_29": val.positif_20_29,
+                      "30_39": val.positif_30_39,
+                      "40_49": val.positif_40_49,
+                      "50_59": val.positif_50_59,
+                      "60_69": val.positif_60_69,
+                      "70_79": val.positif_70_79,
+                      atas_80: val.positif_atas_80,
+                    },
 
                     wni_total: val.wni_total,
                     wna_total: val.wna_total,
@@ -839,28 +839,28 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
             perempuan: sum_positif_aktif_perempuan
           },
 
-          // positif_proses: sum_positif_proses,
-          // positif_selesai: sum_positif_selesai,
-          // positif_total: sum_positif_total,
-          // positif_by_gender: {
-          //   laki_laki: sum_positif_lakilaki,
-          //   perempuan: sum_positif_perempuan
-          // },
-          // positif_by_nationality: {
-          //    wni: sum_positif_wni,
-          //    wna: sum_positif_wna
-          //  },
-          // positif_by_usia: {
-          //   bawah_5: sum_positif_bawah_5,
-          //   "6_19": sum_positif_6_19,
-          //   "20_29": sum_positif_20_29,
-          //   "30_39": sum_positif_30_39,
-          //   "40_49": sum_positif_40_49,
-          //   "50_59": sum_positif_50_59,
-          //   "60_69": sum_positif_60_69,
-          //   "70_79": sum_positif_70_79,
-          //   atas_80: sum_positif_atas_80,
-          // },
+          positif_proses: sum_positif_proses,
+          positif_selesai: sum_positif_selesai,
+          positif_total: sum_positif_total,
+          positif_by_gender: {
+            laki_laki: sum_positif_lakilaki,
+            perempuan: sum_positif_perempuan
+          },
+          positif_by_nationality: {
+             wni: sum_positif_wni,
+             wna: sum_positif_wna
+           },
+          positif_by_usia: {
+            bawah_5: sum_positif_bawah_5,
+            "6_19": sum_positif_6_19,
+            "20_29": sum_positif_20_29,
+            "30_39": sum_positif_30_39,
+            "40_49": sum_positif_40_49,
+            "50_59": sum_positif_50_59,
+            "60_69": sum_positif_60_69,
+            "70_79": sum_positif_70_79,
+            atas_80: sum_positif_atas_80,
+          },
 
          wni_total: sum_wni_total,
          wna_total: sum_wna_total,
