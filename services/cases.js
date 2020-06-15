@@ -90,7 +90,8 @@ async function ListCase (query, user, callback) {
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
-      { nik: new RegExp(query.search, "i") }
+      { nik: new RegExp(query.search, "i") },
+      { phone_number: new RegExp(query.search, "i") },
     ];
 
     if (query.verified_status !== 'verified') {
