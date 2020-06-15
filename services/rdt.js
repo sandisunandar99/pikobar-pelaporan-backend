@@ -633,8 +633,7 @@ function getCaseByidcase(idcase,callback) {
 
 }
 
-function FormSelectIdCase(query, user, callback) {
-
+function FormSelectIdCase(query, user, data_pendaftaran, callback) {
   let params = new Object();
 
   if (query.address_district_code) {
@@ -653,8 +652,8 @@ function FormSelectIdCase(query, user, callback) {
     .exec()
     .then(x => {
       let res = x.map(res => res.JSONFormCase())
-      // let concat = res.concat(data_pendaftaran)
-      return callback(null, res)
+      let concat = res.concat(data_pendaftaran)
+      return callback(null, concat)
     })
     .catch(err => callback(err, null))
 }
@@ -672,13 +671,15 @@ function getDatafromExternal(address_district_code, search, callback) {
      res.on('end', () => {
       let jsonData = JSON.parse(data)
       let result = jsonData.data.content
-
+      
       let outputData = []
       result.forEach(val => {
         outputData.push({
           display: val.name + "/" + val.nik + "/" + val.phone_number,
           id_case: null,
-          id: null
+          id: null,
+          last_status: val.final_result,
+          source_data:"external"
         })
       });
 
@@ -690,14 +691,12 @@ function getDatafromExternal(address_district_code, search, callback) {
    });
 }
 
-function FormSelectIdCaseDetail(search_internal, user, callback) {
-    // if (search_internal === null || search_internal=== undefined) {
-    //   return callback(null, search_external)
-    // }else{
-    //   return callback(null, search_internal.JSONSeacrhOutput())
-    // }
-    return callback(null, search_internal.JSONSeacrhOutput())
-    
+function FormSelectIdCaseDetail(search_internal, search_external, callback) {
+    if (search_internal === null || search_internal=== undefined) {
+      return callback(null, search_external)
+    }else{
+      return callback(null, search_internal.JSONSeacrhOutput())
+    }   
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
