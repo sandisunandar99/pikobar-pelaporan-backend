@@ -47,11 +47,16 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
     }else if (user.role == "dinkesprov" || user.role == "superadmin") {
       result_search = schema.find(params).where(conditions).ne("deleted")
     }else {
-      params.$or = [
-        { author: { $in: caseAuthors }, transfer_status: null },
-        { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
-      ]
-      // params.author_district_code = user.code_district_city;
+      if (user.unit_id) {
+        params.$or = [
+          { author: { $in: caseAuthors }, transfer_status: null },
+          { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
+        ]
+      } else {
+        params.author = new ObjectId(user._id)
+        params.author_district_code = user.code_district_city
+        params.transfer_status= null
+      }
       result_search = schema.find(params).where(conditions).ne("deleted")
     }
   } else {
@@ -61,11 +66,16 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
     }else if (user.role == "dinkesprov" || user.role == "superadmin") {
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
     }else {
-      params.$or = [
-        { author: { $in: caseAuthors }, transfer_status: null },
-        { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
-      ]
-      // params.author_district_code = user.code_district_city;
+      if (user.unit_id) {
+        params.$or = [
+          { author: { $in: caseAuthors }, transfer_status: null },
+          { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
+        ]
+      } else {
+        params.author = new ObjectId(user._id)
+        params.author_district_code = user.code_district_city
+        params.transfer_status= null
+      }
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
     }
   }
