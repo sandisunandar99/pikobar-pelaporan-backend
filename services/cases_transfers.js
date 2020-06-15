@@ -104,9 +104,8 @@ async function getCasetransfers (caseId, callback) {
   try {
 
     let transfers = await CaseTransfer
-      .find({ transfer_case_id: caseId })
-      .populate('createdBy')
-      .sort({ createdAt: 'desc'})
+      .find({ transfer_case_id: caseId, is_hospital_case_last_status: true })
+      .sort({ createdAt: 1 })
 
     transfers = transfers.map(transfers => transfers.toJSONFor())
     
