@@ -25,11 +25,11 @@ CaseTransferSchema.methods.toJSONFor = function () {
         transfer_status : this.transfer_status,
         transfer_case_id: this.transfer_case_id,
         transfer_from_unit_id: this.transfer_from_unit_id,
-        transfer_from_unit_name: this.transfer_from_unit_id,
+        transfer_from_unit_name: this.transfer_from_unit_name,
         transfer_to_unit_id: this.transfer_to_unit_id,
         transfer_to_unit_name: this.transfer_to_unit_name,
         is_hospital_case_last_status: this.is_hospital_case_last_status,
-        createdBy: this.createdBy ? this.createdBy.JSONCase() : null,
+        createdBy: this.createdBy,
         createdAt : this.createdAt
     }
 }
