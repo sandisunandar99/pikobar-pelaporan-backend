@@ -7,6 +7,10 @@ const UnitSchema = new mongoose.Schema({
     unit_type: String, //puskesmas, rs, klinik
     name: String,
     description: String,
+    code_district_code: { type: String, default: null},
+    name_district_code: { type: String, default: null},
+    address_province_code: { type: String, default:32},
+    address_province_name: { type: String, default:"Jawa Barat"},
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     delete_status: String,
     deletedAt: Date,
