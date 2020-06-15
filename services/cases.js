@@ -82,6 +82,7 @@ async function ListCase (query, user, callback) {
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {
+    delete params.author
     caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
     caseAuthors = caseAuthors.map(obj => obj._id)
   }
