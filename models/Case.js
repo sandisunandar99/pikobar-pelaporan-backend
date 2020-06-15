@@ -48,7 +48,7 @@ const CaseSchema = new mongoose.Schema({
     verified_comment: {type: String, default: null},
     transfer_status: { type: String, lowercase: true, default: null },
     transfer_to_unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
-    transfer_to_unit_name: String,
+    latest_faskes_unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     is_test_masif: {type: Boolean, default: false},
     input_source: String,
 

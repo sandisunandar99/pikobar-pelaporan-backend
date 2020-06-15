@@ -127,8 +127,7 @@ async function createCaseTransfer (caseId, author, payload, callback) {
     const a = await Case.findOneAndUpdate({ _id: caseId}, {
       $set: {
         transfer_status: payload.transfer_status,
-        transfer_to_unit_id: payload.transfer_to_unit_id,
-        transfer_to_unit_name: payload.transfer_to_unit_name,      
+        transfer_to_unit_id: payload.transfer_to_unit_id  
       }
     })
 
@@ -194,6 +193,7 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
 
     if (action === 'approve') {
       casePayload.transfer_status = 'approved'
+      casePayload.latest_faskes_unit = latestTransferred.transfer_to_unit_id
     } else if (action === 'decline') {
       casePayload.transfer_status = 'declined'
     } else if (action === 'abort') {
@@ -214,9 +214,10 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
     }
 
     // update case transfer status
+    const { transfer_to_unit_name, ...caseUpdatePayload } = casePayload
     await Case.findOneAndUpdate(
       { _id: caseId }, 
-      { $set: casePayload })
+      { $set: caseUpdatePayload })
     
     if (action === 'abort') {
       casePayload.transfer_status = 'aborted'
