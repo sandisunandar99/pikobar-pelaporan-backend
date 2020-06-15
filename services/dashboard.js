@@ -87,57 +87,57 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
     let sum_otg_age_70_79 = 0
     let sum_otg_age_atas_80 = 0
 
-    // let sum_positif_aktif_proses = 0
-    // let sum_positif_aktif_selesai = 0
-    // let sum_positif_aktif_total = 0
-    // let sum_positif_aktif_lakilaki = 0
-    // let sum_positif_aktif_perempuan = 0
-    // let sum_positif_aktif_wni = 0
-    // let sum_positif_aktif_wna = 0
-    // let sum_positif_aktif_bawah_5 = 0
-    // let sum_positif_aktif_6_19 = 0
-    // let sum_positif_aktif_20_29 = 0
-    // let sum_positif_aktif_30_39 = 0
-    // let sum_positif_aktif_40_49 = 0
-    // let sum_positif_aktif_50_59 = 0
-    // let sum_positif_aktif_60_69 = 0
-    // let sum_positif_aktif_70_79 = 0
-    // let sum_positif_aktif_atas_80 = 0
+    let sum_positif_aktif_proses = 0
+    let sum_positif_aktif_selesai = 0
+    let sum_positif_aktif_total = 0
+    let sum_positif_aktif_lakilaki = 0
+    let sum_positif_aktif_perempuan = 0
+    let sum_positif_aktif_wni = 0
+    let sum_positif_aktif_wna = 0
+    let sum_positif_aktif_bawah_5 = 0
+    let sum_positif_aktif_6_19 = 0
+    let sum_positif_aktif_20_29 = 0
+    let sum_positif_aktif_30_39 = 0
+    let sum_positif_aktif_40_49 = 0
+    let sum_positif_aktif_50_59 = 0
+    let sum_positif_aktif_60_69 = 0
+    let sum_positif_aktif_70_79 = 0
+    let sum_positif_aktif_atas_80 = 0
 
 
-    // let sum_positif_sembuh_proses = 0
-    // let sum_positif_sembuh_selesai = 0
-    // let sum_positif_sembuh_total = 0
-    // let sum_positif_sembuh_lakilaki = 0
-    // let sum_positif_sembuh_perempuan = 0
-    // let sum_positif_sembuh_wni = 0
-    // let sum_positif_sembuh_wna = 0
-    // let sum_positif_sembuh_bawah_5 = 0
-    // let sum_positif_sembuh_6_19 = 0
-    // let sum_positif_sembuh_20_29 = 0
-    // let sum_positif_sembuh_30_39 = 0
-    // let sum_positif_sembuh_40_49 = 0
-    // let sum_positif_sembuh_50_59 = 0
-    // let sum_positif_sembuh_60_69 = 0
-    // let sum_positif_sembuh_70_79 = 0
-    // let sum_positif_sembuh_atas_80 = 0
+    let sum_positif_sembuh_proses = 0
+    let sum_positif_sembuh_selesai = 0
+    let sum_positif_sembuh_total = 0
+    let sum_positif_sembuh_lakilaki = 0
+    let sum_positif_sembuh_perempuan = 0
+    let sum_positif_sembuh_wni = 0
+    let sum_positif_sembuh_wna = 0
+    let sum_positif_sembuh_bawah_5 = 0
+    let sum_positif_sembuh_6_19 = 0
+    let sum_positif_sembuh_20_29 = 0
+    let sum_positif_sembuh_30_39 = 0
+    let sum_positif_sembuh_40_49 = 0
+    let sum_positif_sembuh_50_59 = 0
+    let sum_positif_sembuh_60_69 = 0
+    let sum_positif_sembuh_70_79 = 0
+    let sum_positif_sembuh_atas_80 = 0
 
-    // let sum_positif_meninggal_proses = 0
-    // let sum_positif_meninggal_selesai = 0
-    // let sum_positif_meninggal_total = 0
-    // let sum_positif_meninggal_lakilaki = 0
-    // let sum_positif_meninggal_perempuan = 0
-    // let sum_positif_meninggal_wni = 0
-    // let sum_positif_meninggal_wna = 0
-    // let sum_positif_meninggal_bawah_5 = 0
-    // let sum_positif_meninggal_6_19 = 0
-    // let sum_positif_meninggal_20_29 = 0
-    // let sum_positif_meninggal_30_39 = 0
-    // let sum_positif_meninggal_40_49 = 0
-    // let sum_positif_meninggal_50_59 = 0
-    // let sum_positif_meninggal_60_69 = 0
-    // let sum_positif_meninggal_70_79 = 0
-    // let sum_positif_meninggal_atas_80 = 0
+    let sum_positif_meninggal_proses = 0
+    let sum_positif_meninggal_selesai = 0
+    let sum_positif_meninggal_total = 0
+    let sum_positif_meninggal_lakilaki = 0
+    let sum_positif_meninggal_perempuan = 0
+    let sum_positif_meninggal_wni = 0
+    let sum_positif_meninggal_wna = 0
+    let sum_positif_meninggal_bawah_5 = 0
+    let sum_positif_meninggal_6_19 = 0
+    let sum_positif_meninggal_20_29 = 0
+    let sum_positif_meninggal_30_39 = 0
+    let sum_positif_meninggal_40_49 = 0
+    let sum_positif_meninggal_50_59 = 0
+    let sum_positif_meninggal_60_69 = 0
+    let sum_positif_meninggal_70_79 = 0
+    let sum_positif_meninggal_atas_80 = 0
 
     let sum_wni_total = 0
     let sum_wna_total = 0
@@ -213,56 +213,56 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
         sum_otg_age_70_79 += val.otg_age_70_79
         sum_otg_age_atas_80 += val.otg_age_atas_80
 
-        // sum_positif_aktif_proses += val.positif_aktif_proses
-        // sum_positif_aktif_selesai += val.positif_aktif_selesai
-        // sum_positif_aktif_total += val.positif_aktif_total
-        // sum_positif_aktif_lakilaki += val.positif_aktif_lakilaki
-        // sum_positif_aktif_perempuan += val.positif_aktif_perempuan
-        // sum_positif_aktif_wni += val.positif_aktif_wni
-        // sum_positif_aktif_wna += val.positif_aktif_wna
-        // sum_positif_aktif_bawah_5 += val.positif_aktif_bawah_5
-        // sum_positif_aktif_6_19 += val.positif_aktif_6_19
-        // sum_positif_aktif_20_29 += val.positif_aktif_20_29
-        // sum_positif_aktif_30_39 += val.positif_aktif_30_39
-        // sum_positif_aktif_40_49 += val.positif_aktif_40_49
-        // sum_positif_aktif_50_59 += val.positif_aktif_50_59
-        // sum_positif_aktif_60_69 += val.positif_aktif_60_69
-        // sum_positif_aktif_70_79 += val.positif_aktif_70_79
-        // sum_positif_aktif_atas_80 += val.positif_aktif_atas_80
+        sum_positif_aktif_proses += val.positif_aktif_proses
+        sum_positif_aktif_selesai += val.positif_aktif_selesai
+        sum_positif_aktif_total += val.positif_aktif_total
+        sum_positif_aktif_lakilaki += val.positif_aktif_lakilaki
+        sum_positif_aktif_perempuan += val.positif_aktif_perempuan
+        sum_positif_aktif_wni += val.positif_aktif_wni
+        sum_positif_aktif_wna += val.positif_aktif_wna
+        sum_positif_aktif_bawah_5 += val.positif_aktif_bawah_5
+        sum_positif_aktif_6_19 += val.positif_aktif_6_19
+        sum_positif_aktif_20_29 += val.positif_aktif_20_29
+        sum_positif_aktif_30_39 += val.positif_aktif_30_39
+        sum_positif_aktif_40_49 += val.positif_aktif_40_49
+        sum_positif_aktif_50_59 += val.positif_aktif_50_59
+        sum_positif_aktif_60_69 += val.positif_aktif_60_69
+        sum_positif_aktif_70_79 += val.positif_aktif_70_79
+        sum_positif_aktif_atas_80 += val.positif_aktif_atas_80
 
-        // sum_positif_sembuh_proses += val.positif_sembuh_proses
-        // sum_positif_sembuh_selesai += val.positif_sembuh_selesai
-        // sum_positif_sembuh_total += val.positif_sembuh_total
-        // sum_positif_sembuh_lakilaki += val.positif_sembuh_lakilaki
-        // sum_positif_sembuh_perempuan += val.positif_sembuh_perempuan
-        // sum_positif_sembuh_wni += val.positif_sembuh_wni
-        // sum_positif_sembuh_wna += val.positif_sembuh_wna
-        // sum_positif_sembuh_bawah_5 += val.positif_sembuh_bawah_5
-        // sum_positif_sembuh_6_19 += val.positif_sembuh_6_19
-        // sum_positif_sembuh_20_29 += val.positif_sembuh_20_29
-        // sum_positif_sembuh_30_39 += val.positif_sembuh_30_39
-        // sum_positif_sembuh_40_49 += val.positif_sembuh_40_49
-        // sum_positif_sembuh_50_59 += val.positif_sembuh_50_59
-        // sum_positif_sembuh_60_69 += val.positif_sembuh_60_69
-        // sum_positif_sembuh_70_79 += val.positif_sembuh_70_79
-        // sum_positif_sembuh_atas_80 += val.positif_sembuh_atas_80
+        sum_positif_sembuh_proses += val.positif_sembuh_proses
+        sum_positif_sembuh_selesai += val.positif_sembuh_selesai
+        sum_positif_sembuh_total += val.positif_sembuh_total
+        sum_positif_sembuh_lakilaki += val.positif_sembuh_lakilaki
+        sum_positif_sembuh_perempuan += val.positif_sembuh_perempuan
+        sum_positif_sembuh_wni += val.positif_sembuh_wni
+        sum_positif_sembuh_wna += val.positif_sembuh_wna
+        sum_positif_sembuh_bawah_5 += val.positif_sembuh_bawah_5
+        sum_positif_sembuh_6_19 += val.positif_sembuh_6_19
+        sum_positif_sembuh_20_29 += val.positif_sembuh_20_29
+        sum_positif_sembuh_30_39 += val.positif_sembuh_30_39
+        sum_positif_sembuh_40_49 += val.positif_sembuh_40_49
+        sum_positif_sembuh_50_59 += val.positif_sembuh_50_59
+        sum_positif_sembuh_60_69 += val.positif_sembuh_60_69
+        sum_positif_sembuh_70_79 += val.positif_sembuh_70_79
+        sum_positif_sembuh_atas_80 += val.positif_sembuh_atas_80
 
-        // sum_positif_meninggal_proses += val.positif_meninggal_proses
-        // sum_positif_meninggal_selesai += val.positif_meninggal_selesai
-        // sum_positif_meninggal_total += val.positif_meninggal_total
-        // sum_positif_meninggal_lakilaki += val.positif_meninggal_lakilaki
-        // sum_positif_meninggal_perempuan += val.positif_meninggal_perempuan
-        // sum_positif_meninggal_wni += val.positif_meninggal_wni
-        // sum_positif_meninggal_wna += val.positif_meninggal_wna
-        // sum_positif_meninggal_bawah_5 += val.positif_meninggal_bawah_5
-        // sum_positif_meninggal_6_19 += val.positif_meninggal_6_19
-        // sum_positif_meninggal_20_29 += val.positif_meninggal_20_29
-        // sum_positif_meninggal_30_39 += val.positif_meninggal_30_39
-        // sum_positif_meninggal_40_49 += val.positif_meninggal_40_49
-        // sum_positif_meninggal_50_59 += val.positif_meninggal_50_59
-        // sum_positif_meninggal_60_69 += val.positif_meninggal_60_69
-        // sum_positif_meninggal_70_79 += val.positif_meninggal_70_79
-        // sum_positif_meninggal_atas_80 += val.positif_meninggal_atas_80
+        sum_positif_meninggal_proses += val.positif_meninggal_proses
+        sum_positif_meninggal_selesai += val.positif_meninggal_selesai
+        sum_positif_meninggal_total += val.positif_meninggal_total
+        sum_positif_meninggal_lakilaki += val.positif_meninggal_lakilaki
+        sum_positif_meninggal_perempuan += val.positif_meninggal_perempuan
+        sum_positif_meninggal_wni += val.positif_meninggal_wni
+        sum_positif_meninggal_wna += val.positif_meninggal_wna
+        sum_positif_meninggal_bawah_5 += val.positif_meninggal_bawah_5
+        sum_positif_meninggal_6_19 += val.positif_meninggal_6_19
+        sum_positif_meninggal_20_29 += val.positif_meninggal_20_29
+        sum_positif_meninggal_30_39 += val.positif_meninggal_30_39
+        sum_positif_meninggal_40_49 += val.positif_meninggal_40_49
+        sum_positif_meninggal_50_59 += val.positif_meninggal_50_59
+        sum_positif_meninggal_60_69 += val.positif_meninggal_60_69
+        sum_positif_meninggal_70_79 += val.positif_meninggal_70_79
+        sum_positif_meninggal_atas_80 += val.positif_meninggal_atas_80
 
         sum_wni_total += val.wni_total
         sum_wna_total += val.wna_total
@@ -393,18 +393,18 @@ const summaryAggregateByDinkes = async (query, user, callback) =>{
                      otg_proses: val.otg_proses,
                      otg_selesai: val.otg_selesai,
                      otg_total: val.otg_total,
-                    //  positif_aktif_proses: val.positif_aktif_proses,
-                    //  positif_aktif_selesai: val.positif_aktif_selesai,
-                    //  positif_aktif_total: val.positif_aktif_total,
-                    //  positif_sembuh_proses: val.positif_sembuh_proses,
-                    //  positif_sembuh_selesai: val.positif_sembuh_selesai,
-                    //  positif_sembuh_total: val.positif_sembuh_total,
-                    //  positif_meninggal_proses: val.positif_meninggal_proses,
-                    //  positif_meninggal_selesai: val.positif_meninggal_selesai,
-                    //  positif_meninggal_total: val.positif_meninggal_total,
-                    positif_proses : val.positif_proses,
-                    positif_selesai : val.positif_selesai,
-                    positif_total : val.positif_total,
+                     positif_aktif_proses: val.positif_aktif_proses,
+                     positif_aktif_selesai: val.positif_aktif_selesai,
+                     positif_aktif_total: val.positif_aktif_total,
+                     positif_sembuh_proses: val.positif_sembuh_proses,
+                     positif_sembuh_selesai: val.positif_sembuh_selesai,
+                     positif_sembuh_total: val.positif_sembuh_total,
+                     positif_meninggal_proses: val.positif_meninggal_proses,
+                     positif_meninggal_selesai: val.positif_meninggal_selesai,
+                     positif_meninggal_total: val.positif_meninggal_total,
+                    // positif_proses : val.positif_proses,
+                    // positif_selesai : val.positif_selesai,
+                    // positif_total : val.positif_total,
                     grand_total: val.grand_total,
                   })     
               } else{
