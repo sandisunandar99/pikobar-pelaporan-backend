@@ -29,6 +29,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list id_case for form',
                 tags: ['api', 'rdt'],
+                validate: inputValidations.rdtSearchValidation,
                 pre: [
                     getDataExternal
                 ]
