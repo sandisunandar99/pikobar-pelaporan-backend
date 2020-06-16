@@ -102,7 +102,7 @@ RdtSchema.methods.toJSONFor = function () {
         nationality_name: this.nationality_name ,
 
         final_result: this.final_result ,
-        tool_teste: this.tool_teste ,
+        tool_tester: this.tool_tester,
         code_tool_tester: this.code_tool_tester , // code alat pas tes ex (RDT / TCR)
         test_method: this.test_method,
         sampling_type: this.sampling_type, 
