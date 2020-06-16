@@ -105,6 +105,7 @@ async function getCasetransfers (caseId, callback) {
 
     let transfers = await CaseTransfer
       .find({ transfer_case_id: caseId, is_hospital_case_last_status: true })
+      .populate('transfer_last_history')
       .sort({ createdAt: 1 })
 
     transfers = transfers.map(transfers => transfers.toJSONFor())
@@ -115,13 +116,14 @@ async function getCasetransfers (caseId, callback) {
   }
 }
 
-async function createCaseTransfer (caseId, author, payload, callback) {
+async function createCaseTransfer (caseId, author, pre, payload, callback) {
 
   try {
     // insert transfer logs
     payload.transfer_status = 'pending'
     payload.transfer_from_unit_id = author.unit_id._id
     payload.transfer_from_unit_name = author.unit_id.name
+    payload.transfer_last_history = pre.cases.last_history._id
 
     // update case transfer status
     const a = await Case.findOneAndUpdate({ _id: caseId}, {
@@ -147,11 +149,13 @@ async function createCaseTransfer (caseId, author, payload, callback) {
   }
 }
 
+// TODO CLEANUP
 async function processTransfer (lastTransferId, caseId, action, author, payload, callback) {
   
   if (!payload) payload = {}
 
-  try {  
+  try {
+    const detailCase = await Case.findById(caseId)
     const latestTransferred = await CaseTransfer.findById(lastTransferId)
 
     // change all latest log hospital fro this case to false
@@ -174,6 +178,7 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
         transfer_from_unit_name: latestTransferred.transfer_from_unit_name,
         transfer_comment: payload.transfer_comment || null,
         transfer_case_id: latestTransferred.transfer_case_id,
+        transfer_last_history: detailCase.last_history,
         createdBy: author._id
       }
     } else {
@@ -182,6 +187,7 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
         transfer_from_unit_name: author.unit_id.name,
         transfer_comment: payload.transfer_comment || null,
         transfer_case_id: caseId,
+        transfer_last_history: detailCase.last_history,
         createdBy: author._id
       }
     }
