@@ -417,6 +417,7 @@ module.exports = (server) => {
             async (err, resultCase) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
+                payload.case = id
                 server.methods.services.histories.createIfChanged(payload, (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
