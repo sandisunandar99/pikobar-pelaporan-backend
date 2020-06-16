@@ -422,6 +422,22 @@ module.exports = (server) =>{
             },
             handler: handlers.ProcessCaseTransfer
         },
+        // Get case's summary of verifications
+        {
+            method: 'GET',
+            path: '/cases-transfer-summary/{type}',
+            config: {
+                auth: 'jwt',
+                description: 'Get a case transfers summary',
+                tags: ['api', 'cases.summary.transfers'],
+                validate: inputValidations.TransferCaseListParamValidations,
+                pre: [
+                    CheckRoleView,
+                    CheckCredentialUnitIsExist,
+                ]
+            },
+            handler: handlers.GetCaseSummaryTransfer
+        },
     ]
 
 }

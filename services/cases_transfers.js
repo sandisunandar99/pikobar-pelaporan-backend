@@ -127,8 +127,7 @@ async function createCaseTransfer (caseId, author, payload, callback) {
     const a = await Case.findOneAndUpdate({ _id: caseId}, {
       $set: {
         transfer_status: payload.transfer_status,
-        transfer_to_unit_id: payload.transfer_to_unit_id,
-        transfer_to_unit_name: payload.transfer_to_unit_name,      
+        transfer_to_unit_id: payload.transfer_to_unit_id  
       }
     })
 
@@ -194,6 +193,7 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
 
     if (action === 'approve') {
       casePayload.transfer_status = 'approved'
+      casePayload.latest_faskes_unit = latestTransferred.transfer_to_unit_id
     } else if (action === 'decline') {
       casePayload.transfer_status = 'declined'
     } else if (action === 'abort') {
@@ -214,9 +214,10 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
     }
 
     // update case transfer status
+    const { transfer_to_unit_name, ...caseUpdatePayload } = casePayload
     await Case.findOneAndUpdate(
       { _id: caseId }, 
-      { $set: casePayload })
+      { $set: caseUpdatePayload })
     
     if (action === 'abort') {
       casePayload.transfer_status = 'aborted'
@@ -233,6 +234,45 @@ async function processTransfer (lastTransferId, caseId, action, author, payload,
     console.log(error)
     return callback(null, error)
   }
+}
+
+async function geTransferCaseSummary (query, type, user, callback) {
+  let params = { is_hospital_case_last_status: true }
+
+  if (type == 'in') {
+    params.transfer_to_unit_id = user.unit_id._id
+  } else {
+    params.transfer_from_unit_id = user.unit_id._id
+  }
+
+  const dbQuery = [
+    { $match: params },
+    { $group: { _id: "$transfer_status", total: {$sum: 1}} }
+  ]
+  
+  let result =  {
+    'PENDING': 0, 
+    'DECLINED': 0,
+    'APPROVED': 0
+  }
+
+  CaseTransfer.aggregate(dbQuery).exec().then(async item => {
+
+      item.forEach(function(item){
+        if (item['_id'] == 'pending') {
+          result.PENDING = item['total']
+        }
+        if (item['_id'] == 'declined') {
+          result.DECLINED = item['total']
+        }
+        if (item['_id'] == 'approved') {
+          result.APPROVED = item['total']
+        }
+      })
+
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
 }
 
 function getTransferCaseById (id, callback) {
@@ -274,6 +314,10 @@ module.exports = [
   {
     name: 'services.casesTransfers.processTransfer',
     method: processTransfer
+  },
+  {
+    name: 'services.casesTransfers.geTransferCaseSummary',
+    method: geTransferCaseSummary
   },
 ];
 
