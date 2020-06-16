@@ -417,8 +417,8 @@ module.exports = (server) => {
             async (err, resultCase) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                payload.case = id
-                server.methods.services.histories.createIfChanged(payload, (err, result) => {
+                server.methods.services.histories.createIfChanged(Object.assign(payload, {case: id}),
+                (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
                     server.methods.services.casesTransfers.processTransfer(
