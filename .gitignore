@@ -10,3 +10,7 @@ typings
 .npm
 /data
 /upload/
+
+
+
+Dockerfile

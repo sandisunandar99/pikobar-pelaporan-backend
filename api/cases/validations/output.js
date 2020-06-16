@@ -31,6 +31,7 @@ const CaseJSON = Joi.object().keys({
     status: Joi.string().allow('', null),
     verified_status: Joi.string().allow('', null),
     verified_comment: Joi.string().allow('',null),
+    transfer_status: Joi.string().allow('', null),
     final_result: Joi.string().allow('', null),
     delete_status: Joi.string().allow('', null),
     deletedAt: Joi.date().allow('', null),

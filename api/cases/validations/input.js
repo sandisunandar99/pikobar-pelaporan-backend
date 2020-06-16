@@ -28,12 +28,37 @@ const CaseVerifyPayload = Joi.object().keys({
     verified_comment: Joi.string().allow('', null).optional()
 })
 
+const CaseTransferPayload = Joi.object().keys({
+    transfer_to_unit_id: Joi.string().required(),
+    transfer_to_unit_name: Joi.string().required(),
+    transfer_comment: Joi.string().allow('', null).optional().default(null),
+})
+
+const CaseTransferActionPayload = Joi.object().keys({
+    transfer_comment: Joi.string().allow('', null).optional().default(null),
+})
+
 const CaseParamsValidations = {
     params: {
         id: Joi.string().required()
     }
 }
 
+const TransferActionParamsValidations = {
+    params: {
+        id: Joi.string().required(),
+        transferId: Joi.string().required(),
+        action: Joi.string().valid('approve','decline','abort').required(),
+    }
+}
+
+const TransferCaseListParamValidations = {
+    params: {
+        type: Joi.string().valid('in','out').required(),
+    },
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}
 
 // --------------------------------------------------
 //    Config - Input Validations
@@ -43,7 +68,7 @@ const CaseQueryValidations = {
         limit: Joi.number().integer().empty('', 10).default(10).description('limit result set'),
         offset: Joi.number().integer().default(0).description('number of record to skip'),
         page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
-        sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
+        sort: Joi.string().empty('', 'desc').default('{createdAt:"desc"}').description('sorting by create date'),
         address_village_code: Joi.string().empty('', null).default('').description('search data by Keluarahan/Desa'),
         address_subdistrict_code: Joi.string().empty('', null).default('').description('search data by Kecamatan'),
         address_district_code: Joi.string().empty('', null).default('').description('search data by Case name'),
@@ -54,7 +79,8 @@ const CaseQueryValidations = {
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
         end_date: Joi.string().empty('', null).default('').description('search data by test date'),
         author: Joi.string().empty('', null).default('').description('filter by author'),
-        verified_status: Joi.string().empty('', null).default('').description('filter by verified status')
+        verified_status: Joi.string().empty('', null).default('').description('filter by verified status'),
+        transfer_status: Joi.string().optional().valid('pending', 'declined', 'approved').description('filter by transfer status')
     },
     options: validateOptions.options,
     failAction: validateOptions.failAction
@@ -148,6 +174,20 @@ const CaseVerifyPayloadValidations = Object.assign({
     failAction: validateOptions.failAction
 }, CaseParamsValidations)
 
+const CaseTransferPayloadValidations = Object.assign({
+    payload: CaseTransferPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, CaseParamsValidations)
+
+const CaseTransferActPayloadValidations = Object.assign({
+    payload: CaseTransferActionPayload,
+    headers: HeadersPayLoad,
+    options: validateOptions.options,
+    failAction: validateOptions.failAction
+}, TransferActionParamsValidations)
+
 module.exports = {
     CaseParamsValidations,
     CaseQueryValidations,
@@ -156,5 +196,8 @@ module.exports = {
     CaseDeletePayloadValidations,
     CaseImportPayloadValidations,
     caseSchemaValidation,
-    CaseVerifyPayloadValidations
+    CaseVerifyPayloadValidations,
+    CaseTransferPayloadValidations,
+    CaseTransferActPayloadValidations,
+    TransferCaseListParamValidations,
 }

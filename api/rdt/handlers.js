@@ -39,7 +39,9 @@ module.exports = (server) => {
          */
         async CreateRdt(request, reply){
             let payload = request.payload
+            let query  = request.query
             server.methods.services.rdt.create(
+                query,
                 payload,
                 request.auth.credentials.user,
                 request.pre,
@@ -131,7 +133,7 @@ module.exports = (server) => {
         async DeleteRdt(request, reply) {
             server.methods.services.rdt.softDeleteRdt(
                 request.pre.rdt,
-                request.pre.cases,
+                // request.pre.cases,
                 request.auth.credentials.user,
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
@@ -170,7 +172,7 @@ module.exports = (server) => {
             server.methods.services.rdt.FormSelectIdCaseDetail(
                 request.pre.search_internal,
                 request.pre.search_external,
-                request.auth.credentials.user,
+                // request.auth.credentials.user,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(

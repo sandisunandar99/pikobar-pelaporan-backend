@@ -21,6 +21,7 @@ const listUser = async (user, query, callback) => {
   const options = {
     page: query.page,
     limit: query.limit,
+    populate: (['unit_id']),
     sort: sorts,
     leanWithId: true,
     customLabels: myCustomLabels,
@@ -91,7 +92,7 @@ const getUserByUsername = (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
     return callback(null, user);
-  });
+  }).populate('unit_id');
 }
 
 const checkUser = async (query, callback) => {
@@ -146,7 +147,8 @@ const updateUser = (user, payload, callback) => {
     address_subdistrict_code: payload.address_subdistrict_code ? payload.address_subdistrict_code : user.address_subdistrict_code,
     address_subdistrict_name: payload.address_subdistrict_name ? payload.address_subdistrict_name : user.address_subdistrict_name,
     address_village_code: payload.address_village_code ? payload.address_village_code : user.address_village_code,
-    address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name
+    address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name,
+    unit_id: payload.unit_id ? payload.unit_id : user.unit_id
   }
   
   user = Object.assign(user, users);

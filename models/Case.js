@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+
 const check = require("../helpers/historycheck")
 var uniqueValidator = require('mongoose-unique-validator')
 
@@ -44,6 +46,9 @@ const CaseSchema = new mongoose.Schema({
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
+    transfer_status: { type: String, lowercase: true, default: null },
+    transfer_to_unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
+    latest_faskes_unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     is_test_masif: {type: Boolean, default: false},
     input_source: String,
 
@@ -53,6 +58,7 @@ CaseSchema.index( { verified_status: 1 } )
 CaseSchema.index( { address_district_code: 1 } )
 
 CaseSchema.plugin(mongoosePaginate)
+CaseSchema.plugin(aggregatePaginate);
 CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
 
 
@@ -74,6 +80,7 @@ CaseSchema.methods.toJSONFor = function () {
         status: this.status,
         verified_status: this.verified_status,
         verified_comment: this.verified_comment,
+        transfer_status: this.transfer_status || null,
         final_result: this.final_result,
         delete_status: this.delete_status,
         deletedAt: this.deletedAt,
@@ -87,12 +94,14 @@ CaseSchema.methods.toJSONFor = function () {
 
 
 CaseSchema.methods.JSONFormCase = function () {
-    let covid = this.id_case
+    let covid = this.id_case 
     let nik = this.nik === null || this.nik === undefined ? "-" : this.nik
     return {
         display: this.name + '/'+nik+'/'+this.phone_number,
         id_case: this.id_case,
-        id: this._id
+        id: this._id,
+        last_status: this.status,
+        source_data: "internal"
     }
 }
 
@@ -108,30 +117,31 @@ CaseSchema.methods.JSONFormIdCase = function () {
 
 CaseSchema.methods.JSONSeacrhOutput = function () {
     return {
-       id: this._id,
-       id_case: this.id_case,
-       target: null,
-       nik: this.nik,
-       name: this.name,
-       birth_date: this.birth_date,
-       age: this.age,
-       gender: this.gender,
-       address_detail: this.address_street,
-       address_district_code: this.address_district_code,
-       address_district_name: this.address_district_name,
-       address_subdistrict_code: this.address_subdistrict_code,
-       address_subdistrict_name: this.address_subdistrict_name,
-       address_village_code: this.address_village_code,
-       address_village_name: this.address_village_name,
-       phone_number: this.phone_number,
-       category: null,
-       mechanism: null,
-       nationality: this.nationality,
-       nationality_name: this.nationality_name,
-       final_result: this.final_result,
-       test_location_type: null,
-       test_location: null,
-       status: null
+        id: this._id,
+        id_case: this.id_case,
+        target: null,
+        nik: this.nik,
+        name: this.name,
+        birth_date: this.birth_date,
+        age: this.age,
+        gender: this.gender,
+        address_detail: this.address_street,
+        address_district_code: this.address_district_code,
+        address_district_name: this.address_district_name,
+        address_subdistrict_code: this.address_subdistrict_code,
+        address_subdistrict_name: this.address_subdistrict_name,
+        address_village_code: this.address_village_code,
+        address_village_name: this.address_village_name,
+        phone_number: this.phone_number,
+        category: null,
+        mechanism: null,
+        nationality: this.nationality,
+        nationality_name: this.nationality_name,
+        final_result: this.final_result,
+        test_location_type: null,
+        test_location: null,
+        status: null,
+        source_data: "internal"
     }
 }
 

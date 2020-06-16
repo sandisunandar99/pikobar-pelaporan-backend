@@ -32,7 +32,8 @@ const RegisterPayload = {
     address_subdistrict_code: Joi.string().required().allow(null, '').default('null'),
     address_subdistrict_name: Joi.string().required().allow(null, '').default('null'),
     address_village_code: Joi.string().required().allow(null, '').default('null'),
-    address_village_name: Joi.string().required().allow(null, '').default('null')
+    address_village_name: Joi.string().required().allow(null, '').default('null'),
+    unit_id: Joi.string().allow(null, '').default('null'),
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction

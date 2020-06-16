@@ -17,6 +17,24 @@ const validationBeforeInput = server => {
     }
 }
 
+const CheckCredentialUnitIsExist = server => {
+    return {
+        method: (request, reply) => {
+            let user = request.auth.credentials.user
+            if (user.unit_id) {
+                return reply()
+            } else {
+                return reply({
+                    status: 422,
+                    message: 'Anda tidak memiliki akses unit, silahkah edit profil user unit!',
+                    data: null
+                }).code(422).takeover()
+            }
+        },
+        assign: 'check_credential_unit_is_exist'
+    }
+}
+
 const checkCaseIsExists = server => {
     return {
         method: (request, reply) => {
@@ -28,7 +46,14 @@ const checkCaseIsExists = server => {
 
                 let message
                 message = `NIK ${nik} atas nama ${result.name} `
-                message += `Sudah terdata di laporan kasus oleh ${author}`
+
+                if (result.transfer_to_unit_name && result.transfer_status !== 'approved' ) {
+                    message += `Sedang dalam proses rujukan ke ${result.transfer_to_unit_name}`
+                } else if (result.transfer_to_unit_name && result.transfer_status === 'approved') {
+                    message += `Sudah terdata di laporan kasus ${result.transfer_to_unit_name}`
+                } else {
+                    message += `Sudah terdata di laporan kasus ${author}`
+                }
 
                 return reply({
                     status: 409,
@@ -238,6 +263,79 @@ const getDetailCase = server => {
     }
 }
 
+const getTransferCasebyId = server => {
+    return {
+        method: (request, reply) => {
+             let id = request.params.transferId
+             server.methods.services.casesTransfers.getById(id, (err, item) => {
+                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                 return reply(item)
+             })
+        },
+        assign: 'transfer_case'
+    }
+}
+
+const CheckCaseIsAllowToTransfer = server => {
+    return {
+        method: (request, reply) => {
+            const params = {
+                transfer_case_id: request.params.id,
+            }
+
+            let currentCase = request.preResponses.cases.source
+            if (currentCase.verified_status !== 'verified') {
+                return reply({
+                    status: 422,
+                    message: 'Data Kasus belum terverifikasi oleh Dinkes!',
+                    data: null
+                }).code(422).takeover()
+             }
+
+            server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+
+                if (!result || !['pending', 'declined'].includes(result.transfer_status)) return reply(result)                
+
+                const msg = "Rujukan sudah ada dan sedang menunggu persetujuan dari " + result.transfer_to_unit_name
+                return reply({
+                    status: 409,
+                    message: msg,
+                    data: null
+                }).code(409).takeover()
+            })
+        },
+        assign: 'is_case_allow_to_transfer'
+    }
+}
+
+const CheckIsTransferActionIsAllow = server => {
+    return {
+        method: (request, reply) => {
+            const params = {
+                transfer_case_id: request.params.id,
+            }
+            server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                
+                let action = 'aborted'
+                if (request.params.action === 'approve') action = 'approved'
+                else if (request.params.action === 'decline') action = 'declined'
+
+                if (result && action !== result.transfer_status) return reply(result)                
+
+                const msg = request.params.action + ' is already in process!'
+                return reply({
+                    status: 409,
+                    message: msg,
+                    data: null
+                }).code(409).takeover()
+            })
+        },
+        assign: 'is_case_allow_to_action'
+    }
+}
+
 module.exports ={
     countCaseByDistrict,
     countCasePendingByDistrict,
@@ -247,5 +345,9 @@ module.exports ={
     validationBeforeInput,
     checkCaseIsExists,
     getDetailCase,
-    checkCaseIsAllowToDelete
+    checkCaseIsAllowToDelete,
+    getTransferCasebyId,
+    CheckCaseIsAllowToTransfer,
+    CheckIsTransferActionIsAllow,
+    CheckCredentialUnitIsExist,
 }

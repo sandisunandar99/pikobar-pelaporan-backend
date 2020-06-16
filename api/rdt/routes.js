@@ -29,6 +29,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show list id_case for form',
                 tags: ['api', 'rdt'],
+                validate: inputValidations.rdtSearchValidation,
                 pre: [
                     getDataExternal
                 ]
@@ -101,7 +102,7 @@ module.exports = (server) =>{
                     CheckRoleCreate,
                     validationBeforeInput,
                     countRdtCode,
-                    countCaseByDistrict,
+                    // countCaseByDistrict,
                     getCodeDinkes
                 ]
             },
@@ -173,8 +174,8 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleDelete,
-                    getRdtbyId,
-                    getCasebyIdcase
+                    getRdtbyId
+                    // getCasebyIdcase
                 ]
             },
             handler: handlers.DeleteRdt

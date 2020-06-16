@@ -15,6 +15,9 @@ const User = mongoose.model('User')
 require('../models/Notification')
 const Notification = mongoose.model('Notification')
 
+require('../models/CaseTransfer')
+const CaseTransfer = mongoose.model('CaseTransfer')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
@@ -29,9 +32,9 @@ async function ListCase (query, user, callback) {
     limit: 'perPage',
     page: 'currentPage',
     meta: '_meta'
-  };
+  };  
 
-  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : JSON.parse(query.sort))
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
   
   const options = {
     page: query.page,
@@ -76,11 +79,20 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
   
+  // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
+  let caseAuthors = []
+  if (user.role === "faskes" && user.unit_id) {
+    delete params.author
+    caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
+    caseAuthors = caseAuthors.map(obj => obj._id)
+  }
+
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
-      { nik: new RegExp(query.search, "i") }
+      { nik: new RegExp(query.search, "i") },
+      { phone_number: new RegExp(query.search, "i") },
     ];
 
     if (query.verified_status !== 'verified') {
@@ -88,9 +100,9 @@ async function ListCase (query, user, callback) {
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
     }
 
-    var result_search = Check.listByRole(user, params, search_params,Case,"delete_status")
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseAuthors)
   } else {
-    var result_search = Check.listByRole(user, params, null,Case,"delete_status")
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
   }
 
   Case.paginate(result_search, options).then(function(results){
@@ -684,6 +696,13 @@ async function healthCheck(payload, callback) {
   }
 }
 
+async function epidemiologicalInvestigationForm (detailCase, callback) {
+  const pdfmaker = require('../helpers/pdfmaker')
+  const histories = await History.find({ case: detailCase._id })
+  Object.assign(detailCase, { histories: histories })
+  return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
+}
+
 /**
 * compare data in 1 millisecond
 * if different means the case is in the process of insertion by another process
@@ -770,5 +789,9 @@ module.exports = [
     name: 'services.cases.healthcheck',
     method: healthCheck,
   },
+  {
+    name: 'services.cases.epidemiologicalInvestigationForm',
+    method: epidemiologicalInvestigationForm
+  }
 ];
 
