@@ -15,6 +15,7 @@ const register = (server, options, next) => {
       require('./notifications'),
       require('./map'),
       require('./unit'),
+      require('./case_related'),
     );
     server.method(services)
     return next()
