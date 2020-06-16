@@ -1,5 +1,5 @@
 const ObjectId = require("mongoose").Types.ObjectId
-const countByRole = (user) => {
+const countByRole = (user, caseAuthors=[]) => {
   let searching
   if (user.role == "dinkeskota") {
     searching = {
@@ -8,9 +8,19 @@ const countByRole = (user) => {
   } else if (user.role == "dinkesprov" || user.role == "superadmin") {
     searching = {}
   } else {
-    searching = {
-      author:new ObjectId(user._id),
-      author_district_code:user.code_district_city
+    if (user.unit_id) {
+      searching = {
+        $or: [
+          { author: { $in: caseAuthors }, transfer_status: null },
+          { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved' }
+        ]
+      }
+    } else {
+      searching = {
+        author:new ObjectId(user._id),
+        author_district_code:user.code_district_city,
+        transfer_status: null
+      }
     }
   }
   return searching
