@@ -18,8 +18,7 @@ const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
-const { object } = require('joi');
-const { log } = require('console');
+
 
 function ListRdt (query, user, callback) {
 
@@ -525,10 +524,13 @@ function updateRdt (id, payload, author, callback) {
 
     rdt_item.save((err, res) => {
        if (err) return callback(err, null)
+
        RdtHistory.findByIdAndUpdate(rdt_item.last_history, { $set: payload }, { new: true }, (err, result) =>{
-         if (err) console.log(err);
+         if (err) console.log(err)
+         
+         return callback(null, result)
        })
-       return callback(null, rdt_item)
+       
     })
 
   }).catch(err => callback(err, null))
