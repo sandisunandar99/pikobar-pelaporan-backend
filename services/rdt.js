@@ -526,9 +526,11 @@ function updateRdt (id, payload, author, callback) {
        if (err) return callback(err, null)
 
        RdtHistory.findByIdAndUpdate(rdt_item.last_history, { $set: payload }, { new: true }, (err, result) =>{
-         if (err) console.log(err)
-         
-         return callback(null, result)
+          if (err) console.log(err)
+          
+          console.log(result);
+          
+          return callback(null, result)
        })
        
     })
