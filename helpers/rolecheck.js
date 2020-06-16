@@ -8,7 +8,7 @@ const countByRole = (user, caseAuthors=[]) => {
   } else if (user.role == "dinkesprov" || user.role == "superadmin") {
     searching = {}
   } else {
-    if (user.unit_id) {
+    if (user.unit_id && Array.isArray(caseAuthors)) {
       searching = {
         $or: [
           { author: { $in: caseAuthors }, transfer_status: null },

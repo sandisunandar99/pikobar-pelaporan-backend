@@ -232,7 +232,10 @@ async function getCaseSummaryFinal (query, user, callback) {
 }
 
 async function getCaseSummary (query, user, callback) {
-  let searching = Check.countByRole(user,query);
+  // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
+  const caseAuthors = await thisUnitCaseAuthors(user)
+
+  let searching = Check.countByRole(user,caseAuthors);
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
       searching.address_district_code = query.address_district_code;
@@ -307,12 +310,8 @@ async function getCaseSummary (query, user, callback) {
 }
 
 async function getCaseSummaryVerification (query, user, callback) {
-  let caseAuthors = []
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  if (user.role === "faskes" && user.unit_id) {
-    caseAuthors = await User.find({unit_id: user.unit_id._id, role: 'faskes'}).select('_id')
-    caseAuthors = caseAuthors.map(obj => obj._id)
-  }
+  const caseAuthors = await thisUnitCaseAuthors(user)
 
   let searching = Check.countByRole(user,caseAuthors);
   if(user.role == "dinkesprov" || user.role == "superadmin"){
@@ -729,6 +728,15 @@ async function delayIfAnotherImportProcessIsRunning () {
 
 function delay(t) {
   return new Promise(resolve => setTimeout(resolve.bind(), t))
+}
+
+async function thisUnitCaseAuthors (user) {
+  let caseAuthors = []
+  if (user.role === "faskes" && user.unit_id) {
+    caseAuthors = await User.find({unit_id: user.unit_id._id, role: 'faskes'}).select('_id')
+    caseAuthors = caseAuthors.map(obj => obj._id)
+  }
+  return caseAuthors
 }
 
 module.exports = [

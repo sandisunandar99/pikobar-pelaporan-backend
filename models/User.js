@@ -30,6 +30,8 @@ const UserSchema = new mongoose.Schema({
   deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null}
 }, {timestamps: true})
 
+UserSchema.index( { unit_id: 1 } )
+
 UserSchema.plugin(uniqueValidator, {
   message: 'sudah ada di basisdata'
 });
