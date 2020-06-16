@@ -72,4 +72,12 @@ HistorySchema.methods.toJSONFor = function () {
     }
 }
 
+HistorySchema.methods.JSONCaseTransfer = function () {
+    return {
+        status : this.status,
+        stage : this.stage,
+        final_result : this.final_result
+    }
+}
+
 module.exports = mongoose.model('History', HistorySchema)
