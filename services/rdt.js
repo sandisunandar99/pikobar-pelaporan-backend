@@ -59,6 +59,9 @@ async function ListRdt (query, user, callback) {
   if(query.test_method){
     params.test_method = query.test_method;
   }
+  if(query.tool_tester){
+    params.tool_tester = query.tool_tester;
+  }
   if(query.test_address_district_code){
     params.test_address_district_code = query.test_address_district_code;
   }
@@ -120,7 +123,7 @@ function getRdtById (id, callback) {
 
 function GetRdtSummaryByCities (query, callback) {
   var aggStatus = [
-    { $match: { tool_tester: 'RAPID TEST'} },
+    { $match: { tool_tester: 'RDT'} },
     {$group: {
       _id: "$test_address_district_code",
       total: {$sum: 1}
