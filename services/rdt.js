@@ -259,14 +259,14 @@ function createRdt(query, payload, author, pre, callback) {
     code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
     code_tool_tester += pre.count_rdt.count
 
-    let id_case
-    if (query.source_data === "external" || payload.source_data === "external" || query.source_data === "manual" || payload.source_data === "manual") {
-      id_case = "COVID-"
-      id_case += pre.code_dinkes.code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
-      id_case += pre.count_rdt.count
-    }
+      let id_case
+      if (payload.id_case) {
+        id_case = "COVID-"
+        id_case += pre.code_dinkes.code
+        id_case += date.substr(2, 2)
+        id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
+        id_case += pre.count_rdt.count
+      }
 
     let code = {
       code_test: code_test,
@@ -361,7 +361,7 @@ function createRdt(query, payload, author, pre, callback) {
             code_tool_tester += pre.count_rdt.count
 
             let id_case
-            if (query.source_data === "external" || payload.source_data === "external" || query.source_data === "manual" || payload.source_data === "manual") {
+            if (payload.id_case) {
                     id_case = "COVID-"
                     id_case += pre.code_dinkes.code
                     id_case += date.substr(2, 2)
