@@ -76,7 +76,7 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
     }else if (user.role == "dinkesprov" || user.role == "superadmin") {
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
     }else {
-      if (user.unit_id) {
+      if (user.unit_id && Array.isArray(caseAuthors) && caseAuthors.length) {
         params.$or = [
           { author: { $in: caseAuthors }, transfer_status: null, $or: search_params },
           { transfer_to_unit_id: new ObjectId(user.unit_id._id), transfer_status: 'approved', $or: search_params  }
