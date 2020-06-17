@@ -237,8 +237,10 @@ function createRdt(query, payload, author, pre, callback) {
  
   if (payload.nik === null && payload.phone_number === null) {
 
-     delete payload.id
-     delete payload.id_case
+     if (payload.source_data === "external" || payload.source_data === "manual") {
+       delete payload.id
+       delete payload.id_case
+     }
 
     let date = new Date().getFullYear().toString()
     let code_test = "PTS-"
@@ -262,14 +264,15 @@ function createRdt(query, payload, author, pre, callback) {
     code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
     code_tool_tester += pre.count_rdt.count
 
-      let id_case
-      if (payload.id_case) {
-        id_case = "COVID-"
-        id_case += pre.code_dinkes.code
-        id_case += date.substr(2, 2)
-        id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
-        id_case += pre.count_rdt.count
-      }
+    let id_case
+    if (payload.source_data === "external" || payload.source_data === "manual") {
+      id_case = "COVID-"
+      id_case += pre.code_dinkes.code
+      id_case += date.substr(2, 2)
+      id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
+      id_case += pre.count_rdt.count
+    }
+
 
     let code = {
       code_test: code_test,
@@ -340,7 +343,7 @@ function createRdt(query, payload, author, pre, callback) {
             // "code_test": "PST-100012000001"
             // "code_tool_tester": "RDT-10012000001",
             // "code_tool_tester": "PCR-10012000001",
-            if (payload.source_data === "external") {
+            if (payload.source_data === "external" || payload.source_data === "manual") {
               delete payload.id
               delete payload.id_case
             }
@@ -368,7 +371,7 @@ function createRdt(query, payload, author, pre, callback) {
             code_tool_tester += pre.count_rdt.count
 
             let id_case
-            if (payload.id_case) {
+            if (payload.source_data === "external" || payload.source_data === "manual") {
                     id_case = "COVID-"
                     id_case += pre.code_dinkes.code
                     id_case += date.substr(2, 2)
