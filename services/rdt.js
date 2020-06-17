@@ -20,7 +20,7 @@ const https = require('https')
 const url = require('url');
 
 
-function ListRdt (query, user, callback) {
+async function ListRdt (query, user, callback) {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -75,6 +75,14 @@ function ListRdt (query, user, callback) {
     }
   }
 
+  let caseAuthors = []
+  if (user.role === "faskes" && user.unit_id) {
+    delete params.author
+    caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
+    caseAuthors = caseAuthors.map(obj => obj._id)
+  }
+
+
   if (query.search) {
     var search_params = [
       { name: new RegExp(query.search, "i") },
@@ -83,9 +91,9 @@ function ListRdt (query, user, callback) {
       { mechanism: new RegExp(query.search, "i") },
       { test_method: new RegExp(query.search, "i") },
     ];
-    var result_search = Check.listByRole(user, params, search_params,Rdt,"status")
+    var result_search = Check.listByRole(user, params, search_params, Rdt, "status", caseAuthors)
   } else {
-    var result_search = Check.listByRole(user,params,null,Rdt,"status")
+    var result_search = Check.listByRole(user, params, null, Rdt, "status", caseAuthors)
   }
 
   Rdt.paginate(result_search, options).then(function (results) {
