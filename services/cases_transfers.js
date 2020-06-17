@@ -20,7 +20,10 @@ const myCustomLabels = {
 async function ListCase (query, user, type, callback) {
 
   let search = {}
-  let params = { is_hospital_case_last_status: true }
+  let params = {
+    is_hospital_case_last_status: true,
+    transfer_status: { $ne: 'aborted' }
+  }
   
   if (query.transfer_status) {
     params.transfer_status = query.transfer_status
