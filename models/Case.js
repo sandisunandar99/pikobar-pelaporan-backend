@@ -103,7 +103,6 @@ CaseSchema.methods.JSONFormCase = function () {
     return {
         display: this.name + '/' + nik + '/' + phone_number,
         id_case: this.id_case,
-        id: this._id,
         last_status: this.status,
         source_data: "internal"
     }
