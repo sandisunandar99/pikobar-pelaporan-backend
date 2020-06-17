@@ -234,7 +234,6 @@ function GetRdtHistoryByRdtId (id, callback) {
 }
 
 function createRdt(query, payload, author, pre, callback) {
-  delete payload.id_case
   delete payload._id
 
   if (payload.nik === null || payload.phone_number === null) {
