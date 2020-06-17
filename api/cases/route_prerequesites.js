@@ -39,6 +39,7 @@ const checkCaseIsExists = server => {
     return {
         method: (request, reply) => {
             const nik = request.payload.nik
+            if(!nik) return reply()
             server.methods.services.cases.getByNik(nik, (err, result) => {
                 if (!result) return reply(result)
 
@@ -56,10 +57,10 @@ const checkCaseIsExists = server => {
                 }
 
                 return reply({
-                    status: 409,
+                    status: 422,
                     message: message,
                     data: null
-                }).code(409).takeover()
+                }).code(422).takeover()
             })
        },
        assign: 'case_exist'
@@ -299,10 +300,10 @@ const CheckCaseIsAllowToTransfer = server => {
 
                 const msg = "Rujukan sudah ada dan sedang menunggu persetujuan dari " + result.transfer_to_unit_name
                 return reply({
-                    status: 409,
+                    status: 422,
                     message: msg,
                     data: null
-                }).code(409).takeover()
+                }).code(422).takeover()
             })
         },
         assign: 'is_case_allow_to_transfer'
@@ -312,6 +313,7 @@ const CheckCaseIsAllowToTransfer = server => {
 const CheckIsTransferActionIsAllow = server => {
     return {
         method: (request, reply) => {
+            let user = request.auth.credentials.user
             const params = {
                 transfer_case_id: request.params.id,
             }
@@ -322,14 +324,40 @@ const CheckIsTransferActionIsAllow = server => {
                 if (request.params.action === 'approve') action = 'approved'
                 else if (request.params.action === 'decline') action = 'declined'
 
-                if (result && action !== result.transfer_status) return reply(result)                
-
-                const msg = request.params.action + ' is already in process!'
+                let msg = request.params.action + ' is already in process!'
+                if (result.transfer_status === 'approved') {
+                    msg =  'Case is already approved!'
+                } else if (result && action === result.transfer_status) {
+                    msg = request.params.action + ' is already in process!'               
+                } else if (request.params.action === 'approve') {
+                    if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
+                        msg =  'Only the destination unit is allowed to approve!'
+                    } else if (result.transfer_status !== 'pending') {
+                        msg =  'Only pending transfer cases are allow to approve!'
+                    } else {
+                        return reply(result)
+                    }
+                } else if (request.params.action === 'decline') {
+                    if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
+                        msg =  'Only the destination unit is allowed to decline!'
+                    } else if (result.transfer_status !== 'pending') {
+                        msg =  'Only pending transfer cases are allow to decline!'
+                    } else {
+                        return reply(result)
+                    }
+                } else if (request.params.action === 'abort') {
+                    if (result.transfer_from_unit_id.toString() !== user.unit_id._id.toString()) {
+                        msg =  'Only the transfer creator is allowed to abort!'
+                    } else {
+                        return reply(result)
+                    }
+                }
+                
                 return reply({
-                    status: 409,
+                    status: 422,
                     message: msg,
                     data: null
-                }).code(409).takeover()
+                }).code(422).takeover()
             })
         },
         assign: 'is_case_allow_to_action'
