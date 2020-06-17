@@ -12,6 +12,9 @@ const Case = mongoose.model('Case');
 require('../models/RdtHistory')
 const RdtHistory = mongoose.model('RdtHistory');
 
+require('../models/User')
+const User = mongoose.model('User')
+
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId
