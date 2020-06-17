@@ -761,8 +761,6 @@ function getDatafromExternal(address_district_code, search, callback) {
       result.forEach(val => {
         outputData.push({
           display: val.name + "/" + val.nik + "/" + val.phone_number,
-          id_case: null,
-          id: null,
           last_status: val.final_result,
           source_data:"external"
         })
