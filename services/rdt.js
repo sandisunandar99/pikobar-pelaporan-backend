@@ -231,6 +231,8 @@ function GetRdtHistoryByRdtId (id, callback) {
 }
 
 function createRdt(query, payload, author, pre, callback) {
+  delete payload.id_case
+  delete payload._id
 
   // find existing Rdt by nik & phone_number
   Rdt.findOne({ nik: payload.nik })
@@ -314,7 +316,7 @@ function createRdt(query, payload, author, pre, callback) {
 
           let rdt = new Rdt(Object.assign(code, payload))
           rdt = Object.assign(rdt,{author})
-
+          
           if (rdt.address_district_code === author.code_district_city) {
             return rdt.save();
           }
@@ -505,6 +507,7 @@ function createRdtMultiple(payload, author, pre, callback) {
 }
 
 function updateRdt (id, payload, author, callback) {
+   delete payload._id
   // update Rdt
   payload.author_district_code = author.code_district_city
   payload.author_district_name = author.name_district_city
