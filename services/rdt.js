@@ -293,7 +293,7 @@ function createRdt(query, payload, author, pre, callback) {
           code_tool_tester += pre.count_rdt.count
 
           let id_case
-          if (query.source_data === "external" || query.source_data === "manual") {
+          if (query.source_data === "external" || payload.source_data === "external" || query.source_data === "manual" || payload.source_data === "manual") {
                   id_case = "COVID-"
                   id_case += pre.code_dinkes.code
                   id_case += date.substr(2, 2)
