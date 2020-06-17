@@ -236,7 +236,7 @@ function GetRdtHistoryByRdtId (id, callback) {
 function createRdt(query, payload, author, pre, callback) {
   delete payload._id
 
-  if (payload.nik === null || payload.phone_number === null) {
+  if (payload.nik === null && payload.phone_number === null) {
     let date = new Date().getFullYear().toString()
     let code_test = "PTS-"
     code_test += pre.code_dinkes.code
