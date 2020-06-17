@@ -234,9 +234,12 @@ function GetRdtHistoryByRdtId (id, callback) {
 }
 
 function createRdt(query, payload, author, pre, callback) {
-  delete payload._id
-
+ 
   if (payload.nik === null && payload.phone_number === null) {
+
+     delete payload.id
+     delete payload.id_case
+
     let date = new Date().getFullYear().toString()
     let code_test = "PTS-"
     code_test += pre.code_dinkes.code
@@ -337,6 +340,10 @@ function createRdt(query, payload, author, pre, callback) {
             // "code_test": "PST-100012000001"
             // "code_tool_tester": "RDT-10012000001",
             // "code_tool_tester": "PCR-10012000001",
+            if (payload.source_data === "external") {
+              delete payload.id
+              delete payload.id_case
+            }
 
             let date = new Date().getFullYear().toString()
             let code_test = "PTS-"
