@@ -280,18 +280,29 @@ const getTransferCasebyId = server => {
 const CheckCaseIsAllowToTransfer = server => {
     return {
         method: (request, reply) => {
+            const currentCase = request.preResponses.cases.source
+            const userUnit = request.auth.credentials.user.unit_id
+            const destinationUnit = request.payload.transfer_to_unit_id
+
             const params = {
                 transfer_case_id: request.params.id,
             }
 
-            let currentCase = request.preResponses.cases.source
-            if (currentCase.verified_status !== 'verified') {
+            const response = (code, messg) => {
                 return reply({
-                    status: 422,
-                    message: 'Data Kasus belum terverifikasi oleh Dinkes!',
+                    status: code,
+                    message: messg,
                     data: null
-                }).code(422).takeover()
-             }
+                }).code(code).takeover()
+            }
+
+            if (destinationUnit.toString() === userUnit._id.toString()) {
+                return response(422, 'Cannot transfer to your own unit!')
+            }
+
+            if (currentCase.verified_status !== 'verified') {
+                return response(422, 'Data Kasus belum terverifikasi oleh Dinkes!')
+            }
 
             server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
@@ -299,11 +310,7 @@ const CheckCaseIsAllowToTransfer = server => {
                 if (!result || !['pending', 'declined'].includes(result.transfer_status)) return reply(result)                
 
                 const msg = "Rujukan sudah ada dan sedang menunggu persetujuan dari " + result.transfer_to_unit_name
-                return reply({
-                    status: 422,
-                    message: msg,
-                    data: null
-                }).code(422).takeover()
+                return response(422, msg)
             })
         },
         assign: 'is_case_allow_to_transfer'
