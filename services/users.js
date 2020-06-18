@@ -6,6 +6,7 @@ const User = mongoose.model('User');
 const Hospital = mongoose.model('Hospital');
 const Check = require('../helpers/rolecheck');
 const Helper = require('../helpers/custom');
+const { func, object } = require('joi');
 
 const listUser = async (user, query, callback) => {
 
@@ -91,6 +92,9 @@ const getUserById = async (id, category, callback) => {
 const getUserByUsername = (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
+    
+    LastLogin(user)
+    
     return callback(null, user);
   }).populate('unit_id');
 }
@@ -217,46 +221,61 @@ const updateUsersFcmToken = async (id, payload, author, callback) =>{
   }
 }
 
+const LastLogin = async (user)=>{
+  let date = new Date()
+  let last_login = {
+    last_login: date.toISOString()
+  }
+  user = Object.assign(user,last_login)
+  user.save((err, res) =>{
+    if(err) console.log(err)
+
+    return res
+  }) 
+  
+}
+
+
 module.exports = [
   {
-    name: 'services.users.checkUser',
-    method: checkUser
+    name: "services.users.checkUser",
+    method: checkUser,
   },
   {
-    name: 'services.users.listUser',
-    method: listUser
+    name: "services.users.listUser",
+    method: listUser,
   },
   {
-    name: 'services.users.getById',
-    method: getUserById
+    name: "services.users.getById",
+    method: getUserById,
   },
   {
-    name: 'services.users.getByUsername',
-    method: getUserByUsername
+    name: "services.users.getByUsername",
+    method: getUserByUsername,
   },
   {
-    name: 'services.users.create',
-    method: createUser
+    name: "services.users.create",
+    method: createUser,
   },
   {
-    name: 'services.users.update',
-    method: updateUser
+    name: "services.users.update",
+    method: updateUser,
   },
   {
-    name: 'services.users.updateUsers',
-    method: updateUsers
+    name: "services.users.updateUsers",
+    method: updateUsers,
   },
   {
-    name: 'services.users.listUserIds',
-    method: listUserIds
+    name: "services.users.listUserIds",
+    method: listUserIds,
   },
   {
-    name: 'services.users.updateUsersFcmToken',
-    method: updateUsersFcmToken
+    name: "services.users.updateUsersFcmToken",
+    method: updateUsersFcmToken,
   },
   {
-    name: 'services.users.getFaskesOfUser',
-    method: getFaskesOfUser
-  }
+    name: "services.users.getFaskesOfUser",
+    method: getFaskesOfUser,
+  },
 ];
  

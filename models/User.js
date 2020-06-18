@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const mongoosePaginate = require('mongoose-paginate-v2');
+const { date } = require('joi');
 
 const UserSchema = new mongoose.Schema({
   fullname: String,
@@ -27,7 +28,8 @@ const UserSchema = new mongoose.Schema({
   unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' ,default:null},
   delete_status: { type: String, default:null},
   deletedAt: { type: Date, default:null},
-  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null}
+  deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' ,default:null},
+  last_login: {type: Date}
 }, {timestamps: true})
 
 UserSchema.index( { role: 1 } )
@@ -67,7 +69,8 @@ UserSchema.methods.toAuthJSON = function () {
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
     unit_id : this.unit_id,
-    token: this.generateJWT()
+    token: this.generateJWT(),
+    last_login: this.last_login
   }
 }
 
@@ -85,6 +88,7 @@ UserSchema.methods.toJSONFor = function () {
     address_village_name: this.address_village_name,
     address_subdistrict_name: this.address_subdistrict_name,
     unit_id : this.unit_id,
+    last_login: this.last_login
   }
 }
 
