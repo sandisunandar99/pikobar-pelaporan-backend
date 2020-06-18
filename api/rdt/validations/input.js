@@ -21,6 +21,7 @@ const RdtQueryValidations = {
         final_result: Joi.string().empty('', null).default('').description('search by final_result'),
         mechanism: Joi.string().empty('', null).default('').description('search by mechanism'),
         test_method: Joi.string().empty('', null).default('').description('search by test_method'),
+        tool_tester: Joi.string().empty('', null).default('').description('search by tool_tester'),
         test_address_district_code: Joi.string().empty('', null).default('').description('search by test_address_district_code'),
         search: Joi.string().empty('', null).default('').description('search data'),
         start_date: Joi.string().empty('', null).default('').description('search data by test date'),
