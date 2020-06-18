@@ -362,7 +362,6 @@ module.exports = (server) =>{
                 tags: ['api', 'cases.transfers'],
                 pre: [
                     CheckRoleView,
-                    CheckCredentialUnitIsExist,
                 ]
             },
             handler: handlers.GetCaseTransfers
