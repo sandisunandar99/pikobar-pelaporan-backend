@@ -1,4 +1,6 @@
 
+const ObjectId = require("mongoose").Types.ObjectId
+
 const setFalseAllThisCaseTransferLogs = (schema, caseId, unitId)  => {
   return schema.updateMany(
     { transfer_case_id: caseId, transfer_from_unit_id: unitId }, 
@@ -64,9 +66,87 @@ const buildUpdateCasePayload = async (action, author, caseId, payload, schema, l
   return casePayload
 }
 
+const isObjectIdValid = (uuid) => {
+  return ObjectId.isValid(uuid)
+}
+
+const buildParams = (type, user, query)  => {
+  let params = {
+    is_hospital_case_last_status: true,
+    transfer_status: { $ne: 'aborted' }
+  }
+  
+  if (query.transfer_status) {
+    params.transfer_status = query.transfer_status
+  }
+
+  if(query.createdAt){
+    let due = new Date(new Date(query.createdAt))
+    due = new Date(due.setDate(due.getDate() + 1)).toISOString()
+    params.createdAt = {
+      $gte: new Date(query.createdAt),
+      $lt: new Date(due)
+    }
+  }
+
+  if (type == 'in') {
+    params.transfer_to_unit_id = user.unit_id._id
+    if(query.transfer_from_unit_id){
+      let isValid = isObjectIdValid(query.transfer_from_unit_id)
+      params.transfer_from_unit_id = isValid
+        ? new ObjectId(query.transfer_from_unit_id)
+        : null
+    }
+  } else {
+    params.transfer_from_unit_id = user.unit_id._id
+    if(query.transfer_to_unit_id){
+      let isValid = isObjectIdValid(query.transfer_to_unit_id)
+      params.transfer_to_unit_id = isValid
+        ? new ObjectId(query.transfer_to_unit_id)
+        : null
+    }
+  }
+
+  return params
+}
+
+const buildCaseParams = (query)  => {
+  let caseParams = {}
+  if(query.status){
+    caseParams.status = query.status
+  }
+  if(query.final_result){
+    caseParams.final_result = query.final_result
+  }
+  if(query.address_district_code){
+    caseParams.address_district_code = query.address_district_code
+  }
+  if(query.address_subdistrict_code){
+    caseParams.address_subdistrict_code = query.address_subdistrict_code
+  }
+  if(query.address_village_code){
+    caseParams.address_village_code = query.address_village_code
+  }
+  return caseParams
+}
+
+const buildSearchParams = (query)  => {
+  let search = {}
+  if (query.search) {
+    search.$or = [
+      { id_case : new RegExp(query.search || '',"i") },
+      { name: new RegExp(query.search || '', "i") },
+      { nik: new RegExp(query.search || '', "i") },
+    ]
+  }
+  return search
+}
 
 module.exports = {
   setFalseAllThisCaseTransferLogs,
   buildTransferCasePaylod,
   buildUpdateCasePayload,
+  buildParams,
+  buildCaseParams,
+  buildSearchParams,
 }

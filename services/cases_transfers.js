@@ -19,29 +19,9 @@ const myCustomLabels = {
 
 async function ListCase (query, user, type, callback) {
 
-  let search = {}
-  let params = {
-    is_hospital_case_last_status: true,
-    transfer_status: { $ne: 'aborted' }
-  }
-  
-  if (query.transfer_status) {
-    params.transfer_status = query.transfer_status
-  }
-
-  if (type == 'in') {
-    params.transfer_to_unit_id = user.unit_id._id
-  } else {
-    params.transfer_from_unit_id = user.unit_id._id
-  }
-
-  if (query.search) {
-    search.$or = [
-      { id_case : new RegExp(query.search || '',"i") },
-      { name: new RegExp(query.search || '', "i") },
-      { nik: new RegExp(query.search || '', "i") }
-    ]
-  }
+  const search = helper.buildSearchParams(query)
+  const caseParams = helper.buildCaseParams(query)
+  const params = helper.buildParams(type, user,  query)
 
   const dbQuery = [
     { $match: params },
@@ -61,6 +41,7 @@ async function ListCase (query, user, type, callback) {
                       { $eq: [ "$_id",  "$$transferCaseId" ] }
                     ],
                 },
+                ...caseParams,
                 ...search
               },
           }
@@ -87,7 +68,7 @@ async function ListCase (query, user, type, callback) {
     const results = await CaseTransfer.aggregatePaginate(aggregate,
     {
       page: query.page || 1,
-      limit: query.limit || 3,
+      limit: query.limit || 10,
       customLabels: myCustomLabels
     })
 
