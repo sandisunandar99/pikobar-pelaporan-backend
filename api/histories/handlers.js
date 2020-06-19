@@ -1,4 +1,4 @@
-const replyHelper = require('../helpers')
+const replyHelper = require('../helpers');
 
 module.exports = (server) => {
     function constructHistorysResponse(histories) {
@@ -7,10 +7,8 @@ module.exports = (server) => {
             message: "Success",
             data: histories
         }
-        // return survey
         return jsonHistories
     }
-
 
     return {
         /**
@@ -18,7 +16,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async ListHistory(request, reply){
+        async ListHistory(_request, reply){
             server.methods.services.histories.list( (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
@@ -26,7 +24,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * POST /api/histories
          * @param {*} request
@@ -41,7 +38,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-        
         /**
          * GET /api/histories/{id}
          * @param {*} request
@@ -56,7 +52,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * DELETE /api/histories/{id}
          * @param {*} request
