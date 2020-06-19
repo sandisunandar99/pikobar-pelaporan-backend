@@ -48,7 +48,12 @@ const listUnit = async (query, callback) => {
 
 const listUnitById = async (id, callback) => {
     try {
-        const result = await Unit.findById(id).populate('createdBy');
+        let result;
+        if(id === 'null'){
+            result = await Unit.find().populate('createdBy');
+        }else{
+            result = await Unit.findById(id).populate('createdBy');
+        }
         callback(null, result);
     } catch (error) {
         callback(error, null);
