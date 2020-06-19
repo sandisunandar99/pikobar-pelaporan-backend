@@ -1,16 +1,9 @@
 module.exports = (server) =>{
-    const handlers = require('./handlers')(server)
-    //const inputValidations = require('./validations/input')
-    //const outputValidations = require('./validations/output') 
-
-   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
-   const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
-   const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
-   const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
-
-
+    const handlers = require('./handlers')(server);
+    const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
+    const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server);
+    
     return [
-        // Get list history
         {
             method: 'GET',
             path: '/history_cases',
@@ -24,7 +17,6 @@ module.exports = (server) =>{
             },
             handler: handlers.ListHistory
         },
-        // Create history
         {
             method: 'POST',
             path: '/history_cases',
@@ -38,7 +30,6 @@ module.exports = (server) =>{
             },
             handler: handlers.CreateHistory
         },
-        // Get detail history
         {
             method: 'GET',
             path: '/history_cases/{id}',
@@ -52,19 +43,5 @@ module.exports = (server) =>{
             },
             handler: handlers.GetHistoryDetail
         },
-        // Delete history
-        // {
-        //     method: 'DELETE',
-        //     path: '/history_cases/{id}',
-        //     config: {
-        //         auth: 'jwt',
-        //         description: 'show a specific histories details',
-        //         tags: ['api', 'histories'],
-        //         // validate: inputValidations,
-        //         // response: outputValidations
-        //     },
-        //     handler: handlers.DeleteHistory
-        // }
     ]
-
 }
