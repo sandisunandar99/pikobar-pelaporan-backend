@@ -74,13 +74,7 @@ const getUserById = async (id, category, callback) => {
   try {
     result = await User.findById(id);
     if(category == 'reset'){
-      const salt = crypto.randomBytes(16).toString('hex');
-      const params = {
-        salt:salt,
-        hash:crypto.pbkdf2Sync(`${result.username}890`, salt, 10000, 512, 'sha512').toString('hex'),
-        password:Helper.setPwd(`${result.username}890`),
-      }
-      result = await User.findByIdAndUpdate(id,{ $set: params }, { new: true });
+      result = {'msg':'Harap hubungi administrator'}
     }
     callback(null, result);
   } catch (error) {
