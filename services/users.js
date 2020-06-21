@@ -74,7 +74,7 @@ const getUserById = async (id, category, callback) => {
   try {
     result = await User.findById(id);
     if(category == 'reset'){
-      result = {}
+      result = {'msg':'Harap hubungi administrator'}
     }
     callback(null, result);
   } catch (error) {
