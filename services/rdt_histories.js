@@ -22,15 +22,6 @@ function getRdtHistoryById (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function createRdtHistory (payload, callback) {
-  let item = new RdtHistory(payload);
-
-  item.save((err, item) => {
-    if (err) return callback(err, null);
-    return callback(null, item);
-  });
-}
-
 module.exports = [
   {
     name: 'services.rdt_histories.list',

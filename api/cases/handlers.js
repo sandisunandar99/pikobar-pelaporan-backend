@@ -417,20 +417,25 @@ module.exports = (server) => {
             async (err, resultCase) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                server.methods.services.casesTransfers.processTransfer(
-                    request.params.transferId,
-                    pre.transfer_case.transfer_case_id,
-                    'pending',
-                    request.auth.credentials.user,
-                    request.payload,
-                    (err, result) => {
+                server.methods.services.histories.createIfChanged(Object.assign(payload, {case: id}),
+                (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCasesResponse({
-                            ...result._doc,
-                            case: resultCase
-                        }, request)
-                    ).code(200)
+
+                    server.methods.services.casesTransfers.processTransfer(
+                        request.params.transferId,
+                        pre.transfer_case.transfer_case_id,
+                        'pending',
+                        request.auth.credentials.user,
+                        request.payload,
+                        (err, result) => {
+                        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                        return reply(
+                            constructCasesResponse({
+                                ...result._doc,
+                                case: resultCase
+                            }, request)
+                        ).code(200)
+                    })
                 })
             })
         },
@@ -464,6 +469,7 @@ module.exports = (server) => {
             server.methods.services.casesTransfers.create(
                 id,
                 author,
+                request.pre,
                 payload,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

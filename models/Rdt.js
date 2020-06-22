@@ -51,7 +51,8 @@ const RdtSchema = new mongoose.Schema({
 
     rdt_count: {type: Number, default: 0},
     pcr_count: {type: Number, default: 0}, 
-    swab_count: {type: Number, default: 0}, 
+    swab_to: {type: Number, default: 0}, 
+    rdt_to: {type: Number, default: 0}, 
     lab: String,
 
     author : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -102,7 +103,7 @@ RdtSchema.methods.toJSONFor = function () {
         nationality_name: this.nationality_name ,
 
         final_result: this.final_result ,
-        tool_teste: this.tool_teste ,
+        tool_tester: this.tool_tester,
         code_tool_tester: this.code_tool_tester , // code alat pas tes ex (RDT / TCR)
         test_method: this.test_method,
         sampling_type: this.sampling_type, 
@@ -121,11 +122,13 @@ RdtSchema.methods.toJSONFor = function () {
         
         rdt_count : this.rdt_count,
         pcr_count : this.pcr_count,
-        swab_count : this.swab_count,
+        swab_to : this.swab_to,
+        rdt_to : this.rdt_to,
         lab : this.lab,
 
         status :this.status ,
-        author: this.author.JSONCase()
+        author: this.author.JSONCase(),
+        last_history: this.last_history
     }
 }
 
