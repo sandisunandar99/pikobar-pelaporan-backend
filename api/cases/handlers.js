@@ -493,6 +493,20 @@ module.exports = (server) => {
                 request.payload,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                
+                const {_id, ...historyPayload } = result.transfer_last_history.toObject()
+                let historiesPayload = Object.assign(historyPayload, {
+                    current_location_type: 'RS',
+                    current_location_address: result.transfer_to_unit_name,
+                    hospital_id: result.transfer_to_unit_id
+                })
+
+                if (request.params.action === 'approve') {
+                    server.methods.services.histories.createIfChanged(
+                        historiesPayload,
+                        (err, resultHistory) => resultHistory)
+                }
+
                 return reply(
                     constructCasesResponse(result, request)
                 ).code(200)
