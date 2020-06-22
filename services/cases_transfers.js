@@ -138,7 +138,7 @@ async function createCaseTransfer (caseId, author, pre, payload, callback) {
 async function processTransfer (lastTransferId, caseId, action, author, payload = {}, callback) {
   
   try {
-    const detailCase = await Case.findById(caseId)
+    const detailCase = await Case.findById(caseId).populate('last_history')
     const latestTransferred = await CaseTransfer.findById(lastTransferId)
 
     if(latestTransferred) {
