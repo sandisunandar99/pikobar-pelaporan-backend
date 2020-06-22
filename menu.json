@@ -1,0 +1,29 @@
+{
+    "path": "/",
+    "redirect": "dashboard",
+    "meta": {
+        "icon": "dashboard",
+        "roles": [
+            "superadmin",
+            "dinkesprov",
+            "dinkeskota"
+        ]
+    },
+    "active": false,
+    "children": [
+        {
+            "path": "/",
+            "meta": {
+                "title": "dashboard",
+                "icon": "dashboard",
+                "noCache": true,
+                "affix": true,
+                "roles": [
+                    "superadmin",
+                    "dinkesprov",
+                    "dinkeskota"
+                ]
+            }
+        }
+    ]
+}
