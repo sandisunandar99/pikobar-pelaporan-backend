@@ -26,5 +26,15 @@ module.exports = (server) => {
                 }
             )
         },
+        async listMenu(request, reply) {
+            server.methods.services.country.getMenuList(
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructAreasResponse(result)
+                    ).code(200)
+                }
+            )
+        },
     } //end
 }

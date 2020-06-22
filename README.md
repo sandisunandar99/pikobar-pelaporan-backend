@@ -1,4 +1,7 @@
 # API Pikobar Pelaporan Jabar
+[![Maintainability](https://api.codeclimate.com/v1/badges/2298b98ac9b6d1ad5bca/maintainability)](https://codeclimate.com/github/jabardigitalservice/pikobar-pelaporan-backend/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/2298b98ac9b6d1ad5bca/test_coverage)](https://codeclimate.com/github/jabardigitalservice/pikobar-pelaporan-backend/test_coverage)
+
 API service for Jabar Pikobar application
 
 ## Core Stack

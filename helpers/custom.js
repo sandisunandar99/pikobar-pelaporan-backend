@@ -5,6 +5,14 @@ const setPwd = (password) => {
     return hashing
 }
 
+const deletedSave = (payloads) => {
+    const date = new Date();
+    payloads.delete_status = "deleted";
+    payloads.deletedAt = date.toISOString();
+    payloads.deletedBy = author;
+    return payloads;
+}
+
 module.exports = {
-    setPwd
+    setPwd, deletedSave
 }

@@ -7,7 +7,6 @@ module.exports = (server) => {
             message: "Success",
             data: areas
         }
-        // return survey
         return jsonAreas
     }
 

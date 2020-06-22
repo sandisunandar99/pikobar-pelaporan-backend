@@ -2,25 +2,14 @@ const mongoose = require('mongoose');
 
 require('../models/Unit');
 const Unit = mongoose.model('Unit');
+const paginate = require('../helpers/paginate');
+const custom = require('../helpers/custom');
 
 const listUnit = async (query, callback) => {
     try {
-        const myCustomLabels = {
-            totalDocs: 'itemCount',
-            docs: 'itemsList',
-            limit: 'perPage',
-            page: 'currentPage',
-            meta: '_meta'
-        };
-        const sorts = (query.sort == "desc" ? { createdAt: "desc" } : JSON.parse(query.sort))
-        const options = {
-            page: query.page,
-            limit: query.limit,
-            populate: (['createdBy']),
-            sort: sorts,
-            leanWithId: true,
-            customLabels: myCustomLabels
-        };
+        const sorts = (query.sort == "desc" ? { createdAt: "desc" } : JSON.parse(query.sort));
+        const populate = (['createdBy']);
+        const options = paginate.optionsLabel(query, sorts, populate);
         let params = {};
         if(query.unit_type){
             params.unit_type = query.unit_type;
@@ -48,7 +37,12 @@ const listUnit = async (query, callback) => {
 
 const listUnitById = async (id, callback) => {
     try {
-        const result = await Unit.findById(id).populate('createdBy');
+        let result;
+        if(id === 'null'){
+            result = await Unit.find().populate('createdBy');
+        }else{
+            result = await Unit.findById(id).populate('createdBy');
+        }
         callback(null, result);
     } catch (error) {
         callback(error, null);
@@ -70,10 +64,7 @@ const updateUnit = async (pay, id, category, author, callback) => {
         const payloads = {};
         const payload = (pay == null ? {} : pay);
         if (category == "delete") {
-            const date = new Date();
-            payloads.delete_status = "deleted";
-            payloads.deletedAt = date.toISOString();
-            payloads.deletedBy = author;
+            custom.deletedSave(payloads);
         }
         const params = Object.assign(payload, payloads);
         const result = await Unit.findByIdAndUpdate(id,
