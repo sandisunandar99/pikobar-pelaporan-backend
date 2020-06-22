@@ -7,16 +7,16 @@ module.exports = (server) => {
       message: true,
       data : user.toAuthJSON() 
     }
-    return authUser
+    return authUser;
   }
 
   function constructUsersResponse(user) {
-    let authUser = { 
+    let userResponse = { 
       status : 200,
       message: true,
       data : user 
     }
-    return authUser
+    return userResponse;
   }
 
   return {
@@ -40,9 +40,9 @@ module.exports = (server) => {
      */
     async getUserById (request, reply) {
       server.methods.services.users.getById(
-        request.params.id, "update", (err, listUser) => {
+        request.params.id, "update", (err, userById) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        return reply(constructUsersResponse(userById));
       });
     },
     /**
@@ -52,9 +52,9 @@ module.exports = (server) => {
      */
     async resetPassword (request, reply) {
       server.methods.services.users.getById(
-        request.params.id, "reset", (err, listUser) => {
+        request.params.id, "reset", (err, userReset) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        return reply(constructUsersResponse(userReset));
       });
     },
     /**
@@ -98,9 +98,9 @@ module.exports = (server) => {
       server.methods.services.users.updateUsers(
         request.params.id, request.payload, "delete",
         request.auth.credentials.user._id,
-        (err, listUser) => {
+        (err, callbackDelete) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        return reply(constructUsersResponse(callbackDelete));
       })
     },
     /**
@@ -112,9 +112,9 @@ module.exports = (server) => {
       server.methods.services.users.updateUsers(
         request.params.id, request.payload, "update",
         request.auth.credentials.user._id,
-        (err, listUser) => {
+        (err, callbackUpdate) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        return reply(constructUsersResponse(callbackUpdate));
       })
     },
     /**

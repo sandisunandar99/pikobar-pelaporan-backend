@@ -1,8 +1,5 @@
 module.exports = (server) =>{
-    const handlers = require('./handlers')(server)
-    const inputValidations = require('./validations/input')
-    const outputValidations = require('./validations/output') 
-
+    const handlers = require('./handlers')(server);
     return [
         {
             method: 'GET',
@@ -11,8 +8,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show city in west java areas',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.DistrictCity
         },
@@ -23,8 +18,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show districs in west java areas',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.SubDistrict
         },
@@ -35,8 +28,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show sub districs detail',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.SubDistrictDetail
         },
@@ -47,8 +38,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show villege in west java areas',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.Village
         },
@@ -59,8 +48,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'show villege detail',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.VillageDetail
         },
@@ -71,8 +58,6 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'get hospitals in west java',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.Hospital
         },
@@ -83,11 +68,8 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'get lab in west java',
                 tags: ['api', 'areas'],
-                // validate: inputValidations,
-                // response: outputValidations
             },
             handler: handlers.Lab
         }
     ]
-
 }

@@ -54,6 +54,9 @@ const CaseSchema = new mongoose.Schema({
 
 },{ timestamps:true, usePushEach: true })
 
+CaseSchema.index( { author: 1 } )
+CaseSchema.index( { transfer_status: 1 } )
+CaseSchema.index( { transfer_to_unit_id: 1 } )
 CaseSchema.index( { verified_status: 1 } )
 CaseSchema.index( { address_district_code: 1 } )
 
@@ -96,10 +99,10 @@ CaseSchema.methods.toJSONFor = function () {
 CaseSchema.methods.JSONFormCase = function () {
     let covid = this.id_case 
     let nik = this.nik === null || this.nik === undefined ? "-" : this.nik
+    let phone_number = this.phone_number === null || this.phone_number === undefined ? "-" : this.phone_number
     return {
-        display: this.name + '/'+nik+'/'+this.phone_number,
+        display: this.name + '/' + nik + '/' + phone_number,
         id_case: this.id_case,
-        id: this._id,
         last_status: this.status,
         source_data: "internal"
     }
