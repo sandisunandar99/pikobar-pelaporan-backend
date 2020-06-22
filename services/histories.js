@@ -61,6 +61,10 @@ function createHistoryIfChanged (payload, callback) {
    * has difference. If the same would just return the old history. If there
    * are any difference, would create a new history, then update the related
    * case's last_history to the newly created history. */
+
+  // guarded field (cannot be filled)
+  ['last_changed', 'createdAt', 'updatedAt'].map(x => delete payload[x])
+
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
