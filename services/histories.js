@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 require('../models/History');
 require('../models/Case');
 
+const Helper = require('../helpers/custom');
 const History = mongoose.model('History');
 const Case = mongoose.model('Case');
 
@@ -63,7 +64,7 @@ function createHistoryIfChanged (payload, callback) {
    * case's last_history to the newly created history. */
 
   // guarded field (cannot be filled)
-  ['last_changed', 'createdAt', 'updatedAt'].map(x => delete payload[x])
+  Helper.deleteProps(['last_changed', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {

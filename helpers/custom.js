@@ -13,6 +13,15 @@ const deletedSave = (payloads) => {
     return payloads;
 }
 
+const isObject = (value) => {
+    return value && typeof value === 'object' && value.constructor === Object
+}
+
+const deleteProps = (arrProps, obj) => {
+    if (!isObject(obj) || !Array.isArray(arrProps)) return
+    arrProps.map(x => delete obj[x])
+}
+
 module.exports = {
-    setPwd, deletedSave
+    setPwd, deletedSave, isObject, deleteProps
 }
