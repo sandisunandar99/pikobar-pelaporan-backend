@@ -6,28 +6,13 @@ const User = mongoose.model('User');
 const Unit = mongoose.model('Unit');
 const Check = require('../helpers/rolecheck');
 const Helper = require('../helpers/custom');
-const { func, object } = require('joi');
+const paginate = require('../helpers/paginate');
+const custom = require('../helpers/custom');
 
 const listUser = async (user, query, callback) => {
-
-  const myCustomLabels = {
-    totalDocs: 'itemCount',
-    docs: 'itemsList',
-    limit: 'perPage',
-    page: 'currentPage',
-    meta: '_meta'
-  };
-
   const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort));
-  const options = {
-    page: query.page,
-    limit: query.limit,
-    populate: (['unit_id']),
-    sort: sorts,
-    leanWithId: true,
-    customLabels: myCustomLabels,
-  };
-
+  const populate = (['unit_id']);
+  const options = paginate.optionsLabel(query, sorts, populate);
   let result_search;
   let params = Check.userByRole({}, user);
 
@@ -84,11 +69,9 @@ const getUserById = async (id, category, callback) => {
 }
 
 const getUserByUsername = (username, callback) => {
-  User.findOne({ username }, (err, user) => {
+  User.findOne({ username }, async (err, user) => {
     if (err) return callback(err, null);
-    
-    LastLogin(user)
-    
+    await LastLogin(user);
     return callback(null, user);
   }).populate('unit_id');
 }
@@ -108,11 +91,10 @@ const checkUser = async (query, callback) => {
 const getFaskesOfUser = async (user, callback) => {
   if (user.role != 'faskes' || !user.hasOwnProperty('faskes_id')) {
       let err = { message: "This user has no faskes data ascociated with it" }
-      callback(err, null)
+      callback(err, null);
   } else {
-      const res = await Unit.find(user.faskes_id)
-
-      callback(null, res)
+      const res = await Unit.find(user.faskes_id);
+      callback(null, res);
   }
 }
 
@@ -131,7 +113,6 @@ const createUser = async (payload, callback) => {
 
 const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
-
   let users = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
@@ -150,7 +131,6 @@ const updateUser = (user, payload, callback) => {
   }
   
   user = Object.assign(user, users);
-
   user.save((err, user) => {
     if (err) return callback(err, null);
     return callback(null, user);
@@ -162,10 +142,7 @@ const updateUsers = async (id, pay, category, author, callback) =>{
     const payloads = {};
     const payload = (pay == null ? {} : pay );
     if(category == "delete"){
-      const date = new Date();
-      payloads.delete_status = "deleted";
-      payloads.deletedAt = date.toISOString();
-      payloads.deletedBy = author;
+      custom.deletedSave(payloads);
     }
     if(typeof payload.password !== "undefined"){
       payload.salt = crypto.randomBytes(16).toString('hex');
@@ -223,10 +200,8 @@ const LastLogin = async (user)=>{
   user = Object.assign(user,last_login)
   user.save((err, res) =>{
     if(err) console.log(err)
-
     return res
   }) 
-  
 }
 
 
