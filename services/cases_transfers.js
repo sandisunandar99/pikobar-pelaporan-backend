@@ -89,14 +89,10 @@ async function ListCase (query, user, type, callback) {
 async function getCasetransfers (caseId, callback) {
   try {
 
-    let transfers = await CaseTransfer
-      .find({ transfer_case_id: caseId, is_hospital_case_last_status: true })
-      .populate('transfer_last_history')
-      .sort({ createdAt: 1 })
+    const dbQuery = helper.transferLogsQuery(caseId)
+    let transferLogs = await CaseTransfer.aggregate(dbQuery)   
 
-    transfers = transfers.map(transfers => transfers.toJSONFor())
-    
-    return callback(null, transfers)
+    return callback(null, transferLogs)
   } catch (error) {
     return callback(null, error)
   }

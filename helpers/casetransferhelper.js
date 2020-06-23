@@ -142,6 +142,48 @@ const buildSearchParams = (query)  => {
   return search
 }
 
+const transferLogsQuery = (caseId)  => {
+  const dbQuery = [
+    { $match: { transfer_case_id: new ObjectId(caseId) } },
+    {
+      $lookup:
+        {
+          from: 'histories',
+          localField: 'transfer_last_history',
+          foreignField: '_id',
+          as: 'transfer_last_history'
+        }
+    },
+    { "$addFields": {
+      "transfer_last_history": {
+        "$map": {
+          "input": "$transfer_last_history",
+          "as": "val",
+          "in": {
+            "status": "$$val.status",
+            "stage": "$$val.stage",
+            "final_result": "$$val.final_result"
+          }
+        } 
+      }  
+    }},
+    { $unwind: "$transfer_last_history" },
+    { $sort: {createdAt: -1} },
+    {
+      $group:
+      {
+        _id: {
+          "transfer_to_unit_id": "$transfer_to_unit_id",
+          "transfer_from_unit_id": "$transfer_from_unit_id"
+        },
+        data: { $first: "$$ROOT" }
+      }
+    },
+    { $replaceRoot: { newRoot: "$data" } },
+  ]
+  return dbQuery
+}
+
 const canAction = (request, reply, result, action, user) => {
   let msg = null
   if (result.transfer_status === 'approved') {
@@ -184,5 +226,6 @@ module.exports = {
   buildParams,
   buildCaseParams,
   buildSearchParams,
-  canAction
+  canAction,
+  transferLogsQuery
 }
