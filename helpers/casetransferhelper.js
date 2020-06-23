@@ -180,6 +180,7 @@ const transferLogsQuery = (caseId)  => {
       }
     },
     { $replaceRoot: { newRoot: "$data" } },
+    { $sort: {createdAt: -1} },
   ]
   return dbQuery
 }
