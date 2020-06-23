@@ -395,6 +395,7 @@ module.exports = (server) =>{
                 pre: [
                     CheckRoleUpdate,
                     CheckCredentialUnitIsExist,
+                    CheckIsTransferActionIsAllow,
                     countCaseByDistrict,
                     countCasePendingByDistrict,
                     getTransferCasebyId,

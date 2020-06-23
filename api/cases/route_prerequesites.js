@@ -1,4 +1,5 @@
 const replyHelper = require('../helpers')
+const caseTransferHelper = require('../../helpers/casetransferhelper')
 
 const validationBeforeInput = server => {
     return {
@@ -327,43 +328,17 @@ const CheckIsTransferActionIsAllow = server => {
             server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                 
-                let action = 'aborted'
+                let action = 'revise'
                 if (request.params.action === 'approve') action = 'approved'
                 else if (request.params.action === 'decline') action = 'declined'
+                else if (request.params.action === 'abort') action = 'aborted'
 
-                let msg = request.params.action + ' is already in process!'
-                if (result.transfer_status === 'approved') {
-                    msg =  'Case is already approved!'
-                } else if (result && action === result.transfer_status) {
-                    msg = request.params.action + ' is already in process!'               
-                } else if (request.params.action === 'approve') {
-                    if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
-                        msg =  'Only the destination unit is allowed to approve!'
-                    } else if (result.transfer_status !== 'pending') {
-                        msg =  'Only pending transfer cases are allow to approve!'
-                    } else {
-                        return reply(result)
-                    }
-                } else if (request.params.action === 'decline') {
-                    if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
-                        msg =  'Only the destination unit is allowed to decline!'
-                    } else if (result.transfer_status !== 'pending') {
-                        msg =  'Only pending transfer cases are allow to decline!'
-                    } else {
-                        return reply(result)
-                    }
-                } else if (request.params.action === 'abort') {
-                    if (result.transfer_from_unit_id.toString() !== user.unit_id._id.toString()) {
-                        msg =  'Only the transfer creator is allowed to abort!'
-                    } else {
-                        return reply(result)
-                    }
-                }
-                
+                const errors = caseTransferHelper.canAction(request, reply, result, action, user)
+                if (!errors) return reply()
+
                 return reply({
                     status: 422,
-                    message: msg,
-                    data: null
+                    message: errors
                 }).code(422).takeover()
             })
         },
