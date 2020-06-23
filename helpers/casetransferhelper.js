@@ -142,6 +142,41 @@ const buildSearchParams = (query)  => {
   return search
 }
 
+const canAction = (request, reply, result, action, user) => {
+  let msg = null
+  if (result.transfer_status === 'approved') {
+      msg =  'Case is already approved!'
+  } else if (result && action === result.transfer_status) {
+      msg = request.params.action + ' is already in process!'               
+  } else if (request.params.action === 'approve') {
+      if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
+          msg =  'Only the destination unit is allowed to approve!'
+      } else if (result.transfer_status !== 'pending') {
+          msg =  'Only pending transfer cases are allow to approve!'
+      }
+  } else if (request.params.action === 'decline') {
+      if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
+          msg =  'Only the destination unit is allowed to decline!'
+      } else if (result.transfer_status !== 'pending') {
+          msg =  'Only pending transfer cases are allow to decline!'
+      }
+  } else if (request.params.action === 'abort') {
+      if (result.transfer_from_unit_id.toString() !== user.unit_id._id.toString()) {
+          msg =  'Only the transfer creator is allowed to abort!'
+      }
+  } else if (action === 'revise') {
+      if (result.transfer_from_unit_id.toString() !== user.unit_id._id.toString()) {
+          msg =  'Only the transfer creator is allowed to revise!'
+      } else if (request.payload.transfer_to_unit_id.toString() === user.unit_id._id.toString()) {
+        msg =  'Cannot transfer to your own unit!'
+      } else if (result.transfer_status !== 'declined') {
+        msg =  'Only declined transfer cases are allow to revise!'
+      }
+  }
+
+  return msg
+}
+
 module.exports = {
   setFalseAllThisCaseTransferLogs,
   buildTransferCasePaylod,
@@ -149,4 +184,5 @@ module.exports = {
   buildParams,
   buildCaseParams,
   buildSearchParams,
+  canAction
 }
