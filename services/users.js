@@ -142,7 +142,7 @@ const updateUsers = async (id, pay, category, author, callback) =>{
     const payloads = {};
     const payload = (pay == null ? {} : pay );
     if(category == "delete"){
-      custom.deletedSave(payloads);
+      custom.deletedSave(payloads,author);
     }
     if(typeof payload.password !== "undefined"){
       payload.salt = crypto.randomBytes(16).toString('hex');

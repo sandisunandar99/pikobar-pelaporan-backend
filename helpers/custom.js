@@ -5,7 +5,7 @@ const setPwd = (password) => {
     return hashing
 }
 
-const deletedSave = (payloads) => {
+const deletedSave = (payloads, author) => {
     const date = new Date();
     payloads.delete_status = "deleted";
     payloads.deletedAt = date.toISOString();
