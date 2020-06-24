@@ -288,22 +288,22 @@ function createRdt(query, payload, author, pre, callback) {
     let rdt = new Rdt(Object.assign(code, payload))
     rdt = Object.assign(rdt, {author})
     
-    if (rdt.address_district_code === author.code_district_city) {
-        let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
-        rdt_history.save((err, item) => {
-          if (err) return callback(err, null);
-          
-          //TODO: for send sms and whatsap message efter input test result
-          // sendMessagesSMS(rdt)
-          // sendMessagesWA(rdt)
+    
+    let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+    rdt_history.save((err, item) => {
+      if (err) return callback(err, null);
+      
+      //TODO: for send sms and whatsap message efter input test result
+      // sendMessagesSMS(rdt)
+      // sendMessagesWA(rdt)
 
-          let last_history = {last_history: item._id}
-          rdt = Object.assign(rdt, last_history)
-          rdt.save()
+      let last_history = {last_history: item._id}
+      rdt = Object.assign(rdt, last_history)
+      rdt.save()
 
-          return callback(null, rdt);
-        });
-    }
+      return callback(null, rdt);
+    });
+    
 
   } else {
     // find existing Rdt by nik & phone_number
@@ -333,9 +333,9 @@ function createRdt(query, payload, author, pre, callback) {
             payload = Object.assign(payload, count_test_tool)
             rdt = Object.assign(rdt, payload);
 
-            if (rdt.address_district_code === author.code_district_city) {
-              return rdt.save();
-            }
+            
+            return rdt.save();
+            
 
           } else {
             // if rdt not found, create new rdt
@@ -393,30 +393,29 @@ function createRdt(query, payload, author, pre, callback) {
             let rdt = new Rdt(Object.assign(code, payload))
             rdt = Object.assign(rdt,{author})
             
-            if (rdt.address_district_code === author.code_district_city) {
-              return rdt.save();
-            }
+            
+            return rdt.save();
+            
           
           }
       })
       .then( (rdt) => {
           // whatever happen always create new TestHistory
-          if (rdt.address_district_code === author.code_district_city) {
-              let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
-              rdt_history.save((err, item) => {
-                if (err) return callback(err, null);
-                
-                //TODO: for send sms and whatsap message efter input test result
-                // sendMessagesSMS(rdt)
-                // sendMessagesWA(rdt)
+            let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+            rdt_history.save((err, item) => {
+              if (err) return callback(err, null);
+              
+              //TODO: for send sms and whatsap message efter input test result
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
 
-                let last_history = {last_history: item._id}
-                rdt = Object.assign(rdt, last_history)
-                rdt.save()
+              let last_history = {last_history: item._id}
+              rdt = Object.assign(rdt, last_history)
+              rdt.save()
 
-                return callback(null, rdt);
-              });
-          }
+              return callback(null, rdt);
+            });
+          
       })
       .catch( (err) => callback(err, null));
   }
@@ -492,21 +491,20 @@ function createRdtMultiple(payload, author, pre, callback) {
               let rdt = new Rdt(Object.assign(codes, result))
               rdt = Object.assign(rdt,{author})
 
-              if (rdt.address_district_code === author.code_district_city) {
-                return rdt.save();
-              }
+            
+              return rdt.save();
+             
 
             }
         }).then((rdts) => {
             // whatever happen always create new TestHistory
-            if (rdts.address_district_code === author.code_district_city) {
-              let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
-              return rdt_history.save((err, item) => {
-                if (err) console.log(err)
-                // sendMessagesSMS(rdts)
-                // sendMessagesWA(rdts)
-              });
-            }
+            let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
+            return rdt_history.save((err, item) => {
+              if (err) console.log(err)
+              // sendMessagesSMS(rdts)
+              // sendMessagesWA(rdts)
+            });
+            
 
         }).catch( (err) => console.log(err));
       
