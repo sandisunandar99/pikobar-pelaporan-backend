@@ -100,7 +100,7 @@ module.exports = (server) =>{
                 tags: ['api', 'rdt'],
                 pre: [
                     CheckRoleCreate,
-                    validationBeforeInput,
+                    // validationBeforeInput,
                     countRdtCode,
                     // countCaseByDistrict,
                     getCodeDinkes
