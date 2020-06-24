@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 const Check = require('../helpers/rolecheck');
-const Filter = require('../helpers/casefilter');
+const Filter = require('../helpers/filter/casefilter');
 
 const listMap = async (query, user, callback) => {
     try {
