@@ -1,8 +1,10 @@
-const setPwd = (password) => {
+'use strict';
+const setPwd = (payload) => {
     const crypto = require('crypto');
-    const salts = crypto.randomBytes(16).toString('hex')
-    const hashing = crypto.pbkdf2Sync(password, salts, 10000, 512, 'sha512').toString('hex')
-    return hashing
+    payload.salt = crypto.randomBytes(16).toString('hex');
+    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
+    payload.password = payload.hash;
+    return payload;
 }
 
 const deletedSave = (payloads, author) => {

@@ -4,55 +4,27 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const User = mongoose.model('User');
 const Unit = mongoose.model('Unit');
-const Check = require('../helpers/rolecheck');
-const Helper = require('../helpers/custom');
 const paginate = require('../helpers/paginate');
 const custom = require('../helpers/custom');
+const filters = require('../helpers/filter/userfilter');
 
 const listUser = async (user, query, callback) => {
-  const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort));
-  const populate = (['unit_id']);
-  const options = paginate.optionsLabel(query, sorts, populate);
-  let result_search;
-  let params = Check.userByRole({}, user);
-
-  if(query.role){
-    params.role = query.role;
-  }
-
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.code_district_city){
-      params.code_district_city = query.code_district_city;
-    }
-  }
-  if(query.address_village_code){
-    params.address_village_code = query.address_village_code;
-  }
-  if(query.address_subdistrict_code){
-    params.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  if(query.search){
-    var search_params = [
-      { username : new RegExp(query.search,"i") },
-      { fullname: new RegExp(query.search, "i") },
-      { email: new RegExp(query.search, "i") },
-      { phone_number: new RegExp(query.search, "i"), },
-      { address_street: new RegExp(query.search, "i"), },
-      { address_village_name: new RegExp(query.search, "i"), },
-    ];
-    result_search = User.find(params).or(search_params).where("delete_status").ne("deleted");
-  } else {
-    result_search = User.find(params).where("delete_status").ne("deleted");
-  }
-
-  User.paginate(result_search, options).then(function(results){
+  try {
+    const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort));
+    const populate = (['unit_id']);
+    const options = paginate.optionsLabel(query, sorts, populate);
+    const params = filters.filterUser(query, user);
+    const search_params = filters.searchUser(query);
+    const result = User.find(params).or(search_params).where("delete_status").ne("deleted");
+    const paginateResult = await User.paginate(result, options);
     const res = {
-      users: results.itemsList.map(users => users.toJSONFor()),
-      _meta: results._meta,
+      users: paginateResult.itemsList.map(users => users.toJSONFor()),
+      _meta: paginateResult._meta,
     }
-    return callback(null, res);
-  }).catch(err => callback(err, null));
+    callback(null, res);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
 const getUserById = async (id, category, callback) => {
@@ -100,9 +72,7 @@ const getFaskesOfUser = async (user, callback) => {
 
 const createUser = async (payload, callback) => {
   try {
-    payload.salt = crypto.randomBytes(16).toString('hex');
-    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
-    payload.password = Helper.setPwd(payload.password);
+    custom.setPwd(payload);
     const user = new User(payload);
     const result = await user.save();
     callback(null, result);
@@ -142,12 +112,10 @@ const updateUsers = async (id, pay, category, author, callback) =>{
     const payloads = {};
     const payload = (pay == null ? {} : pay );
     if(category == "delete"){
-      custom.deletedSave(payloads,author);
+      custom.deletedSave(payloads, author);
     }
     if(typeof payload.password !== "undefined"){
-      payload.salt = crypto.randomBytes(16).toString('hex');
-      payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
-      payload.password = Helper.setPwd(payload.password);
+      custom.setPwd(payload);
     }
     const params = Object.assign(payload,payloads);
     const result = await User.findByIdAndUpdate(id,
