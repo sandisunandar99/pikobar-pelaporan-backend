@@ -1,6 +1,5 @@
 const pdfmaker = require('../../helpers/pdfmaker')
 const replyHelper = require('../helpers')
-const json2xls = require('json2xls');
 const moment = require('moment')
 const fs = require('fs');
 module.exports = (server) => {
@@ -13,7 +12,6 @@ module.exports = (server) => {
         // return survey
         return jsonCases
     }
-
 
     return {
         /**
@@ -34,7 +32,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * POST /api/cases
          * @param {*} request
@@ -53,7 +50,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * GET /api/cases/{id}
          * @param {*} request
@@ -68,7 +64,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * GET /api/cases/{id}/history
          * @param {*} request
@@ -85,7 +80,6 @@ module.exports = (server) => {
                 }
             )
         },
-
         /**
          * GET /api/cases/{id}/last-history
          * @param {*} request
@@ -102,7 +96,6 @@ module.exports = (server) => {
                 }
             )
         },
-
         /**
          * GET /api/cases/summary
          * @param {*} request
@@ -119,7 +112,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * GET /api/cases/summary-by-district
          * @param {*} request
@@ -134,8 +126,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
-
         /**
          * GET /api/cases/summary-final
          * @param {*} request
@@ -152,8 +142,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
-
         /**
          * PUT /api/cases/{id}
          * @param {*} request
@@ -260,7 +248,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * GET /api/cases-by-nik/{nik}
          * @param {*} request
@@ -275,8 +262,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
-
         /**
          * GET /api/cases-healthcheck
          * @param {*} request
@@ -292,7 +277,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * GET /api/cases/{id}/verifications
          * @param {*} request
@@ -308,7 +292,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * PUT /api/cases/{id}/verifications
          * @param {*} request
@@ -331,7 +314,6 @@ module.exports = (server) => {
                 ).code(200)
             })
         },
-
         /**
          * GET /api/cases/summary-verification
          * @param {*} request
@@ -347,190 +329,6 @@ module.exports = (server) => {
                     constructCasesResponse(item, request)
                 ).code(200)
             })
-        },
-
-        /**
-         * GET /api/cases-transfer
-         * @param {*} request
-         * @param {*} reply
-         */
-        async ListCaseTransfer(request, reply){
-            let query = request.query
-            let type = request.params.type
-
-            server.methods.services.casesTransfers.list(
-                query, 
-                request.auth.credentials.user,
-                type,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(result,request)
-                ).code(200)
-            })
-        },
-
-        /**
-         * POST /api/cases-transfer
-         * @param {*} request
-         * @param {*} reply
-         */
-        CreateCaseAndTransfer(request, reply) {
-            let payload = request.payload
-            let author = request.auth.credentials.user
-            server.methods.services.cases.create(
-                payload,
-                author,
-                request.pre,
-                async (err, resultCase) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-
-                server.methods.services.casesTransfers.processTransfer(
-                    request.params.transferId,
-                    resultCase._id,
-                    'pending',
-                    request.auth.credentials.user,
-                    request.payload,
-                    (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCasesResponse({
-                            ...result._doc,
-                            case: resultCase
-                        }, request)
-                    ).code(200)
-                })
-            })
-        },
-
-        /**
-         * PUT /api/cases-transfer/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
-        async UpdateCaseAndTransfer(request, reply){
-            let pre = request.pre
-            let payload = request.payload
-            let id = request.params.id
-            let author = request.auth.credentials.user
-            server.methods.services.cases.update(id, pre, author, payload,
-            async (err, resultCase) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-
-                server.methods.services.histories.createIfChanged(Object.assign(payload, {case: id}),
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-
-                    server.methods.services.casesTransfers.processTransfer(
-                        request.params.transferId,
-                        pre.transfer_case.transfer_case_id,
-                        'pending',
-                        request.auth.credentials.user,
-                        request.payload,
-                        (err, result) => {
-                        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                        return reply(
-                            constructCasesResponse({
-                                ...result._doc,
-                                case: resultCase
-                            }, request)
-                        ).code(200)
-                    })
-                })
-            })
-        },
-
-        /**
-         * GET /api/cases/{id}/transfers
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetCaseTransfers(request, reply){
-            server.methods.services.casesTransfers.get(
-                request.params.id,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(result, request)
-                ).code(200)
-            })
-        },
-
-        /**
-         * PUT /api/cases/{id}/transfers
-         * @param {*} request
-         * @param {*} reply
-         */
-        async CreateCaseTransfer(request, reply){
-            let payload = request.payload
-            let id = request.params.id
-            let author = request.auth.credentials.user
-
-            server.methods.services.casesTransfers.create(
-                id,
-                author,
-                request.pre,
-                payload,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(result, request)
-                ).code(200)
-            })
-        },
-
-        /**
-         * POST /api/cases/{id}/transfers
-         * @param {*} request
-         * @param {*} reply
-         */
-        async ProcessCaseTransfer(request, reply){
-            server.methods.services.casesTransfers.processTransfer(
-                request.params.transferId,
-                request.pre.transfer_case.transfer_case_id,
-                request.params.action,
-                request.auth.credentials.user,
-                request.payload,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                
-                const {_id, ...historyPayload } = result.transfer_last_history.toObject()
-                let historiesPayload = Object.assign(historyPayload, {
-                    current_location_type: 'RS',
-                    current_location_address: result.transfer_to_unit_name,
-                    hospital_id: result.transfer_to_unit_id
-                })
-
-                if (request.params.action === 'approve') {
-                    server.methods.services.histories.createIfChanged(
-                        historiesPayload,
-                        (err, resultHistory) => resultHistory)
-                }
-
-                return reply(
-                    constructCasesResponse(result, request)
-                ).code(200)
-            })
-        },
-
-        /**
-         * GET /api/cases/summary-transfers
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetCaseSummaryTransfer(request, reply) {
-            server.methods.services.casesTransfers.geTransferCaseSummary(
-                request.query,
-                request.params.type,
-                request.auth.credentials.user,
-                (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
-        },
-
-    }//end
-
+        }
+    }
 }
