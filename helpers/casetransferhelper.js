@@ -89,22 +89,20 @@ const buildParams = (type, user, query)  => {
     }
   }
 
-  if (type == 'in') {
-    params.transfer_to_unit_id = user.unit_id._id
-    if(query.transfer_from_unit_id){
-      let isValid = isObjectIdValid(query.transfer_from_unit_id)
-      params.transfer_from_unit_id = isValid
-        ? new ObjectId(query.transfer_from_unit_id)
-        : null
-    }
-  } else {
-    params.transfer_from_unit_id = user.unit_id._id
-    if(query.transfer_to_unit_id){
-      let isValid = isObjectIdValid(query.transfer_to_unit_id)
-      params.transfer_to_unit_id = isValid
-        ? new ObjectId(query.transfer_to_unit_id)
-        : null
-    }
+  let filterBy = 'transfer_from_unit_id'
+  let filterable = 'transfer_to_unit_id'
+  
+  if (type === 'in') {
+    filterBy = 'transfer_to_unit_id'
+    filterable = 'transfer_from_unit_id'
+  }
+
+  params[filterBy] = user.unit_id._id
+  if (query[filterable]) {
+    let isValid = isObjectIdValid(query[filterable])
+    params[filterable] = isValid
+      ? new ObjectId(query[filterable])
+      : null
   }
 
   return params
