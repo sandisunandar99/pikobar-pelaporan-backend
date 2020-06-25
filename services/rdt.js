@@ -228,7 +228,7 @@ function GetRdtFaskesSummaryByCities (query, callback) {
 
 function GetRdtHistoryByRdtId (id, callback) {
   RdtHistory.find({ rdt: id})
-    .sort({createdAt: -1})
+    .sort({updatedAt: -1})
     .exec()
     .then(item => {
     return callback(null, item);
