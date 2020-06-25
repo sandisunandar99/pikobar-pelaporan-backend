@@ -23,6 +23,7 @@ const DistrictCity = mongoose.model('Districtcity')
 const ObjectId = require('mongoose').Types.ObjectId; 
 const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
+const Helper = require('../helpers/custom')
 
 async function ListCase (query, user, callback) {
 
@@ -34,7 +35,7 @@ async function ListCase (query, user, callback) {
     meta: '_meta'
   };  
 
-  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
+  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : Helper.jsonParse(query.sort))
   
   const options = {
     page: query.page,
