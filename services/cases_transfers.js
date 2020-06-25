@@ -1,12 +1,11 @@
 const helper = require('../helpers/casetransferhelper')
-const mongoose = require('mongoose');
-const { func } = require('joi');
+const mongoose = require('mongoose')
 
-require('../models/Case');
-const Case = mongoose.model('Case');
+require('../models/Case')
+const Case = mongoose.model('Case')
 
-require('../models/CaseTransfer');
-const CaseTransfer = mongoose.model('CaseTransfer');
+require('../models/CaseTransfer')
+const CaseTransfer = mongoose.model('CaseTransfer')
 
 const myCustomLabels = {
   totalDocs: 'itemCount',
@@ -14,55 +13,14 @@ const myCustomLabels = {
   limit: 'perPage',
   page: 'currentPage',
   meta: '_meta'
-};
-
+}
 
 async function ListCase (query, user, type, callback) {
-
-  const search = helper.buildSearchParams(query)
-  const caseParams = helper.buildCaseParams(query)
-  const params = helper.buildParams(type, user,  query)
-
-  const dbQuery = [
-    { $match: params },
-    { $lookup:
-      {
-        from: 'cases',
-        let: {
-          transferCaseId: "$transfer_case_id",
-          tounit_id: "$transfer_to_unit_id",
-          status: "$transfer_status"
-        },
-        pipeline: [
-          { $match:
-              { $expr:
-                { $and:
-                    [
-                      { $eq: [ "$_id",  "$$transferCaseId" ] }
-                    ],
-                },
-                ...caseParams,
-                ...search
-              },
-          }
-        ],
-        as: 'case'
-      },
-    },
-    { $sort: {createdAt: - 1} },
-    { $unwind: "$case" },
-    {
-      $group:
-      {
-        _id: "$transfer_case_id",
-        data: { $first: "$$ROOT" }
-      }
-    },
-    { $replaceRoot: { newRoot: "$data" } },
-    { $sort: {createdAt: - 1} },
-  ]
-  
   try {
+    const search = helper.buildSearchParams(query)
+    const caseParams = helper.buildCaseParams(query)
+    const params = helper.buildParams(type, user,  query)
+    const dbQuery = helper.listCaseQuery(params, caseParams, search)
     const aggregate = CaseTransfer.aggregate(dbQuery)
 
     const results = await CaseTransfer.aggregatePaginate(aggregate,
@@ -88,92 +46,98 @@ async function ListCase (query, user, type, callback) {
 
 async function getCasetransfers (caseId, callback) {
   try {
-
     const dbQuery = helper.transferLogsQuery(caseId)
     let transferLogs = await CaseTransfer.aggregate(dbQuery)   
-
     return callback(null, transferLogs)
   } catch (error) {
     return callback(null, error)
   }
 }
 
-async function createCaseTransfer (caseId, author, pre, payload, callback) {
+async function createCaseTransfer (caseId, auth, pre, req, callback) {
 
   try {
-    // insert transfer logs
-    payload.transfer_status = 'pending'
-    payload.transfer_from_unit_id = author.unit_id._id
-    payload.transfer_from_unit_name = author.unit_id.name
-    payload.transfer_last_history = pre.cases.last_history._id
+    Object.assign(req, {
+      transfer_status: 'pending',
+      transfer_from_unit_id: auth.unit_id._id,
+      transfer_from_unit_name: auth.unit_id.name,
+      transfer_last_history: pre.cases.last_history._id
+    })
 
-    // update case transfer status
-    const a = await Case.findOneAndUpdate({ _id: caseId}, {
+    await Case.findOneAndUpdate({ _id: caseId}, {
       $set: {
-        transfer_status: payload.transfer_status,
-        transfer_to_unit_id: payload.transfer_to_unit_id  
+        transfer_status: req.transfer_status,
+        transfer_to_unit_id: req.transfer_to_unit_id  
       }
     })
 
-    Object.assign(payload, {
+    Object.assign(req, {
       transfer_case_id: caseId,
-      createdBy: author._id
+      createdBy: auth._id
     })
 
-    const item = new CaseTransfer(payload)
+    const item = new CaseTransfer(req)
 
     const caseTransfer = await item.save()
     
     return callback(null, caseTransfer)
   } catch (error) {
-    console.log(error)
     return callback(null, error)
   }
 }
 
-async function processTransfer (lastTransferId, caseId, action, author, payload = {}, callback) {
+async function processTransfer (transferId, caseId, act, auth, req = {}, callback) {
   
   try {
+    let results = null
+    let detail = await CaseTransfer.findById(transferId)
     const detailCase = await Case.findById(caseId).populate('last_history')
-    const latestTransferred = await CaseTransfer.findById(lastTransferId)
 
-    if(latestTransferred) {
+    if (helper.isTransferToChanged(detail, req)) {
+      let exist = await CaseTransfer.findOne({
+        transfer_case_id: caseId,
+        transfer_to_unit_id: req.transfer_to_unit_id
+      })
+      if (exist) { detail = exist }
+    }
+
+    if(detail) {
+      transferId = detail._id
       await helper.setFalseAllThisCaseTransferLogs(
         CaseTransfer,
         caseId,
-        latestTransferred.transfer_from_unit_id
+        detail.transfer_from_unit_id
       )
     }
 
     let casePayload = await helper.buildUpdateCasePayload(
-      action,
-      author,
-      caseId,
-      payload,
-      CaseTransfer,
-      latestTransferred
-    )
+      act, auth, caseId, req, CaseTransfer, detail)
 
     let transferCasePayload = helper.buildTransferCasePaylod(
-      detailCase,
-      latestTransferred,
-      author,
-      payload
-    )
+      detailCase, auth, req)
 
     const { transfer_to_unit_name, ...caseUpdatePayload } = casePayload
     await Case.findOneAndUpdate({ _id: caseId }, {
       $set: caseUpdatePayload
     })
     
-    if (action === 'abort') {
-      casePayload.transfer_status = 'aborted'
-      casePayload.transfer_to_unit_id = latestTransferred.transfer_to_unit_id
-      casePayload.transfer_to_unit_name = latestTransferred.transfer_to_unit_name
+    if (act === 'abort') {
+      return actionAbort(CaseTransfer, caseId, auth, callback)
     }
 
-    const item = new CaseTransfer(Object.assign(casePayload, transferCasePayload))
-    const results = await item.save()   
+    if (!detail || helper.isTransferToChanged(detail, req)) {
+      const item = new CaseTransfer(Object.assign(casePayload, transferCasePayload))
+      results = await item.save()  
+    } else {
+      results = await CaseTransfer.findByIdAndUpdate(transferId, {
+        $set: {
+          ...req,
+          transfer_status: casePayload.transfer_status,
+          transfer_last_history: detail.transfer_last_history,
+          is_hospital_case_last_status: true
+        }
+      }, { new: true }).populate('transfer_last_history')
+    }
 
     return callback(null, results)
   } catch (error) {
@@ -181,12 +145,26 @@ async function processTransfer (lastTransferId, caseId, action, author, payload 
   }
 }
 
-async function geTransferCaseSummary (query, type, user, callback) {
-  let params = { is_hospital_case_last_status: true }
+async function actionAbort (schema, caseId, auth, callback) {
+  try {
+    const results = await schema.updateMany(
+      { transfer_case_id: caseId, transfer_from_unit_id: auth.unit_id._id}, {
+      $set: { transfer_status: 'aborted' }
+    }, { new: true }).populate('transfer_last_history')
+
+    return callback(null, results)
+  } catch (error) {
+    return callback(null, error)
+  }
+}
+
+async function geTransferCaseSummary (type, user, callback) {
+  let params = new Object()
 
   if (type == 'in') {
     params.transfer_to_unit_id = user.unit_id._id
   } else {
+    params.is_hospital_case_last_status = true
     params.transfer_from_unit_id = user.unit_id._id
   }
 
@@ -224,15 +202,15 @@ function getTransferCaseById (id, callback) {
   CaseTransfer.findOne({_id: id})
     .exec()
     .then(cases => callback (null, cases))
-    .catch(err => callback(err, null));
+    .catch(err => callback(err, null))
 }
 
 function getLastTransferCase (params, callback) {
   CaseTransfer.findOne(params)
-    .sort({createdAt: -1})
+    .sort({updatedAt: -1})
     .exec()
     .then(cases => callback (null, cases))
-    .catch(err => callback(err, null));
+    .catch(err => callback(err, null))
 }
 
 module.exports = [
@@ -264,5 +242,4 @@ module.exports = [
     name: 'services.casesTransfers.geTransferCaseSummary',
     method: geTransferCaseSummary
   },
-];
-
+]
