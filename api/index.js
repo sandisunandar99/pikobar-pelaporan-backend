@@ -41,6 +41,7 @@ const register = (server, options, next) => {
   server.register(require('./users'))
   server.register(require('./areas'))
   server.register(require('./cases'))
+  server.register(require('./cases_transfers'))
   server.register(require('./histories'))
   server.register(require('./occupations'))
   server.register(require('./rdt'))
