@@ -23,6 +23,13 @@ conf.database = {
   }
 };
 
+conf.sentry = {
+  dsn: process.env.SENTRY_DSN,
+  attachStacktrace: true,
+  debug: true,
+  environment: process.env.NODE_ENV
+}
+
 conf.pusher = {
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_APP_KEY,
