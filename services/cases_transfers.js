@@ -89,24 +89,15 @@ async function createCaseTransfer (caseId, auth, pre, req, callback) {
 async function processTransfer (transferId, caseId, act, auth, req = {}, callback) {
   
   try {
-    let results = null
     let detail = await CaseTransfer.findById(transferId)
     const detailCase = await Case.findById(caseId).populate('last_history')
 
-    if (helper.isTransferToChanged(detail, req)) {
-      let exist = await CaseTransfer.findOne({
-        transfer_case_id: caseId,
-        transfer_to_unit_id: req.transfer_to_unit_id
-      })
-      if (exist) { detail = exist }
-    }
-
     if(detail) {
-      transferId = detail._id
       await helper.setFalseAllThisCaseTransferLogs(
         CaseTransfer,
         caseId,
-        detail.transfer_from_unit_id
+        detail.transfer_from_unit_id,
+        req.transfer_to_unit_id || detail.transfer_to_unit_id
       )
     }
 
@@ -114,7 +105,7 @@ async function processTransfer (transferId, caseId, act, auth, req = {}, callbac
       act, auth, caseId, req, CaseTransfer, detail)
 
     let transferCasePayload = helper.buildTransferCasePaylod(
-      detailCase, auth, req)
+      detailCase, detail, auth, req)
 
     const { transfer_to_unit_name, ...caseUpdatePayload } = casePayload
     await Case.findOneAndUpdate({ _id: caseId }, {
@@ -125,19 +116,8 @@ async function processTransfer (transferId, caseId, act, auth, req = {}, callbac
       return actionAbort(CaseTransfer, caseId, auth, callback)
     }
 
-    if (!detail || helper.isTransferToChanged(detail, req)) {
-      const item = new CaseTransfer(Object.assign(casePayload, transferCasePayload))
-      results = await item.save()  
-    } else {
-      results = await CaseTransfer.findByIdAndUpdate(transferId, {
-        $set: {
-          ...req,
-          transfer_status: casePayload.transfer_status,
-          transfer_last_history: detail.transfer_last_history,
-          is_hospital_case_last_status: true
-        }
-      }, { new: true }).populate('transfer_last_history')
-    }
+    const item = new CaseTransfer(Object.assign(casePayload, transferCasePayload))
+    const results = await item.save()  
 
     return callback(null, results)
   } catch (error) {
@@ -162,6 +142,7 @@ async function geTransferCaseSummary (type, user, callback) {
   let params = new Object()
 
   if (type == 'in') {
+    params.is_pair_last_status = true
     params.transfer_to_unit_id = user.unit_id._id
   } else {
     params.is_hospital_case_last_status = true
@@ -207,7 +188,7 @@ function getTransferCaseById (id, callback) {
 
 function getLastTransferCase (params, callback) {
   CaseTransfer.findOne(params)
-    .sort({updatedAt: -1})
+    .sort({createdAt: -1})
     .exec()
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null))

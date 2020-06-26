@@ -11,6 +11,7 @@ const CaseTransferSchema = new mongoose.Schema({
     transfer_to_unit_name : { type: String, required: [true, "can't be blank"]},
     transfer_last_history : {type: mongoose.Schema.Types.ObjectId, ref: 'History'},
     is_hospital_case_last_status: { type: Boolean, default: true },
+    is_pair_last_status: { type: Boolean, default: true },
     createdBy : { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps : true });
 
@@ -32,6 +33,7 @@ CaseTransferSchema.methods.toJSONFor = function () {
         transfer_to_unit_name: this.transfer_to_unit_name,
         transfer_last_history: lastHistory ? lastHistory.JSONCaseTransfer() : null,
         is_hospital_case_last_status: this.is_hospital_case_last_status,
+        is_pair_last_status: this.is_pair_last_status,
         createdBy: this.createdBy,
         createdAt : this.createdAt
     }

@@ -1,31 +1,26 @@
 const ObjectId = require("mongoose").Types.ObjectId
-
 function isObjectIdValid (uuid) { 
   return ObjectId.isValid(uuid) 
 }
 
 module.exports = {
-  setFalseAllThisCaseTransferLogs: (schema, caseId, unitId)  => {
-    return schema.updateMany(
+  setFalseAllThisCaseTransferLogs: async (schema, caseId, unitId, toUnitId)  => {
+    let res = {}
+    res.one = await schema.updateMany(
       { transfer_case_id: caseId, transfer_from_unit_id: unitId }, 
       { $set: { is_hospital_case_last_status: false } })
+    res.two =  await schema.updateMany(
+      { transfer_case_id: caseId, transfer_from_unit_id: unitId, transfer_to_unit_id: toUnitId }, 
+      { $set: { is_pair_last_status: false } })
+    return res
   },
 
-  isTransferToChanged: (detail, req) => {
-    if (detail && req.transfer_to_unit_id) {
-      if (detail.transfer_to_unit_id.toString() !== req.transfer_to_unit_id.toString()) {
-        return true
-      }
-    }
-    return false
-  },
-
-  buildTransferCasePaylod: (detailCase, author, req) => {
+  buildTransferCasePaylod: (detailCase, detail, author, req) => {
     return {
-      transfer_from_unit_id: author.unit_id._id,
-      transfer_from_unit_name: author.unit_id.name,
+      transfer_from_unit_id: detail ? detail.transfer_from_unit_id : author.unit_id._id,
+      transfer_from_unit_name: detail ? detail.transfer_from_unit_name : author.unit_id.name,
       transfer_comment: req.transfer_comment || null,
-      transfer_case_id: detailCase._id,
+      transfer_case_id: detail ? detail.transfer_case_id : detailCase._id,
       transfer_last_history: detailCase.last_history,
       createdBy: author._id
     }
@@ -92,6 +87,7 @@ module.exports = {
     if (type === 'in') {
       filterBy = 'transfer_to_unit_id'
       filterable = 'transfer_from_unit_id'
+      params.is_pair_last_status = true
     } else {
       params.is_hospital_case_last_status = true
     }
@@ -109,21 +105,18 @@ module.exports = {
 
   buildCaseParams: (query)  => {
     let caseParams = {}
-    if(query.status){
-      caseParams.status = query.status
-    }
-    if(query.final_result){
-      caseParams.final_result = query.final_result
-    }
-    if(query.address_district_code){
-      caseParams.address_district_code = query.address_district_code
-    }
-    if(query.address_subdistrict_code){
-      caseParams.address_subdistrict_code = query.address_subdistrict_code
-    }
-    if(query.address_village_code){
-      caseParams.address_village_code = query.address_village_code
-    }
+    const flterFields = [
+      'status',
+      'final_result',
+      'address_district_code',
+      'address_subdistrict_code',
+      'address_village_code'
+    ]
+    flterFields.forEach(key => {
+      if (query[key]) {
+        caseParams[key] = query[key]
+      }
+    })
     return caseParams
   },
 
@@ -173,7 +166,11 @@ module.exports = {
 
   transferLogsQuery: (caseId)  => {
     const dbQuery = [
-      { $match: { transfer_case_id: new ObjectId(caseId) } },
+      { $match: {
+          transfer_case_id: new ObjectId(caseId),
+          transfer_status: { $ne: 'aborted' }
+        }
+      },
       {
         $lookup:
           {
@@ -197,7 +194,19 @@ module.exports = {
         }  
       }},
       { $unwind: "$transfer_last_history" },
-      { $sort: {updatedAt: -1} },
+      { $sort: {createdAt: -1} },
+      {
+        $group:
+        {
+          _id: {
+            "transfer_to_unit_id": "$transfer_to_unit_id",
+            "transfer_from_unit_id": "$transfer_from_unit_id"
+          },
+          data: { $first: "$$ROOT" }
+        }
+      },
+      { $replaceRoot: { newRoot: "$data" } },
+      { $sort: {createdAt: -1} },
     ]
     return dbQuery
   },
