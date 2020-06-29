@@ -4,29 +4,6 @@ require('../models/Case');
 const Case = mongoose.model('Case');
 const check = require('../helpers/rolecheck');
 const filter = require('../helpers/filter/casefilter');
-const https = require('https');
-
-
-const convertLatLong = (code) => {
-    console.log(code);
-
-    const convertString = code.replace(".", "");
-    https.get(`${process.env.APP_CONVERT}${convertString}`, (res) => {
-        let data = '';
-        res.on('data', (chunk) => {
-            data += chunk;
-        });
-
-        res.on('end', () => {
-            let jsonData = JSON.parse(data);
-            let result = jsonData.data.longitude;
-            return callback(null, result);
-        });
-
-    }).on("error", (err) => {
-        return callback(null, err);
-    });
-}
 
 const listMap = async (query, user, callback) => {
     try {
