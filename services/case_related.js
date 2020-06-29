@@ -4,7 +4,7 @@ require('../models/Case');
 const Case = mongoose.model('Case');
 const Check = require('../helpers/rolecheck');
 const Filter = require('../helpers/filter/casefilter');
-const _ = require('lodash')
+const _ = require('lodash');
 
 const listCaseRelated = async (query, user, callback) => {
     try {

@@ -1,7 +1,6 @@
 require('../models/User');
 require('../models/Unit');
 const mongoose = require('mongoose');
-const crypto = require('crypto');
 const User = mongoose.model('User');
 const Unit = mongoose.model('Unit');
 const paginate = require('../helpers/paginate');
