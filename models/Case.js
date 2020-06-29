@@ -1,9 +1,10 @@
-const mongoose = require('mongoose')
-const mongoosePaginate = require('mongoose-paginate-v2')
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
-const check = require("../helpers/historycheck")
-var uniqueValidator = require('mongoose-unique-validator')
+const check = require("../helpers/historycheck");
+const filtersMap = require("../helpers/filter/mapfilter");
+var uniqueValidator = require('mongoose-unique-validator');
 
 const CaseSchema = new mongoose.Schema({
     // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
@@ -117,7 +118,6 @@ CaseSchema.methods.JSONFormIdCase = function () {
     }
 }
 
-
 CaseSchema.methods.JSONSeacrhOutput = function () {
     return {
         id: this._id,
@@ -146,6 +146,12 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
         status: null,
         source_data: "internal"
     }
+}
+
+CaseSchema.methods.MapOutput = function () {
+    // filter output untuk memperkecil line file tidak 
+    // melebihi 250 di pecah di simpan di helper
+    return filtersMap.filterOutput(this);
 }
 
 function convertDate(dates){
@@ -202,6 +208,5 @@ CaseSchema.methods.JSONExcellOutput = function () {
        "Author": this.author.fullname
     }
 }
-
 
 module.exports = mongoose.model('Case', CaseSchema)

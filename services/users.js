@@ -165,10 +165,7 @@ const LastLogin = async (user)=>{
     last_login: date.toISOString()
   }
   user = Object.assign(user,last_login)
-  user.save((err, res) =>{
-    if(err) console.log(err)
-    return res
-  }) 
+  return await user.save();
 }
 
 
