@@ -14,7 +14,7 @@ const httprequest = (url) => {
             } catch(e) {
                 reject(e);
             }
-            resolve(body);
+            resolve(body.data);
         });
     });
     req.on('error', (e) => {
@@ -24,24 +24,16 @@ const httprequest = (url) => {
 });
 }
 
-const promiseLong = async (code) => {
-    const convertString = code.replace(/\./g,'');
-    const getLong = await httprequest(`${process.env.APP_CONVERT}${convertString}`).then((data) => {
-        const response = data
-        return response.data;
-    });
-
+const promiseLong = async (codeLong) => {
+    const stringLong = codeLong.replace(/\./g,'');
+    const getLong = await httprequest(`${process.env.APP_CONVERT}${stringLong}`);
     return getLong.longitude;
 };
 
-const promiseLat = async (code) => {
-    const convertString = code.replace(/\./g,'');
-    const getLong = await httprequest(`${process.env.APP_CONVERT}${convertString}`).then((data) => {
-        const response = data
-        return response.data;
-    });
-
-    return getLong.latitude;
+const promiseLat = async (codeLat) => {
+    const stringLat = codeLat.replace(/\./g,'');
+    const getLat = await httprequest(`${process.env.APP_CONVERT}${stringLat}`);
+    return getLat.latitude;
 }
 
 const filterOutput = async (this_) => {
