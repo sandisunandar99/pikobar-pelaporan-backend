@@ -65,6 +65,9 @@ async function ListCase (query, user, callback) {
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
   }
+  if(query.stage){
+    params.stage = query.stage;
+  }
   if(query.status){
     params.status = query.status;
   }
