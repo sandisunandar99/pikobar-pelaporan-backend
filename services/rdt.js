@@ -756,7 +756,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 
 function getDatafromExternal(address_district_code, search, callback) {
 
-   https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+   https.get(process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -795,7 +795,7 @@ function FormSelectIdCaseDetail(search_internal, search_external, callback) {
 
 function seacrhFromExternal(address_district_code, search, callback) {
 
-    https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' +'&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+    https.get(process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + ' &mode=bykeyword' + ' &keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
