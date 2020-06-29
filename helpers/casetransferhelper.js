@@ -106,6 +106,7 @@ module.exports = {
   buildCaseParams: (query)  => {
     let caseParams = {}
     const flterFields = [
+      'stage',
       'status',
       'final_result',
       'address_district_code',
