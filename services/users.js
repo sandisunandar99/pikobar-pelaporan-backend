@@ -42,7 +42,7 @@ const getUserById = async (id, category, callback) => {
 const getUserByUsername = (username, callback) => {
   User.findOne({ username }, async (err, user) => {
     if (err) return callback(err, null);
-    await LastLogin(user);
+    if (user !== null ) await LastLogin(user);
     return callback(null, user);
   }).populate('unit_id');
 }
@@ -164,8 +164,14 @@ const LastLogin = async (user)=>{
   let last_login = {
     last_login: date.toISOString()
   }
-  user = Object.assign(user,last_login)
-  return await user.save();
+  user = Object.assign(user,last_login);
+  let result;
+  try {
+    result = await user.save();
+  } catch (error) {
+    result = error
+  }
+  return result;
 }
 
 
