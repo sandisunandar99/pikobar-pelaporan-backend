@@ -168,10 +168,10 @@ const LastLogin = async (user) => {
     let last_login = {
       last_login: date.toISOString()
     }
-    user = Object.assign(user, last_login);
-    result = await user.save();
+    result = await User.findByIdAndUpdate(user._id,
+      { $set: last_login }, { new: true });
   } catch (error) {
-    result = error
+    result = error;
   }
   return result;
 }
