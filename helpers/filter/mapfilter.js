@@ -14,7 +14,7 @@ const httprequest = (url) => {
             } catch(e) {
                 reject(e);
             }
-            resolve(body);
+            resolve(body.data);
         });
     });
     req.on('error', (e) => {
@@ -24,24 +24,14 @@ const httprequest = (url) => {
 });
 }
 
-const promiseLong = async (code) => {
-    const convertString = code.replace(/\./g,'');
-    const getLong = await httprequest(`${process.env.APP_CONVERT}${convertString}`).then((data) => {
-        const response = data
-        return response.data;
-    });
-
+const promiseLong = async (codeLong) => {
+    const getLong = await httprequest(`${process.env.APP_CONVERT}${codeLong}`);
     return getLong.longitude;
 };
 
-const promiseLat = async (code) => {
-    const convertString = code.replace(/\./g,'');
-    const getLong = await httprequest(`${process.env.APP_CONVERT}${convertString}`).then((data) => {
-        const response = data
-        return response.data;
-    });
-
-    return getLong.latitude;
+const promiseLat = async (codeLat) => {
+    const getLat = await httprequest(`${process.env.APP_CONVERT}${codeLat}`);
+    return getLat.latitude;
 }
 
 const filterOutput = async (this_) => {
@@ -58,8 +48,8 @@ const filterOutput = async (this_) => {
         stage: (this_.stage == 0 ? "Prosess" : "Selesai"),
         umur: this_.age,
         gender: this_.gender,
-        longitude: await promiseLong(this_.address_subdistrict_code),
-        latitude: await promiseLat(this_.address_subdistrict_code),
+        longitude: await promiseLong(this_.address_village_code),
+        latitude: await promiseLat(this_.address_village_code),
         tanggal_konfirmasi: this_.createdAt,
         tanggal_update: this_.updatedAt,
     }

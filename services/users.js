@@ -9,7 +9,7 @@ const filters = require('../helpers/filter/userfilter');
 
 const listUser = async (user, query, callback) => {
   try {
-    const sorts = (query.sort == "desc" ? {_id:"desc"} : JSON.parse(query.sort));
+    const sorts = (query.sort == "desc" ? { _id: "desc" } : JSON.parse(query.sort));
     const populate = (['unit_id']);
     const options = paginate.optionsLabel(query, sorts, populate);
     const params = filters.filterUser(query, user);
@@ -30,8 +30,8 @@ const getUserById = async (id, category, callback) => {
   let result;
   try {
     result = await User.findById(id);
-    if(category == 'reset'){
-      result = {'msg':'Harap hubungi administrator'};
+    if (category == 'reset') {
+      result = { 'msg': 'Harap hubungi administrator' };
     }
     callback(null, result);
   } catch (error) {
@@ -42,16 +42,18 @@ const getUserById = async (id, category, callback) => {
 const getUserByUsername = (username, callback) => {
   User.findOne({ username }, async (err, user) => {
     if (err) return callback(err, null);
-    await LastLogin(user);
+    if (user !== null) await LastLogin(user);
     return callback(null, user);
   }).populate('unit_id');
 }
 
 const checkUser = async (query, callback) => {
   let check;
-  if(query.params){
-    const gets = await User.find({ $or:[ 
-      {'username':query.params}, {'email':query.params} ]}).then(res => { return res.length });
+  if (query.params) {
+    const gets = await User.find({
+      $or: [
+        { 'username': query.params }, { 'email': query.params }]
+    }).then(res => { return res.length });
     check = (gets > 0 ? true : false);
   } else {
     check = {};
@@ -61,11 +63,11 @@ const checkUser = async (query, callback) => {
 
 const getFaskesOfUser = async (user, callback) => {
   if (user.role != 'faskes' || !user.hasOwnProperty('faskes_id')) {
-      let err = { message: "This user has no faskes data ascociated with it" }
-      callback(err, null);
+    let err = { message: "This user has no faskes data ascociated with it" }
+    callback(err, null);
   } else {
-      const res = await Unit.find(user.faskes_id);
-      callback(null, res);
+    const res = await Unit.find(user.faskes_id);
+    callback(null, res);
   }
 }
 
@@ -86,8 +88,8 @@ const updateUser = (user, payload, callback) => {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
     password: passwords,
-    email: payload.email ? payload.email: user.email,
-    role: payload.role ? payload.role: user.role,
+    email: payload.email ? payload.email : user.email,
+    role: payload.role ? payload.role : user.role,
     code_district_city: payload.code_district_city ? payload.code_district_city : user.code_district_city,
     name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city,
     phone_number: payload.phone_number ? payload.phone_number : user.phone_number,
@@ -98,7 +100,7 @@ const updateUser = (user, payload, callback) => {
     address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name,
     unit_id: payload.unit_id ? payload.unit_id : user.unit_id
   }
-  
+
   user = Object.assign(user, users);
   user.save((err, user) => {
     if (err) return callback(err, null);
@@ -106,19 +108,19 @@ const updateUser = (user, payload, callback) => {
   });
 }
 
-const updateUsers = async (id, pay, category, author, callback) =>{
+const updateUsers = async (id, pay, category, author, callback) => {
   try {
     const payloads = {};
-    const payload = (pay == null ? {} : pay );
-    if(category == "delete"){
+    const payload = (pay == null ? {} : pay);
+    if (category == "delete") {
       custom.deletedSave(payloads, author);
     }
-    if(typeof payload.password !== "undefined"){
+    if (typeof payload.password !== "undefined") {
       custom.setPwd(payload);
     }
-    const params = Object.assign(payload,payloads);
+    const params = Object.assign(payload, payloads);
     const result = await User.findByIdAndUpdate(id,
-    { $set: params }, { new: true });
+      { $set: params }, { new: true });
     callback(null, result);
   } catch (error) {
     callback(error, null);
@@ -127,16 +129,16 @@ const updateUsers = async (id, pay, category, author, callback) =>{
 
 const listUserIds = async (user, query, callback) => {
   const params = {}
-  
-  if(query.search){
+
+  if (query.search) {
     params.fullname = new RegExp(query.search, "i")
   }
 
-  if(query.code_district_city){
+  if (query.code_district_city) {
     params.code_district_city = query.code_district_city
   }
 
-  if(query.role){
+  if (query.role) {
     params.role = query.role
   }
 
@@ -148,24 +150,30 @@ const listUserIds = async (user, query, callback) => {
   }
 }
 
-const updateUsersFcmToken = async (id, payload, author, callback) =>{
+const updateUsersFcmToken = async (id, payload, author, callback) => {
   try {
     const params = { fcm_token: payload.fcm_token }
     const result = await User.findByIdAndUpdate(id,
-    { $set: params }, { new: true });
+      { $set: params }, { new: true });
     callback(null, result);
   } catch (error) {
     callback(error, null);
   }
 }
 
-const LastLogin = async (user)=>{
-  let date = new Date()
-  let last_login = {
-    last_login: date.toISOString()
+const LastLogin = async (user) => {
+  let result;
+  try {
+    let date = new Date()
+    let last_login = {
+      last_login: date.toISOString()
+    }
+    result = await User.findByIdAndUpdate(user._id,
+      { $set: last_login }, { new: true });
+  } catch (error) {
+    result = error;
   }
-  user = Object.assign(user,last_login)
-  return await user.save();
+  return result;
 }
 
 
@@ -211,4 +219,4 @@ module.exports = [
     method: getFaskesOfUser,
   },
 ];
- 
+
