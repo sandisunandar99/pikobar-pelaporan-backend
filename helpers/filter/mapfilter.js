@@ -25,14 +25,12 @@ const httprequest = (url) => {
 }
 
 const promiseLong = async (codeLong) => {
-    const stringLong = codeLong.replace(/\./g,'');
-    const getLong = await httprequest(`${process.env.APP_CONVERT}${stringLong}`);
+    const getLong = await httprequest(`${process.env.APP_CONVERT}${codeLong}`);
     return getLong.longitude;
 };
 
 const promiseLat = async (codeLat) => {
-    const stringLat = codeLat.replace(/\./g,'');
-    const getLat = await httprequest(`${process.env.APP_CONVERT}${stringLat}`);
+    const getLat = await httprequest(`${process.env.APP_CONVERT}${codeLat}`);
     return getLat.latitude;
 }
 
@@ -50,8 +48,8 @@ const filterOutput = async (this_) => {
         stage: (this_.stage == 0 ? "Prosess" : "Selesai"),
         umur: this_.age,
         gender: this_.gender,
-        longitude: await promiseLong(this_.address_subdistrict_code),
-        latitude: await promiseLat(this_.address_subdistrict_code),
+        longitude: await promiseLong(this_.address_village_code),
+        latitude: await promiseLat(this_.address_village_code),
         tanggal_konfirmasi: this_.createdAt,
         tanggal_update: this_.updatedAt,
     }
