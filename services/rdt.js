@@ -22,6 +22,7 @@ const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
 const { log } = require('console');
+const { isArray } = require('lodash');
 
 
 async function ListRdt (query, user, callback) {
@@ -755,8 +756,8 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 }
 
 function getDatafromExternal(address_district_code, search, callback) {
-
-   https.get(process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+  let Url = process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+   https.get(Url, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -794,8 +795,8 @@ function FormSelectIdCaseDetail(search_internal, search_external, callback) {
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
-
-    https.get(process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + ' &mode=bykeyword' + ' &keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+ let Url = process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+  https.get(Url, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
@@ -805,7 +806,7 @@ function seacrhFromExternal(address_district_code, search, callback) {
       res.on('end', () => {
         let jsonData = JSON.parse(data)
         let result = jsonData.data.content
-
+        
         let outputData = {}
         result.forEach(val => {
           outputData = val
