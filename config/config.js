@@ -30,14 +30,6 @@ conf.sentry = {
   environment: process.env.NODE_ENV
 }
 
-conf.pusher = {
-  appId: process.env.PUSHER_APP_ID,
-  key: process.env.PUSHER_APP_KEY,
-  secret: process.env.PUSHER_APP_SECRET,
-  cluster: process.env.PUSHER_APP_CLUSTER,
-  encrypted: true
-};
-
 conf.firebase = {
   type: 'service_account',
   project_id: process.env.FIREBASE_PROJECT_ID,
