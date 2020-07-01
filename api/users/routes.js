@@ -40,6 +40,20 @@ module.exports = (server) => {
       },
       handler: handlers.getUserById
     },
+    // Get user by username
+    {
+      method: 'GET',
+      path: '/users/username/{value}',
+      config: {
+        auth: 'jwt',
+        description: 'Get user by username',
+        tags: ['api', 'users'],
+          pre: [
+            CheckRoleView
+          ]
+      },
+      handler: handlers.getUserByUsername
+    },
     // Reset password by id
     {
       method: 'PUT',
