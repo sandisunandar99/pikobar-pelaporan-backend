@@ -73,6 +73,9 @@ const getFaskesOfUser = async (user, callback) => {
 
 const createUser = async (payload, callback) => {
   try {
+    if (payload.unit_id == '') {
+      payload.unit_id = null;
+    }
     custom.setPwd(payload);
     const user = new User(payload);
     const result = await user.save();
