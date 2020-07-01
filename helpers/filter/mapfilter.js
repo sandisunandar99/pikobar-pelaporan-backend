@@ -2,36 +2,51 @@
 const https = require('https');
 
 const httprequest = (url) => {
- return new Promise((resolve, reject) => {
-    const req = https.request(url, (res) => {
-        let body = [];
-        res.on('data', function(chunk) {
-            body.push(chunk);
+    return new Promise((resolve, reject) => {
+        const req = https.request(url, (res) => {
+            let body = [];
+            res.on('data', function (chunk) {
+                body.push(chunk);
+            });
+            res.on('end', function () {
+                try {
+                    body = JSON.parse(Buffer.concat(body).toString());
+                } catch (e) {
+                    reject(e);
+                }
+                resolve(body.data);
+            });
         });
-        res.on('end', function() {
-            try {
-                body = JSON.parse(Buffer.concat(body).toString());
-            } catch(e) {
-                reject(e);
-            }
-            resolve(body.data);
+        req.on('error', (e) => {
+            reject(e.message);
         });
+        req.end();
     });
-    req.on('error', (e) => {
-      reject(e.message);
-    });
-   req.end();
-});
 }
 
+function delay(t) {
+    return new Promise(resolve => setTimeout(resolve.bind(), t))
+}
+  
+
 const promiseLong = async (codeLong) => {
+    let promise = Promise.resolve();
+    promise = delay(100);
     const getLong = await httprequest(`${process.env.APP_CONVERT}${codeLong}`);
-    return getLong.longitude;
+    return promise.then(async () => {
+        if (getLong.longitude == null) return delay(10000);
+        return new Promise(resolve => resolve(getLong.longitude));
+    })
 };
 
 const promiseLat = async (codeLat) => {
+    let promise = Promise.resolve();
+    promise = delay(100);
     const getLat = await httprequest(`${process.env.APP_CONVERT}${codeLat}`);
-    return getLat.latitude;
+    return promise.then(async () => {
+        if (getLat.latitude == null) return delay(10000);
+        return new Promise(resolve => resolve(getLat.latitude));
+    })
 }
 
 const filterOutput = async (this_) => {
@@ -55,6 +70,28 @@ const filterOutput = async (this_) => {
     }
 };
 
+const filterDefault = (query) => {
+    let queryStrings;
+    if (query.status_patient) {
+        const splits = query.status_patient.split('-');
+        if (splits[0] == "POSITIF" && splits[1] !== "3") {
+            queryStrings = { "status": splits[0], "final_result": splits[1] }
+        } else if (splits[0] == "POSITIF" && splits[1] == "3") {
+            queryStrings = { "status": splits[0] }
+        } else if (query.status_patient == "all") {
+            queryStrings = {};
+        } else {
+            queryStrings = { "status": splits[0], "stage": splits[1] }
+        }
+    } else {
+        queryStrings = {
+            "status": "POSITIF",
+            "final_result": { "$in": [null, "", "0"] }
+        };
+    }
+    return queryStrings;
+}
+
 module.exports = {
-    filterOutput
+    filterOutput, filterDefault
 }
