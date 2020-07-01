@@ -68,6 +68,12 @@ UserSchema.methods.toAuthJSON = function () {
     role: this.role,
     code_district_city: this.code_district_city,
     name_district_city: this.name_district_city,
+    address_subdistrict_name: this.address_subdistrict_name,
+    address_subdistrict_code: this.address_subdistrict_code,
+    address_village_name: this.address_village_name,
+    address_village_code: this.address_village_code,
+    address_street: this.address_street,
+    phone_number: this.phone_number,
     unit_id : this.unit_id,
     token: this.generateJWT(),
     last_login: this.last_login
