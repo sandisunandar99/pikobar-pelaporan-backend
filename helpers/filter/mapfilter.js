@@ -14,6 +14,7 @@ const httprequest = (url) => {
                 } catch (e) {
                     reject(e);
                 }
+                if(body.data == null) httprequest();
                 resolve(body.data);
             });
         });
