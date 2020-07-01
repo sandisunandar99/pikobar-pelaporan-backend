@@ -46,7 +46,7 @@ module.exports = (server) => {
       });
     },
     /**
-     * GET /api/users/{id}
+     * GET /api/users/username/{value}
      * @param {*} request
      * @param {*} reply
      */
