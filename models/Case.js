@@ -122,7 +122,7 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
     return {
         id: this._id,
         id_case: this.id_case,
-        target: null,
+        target: this.target,
         nik: this.nik,
         name: this.name,
         birth_date: this.birth_date,
@@ -136,14 +136,14 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
         address_village_code: this.address_village_code,
         address_village_name: this.address_village_name,
         phone_number: this.phone_number,
-        category: null,
+        category: this.category,
         mechanism: null,
         nationality: this.nationality,
         nationality_name: this.nationality_name,
         final_result: this.final_result,
         test_location_type: null,
         test_location: null,
-        status: null,
+        status: this.status,
         source_data: "internal"
     }
 }
