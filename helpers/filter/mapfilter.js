@@ -14,7 +14,6 @@ const httprequest = (url) => {
                 } catch (e) {
                     reject(e);
                 }
-                if(body.data == null) httprequest();
                 resolve(body.data);
             });
         });
@@ -25,14 +24,29 @@ const httprequest = (url) => {
     });
 }
 
+function delay(t) {
+    return new Promise(resolve => setTimeout(resolve.bind(), t))
+}
+  
+
 const promiseLong = async (codeLong) => {
+    let promise = Promise.resolve();
+    promise = delay(100);
     const getLong = await httprequest(`${process.env.APP_CONVERT}${codeLong}`);
-    return getLong.longitude;
+    return promise.then(async () => {
+        if (getLong.longitude == null) return delay(10000);
+        return new Promise(resolve => resolve(getLong.longitude));
+    })
 };
 
 const promiseLat = async (codeLat) => {
+    let promise = Promise.resolve();
+    promise = delay(100);
     const getLat = await httprequest(`${process.env.APP_CONVERT}${codeLat}`);
-    return getLat.latitude;
+    return promise.then(async () => {
+        if (getLat.latitude == null) return delay(10000);
+        return new Promise(resolve => resolve(getLat.latitude));
+    })
 }
 
 const filterOutput = async (this_) => {
