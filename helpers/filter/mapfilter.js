@@ -50,6 +50,16 @@ const promiseLat = async (codeLat) => {
 }
 
 const filterOutput = async (this_) => {
+    let finalResult;
+    if(this_.final_result == 1){
+        finalResult = 'Sembuh';
+    }else if(this_.final_result == 2){
+        finalResult = 'Meninggal';
+    }else if(this_.final_result == '' || this_.final_result == null || this_.final_result == 0){
+        finalResult = 'Aktif';
+    }else{
+        finalResult = '';
+    }
     return {
         _id: this_._id,
         id: this_.id_case,
@@ -63,6 +73,7 @@ const filterOutput = async (this_) => {
         stage: (this_.stage == 0 ? "Proses" : "Selesai"),
         umur: this_.age,
         gender: this_.gender,
+        final_result: finalResult,
         longitude: await promiseLong(this_.address_village_code),
         latitude: await promiseLat(this_.address_village_code),
         tanggal_konfirmasi: this_.createdAt,

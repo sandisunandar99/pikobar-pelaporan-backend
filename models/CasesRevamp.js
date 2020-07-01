@@ -6,7 +6,7 @@ const check = require("../helpers/historycheck");
 const filtersMap = require("../helpers/filter/mapfilter");
 var uniqueValidator = require('mongoose-unique-validator');
 
-const CaseSchema = new mongoose.Schema({
+const CaseRevampSchema = new mongoose.Schema({
     // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
     id_case : {type: String, lowercase: true, unique: true, index: true},
     // NIK sumber terkait kontak erat
@@ -55,6 +55,19 @@ const CaseSchema = new mongoose.Schema({
     smoking : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     consume_alcohol : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     income : { type: Number, default: null},
+    //faktor kontak
+    travel:Boolean,
+    visited:{type:String,default:null},
+    start_travel:{type:Date,default:Date.now()},
+    end_travel:{type:Date,default:Date.now()},
+    close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_confirm:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
     transfer_status: { type: String, lowercase: true, default: null },
@@ -65,18 +78,18 @@ const CaseSchema = new mongoose.Schema({
 
 },{ timestamps:true, usePushEach: true })
 
-CaseSchema.index( { author: 1 } )
-CaseSchema.index( { transfer_status: 1 } )
-CaseSchema.index( { transfer_to_unit_id: 1 } )
-CaseSchema.index( { verified_status: 1 } )
-CaseSchema.index( { address_district_code: 1 } )
+CaseRevampSchema.index( { author: 1 } )
+CaseRevampSchema.index( { transfer_status: 1 } )
+CaseRevampSchema.index( { transfer_to_unit_id: 1 } )
+CaseRevampSchema.index( { verified_status: 1 } )
+CaseRevampSchema.index( { address_district_code: 1 } )
 
-CaseSchema.plugin(mongoosePaginate)
-CaseSchema.plugin(aggregatePaginate);
-CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
+CaseRevampSchema.plugin(mongoosePaginate)
+CaseRevampSchema.plugin(aggregatePaginate);
+CaseRevampSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
 
 
-CaseSchema.methods.toJSONFor = function () {
+CaseRevampSchema.methods.toJSONFor = function () {
     return {
         _id: this._id,
         id_case: this.id_case,
@@ -107,7 +120,7 @@ CaseSchema.methods.toJSONFor = function () {
 }
 
 
-CaseSchema.methods.JSONFormCase = function () {
+CaseRevampSchema.methods.JSONFormCase = function () {
     let covid = this.id_case 
     let nik = this.nik === null || this.nik === undefined ? "-" : this.nik
     let phone_number = this.phone_number === null || this.phone_number === undefined ? "-" : this.phone_number
@@ -119,7 +132,7 @@ CaseSchema.methods.JSONFormCase = function () {
     }
 }
 
-CaseSchema.methods.JSONFormIdCase = function () {
+CaseRevampSchema.methods.JSONFormIdCase = function () {
     return {
         _id: this._id,
         id_case: this.id_case,
@@ -128,7 +141,7 @@ CaseSchema.methods.JSONFormIdCase = function () {
     }
 }
 
-CaseSchema.methods.JSONSeacrhOutput = function () {
+CaseRevampSchema.methods.JSONSeacrhOutput = function () {
     return {
         id: this._id,
         id_case: this.id_case,
@@ -158,7 +171,7 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
     }
 }
 
-CaseSchema.methods.MapOutput = function () {
+CaseRevampSchema.methods.MapOutput = function () {
     // filter output untuk memperkecil line file tidak 
     // melebihi 250 di pecah di simpan di helper
     return filtersMap.filterOutput(this);
@@ -168,7 +181,7 @@ function convertDate(dates){
     return new Date(dates.getTime()).toLocaleDateString("id-ID")
 }
 
-CaseSchema.methods.JSONExcellOutput = function () {
+CaseRevampSchema.methods.JSONExcellOutput = function () {
     let finals,stages,birthDate,createDate,diagnosis,diagnosis_other
     
     if(this.final_result == '0'){
@@ -219,4 +232,4 @@ CaseSchema.methods.JSONExcellOutput = function () {
     }
 }
 
-module.exports = mongoose.model('Case', CaseSchema)
+module.exports = mongoose.model('CaseRevamp', CaseRevampSchema)
