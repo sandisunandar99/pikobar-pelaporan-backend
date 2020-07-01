@@ -39,6 +39,19 @@ const getUserById = async (id, category, callback) => {
   }
 }
 
+const getUserBySpecifiedKey = async (key, value, callback) => {
+  try {
+    let result = null
+    const user = await User.findOne({ [key]: value });
+    if (user) {
+      result = user.JSONCase();
+    }    
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
 const getUserByUsername = (username, callback) => {
   User.findOne({ username }, async (err, user) => {
     if (err) return callback(err, null);
@@ -189,6 +202,10 @@ module.exports = [
   {
     name: "services.users.getById",
     method: getUserById,
+  },
+  {
+    name: "services.users.getBySpecifiedKey",
+    method: getUserBySpecifiedKey,
   },
   {
     name: "services.users.getByUsername",

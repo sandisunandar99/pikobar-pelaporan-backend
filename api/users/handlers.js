@@ -46,6 +46,18 @@ module.exports = (server) => {
       });
     },
     /**
+     * GET /api/users/{id}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async getUserByUsername (request, reply) {
+      server.methods.services.users.getBySpecifiedKey(
+        'username', request.params.value, (err, userById) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+        return reply(constructUsersResponse(userById));
+      });
+    },
+    /**
      * PUT /api/users/reset/{id}
      * @param {*} request
      * @param {*} reply
