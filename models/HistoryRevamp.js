@@ -19,10 +19,8 @@ const HistoryRevampSchema = new mongoose.Schema({
     is_contact_with_positive : Boolean,
     history_notes: String,
     is_sample_taken : Boolean,
-
     report_source : { type: String, default: null },
     first_symptom_date : {type : Date, default: Date.now()},
-
     other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
     current_location_type: String,  // RS / RUMAH

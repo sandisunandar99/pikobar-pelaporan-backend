@@ -14,4 +14,4 @@ const CloseContactSchema = new mongoose.Schema({
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps : true });
 
-module.exports = mongoose.model('HistoryRevamp', CloseContactSchema)
+module.exports = mongoose.model('CloseContact', CloseContactSchema)
