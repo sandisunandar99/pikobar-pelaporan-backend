@@ -182,6 +182,31 @@ const getRegisteredUserfromExternal = server => {
     }
 }
 
+const createHistoryWhenPositif = server =>{
+    return {
+        method: (request, reply) => {
+            let source_data = request.payload.source_data
+            let tool_tester = request.payload.tool_tester
+            let final_result = request.payload.final_result
+            let payloads = request.payload
+
+            if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF"){
+                payloads = Object.assign(payloads, {final_result: null})
+                server.methods.services.histories.createHistoryFromInputTest(
+                    payloads,
+                    (err, item) => {
+                        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                        
+                        return reply(item)
+                    })
+            }else{
+                return reply()
+            }
+        },
+        assign : 'create_history_when_positif'
+    }
+}
+
 module.exports ={
     countRdtCode,
     getRdtbyId,
@@ -193,5 +218,6 @@ module.exports ={
     searchIdcasefromInternal,
     searchIdcasefromExternal,
     validationBeforeInput,
-    getRegisteredUserfromExternal
+    getRegisteredUserfromExternal,
+    createHistoryWhenPositif
 }
