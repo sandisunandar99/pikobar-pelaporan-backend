@@ -134,6 +134,68 @@ function deleteHistory (id, callback) {
     .catch(err => callback(err, null))
 }
 
+
+function createHistoryFromInputTest(payload, callback){
+   // guarded field (cannot be filled)
+  Helper.deleteProps(['id','last_changed', 'createdAt', 'updatedAt'], payload)
+
+  Case.findOne({"id_case": new RegExp( payload.id_case, "i")}).exec().then(case_obj => {    
+    History.findById(case_obj.last_history).exec().then(old_history => {
+      let new_history = new History(payload);
+      let changed = false, changed_fields=[];
+
+      function is_same(a,b) {
+        /* Method to compare equality between 2 object. support Date object,
+         * array, and generic object */
+        if (typeof a == 'undefined' || typeof b == 'undefined')
+          return false;
+        if (a instanceof Date)
+          return a.getTime() == b.getTime();
+        if (Array.isArray(a))
+          return JSON.stringify(a) == JSON.stringify(b);
+        if (typeof(a) == 'object')
+          return String(a) == String(b);
+        return a == b;
+      }
+
+      for (var property in payload) {
+          if (new_history[property] != null && !is_same(new_history[property],  old_history[property])) {
+            changed = true;
+            changed_fields.push(property);
+          }
+      }
+      
+      if (changed) {       
+        new_history.save((err, item) => {
+          if (err) return callback(err, null);
+          
+          // update case
+          let update_case = {
+              status: payload.status,
+              stage: 1,
+              final_result: payload.final_result,
+              is_test_masif: true,
+              last_history: item._id
+          }
+          
+          let objcase = Object.assign(case_obj, update_case)
+  
+          objcase.save((err, updated_case) => {
+            if (err) return callback(err, null);
+            return callback(null, new_history);
+          });
+        });
+      } else {
+        // return old history if not changed
+        return callback(null, old_history);
+      }
+        
+    }).catch(err => callback(err, null))
+  }).catch(err => callback(err, null))
+  
+}
+
+
 module.exports = [
   {
     name: 'services.histories.list',
@@ -151,8 +213,6 @@ module.exports = [
     name: 'services.histories.getLastHistoryByIdCase',
     method: getLastHistoryByIdCase
   },
-
-
   {
     name: 'services.histories.create',
     method: createHistory
@@ -164,6 +224,10 @@ module.exports = [
   {
     name: 'services.histories.delete',
     method: deleteHistory
-  }
+  },
+  {
+    name: 'services.histories.createHistoryFromInputTest',
+    method: createHistoryFromInputTest
+  },
 ];
 
