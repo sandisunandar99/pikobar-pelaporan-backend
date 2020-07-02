@@ -4,6 +4,7 @@ const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
 const check = require("../helpers/historycheck");
 const filtersMap = require("../helpers/filter/mapfilter");
+const filtersRelated = require("../helpers/filter/relatedfilter");
 var uniqueValidator = require('mongoose-unique-validator');
 
 const CaseSchema = new mongoose.Schema({
@@ -152,6 +153,14 @@ CaseSchema.methods.MapOutput = function () {
     // filter output untuk memperkecil line file tidak 
     // melebihi 250 di pecah di simpan di helper
     return filtersMap.filterOutput(this);
+}
+
+CaseSchema.methods.EdgesOutput = function () {
+    return filtersRelated.filterEdges(this);
+}
+
+CaseSchema.methods.NodesOutput = function () {
+    return filtersRelated.filterNodes(this);
 }
 
 function convertDate(dates){
