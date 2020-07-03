@@ -1,5 +1,7 @@
+'use strict';
 const CasesRevamp = require('../models/Case');
 const HistoryRevamp = require('../models/History');
+const CloseContact = require('../models/CloseContact');
 const User =  require('../models/User');
 const Notification = require('../models/Notification');
 const Notif = require('../helpers/notification');
@@ -59,6 +61,11 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     const last_history = {'last_history': saveHistory._id};
     const x = Object.assign(saveCase, last_history);
     const finalSave = await x.save();
+    const mapingIdCase = raw_payload.close_contact_patient.map(r =>{
+      r.case = saveCase._id;
+      return r;
+    })
+    await CloseContact.create(mapingIdCase);
     await Notif.send(Notification, User, x, author, 'case-created');
     callback(null, finalSave);
   } catch (error) {
