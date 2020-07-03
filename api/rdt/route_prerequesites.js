@@ -182,16 +182,44 @@ const getRegisteredUserfromExternal = server => {
     }
 }
 
+const cekHistoryCases = server =>{
+    return {
+        method: (request, reply) => {
+                let source_data = request.payload.source_data
+                let tool_tester = request.payload.tool_tester
+                let final_result = request.payload.final_result
+                let payloads = {
+                    final_result: null,
+                    status: "POSITIF",
+                    id_case: request.payload.id_case
+                }
+
+                if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF") {
+                    server.methods.services.histories.checkHistoryCasesBeforeInputTest(
+                        payloads,
+                        (err, item) => {
+                            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                            return reply(item)
+                        })
+                } else {
+                    return reply()
+                }
+            },
+            assign: 'cek_history_case'
+    }
+}
+
+
 const createHistoryWhenPositif = server =>{
     return {
         method: (request, reply) => {
             let source_data = request.payload.source_data
             let tool_tester = request.payload.tool_tester
             let final_result = request.payload.final_result
-            let payloads = request.payload
+            let payloads = request.pre.cek_history_case
 
             if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF"){
-                payloads = Object.assign(payloads, {final_result: null})
                 server.methods.services.histories.createHistoryFromInputTest(
                     payloads,
                     (err, item) => {
@@ -219,5 +247,6 @@ module.exports ={
     searchIdcasefromExternal,
     validationBeforeInput,
     getRegisteredUserfromExternal,
+    cekHistoryCases,
     createHistoryWhenPositif
 }

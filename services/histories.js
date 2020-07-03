@@ -4,6 +4,7 @@ require('../models/History');
 require('../models/Case');
 
 const Helper = require('../helpers/custom');
+const { object } = require('joi');
 const History = mongoose.model('History');
 const Case = mongoose.model('Case');
 
@@ -91,7 +92,7 @@ function createHistoryIfChanged (payload, callback) {
             changed_fields.push(property);
           }
       }
-
+      
       if (changed) {
         new_history.save((err, item) => {
           if (err) return callback(err, null);
@@ -135,11 +136,23 @@ function deleteHistory (id, callback) {
 }
 
 
-function createHistoryFromInputTest(payload, callback){
-   // guarded field (cannot be filled)
-  Helper.deleteProps(['id','last_changed', 'createdAt', 'updatedAt'], payload)
+function checkHistoryCasesBeforeInputTest(payload, callback) {
+    Case.findOne({"id_case": new RegExp(payload.id_case, "i")}).exec().then(case_obj => {
+      History.findById(case_obj.last_history).exec().then(old_history => {
+        let assign = Object.assign(old_history, payload)
 
-  Case.findOne({"id_case": new RegExp( payload.id_case, "i")}).exec().then(case_obj => {    
+        return callback(null, assign)
+      }).catch(err => callback(err, null))
+    }).catch(err => callback(err, null))
+}
+
+
+function createHistoryFromInputTest(payload, callback){
+  delete payload._id
+  // guarded field (cannot be filled)
+  Helper.deleteProps(['_id','last_changed', 'createdAt', 'updatedAt'], payload)
+
+  Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
       let changed = false, changed_fields=[];
@@ -165,14 +178,15 @@ function createHistoryFromInputTest(payload, callback){
           }
       }
       
-      if (changed) {       
+
+      if (changed) {
         new_history.save((err, item) => {
           if (err) return callback(err, null);
-          
+
           // update case
           let update_case = {
               status: payload.status,
-              stage: 1,
+              stage: payload.stage,
               final_result: payload.final_result,
               is_test_masif: true,
               last_history: item._id
@@ -185,13 +199,13 @@ function createHistoryFromInputTest(payload, callback){
             return callback(null, new_history);
           });
         });
-      } else {
+      } else
         // return old history if not changed
         return callback(null, old_history);
-      }
-        
-    }).catch(err => callback(err, null))
-  }).catch(err => callback(err, null))
+    })
+    .catch(err => callback(err, null))
+  })
+  .catch(err => callback(err, null))
   
 }
 
@@ -224,6 +238,10 @@ module.exports = [
   {
     name: 'services.histories.delete',
     method: deleteHistory
+  },
+  {
+    name: 'services.histories.checkHistoryCasesBeforeInputTest',
+    method: checkHistoryCasesBeforeInputTest
   },
   {
     name: 'services.histories.createHistoryFromInputTest',
