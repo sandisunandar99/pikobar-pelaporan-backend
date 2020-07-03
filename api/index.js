@@ -8,7 +8,7 @@ const register = (server, options, next) => {
     //console.log('RESPONSE_HEADER:', request.headers);
     //console.log('SERVER:', server.registrations);
     if (response.isBoom) {
-      
+      console.log('e', response)
       Sentry.captureException(response)
 
       const reformated = {}
@@ -52,6 +52,8 @@ const register = (server, options, next) => {
   server.register(require('./map'));
   server.register(require('./unit'));
   server.register(require('./case_related'));
+  server.register(require('./close_contact'));
+  server.register(require('./close_contact_report'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

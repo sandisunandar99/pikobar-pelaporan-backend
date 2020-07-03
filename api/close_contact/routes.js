@@ -1,0 +1,39 @@
+module.exports = (server) =>{
+    const handlers = require('./handlers')(server)
+    const getCasebyId = require('./route_prerequesites').getCasebyId(server)
+
+    return [
+        {
+            method: 'GET',
+            path: '/cases/{caseId}/close-contacts',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all close-contacts',
+                tags: ['api', 'cases', 'close.contacts']
+            },
+            handler: handlers.List
+        },
+        {
+            method: 'POST',
+            path: '/cases/{caseId}/close-contacts',
+            config: {
+                auth: 'jwt',
+                description: 'create new close contacts',
+                tags: ['api', 'cases', 'close.contacts'],
+                pre: [ getCasebyId ]
+            },
+            handler: handlers.Create
+        },
+        {
+            method: 'DELETE',
+            path: '/cases/{caseId}/close-contacts/{id}',
+            config: {
+                auth: 'jwt',
+                description: 'show a specific cases history',
+                tags: ['api', 'cases', 'close.contacts'],
+                pre: [ getCasebyId ]
+            },
+            handler: handlers.Delete
+        }
+    ]
+}

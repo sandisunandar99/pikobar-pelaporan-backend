@@ -16,6 +16,9 @@ const register = (server, options, next) => {
       require('./map'),
       require('./unit'),
       require('./case_related'),
+      require('./close_contact'),
+      require('./close_contact_report'),
+      require('./close_contact_report_histories'),
     );
     server.method(services)
     return next()

@@ -25,6 +25,8 @@ const register = (server, options, next) => {
     require('./CasesRevamp'),
     require('./HistoryRevamp'),
     require('./CloseContact'),
+    require('./CloseContactReport'),
+    require('./CloseContactReportHistory'),
     
     server.app.db = {
       link: db.db,

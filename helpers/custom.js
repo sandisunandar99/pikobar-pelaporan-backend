@@ -16,7 +16,7 @@ const deletedSave = (payloads, author) => {
 }
 
 const isObject = (value) => {
-    return value && typeof value === 'object' && value.constructor === Object
+    return value && typeof value === 'object'
 }
 
 const deleteProps = (arrProps, obj) => {
@@ -32,6 +32,30 @@ const jsonParse = (str) => {
     }
 }
 
+const isDirty = (oldData, newData) => {  
+    if (!isObject(oldData) || !isObject(newData)) return
+    
+    function isEqual (a, b) {
+        if (Array.isArray(a))
+            return JSON.stringify(a) == JSON.stringify(b)
+        if (a instanceof Date)
+            return a.toISOString().slice(0,10) == b
+        else return a == b
+    }
+
+    let result = false
+    let changed_props = [];
+    for (let prop in newData) {
+        if (typeof oldData[prop] == 'undefined') continue
+        if (!isEqual(oldData[prop], newData[prop])) {
+            result = true
+            changed_props.push(prop)
+        }
+    }
+
+    return result
+}
+
 module.exports = {
-    setPwd, deletedSave, isObject, deleteProps, jsonParse
+    setPwd, deletedSave, isObject, deleteProps, jsonParse, isDirty
 }

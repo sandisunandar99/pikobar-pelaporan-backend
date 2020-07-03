@@ -9,6 +9,7 @@ const CloseContactSchema = new mongoose.Schema({
     address : {type:String},
     related : {type:String},
     activity : {type:String},
+    is_reported: { type: Boolean, default: false },
     delete_status: String,
     deletedAt: {type:Date, default:Date.now()},
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
