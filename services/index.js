@@ -16,6 +16,7 @@ const register = (server, options, next) => {
       require('./map'),
       require('./unit'),
       require('./case_related'),
+      require('./case_revamp'),
     );
     server.method(services)
     return next()

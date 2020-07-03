@@ -16,6 +16,9 @@ const CaseSchema = new mongoose.Schema({
     id_case_related : {type:String},
     name_case_related : {type:String},
     name: {type:String},
+    interviewers_name: {type:String,default: null},
+    interviewers_phone_number: {type:String,default: null},
+    interview_date: { type: Date , default: Date.now()},
     // tentatif jika diisi usia, required jika tidak
     birth_date : { type: Date},
     age : {type:Number},
@@ -31,6 +34,8 @@ const CaseSchema = new mongoose.Schema({
     address_district_name: { type: String, required: [true, "can't be blank"]},
     address_province_code: { type: String, default:32},
     address_province_name: { type: String, default:"Jawa Barat"},
+    rt: { type: Number, default:null},
+    rw: { type: Number, default:null},
     office_address: {type:String},
     phone_number: {type:String},
     nationality: {type:String},
@@ -46,6 +51,24 @@ const CaseSchema = new mongoose.Schema({
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    // social history
+    pysichal_activity: {type: Number, default: null},
+    smoking : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
+    consume_alcohol : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
+    income : { type: Number, default: null},
+    //faktor kontak
+    travel:Boolean,
+    visited:{type:String,default:null},
+    start_travel:{type:Date,default:Date.now()},
+    end_travel:{type:Date,default:Date.now()},
+    close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_confirm:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
     transfer_status: { type: String, lowercase: true, default: null },
