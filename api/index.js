@@ -52,6 +52,7 @@ const register = (server, options, next) => {
   server.register(require('./map'));
   server.register(require('./unit'));
   server.register(require('./case_related'));
+  server.register(require('./cases_revamp'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
