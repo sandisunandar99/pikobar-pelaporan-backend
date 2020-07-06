@@ -1,7 +1,8 @@
 require('../models/User')
 require('../models/CloseContact')
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const User = mongoose.model('User')
+const custom = require('../helpers/custom')
 const CloseContact = mongoose.model('CloseContact')
 
 async function index (caseId, callback) {
@@ -35,12 +36,10 @@ async function create (caseId, payload, callback) {
   }
 }
 
-async function softDelete (id, callback) {
+async function softDelete (id, author, callback) {
   try {
-    const result = CloseContact.findByIdAndUpdate(id, {
-      delete_status: 'deleted',
-      deletedAt: date.toISOString()
-    })
+    const payload = custom.deletedSave({}, author)
+    const result = CloseContact.findByIdAndUpdate(id, payload)
     return callback(null, result)
   } catch (error) {
     return callback(e, null)
