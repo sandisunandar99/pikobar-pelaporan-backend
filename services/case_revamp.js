@@ -73,10 +73,27 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
   }
 }
 
+const checkIfExisting = async (query, callback) => {
+  let check;
+  if (query.params) {
+    const gets = await CasesRevamp.find({
+      $or: [{'nik': query.params }]
+    });
+    check = (gets.length > 0 ? true : false);
+  } else {
+    check = 'parameter not set';
+  }
+  callback(null, check);
+}
+
 module.exports = [
   {
     name: 'services.cases_revamp.create',
     method: createCaseRevamp,
+  },
+  {
+    name: "services.cases_revamp.checkIfExisting",
+    method: checkIfExisting,
   },
 ];
 

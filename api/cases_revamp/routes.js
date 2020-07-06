@@ -5,7 +5,6 @@ module.exports = (server) =>{
     const countCasePendingByDistrict = require('../cases/route_prerequesites').countCasePendingByDistrict(server);
 
     return [
-        // Create case revamp
         {
             method: 'POST',
             path: '/cases-revamp',
@@ -20,6 +19,16 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.CreateCaseRevamp
+        },
+        {
+            method: 'GET',
+            path: '/cases-revamp/check',
+            config: {
+                auth: 'jwt',
+                description: 'check if existing with params',
+                tags: ['api', 'cases_revamp'],
+            },
+            handler: handlers.CheckIfExisting
         },
     ]
 }
