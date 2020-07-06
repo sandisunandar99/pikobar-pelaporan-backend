@@ -36,6 +36,7 @@ async function ListCase (query, user, callback) {
   };  
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : Helper.jsonParse(query.sort))
+  
   const options = {
     page: query.page,
     limit: query.limit,

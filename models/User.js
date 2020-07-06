@@ -50,15 +50,14 @@ UserSchema.methods.setPassword = function (password) {
 UserSchema.methods.generateJWT = function () {
   const today = new Date();
   const exp = new Date(today);
-  exp.setDate(today.getDate());
-  exp.setMinutes(today.getMinutes() + 900); // set expires to 8 work hours
+  exp.setDate(today.getDate() + 60);
 
   return jwt.sign({
-      id: this._id,
-      username: this.username,
-      exp: parseInt(exp.getTime() / 1000),
-    },config.auth.secret, { algorithm: config.auth.algorithm });
-};
+    id: this._id,
+    username: this.username,
+    exp: parseInt(exp.getTime() / 1000)
+  }, config.auth.secret, {algorithm: config.auth.algorithm})
+}
 
 UserSchema.methods.toAuthJSON = function () {
   return {

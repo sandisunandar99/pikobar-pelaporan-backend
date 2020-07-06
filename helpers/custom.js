@@ -32,14 +32,6 @@ const jsonParse = (str) => {
     }
 }
 
-const jsonParse = (str) => {
-    try {
-        return JSON.parse(str)
-    } catch (e) {
-        return false
-    }
-}
-
 module.exports = {
     setPwd, deletedSave, isObject, deleteProps, jsonParse
 }
