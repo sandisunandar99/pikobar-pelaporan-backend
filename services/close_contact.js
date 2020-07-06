@@ -1,7 +1,6 @@
 require('../models/User')
 require('../models/CloseContact')
 const mongoose = require('mongoose')
-const User = mongoose.model('User')
 const custom = require('../helpers/custom')
 const CloseContact = mongoose.model('CloseContact')
 

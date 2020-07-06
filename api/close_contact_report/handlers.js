@@ -1,16 +1,8 @@
+const { HTTP } = require('../../helpers/constants')
 const replyHelper = require('../helpers')
 const Helper = require('../../helpers/custom')
 
 module.exports = (server) => {
-    function constructCasesResponse(cases) {
-        let jsonCases = {
-            status: 200,
-            message: "Success",
-            data: cases
-        }
-        return jsonCases
-    }
-
     return {
         /**
          * POST /api/close-contacts/{closeContactId}/report
@@ -22,18 +14,16 @@ module.exports = (server) => {
                 request.params.closeContactId,
                 request.payload,
                 (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    if (err) return replyHelper.errorResponse(reply, err)
 
                     server.methods.services.closeContactReportHistories.create(
                         result._id,
                         request.payload.latest_report_history,
                         (err, resultChild) => {
-                            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                            if (err) return replyHelper.errorResponse(reply, err)
                             
                             const res = Object.assign(result, { latest_report_history: resultChild })
-                            return reply(
-                                constructCasesResponse(res, request)
-                            ).code(200)
+                            return replyHelper.successResponse(reply, res, HTTP.CREATED)
                         })
                 })
         },
@@ -45,11 +35,9 @@ module.exports = (server) => {
         async Show(request, reply) {
             server.methods.services.closeContactReport.show(
                 request.params.closeContactId,
-                (err, item) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCasesResponse(item, request)
-                    ).code(200)
+                (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err)
+                    return replyHelper.successResponse(reply, result, HTTP.OK)
                 })
         },
         /**
@@ -65,24 +53,20 @@ module.exports = (server) => {
                 request.params.closeContactId,
                 request.payload,
                 (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    if (err) return replyHelper.errorResponse(reply, err)
 
                     if (!requestHistory || !isDirty) {
                         const res = Object.assign(result, { latest_report_history: currentHistory })
-                        return reply(
-                            constructCasesResponse(res, request)
-                        ).code(200)
+                        return replyHelper.successResponse(reply, res, HTTP.OK)
                     } else {
                         server.methods.services.closeContactReportHistories.create(
                             result._id,
                             requestHistory,
                             (err, resultChild) => {
-                                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                                if (err) return replyHelper.errorResponse(reply, err)
                                 
                                 const res = Object.assign(result, { latest_report_history: resultChild })
-                                return reply(
-                                    constructCasesResponse(res, request)
-                                ).code(200)
+                                return replyHelper.successResponse(reply, res, HTTP.OK)
                             })
                     }
                 })

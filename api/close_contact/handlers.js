@@ -1,14 +1,6 @@
+const { HTTP } = require('../../helpers/constants')
 const replyHelper = require('../helpers')
 module.exports = (server) => {
-    function constructCasesResponse(cases) {
-        let jsonCases = {
-            status: 200,
-            message: "Success",
-            data: cases
-        }
-        return jsonCases
-    }
-
     return {
         /**
          * GET /api/cases/{caseId}/close-contacts
@@ -19,10 +11,8 @@ module.exports = (server) => {
             server.methods.services.closeContacts.index(
                 request.params.caseId, 
                 (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCasesResponse(result,request)
-                    ).code(200)
+                    if (err) return replyHelper.errorResponse(reply, err)
+                    return replyHelper.successResponse(reply, result, HTTP.OK)
                 })
         },
         /**
@@ -34,16 +24,13 @@ module.exports = (server) => {
             server.methods.services.closeContacts.create(
                 request.params.caseId,
                 request.payload,
-                (errA, resultA) => {
-                    if (errA) return reply(replyHelper.constructErrorResponse(errA)).code(422)
-
-                    return reply(
-                        constructCasesResponse(resultA,request)
-                    ).code(200)
+                (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err)
+                    return replyHelper.successResponse(reply, result, HTTP.CREATED)
                 })
         },
         /**
-         * POST /api/cases/{id}/close-contacts?is_reported=true
+         * POST /api/cases/{id}/close-contacts-with-report
          * @param {*} request
          * @param {*} reply
          */
@@ -52,24 +39,22 @@ module.exports = (server) => {
                 request.params.caseId,
                 request.payload,
                 (err, closeContact) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    if (err) return replyHelper.errorResponse(reply, err)
 
                     server.methods.services.closeContactReport.create(
                         closeContact._id,
                         request.payload,
                         (err, report) => {
-                            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        
+                            if (err) return replyHelper.errorResponse(reply, err)
+
                             server.methods.services.closeContactReportHistories.create(
                                 report._id,
                                 request.payload.latest_report_history,
                                 (err, history) => {
-                                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                                    
+                                    if (err) return replyHelper.errorResponse(reply, err)
+
                                     const res = Object.assign(report, { latest_report_history: history })
-                                    return reply(
-                                        constructCasesResponse(res, request)
-                                    ).code(200)
+                                    return replyHelper.successResponse(reply, res, HTTP.CREATED)
                                 })
                         })
                 })
@@ -84,11 +69,9 @@ module.exports = (server) => {
                 request.params.id,
                 request.auth.credentials.user,
                 request.payload,
-                (err, item) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                     return reply(
-                         constructCasesResponse(item, request)
-                     ).code(202)
+                (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err)
+                    return replyHelper.successResponse(reply, result, HTTP.OK)
                 })
         },
     }
