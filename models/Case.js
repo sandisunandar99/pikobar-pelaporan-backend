@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
-
-const check = require("../helpers/historycheck");
 const filtersMap = require("../helpers/filter/mapfilter");
 const filtersRelated = require("../helpers/filter/relatedfilter");
+const filtersExport = require("../helpers/filter/exportfilter");
 var uniqueValidator = require('mongoose-unique-validator');
 
 const CaseSchema = new mongoose.Schema({
@@ -76,19 +75,26 @@ const CaseSchema = new mongoose.Schema({
     latest_faskes_unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     is_test_masif: {type: Boolean, default: false},
     input_source: String,
-
+    //medical officer
+    fasyankes_type: {type: String, default: null},
+    fasyankes_code: {type: String, default: null},
+    fasyankes_name: {type: String, default: null},
+    fasyankes_province_code: {type: String, default: "32"},
+    fasyankes_province_name: {type: String, default: "Jawa Barat"},
+    fasyankes_subdistrict_code: {type: String},
+    fasyankes_subdistrict_name: {type: String},
+    fasyankes_village_code: {type: String},
+    fasyankes_village_name: {type: String},
 },{ timestamps:true, usePushEach: true })
 
-CaseSchema.index( { author: 1 } )
-CaseSchema.index( { transfer_status: 1 } )
-CaseSchema.index( { transfer_to_unit_id: 1 } )
-CaseSchema.index( { verified_status: 1 } )
-CaseSchema.index( { address_district_code: 1 } )
-
-CaseSchema.plugin(mongoosePaginate)
+CaseSchema.index({author: 1});
+CaseSchema.index({transfer_status: 1});
+CaseSchema.index({transfer_to_unit_id: 1});
+CaseSchema.index({verified_status: 1});
+CaseSchema.index({address_district_code: 1});
+CaseSchema.plugin(mongoosePaginate);
 CaseSchema.plugin(aggregatePaginate);
-CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' })
-
+CaseSchema.plugin(uniqueValidator, { message: 'ID already exists in the database.' });
 
 CaseSchema.methods.toJSONFor = function () {
     return {
@@ -186,59 +192,8 @@ CaseSchema.methods.NodesOutput = function () {
     return filtersRelated.filterNodes(this);
 }
 
-function convertDate(dates){
-    return new Date(dates.getTime()).toLocaleDateString("id-ID")
-}
-
 CaseSchema.methods.JSONExcellOutput = function () {
-    let finals,stages,birthDate,createDate,diagnosis,diagnosis_other
-    
-    if(this.final_result == '0'){
-        finals = 'NEGATIF'
-    }else if(this.final_result == '1'){
-        finals = 'SEMBUH'
-    }else if(this.final_result == '2'){
-        finals = 'MENINGGAL'
-    }else{
-        finals = null
-    }
-
-    stages = (this.stage == 0 ? "Prosess" : "Selesai")    
-    birthDate = (this.birth_date != null ? convertDate(this.birth_date) : null)
-    createDate = (this.createdAt != null ? convertDate(this.createdAt) : null)
-    diagnosis = (this.last_history.diagnosis > 1 ? "" : this.last_history.diagnosis.toString())
-    diagnosis_other = (this.last_history.diseases > 1 ? "" : this.last_history.diseases.toString())
-    
-    return {
-       "Kode Kasus": this.id_case,
-       "Kode Kasus Pusat": this.id_case_national,
-       "Tanggal Lapor": createDate,
-       "Sumber Lapor":(this.last_history !== null ? this.last_history.report_source : null),
-       "NIK": this.nik,
-       "Nama": this.name,
-       "Tanggal Lahir": birthDate,
-       "Usia": this.age,
-       "Jenis Kelamin": this.gender,
-       "Provinsi": "Jawa Barat",
-       "Kota": this.address_district_name,
-       "Kecamatan": this.address_subdistrict_name,
-       "Kelurahan": this.address_village_name,
-       "Alamat detail": `${this.address_street}`,
-       "No Telp": this.phone_number,
-       "Kewarganegaraan": this.nationality,
-       "Negara":(this.nationality == "WNI" ? "Indonesia" : this.nationality_name),
-       "Pekerjaan": this.occupation,
-       "Gejala": diagnosis,
-       "Kondisi Penyerta": diagnosis_other,
-       "Riwayat": check.historyCheck(this.last_history),
-       "Status": this.status,
-       "Tahapan":stages,
-       "Hasil":finals,
-       "Lokasi saat ini": (this.last_history !== null ? this.last_history.current_location_address : null),
-       "Tanggal Input": createDate,
-       "Catatan Tambahan": (this.last_history !== null ? this.last_history.other_notes : ''),
-       "Author": this.author.fullname
-    }
+    return filtersExport.excellOutput(this);
 }
 
-module.exports = mongoose.model('Case', CaseSchema)
+module.exports = mongoose.model('Case', CaseSchema);

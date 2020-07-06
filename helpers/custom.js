@@ -32,6 +32,11 @@ const jsonParse = (str) => {
     }
 }
 
+const convertDate = (dates) => {
+    return new Date(dates.getTime()).toLocaleDateString("id-ID");
+}
+
 module.exports = {
-    setPwd, deletedSave, isObject, deleteProps, jsonParse
+    setPwd, deletedSave, isObject, deleteProps, jsonParse,
+    convertDate,
 }
