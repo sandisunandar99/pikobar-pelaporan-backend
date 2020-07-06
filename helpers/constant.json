@@ -1,0 +1,9 @@
+{
+    "VERIFIED_STATUS_PENDING":"pending",
+    "VERIFIED_STATUS_VERIFIED":"verified",
+    "ROLE_0":"superadmin",
+    "ROLE_1":"dinkeskota",
+    "ROLE_2":"faskes",
+    "CASE_CODE_PRE":"precovid-",
+    "CASE_CODE":"covid-"
+}

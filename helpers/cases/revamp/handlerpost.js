@@ -1,32 +1,33 @@
 'use strict';
+const Conf = require('../../constant.json');
 const validatePost = (raw_payload) => {
-    if (raw_payload.current_hospital_id == "") {
+    if (raw_payload.current_hospital_id === "") {
         raw_payload.current_hospital_id = null;
     }
 
-    if (raw_payload.first_symptom_date == "") {
+    if (raw_payload.first_symptom_date === "") {
         raw_payload.first_symptom_date = Date.now();
     }
 
-    return raw_payload
+    return raw_payload;
 };
 
 const generateIdCase = (author, pre) => {
     let date = new Date().getFullYear().toString();
     let id_case;
-
-    if (author.role === 'faskes') {
-        id_case = "precovid-";
-        id_case += pre.count_case_pending.dinkes_code;
-        id_case += date.substr(2, 2);
-        id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length);
-        id_case += pre.count_case_pending.count_pasien;
+    let pasienCount ='';
+    let pendingCount = '';
+    let dinkesCode = pre.count_case_pending.dinkes_code;
+    let dates = date.substr(2, 2);
+    if (author.role === Conf.ROLE_2) {
+        pasienCount = "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length);
+        pendingCount = pre.count_case_pending.count_pasien;
+        id_case = `${Conf.CASE_CODE_PRE}${dinkesCode}${dates}${pasienCount}${pendingCount}`;
+        
     } else {
-        id_case = "covid-";
-        id_case += pre.count_case.dinkes_code;
-        id_case += date.substr(2, 2);
-        id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length);
-        id_case += pre.count_case.count_pasien;
+        pasienCount = "0".repeat(4 - pre.count_case.count_pasien.toString().length);
+        pendingCount = pre.count_case.count_pasien;
+        id_case = `${Conf.CASE_CODE}${dinkesCode}${dates}${pasienCount}${pendingCount}`;
     }
 
     return id_case;
