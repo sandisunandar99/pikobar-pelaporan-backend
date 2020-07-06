@@ -31,7 +31,7 @@ async function show (closeContact, callback) {
 async function create (closeContact, raw_payload, callback) {
   try {
     
-    const {latest_report_history, ...payload} = raw_payload
+    const { latest_report_history, ...payload } = raw_payload
     let result = new CloseContactReport(Object.assign(payload, {
       close_contact: closeContact
     }))
@@ -47,7 +47,7 @@ async function create (closeContact, raw_payload, callback) {
 async function update (closeContact, raw_payload, callback) {
   try {
     delete raw_payload.closeContact
-    const {latest_report_history, ...payload} = raw_payload
+    const { latest_report_history, ...payload } = raw_payload
     const params = { close_contact: closeContact }
     const result = await CloseContactReport.findOneAndUpdate(params,
       { $set: payload },

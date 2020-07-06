@@ -6,7 +6,7 @@ const CloseContact = mongoose.model('CloseContact')
 
 async function index (caseId, callback) {
   try {
-    const results = await CloseContact.find({case: caseId})
+    const results = await CloseContact.find({ case: caseId })
     return callback(null, results)
   } catch (e) {
     return callback(e, null)

@@ -1,4 +1,4 @@
-const { HTTP } = require('../../helpers/constants')
+const { HTTP } = require('../../helpers/constant')
 const replyHelper = require('../helpers')
 const Helper = require('../../helpers/custom')
 

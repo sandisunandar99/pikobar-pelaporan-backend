@@ -1,62 +1,65 @@
-const uniqueValidator = require('mongoose-unique-validator')
-const validateOptions = { message: 'This Close contact already has a report' }
 const mongoose = require('mongoose')
-const consts = require('../helpers/constants')
+const consts = require('../helpers/constant')
+const { TYPE } = require('../helpers/constant').MONGOOSE_SCHEMA
 
-const refCloseContact = {
+const REF_CLOSE_CONTACT = {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'CloseContact',
     unique: true,
     required: true
 }
-const refCloseContactReportHistory = {
+const REF_CLOSE_CONTACT_REPORT_HISTORY = {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'CloseContactReportHistory'
 }
+const REF_USER = { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Case', 
+    default: null
+}
  
 const CloseContactReportSchema = new mongoose.Schema({
-    interviewer_name: { type: String, required: true},
+    interviewer_name: TYPE.STRING.REQUIRED,
     contact_tracing_date: { type:Date, default:Date.now() },
-    nik : { type: String, required: true },
-    name : { type: String, required: true },
-    phone_number : String,
-    birth_date : Date,
-    age : { type:Number, default: 0 },
-    gender : { type: String, enum: [consts.GENDER.MALE, consts.GENDER.FEMALE] },
-    address_province_code: { type: String, default: consts.DEFAULT_PROVINCE.CODE },
-    address_province_name: { type: String, default: consts.DEFAULT_PROVINCE.NAME },
-    address_district_code: { type: String, required: true },
-    address_district_name: { type: String, required: true },
-    address_subdistrict_code: { type: String, required: true },
-    address_subdistrict_name: { type: String, required: true },
-    address_village_code: { type: String, required: true },
-    address_village_name: { type: String, required: true },
-    address_rw: String,
-    address_rt: String,
-    address_street : String,
-    relationship : String,
-    travel_contact_date: Date,
-    trevel_is_went_abroad: Boolean,
-    travel_visited_country: String,
-    travel_is_went_other_city : Boolean,
-    travel_visited_city : String,
-    travel_depart_date : Date,
-    travel_return_date : Date,
-    travel_occupation: String,
-    travel_address_office: String,
-    travel_transportations: Array,
-    home_contact_date: Date,
-    home_contact_durations: String,
-    home_contact_days: String,
-    home_activities: Array,
-    officer_is_contact: Boolean,
-    officer_protection_tools: Array,
-    close_contact : refCloseContact,
-    latest_report_history : refCloseContactReportHistory,
-    delete_status: String,
-    deletedAt: {type:Date, default:Date.now()},
-    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    nik : TYPE.STRING.REQUIRED,
+    name : TYPE.STRING.REQUIRED,
+    phone_number : TYPE.STRING.DEFAULT,
+    birth_date : TYPE.DATE.DEFAULT,
+    age : TYPE.NUMBER.DEFAULT,
+    gender: TYPE.STRING.ENUM([consts.GENDER.MALE, consts.GENDER.FEMALE]),
+    address_province_code: TYPE.STRING.DEFAULT_VALUE(consts.DEFAULT_PROVINCE.CODE),
+    address_province_name: TYPE.STRING.DEFAULT_VALUE(consts.DEFAULT_PROVINCE.NAME),
+    address_district_code: TYPE.STRING.REQUIRED,
+    address_district_name: TYPE.STRING.REQUIRED,
+    address_subdistrict_code: TYPE.STRING.REQUIRED,
+    address_subdistrict_name: TYPE.STRING.REQUIRED,
+    address_village_code: TYPE.STRING.REQUIRED,
+    address_village_name: TYPE.STRING.REQUIRED,
+    address_rw: TYPE.STRING.DEFAULT,
+    address_rt: TYPE.STRING.DEFAULT,
+    address_street : TYPE.STRING.DEFAULT,
+    relationship : TYPE.STRING.DEFAULT,
+    travel_contact_date: TYPE.DATE.DEFAULT,
+    trevel_is_went_abroad: TYPE.BOOLEAN.DEFAULT,
+    travel_visited_country: TYPE.STRING.DEFAULT,
+    travel_is_went_other_city : TYPE.BOOLEAN.DEFAULT,
+    travel_visited_city : TYPE.STRING.DEFAULT,
+    travel_depart_date : TYPE.DATE.DEFAULT,
+    travel_return_date : TYPE.DATE.DEFAULT,
+    travel_occupation: TYPE.STRING.DEFAULT,
+    travel_address_office: TYPE.STRING.DEFAULT,
+    travel_transportations: TYPE.ARRAY.DEFAULT,
+    home_contact_date: TYPE.DATE.DEFAULT,
+    home_contact_durations: TYPE.STRING.DEFAULT,
+    home_contact_days: TYPE.STRING.DEFAULT,
+    home_activities: TYPE.ARRAY,
+    officer_is_contact: TYPE.DATE.DEFAULT,
+    officer_protection_tools: TYPE.ARRAY,
+    close_contact : REF_CLOSE_CONTACT,
+    latest_report_history : REF_CLOSE_CONTACT_REPORT_HISTORY,
+    delete_status: TYPE.STRING.DEFAULT,
+    deletedAt: TYPE.DATE.DEFAULT,
+    deletedBy: REF_USER,
 }, { timestamps : true });
 
-CloseContactReportSchema.plugin(uniqueValidator, validateOptions)
 module.exports = mongoose.model('CloseContactReport', CloseContactReportSchema)
