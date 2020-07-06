@@ -17,24 +17,6 @@ const validationBeforeInput = server => {
     }
 }
 
-const CheckCredentialUnitIsExist = server => {
-    return {
-        method: (request, reply) => {
-            let user = request.auth.credentials.user
-            if (user.unit_id) {
-                return reply()
-            } else {
-                return reply({
-                    status: 422,
-                    message: 'Anda tidak memiliki akses unit, silahkah edit profil user unit!',
-                    data: null
-                }).code(422).takeover()
-            }
-        },
-        assign: 'check_credential_unit_is_exist'
-    }
-}
-
 const checkCaseIsExists = server => {
     return {
         method: (request, reply) => {
@@ -44,7 +26,6 @@ const checkCaseIsExists = server => {
                 if (!result) return reply(result)
 
                 let author = result.author ? result.author.fullname : null
-
                 let message
                 message = `NIK ${nik} atas nama ${result.name} `
 
@@ -108,7 +89,6 @@ const countCasePendingByDistrict = server =>{
         assign: 'count_case_pending'
     }
 }
-
 
 const getCasebyId = server => {
     return {
@@ -180,22 +160,14 @@ const DataSheetRequest = server => {
         method: async (request, reply) => {
             
             const mongoose = require('mongoose');
-
             require('../../models/Case');
             const Case = mongoose.model('Case');
-            
             const helper = require("../../helpers/casesheet/casesheetextraction")
-
             const rules = require('./validations/input')
-
             const Joi = require('joi')
-
             const config = require('../../helpers/casesheet/casesheetconfig.json')
-
             const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
-
             const payload = await helper.caseSheetExtraction(request)
-
             let invalidPaylodMessage = null
 
             if (payload === config.unverified_template) {
@@ -264,113 +236,6 @@ const getDetailCase = server => {
     }
 }
 
-const getTransferCasebyId = server => {
-    return {
-        method: (request, reply) => {
-             let id = request.params.transferId
-             server.methods.services.casesTransfers.getById(id, (err, item) => {
-                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-                 return reply(item)
-             })
-        },
-        assign: 'transfer_case'
-    }
-}
-
-const CheckCaseIsAllowToTransfer = server => {
-    return {
-        method: (request, reply) => {
-            const currentCase = request.preResponses.cases.source
-            const userUnit = request.auth.credentials.user.unit_id
-            const destinationUnit = request.payload.transfer_to_unit_id
-
-            const params = {
-                transfer_case_id: request.params.id,
-            }
-
-            const response = (code, messg) => {
-                return reply({
-                    status: code,
-                    message: messg,
-                    data: null
-                }).code(code).takeover()
-            }
-
-            if (destinationUnit.toString() === userUnit._id.toString()) {
-                return response(422, 'Cannot transfer to your own unit!')
-            }
-
-            if (currentCase.verified_status !== 'verified') {
-                return response(422, 'Data Kasus belum terverifikasi oleh Dinkes!')
-            }
-
-            server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-
-                if (!result || !['pending', 'declined'].includes(result.transfer_status)) return reply(result)                
-
-                const msg = "Rujukan sudah ada dan sedang menunggu persetujuan dari " + result.transfer_to_unit_name
-                return response(422, msg)
-            })
-        },
-        assign: 'is_case_allow_to_transfer'
-    }
-}
-
-const CheckIsTransferActionIsAllow = server => {
-    return {
-        method: (request, reply) => {
-            let user = request.auth.credentials.user
-            const params = {
-                transfer_case_id: request.params.id,
-            }
-            server.methods.services.casesTransfers.getLastTransferCase(params, (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-                
-                let action = 'aborted'
-                if (request.params.action === 'approve') action = 'approved'
-                else if (request.params.action === 'decline') action = 'declined'
-
-                let msg = request.params.action + ' is already in process!'
-                if (result.transfer_status === 'approved') {
-                    msg =  'Case is already approved!'
-                } else if (result && action === result.transfer_status) {
-                    msg = request.params.action + ' is already in process!'               
-                } else if (request.params.action === 'approve') {
-                    if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
-                        msg =  'Only the destination unit is allowed to approve!'
-                    } else if (result.transfer_status !== 'pending') {
-                        msg =  'Only pending transfer cases are allow to approve!'
-                    } else {
-                        return reply(result)
-                    }
-                } else if (request.params.action === 'decline') {
-                    if (result.transfer_to_unit_id.toString() !== user.unit_id._id.toString()) {
-                        msg =  'Only the destination unit is allowed to decline!'
-                    } else if (result.transfer_status !== 'pending') {
-                        msg =  'Only pending transfer cases are allow to decline!'
-                    } else {
-                        return reply(result)
-                    }
-                } else if (request.params.action === 'abort') {
-                    if (result.transfer_from_unit_id.toString() !== user.unit_id._id.toString()) {
-                        msg =  'Only the transfer creator is allowed to abort!'
-                    } else {
-                        return reply(result)
-                    }
-                }
-                
-                return reply({
-                    status: 422,
-                    message: msg,
-                    data: null
-                }).code(422).takeover()
-            })
-        },
-        assign: 'is_case_allow_to_action'
-    }
-}
-
 module.exports ={
     countCaseByDistrict,
     countCasePendingByDistrict,
@@ -381,8 +246,4 @@ module.exports ={
     checkCaseIsExists,
     getDetailCase,
     checkCaseIsAllowToDelete,
-    getTransferCasebyId,
-    CheckCaseIsAllowToTransfer,
-    CheckIsTransferActionIsAllow,
-    CheckCredentialUnitIsExist,
 }

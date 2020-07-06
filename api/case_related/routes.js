@@ -11,5 +11,15 @@ module.exports = (server) => {
             },
             handler: handlers.caseRelatedList,
         },
+        {
+            method: 'GET',
+            path: '/case-related/{id_case}',
+            config: {
+                auth: 'jwt',
+                description: 'get by case related',
+                tags: ['api', 'case related'],
+            },
+            handler: handlers.caseRelatedById,
+        },
     ]
 }

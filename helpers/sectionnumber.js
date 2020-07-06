@@ -1,5 +1,5 @@
 const Check = require('../helpers/rolecheck');
-const Filter = require('../helpers/casefilter');
+const Filter = require('../helpers/filter/casefilter');
 
 const conditionConfirmResult = async (user, query) => {
   const search = Check.countByRole(user);

@@ -1,10 +1,9 @@
 'use strict';
-
 const Glue = require('glue');
-const mongoose = require('mongoose');
-
 const manifest = require('./config/manifest');
-const db = require('./config/config');
+const config = require('./config/config')
+const Sentry = require("@sentry/node")
+
 
 if (!process.env.PRODUCTION) {
   manifest.registrations.push({
@@ -19,13 +18,9 @@ Glue.compose(manifest, { relativeTo: __dirname }, (err, server) => {
   if (err) {
     console.log('server.register err:', err);
   }
+  
+  Sentry.init(config.sentry)
   server.start(() => {
     console.log('✅  Server is listening on ' + server.info.uri.toLowerCase());
   });
 });
-
- // cek koneksi database 
-//  mongoose.connect(db.database.uri, {useNewUrlParser: true, useUnifiedTopology: true});
-//  mongoose.connection.on('error', console.error.bind(console, 'Connection error.'));
-//  mongoose.connection.once('open', function() {console.log("✅  Connected to database. success!");
-//  }); 

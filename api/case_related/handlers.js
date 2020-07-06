@@ -26,5 +26,13 @@ module.exports = (server) => {
                 }
             )
         },
+        async caseRelatedById(request, reply){
+            server.methods.services.case_related.getById(request.params.id_case,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+                    return reply(caseRelatedResponse(result,request)).code(200);
+                }
+            )
+        },
     } //end
 }

@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 require('../models/Case');
 const Case = mongoose.model('Case');
 const Check = require('../helpers/rolecheck');
-const Filter = require('../helpers/casefilter');
-const _ = require('lodash')
+const Filter = require('../helpers/filter/casefilter');
 
 const listCaseRelated = async (query, user, callback) => {
     try {
@@ -17,7 +16,21 @@ const listCaseRelated = async (query, user, callback) => {
         };
         const searching = Object.assign(condition, staticParam);
         const res = await Case.find({$or: [searching]});
-        const result = _.groupBy(res, 'id_case_related');
+        const resultEdges = res.map(rowEdges => rowEdges.EdgesOutput());
+        const resultNodes = res.map(rowNodes => rowNodes.NodesOutput());
+        const resultJson = {
+            "edges": resultEdges,
+            "nodes": resultNodes,
+        };
+        callback(null, resultJson);
+    } catch (error) {
+        callback(error, null);
+    }
+}
+
+const getByCaseRelated = async (id_case, callback) => {
+    try {
+        const result = await Case.findOne({ 'id_case': id_case });
         callback(null, result);
     } catch (error) {
         callback(error, null);
@@ -27,7 +40,11 @@ const listCaseRelated = async (query, user, callback) => {
 module.exports = [
     {
         name: 'services.case_related.list',
-        method: listCaseRelated
-    }
+        method: listCaseRelated,
+    },
+    {
+        name: 'services.case_related.getById',
+        method: getByCaseRelated,
+    },
 ];
 

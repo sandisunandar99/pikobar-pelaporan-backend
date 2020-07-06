@@ -1,13 +1,16 @@
+const Sentry  = require('@sentry/node')
+
 const register = (server, options, next) => {
 
   const preResponse = (request, reply) => {
     let response = request.response
-
     // console.log('RESPONSE :', response);
-     //console.log('RESPONSE_HEADER:', request.headers);
-     //console.log('SERVER:', server.registrations);
-
+    //console.log('RESPONSE_HEADER:', request.headers);
+    //console.log('SERVER:', server.registrations);
     if (response.isBoom) {
+      
+      Sentry.captureException(response)
+
       const reformated = {}
       reformated.status = response.output.statusCode
       reformated.message = response.output.payload.message
@@ -38,6 +41,7 @@ const register = (server, options, next) => {
   server.register(require('./users'))
   server.register(require('./areas'))
   server.register(require('./cases'))
+  server.register(require('./cases_transfers'))
   server.register(require('./histories'))
   server.register(require('./occupations'))
   server.register(require('./rdt'))
@@ -48,6 +52,7 @@ const register = (server, options, next) => {
   server.register(require('./map'));
   server.register(require('./unit'));
   server.register(require('./case_related'));
+  server.register(require('./cases_revamp'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

@@ -21,7 +21,8 @@ const register = (server, options, next) => {
     require('./LocationTest'),
     require('./Notification'),
     require('./Unit'),
-    require('./Lab')
+    require('./Lab'),
+    require('./CloseContact'),
     
     server.app.db = {
       link: db.db,
@@ -36,7 +37,8 @@ const register = (server, options, next) => {
       RdtHistory: db.model('RdtHistory'),
       LocationTest: db.model('LocationTest'),
       Unit: db.model('Unit'),
-      LocationTest: db.model('Lab')
+      LocationTest: db.model('Lab'),
+      CloseContact: db.model('CloseContact'),
     };
 
     return next();

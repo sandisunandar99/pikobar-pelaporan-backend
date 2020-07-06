@@ -22,6 +22,7 @@ const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
 const { log } = require('console');
+const { isArray } = require('lodash');
 
 
 async function ListRdt (query, user, callback) {
@@ -227,7 +228,10 @@ function GetRdtFaskesSummaryByCities (query, callback) {
 }
 
 function GetRdtHistoryByRdtId (id, callback) {
-  RdtHistory.find({ rdt: id}).exec().then(item => {
+  RdtHistory.find({ rdt: id})
+    .sort({updatedAt: -1})
+    .exec()
+    .then(item => {
     return callback(null, item);
   })
   .catch(err => callback(err, null))
@@ -264,14 +268,14 @@ function createRdt(query, payload, author, pre, callback) {
     code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
     code_tool_tester += pre.count_rdt.count
 
-    let id_case
-    if (payload.source_data === "external" || payload.source_data === "manual") {
-      id_case = "COVID-"
-      id_case += pre.code_dinkes.code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
-      id_case += pre.count_rdt.count
-    }
+    let id_case = null
+    // if (payload.source_data === "external" || payload.source_data === "manual") {
+    //   id_case = "COVID-"
+    //   id_case += pre.code_dinkes.code
+    //   id_case += date.substr(2, 2)
+    //   id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
+    //   id_case += pre.count_rdt.count
+    // }
 
 
     let code = {
@@ -288,22 +292,22 @@ function createRdt(query, payload, author, pre, callback) {
     let rdt = new Rdt(Object.assign(code, payload))
     rdt = Object.assign(rdt, {author})
     
-    if (rdt.address_district_code === author.code_district_city) {
-        let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
-        rdt_history.save((err, item) => {
-          if (err) return callback(err, null);
-          
-          //TODO: for send sms and whatsap message efter input test result
-          // sendMessagesSMS(rdt)
-          // sendMessagesWA(rdt)
+    
+    let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+    rdt_history.save((err, item) => {
+      if (err) return callback(err, null);
+      
+      //TODO: for send sms and whatsap message efter input test result
+      // sendMessagesSMS(rdt)
+      // sendMessagesWA(rdt)
 
-          let last_history = {last_history: item._id}
-          rdt = Object.assign(rdt, last_history)
-          rdt.save()
+      let last_history = {last_history: item._id}
+      rdt = Object.assign(rdt, last_history)
+      rdt.save()
 
-          return callback(null, rdt);
-        });
-    }
+      return callback(null, rdt);
+    });
+    
 
   } else {
     // find existing Rdt by nik & phone_number
@@ -333,9 +337,9 @@ function createRdt(query, payload, author, pre, callback) {
             payload = Object.assign(payload, count_test_tool)
             rdt = Object.assign(rdt, payload);
 
-            if (rdt.address_district_code === author.code_district_city) {
-              return rdt.save();
-            }
+            
+            return rdt.save();
+            
 
           } else {
             // if rdt not found, create new rdt
@@ -370,14 +374,14 @@ function createRdt(query, payload, author, pre, callback) {
             code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
             code_tool_tester += pre.count_rdt.count
 
-            let id_case
-            if (payload.source_data === "external" || payload.source_data === "manual") {
-                    id_case = "COVID-"
-                    id_case += pre.code_dinkes.code
-                    id_case += date.substr(2, 2)
-                    id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
-                    id_case += pre.count_rdt.count
-            }
+            let id_case = null
+            // if (payload.source_data === "external" || payload.source_data === "manual") {
+            //         id_case = "COVID-"
+            //         id_case += pre.code_dinkes.code
+            //         id_case += date.substr(2, 2)
+            //         id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
+            //         id_case += pre.count_rdt.count
+            // }
 
             let code = {
               code_test: code_test,
@@ -393,30 +397,29 @@ function createRdt(query, payload, author, pre, callback) {
             let rdt = new Rdt(Object.assign(code, payload))
             rdt = Object.assign(rdt,{author})
             
-            if (rdt.address_district_code === author.code_district_city) {
-              return rdt.save();
-            }
+            
+            return rdt.save();
+            
           
           }
       })
       .then( (rdt) => {
           // whatever happen always create new TestHistory
-          if (rdt.address_district_code === author.code_district_city) {
-              let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
-              rdt_history.save((err, item) => {
-                if (err) return callback(err, null);
-                
-                //TODO: for send sms and whatsap message efter input test result
-                // sendMessagesSMS(rdt)
-                // sendMessagesWA(rdt)
+            let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+            rdt_history.save((err, item) => {
+              if (err) return callback(err, null);
+              
+              //TODO: for send sms and whatsap message efter input test result
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
 
-                let last_history = {last_history: item._id}
-                rdt = Object.assign(rdt, last_history)
-                rdt.save()
+              let last_history = {last_history: item._id}
+              rdt = Object.assign(rdt, last_history)
+              rdt.save()
 
-                return callback(null, rdt);
-              });
-          }
+              return callback(null, rdt);
+            });
+          
       })
       .catch( (err) => callback(err, null));
   }
@@ -492,21 +495,20 @@ function createRdtMultiple(payload, author, pre, callback) {
               let rdt = new Rdt(Object.assign(codes, result))
               rdt = Object.assign(rdt,{author})
 
-              if (rdt.address_district_code === author.code_district_city) {
-                return rdt.save();
-              }
+            
+              return rdt.save();
+             
 
             }
         }).then((rdts) => {
             // whatever happen always create new TestHistory
-            if (rdts.address_district_code === author.code_district_city) {
-              let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
-              return rdt_history.save((err, item) => {
-                if (err) console.log(err)
-                // sendMessagesSMS(rdts)
-                // sendMessagesWA(rdts)
-              });
-            }
+            let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
+            return rdt_history.save((err, item) => {
+              if (err) console.log(err)
+              // sendMessagesSMS(rdts)
+              // sendMessagesWA(rdts)
+            });
+            
 
         }).catch( (err) => console.log(err));
       
@@ -754,8 +756,8 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 }
 
 function getDatafromExternal(address_district_code, search, callback) {
-
-   https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+  let Url = process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+   https.get(Url, (res) => {
      let data = '';
      // A chunk of data has been recieved.
      res.on('data', (chunk) => {
@@ -793,8 +795,8 @@ function FormSelectIdCaseDetail(search_internal, search_external, callback) {
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
-
-    https.get(process.env.URL_PENDAFTARAN_COVID + '&mode=bykeyword' +'&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code, (res) => {
+ let Url = process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+  https.get(Url, (res) => {
       let data = '';
       // A chunk of data has been recieved.
       res.on('data', (chunk) => {
@@ -804,7 +806,7 @@ function seacrhFromExternal(address_district_code, search, callback) {
       res.on('end', () => {
         let jsonData = JSON.parse(data)
         let result = jsonData.data.content
-
+        
         let outputData = {}
         result.forEach(val => {
           outputData = val
@@ -812,6 +814,7 @@ function seacrhFromExternal(address_district_code, search, callback) {
         let concate ={
           id: null,
           id_case: null,
+          source_data: "external"
         }
         let res = Object.assign(outputData, concate)
         return callback(null, res)

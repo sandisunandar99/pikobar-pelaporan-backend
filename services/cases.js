@@ -36,6 +36,7 @@ async function ListCase (query, user, callback) {
   };  
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : Helper.jsonParse(query.sort))
+  
   const options = {
     page: query.page,
     limit: query.limit,
@@ -63,6 +64,9 @@ async function ListCase (query, user, callback) {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
+  }
+  if(query.stage){
+    params.stage = query.stage;
   }
   if(query.status){
     params.status = query.status;
