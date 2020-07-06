@@ -6,15 +6,15 @@ const User =  require('../models/User');
 const Notification = require('../models/Notification');
 const Notif = require('../helpers/notification');
 const Validate = require('../helpers/cases/revamp/handlerpost');
-const Conf = require('../helpers/constant.json');
+const { VERIFIED_STATUS, ROLE } = require('../helpers/constant');
 
 const createCaseRevamp = async (raw_payload, author, pre, callback) => {
   let verified = {
-    'verified_status': Conf.VERIFIED_STATUS_VERIFIED,
+    'verified_status': VERIFIED_STATUS.VERIFIED,
   };
 
-  if (author.role === Conf.ROLE_2) {
-    verified.verified_status = Conf.VERIFIED_STATUS_PENDING;
+  if (author.role === ROLE.FASKES) {
+    verified.verified_status = VERIFIED_STATUS.PENDING;
   };
 
   const id_case = Validate.generateIdCase(author, pre);
