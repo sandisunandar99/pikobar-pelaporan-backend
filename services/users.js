@@ -136,7 +136,7 @@ const updateUsers = async (id, pay, category, author, callback) => {
     }
     const params = Object.assign(payload, payloads);
     const result = await User.findByIdAndUpdate(id,
-      { $set: params }, { new: true });
+      { $set: params }, { runValidators: true, context: 'query', new: true });
     callback(null, result);
   } catch (error) {
     callback(error, null);
