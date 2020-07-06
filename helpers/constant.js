@@ -32,6 +32,10 @@ module.exports = {
                     type: Date,
                     default: null
                 },
+                NOW: {
+                    type: Date,
+                    default: Date.now()
+                },
             },
             NUMBER: {
                 DEFAULT: {

@@ -20,7 +20,7 @@ const REF_USER = {
  
 const CloseContactReportSchema = new mongoose.Schema({
     interviewer_name: TYPE.STRING.REQUIRED,
-    contact_tracing_date: { type:Date, default:Date.now() },
+    contact_tracing_date: TYPE.DATE.NOW,
     nik : TYPE.STRING.REQUIRED,
     name : TYPE.STRING.REQUIRED,
     phone_number : TYPE.STRING.DEFAULT,
