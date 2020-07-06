@@ -32,21 +32,19 @@ const jsonParse = (str) => {
     }
 }
 
-const isDirty = (oldData, newData) => {  
-    if (!isObject(oldData) || !isObject(newData)) return
-    
+const isDirty = (oldData, newData) => {     
     function isEqual (a, b) {
         if (Array.isArray(a))
-            return JSON.stringify(a) == JSON.stringify(b)
-        if (a instanceof Date)
-            return a.toISOString().slice(0,10) == b
-        else return a == b
+            return JSON.stringify(a) === JSON.stringify(b)
+        else if (typeof(a) == 'object')
+            return String(a) === String(b)
+        return a === b
     }
 
     let result = false
     let changed_props = [];
     for (let prop in newData) {
-        if (typeof oldData[prop] == 'undefined') continue
+        if (typeof oldData[prop] === 'undefined') continue
         if (!isEqual(oldData[prop], newData[prop])) {
             result = true
             changed_props.push(prop)

@@ -31,7 +31,7 @@ async function create (caseId, payload, callback) {
     result = await result.save()
 
     return callback(null, result)
-  } catch (error) {
+  } catch (e) {
     return callback(e, null)
   }
 }
@@ -41,7 +41,7 @@ async function softDelete (id, author, callback) {
     const payload = custom.deletedSave({}, author)
     const result = CloseContact.findByIdAndUpdate(id, payload)
     return callback(null, result)
-  } catch (error) {
+  } catch (e) {
     return callback(e, null)
   }
 }

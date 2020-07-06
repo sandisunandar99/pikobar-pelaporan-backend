@@ -34,15 +34,46 @@ module.exports = (server) => {
             server.methods.services.closeContacts.create(
                 request.params.caseId,
                 request.payload,
-                request.pre,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                (errA, resultA) => {
+                    if (errA) return reply(replyHelper.constructErrorResponse(errA)).code(422)
+
                     return reply(
-                        constructCasesResponse(result,request)
+                        constructCasesResponse(resultA,request)
                     ).code(200)
                 })
         },
+        /**
+         * POST /api/cases/{id}/close-contacts?is_reported=true
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CreateWithReport(request, reply){
+            server.methods.services.closeContacts.create(
+                request.params.caseId,
+                request.payload,
+                (err, closeContact) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
+                    server.methods.services.closeContactReport.create(
+                        closeContact._id,
+                        request.payload,
+                        (err, report) => {
+                            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        
+                            server.methods.services.closeContactReportHistories.create(
+                                report._id,
+                                request.payload.latest_report_history,
+                                (err, history) => {
+                                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                                    
+                                    const res = Object.assign(report, { latest_report_history: history })
+                                    return reply(
+                                        constructCasesResponse(res, request)
+                                    ).code(200)
+                                })
+                        })
+                })
+        },
         /**
          * DELETE /api/cases/{caseId}/close-contacts/{id}
          * @param {*} request
@@ -51,6 +82,7 @@ module.exports = (server) => {
         async Delete(request, reply) {          
             server.methods.services.closeContacts.delete(
                 request.params.id,
+                request.auth.credentials.user,
                 request.payload,
                 (err, item) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

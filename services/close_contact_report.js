@@ -10,8 +10,8 @@ async function eventCreate (closeContact) {
     await CloseContact.findByIdAndUpdate(closeContact, {
       is_reported: true
     })
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    console.log(e)
   }
 }
 
@@ -23,8 +23,8 @@ async function show (closeContact, callback) {
       .populate('latest_report_history')
 
     return callback(null, result)
-  } catch (error) {
-    return callback(error, null)
+  } catch (e) {
+    return callback(e, null)
   }
 }
 
@@ -39,8 +39,8 @@ async function create (closeContact, raw_payload, callback) {
 
     eventCreate(closeContact)
     return callback(null, result)
-  } catch (error) {
-    return callback(error, null)
+  } catch (e) {
+    return callback(e, null)
   }
 }
 
@@ -54,8 +54,8 @@ async function update (closeContact, raw_payload, callback) {
       { new: true })
 
     return callback(null, result)
-  } catch (error) {
-    return callback(error, null)
+  } catch (e) {
+    return callback(e, null)
   }
 }
 

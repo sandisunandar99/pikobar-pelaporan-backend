@@ -1,11 +1,13 @@
 const uniqueValidator = require('mongoose-unique-validator')
 const validateOptions = { message: 'This Close contact already has a report' }
 const mongoose = require('mongoose')
+const consts = require('../helpers/constants')
+
 const refCloseContact = {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'CloseContact',
     unique: true,
-    required: [true, "can't be blank"]
+    required: true
 }
 const refCloseContactReportHistory = {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,26 +15,26 @@ const refCloseContactReportHistory = {
 }
  
 const CloseContactReportSchema = new mongoose.Schema({
-    contact_interviewer_name: { type: String, required: [true, "can't be blank"]},
-    contact_tracing_date: {type:Date, default:Date.now()},
-    identity_nik : { type: String, required: [true, "can't be blank"]},
-    identity_name : { type: String, required: [true, "can't be blank"]},
-    identity_phone_number : { type: String, default:null},
-    identity_birth_date : { type: Date},
-    identity_age : {type:Number, default:0},
-    identity_gender : { type: String },
-    identity_address_province_code: { type: String, default:32},
-    identity_address_province_name: { type: String, default:"Jawa Barat"},
-    identity_address_district_code: { type: String, required: [true, "can't be blank"]},
-    identity_address_district_name: { type: String, required: [true, "can't be blank"]},
-    identity_address_subdistrict_code: { type: String, required: [true, "can't be blank"]},
-    identity_address_subdistrict_name: { type: String, required: [true, "can't be blank"]},
-    identity_address_village_code: { type: String, required: [true, "can't be blank"]},
-    identity_address_village_name: { type: String, required: [true, "can't be blank"]},
-    identity_address_rw: {type:String},
-    identity_address_rt: {type:String},
-    identity_address_street : {type:String},
-    identity_family_relationship : {type:String},
+    interviewer_name: { type: String, required: true},
+    contact_tracing_date: { type:Date, default:Date.now() },
+    nik : { type: String, required: true },
+    name : { type: String, required: true },
+    phone_number : String,
+    birth_date : Date,
+    age : { type:Number, default: 0 },
+    gender : { type: String, enum: [consts.GENDER.MALE, consts.GENDER.FEMALE] },
+    address_province_code: { type: String, default: consts.DEFAULT_PROVINCE.CODE },
+    address_province_name: { type: String, default: consts.DEFAULT_PROVINCE.NAME },
+    address_district_code: { type: String, required: true },
+    address_district_name: { type: String, required: true },
+    address_subdistrict_code: { type: String, required: true },
+    address_subdistrict_name: { type: String, required: true },
+    address_village_code: { type: String, required: true },
+    address_village_name: { type: String, required: true },
+    address_rw: String,
+    address_rt: String,
+    address_street : String,
+    relationship : String,
     travel_contact_date: Date,
     trevel_is_went_abroad: Boolean,
     travel_visited_country: String,

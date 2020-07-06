@@ -1,3 +1,6 @@
+const inputValidations = require('./validations/input')
+const reportInputValidations = require('../close_contact_report/validations/input')
+
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
@@ -20,9 +23,22 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new close contacts',
                 tags: ['api', 'cases', 'close.contacts'],
+                validate: inputValidations.RequestPayload,
                 pre: [ getCasebyId ]
             },
             handler: handlers.Create
+        },
+        {
+            method: 'POST',
+            path: '/cases/{caseId}/close-contacts-with-report',            
+            config: {
+                auth: 'jwt',
+                description: 'create new close contacts',
+                tags: ['api', 'cases', 'close.contacts'],
+                validate: reportInputValidations.RequestPayload,
+                pre: [ getCasebyId ]
+            },
+            handler: handlers.CreateWithReport
         },
         {
             method: 'DELETE',

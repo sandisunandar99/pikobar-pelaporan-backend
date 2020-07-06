@@ -1,3 +1,5 @@
+const inputValidations = require('./validations/input')
+
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
@@ -11,6 +13,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new close contacts report',
                 tags: ['api', 'cases', 'close.contacts.reports'],
+                validate: inputValidations.RequestPayload,
                 pre: [ getCloseContactbyId ]
             },
             handler: handlers.Create
@@ -22,6 +25,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new close contacts',
                 tags: ['api', 'cases', 'close.contacts'],
+                validate: inputValidations.RequestPayload,
                 pre: [
                     getCloseContactbyId,
                     getReportbyCloseContactId
