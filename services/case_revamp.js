@@ -69,7 +69,7 @@ const checkIfExisting = async (query, callback) => {
     const gets = await CasesRevamp.find({
       $or: [{'nik': query.params }]
     });
-    check = gets.length > 0 ? true : false;
+    check = gets.length > 0;
   } else {
     check = 'parameter not set';
   }
