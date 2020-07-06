@@ -41,6 +41,15 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
 
   insert_id_case.author_district_code = author.code_district_city;
   insert_id_case.author_district_name = author.name_district_city;
+  insert_id_case.fasyankes_type = author.role;
+  insert_id_case.fasyankes_code = author._id;
+  insert_id_case.fasyankes_name = author.fullname;
+  insert_id_case.fasyankes_province_code = author.address_province_code;
+  insert_id_case.fasyankes_province_name = author.address_province_name;
+  insert_id_case.fasyankes_subdistrict_code = author.address_subdistrict_code;
+  insert_id_case.fasyankes_subdistrict_name = author.address_subdistrict_name;
+  insert_id_case.fasyankes_village_code = author.address_village_code;
+  insert_id_case.fasyankes_village_name = author.address_village_name;
 
   let item = new CasesRevamp(Object.assign(insert_id_case, { author }));
 
@@ -50,10 +59,6 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
 
     if (raw_payload.current_hospital_id == "") {
       raw_payload.current_hospital_id = null;
-    }
-
-    if (raw_payload.first_symptom_date == "") {
-      raw_payload.first_symptom_date = Date.now();
     }
 
     const history = new HistoryRevamp(Object.assign(raw_payload, c));
@@ -73,10 +78,27 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
   }
 }
 
+const checkIfExisting = async (query, callback) => {
+  let check;
+  if (query.params) {
+    const gets = await CasesRevamp.find({
+      $or: [{'nik': query.params }]
+    });
+    check = (gets.length > 0 ? true : false);
+  } else {
+    check = 'parameter not set';
+  }
+  callback(null, check);
+}
+
 module.exports = [
   {
     name: 'services.cases_revamp.create',
     method: createCaseRevamp,
+  },
+  {
+    name: "services.cases_revamp.checkIfExisting",
+    method: checkIfExisting,
   },
 ];
 

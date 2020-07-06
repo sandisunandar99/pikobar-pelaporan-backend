@@ -16,18 +16,30 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async CreateCaseRevamp(request, reply){
+        async CreateCaseRevamp(request, reply) {
             let payload = request.payload
             server.methods.services.cases_revamp.create(
                 payload,
                 request.auth.credentials.user,
                 request.pre,
                 (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-                return reply(
-                    constructCasesRevampResponse(result,request)
-                ).code(200);
-            })
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+                    return reply(
+                        constructCasesRevampResponse(result, request)
+                    ).code(200);
+                })
+        },
+        /**
+         * GET /api/cases-revamp/{params}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async CheckIfExisting(request, reply) {
+            server.methods.services.cases_revamp.checkIfExisting(
+                request.query, (err, listCase) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+                    return reply(constructCasesRevampResponse(listCase));
+                });
         },
     }
 }
