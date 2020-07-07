@@ -40,7 +40,7 @@ const isDirty = (oldData, newData) => {
     function isEqual (a, b) {
         if (Array.isArray(a))
             return JSON.stringify(a) === JSON.stringify(b)
-        else if (typeof(a) == 'object')
+        else if (typeof(a) === 'object')
             return String(a) === String(b)
         return a === b
     }
