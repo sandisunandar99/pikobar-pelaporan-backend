@@ -14,7 +14,7 @@ module.exports = (server) =>{
                 description: 'show list of all close-contacts',
                 tags: ['api', 'cases', 'close.contacts']
             },
-            handler: handlers.List
+            handler: handlers.ListCloseContactCase
         },
         {
             method: 'POST',
@@ -26,7 +26,7 @@ module.exports = (server) =>{
                 validate: inputValidations.RequestPayload,
                 pre: [ getCasebyId ]
             },
-            handler: handlers.Create
+            handler: handlers.CreateCloseContact
         },
         {
             method: 'POST',
@@ -38,7 +38,7 @@ module.exports = (server) =>{
                 validate: reportInputValidations.RequestPayload,
                 pre: [ getCasebyId ]
             },
-            handler: handlers.CreateWithReport
+            handler: handlers.CreateCloseContactWithReport
         },
         {
             method: 'DELETE',
@@ -49,7 +49,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases', 'close.contacts'],
                 pre: [ getCasebyId ]
             },
-            handler: handlers.Delete
+            handler: handlers.DeleteCloseContact
         }
     ]
 }

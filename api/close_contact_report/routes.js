@@ -16,7 +16,7 @@ module.exports = (server) =>{
                 validate: inputValidations.RequestPayload,
                 pre: [ getCloseContactbyId ]
             },
-            handler: handlers.Create
+            handler: handlers.CreateCloseContactReport
         },
         {
             method: 'PUT',
@@ -31,7 +31,7 @@ module.exports = (server) =>{
                     getReportbyCloseContactId
                 ]
             },
-            handler: handlers.Update
+            handler: handlers.UpdateCloseContactReport
         },
         {
             method: 'GET',
@@ -42,7 +42,7 @@ module.exports = (server) =>{
                 tags: ['api', 'cases', 'close.contacts'],
                 pre: [ getCloseContactbyId ]
             },
-            handler: handlers.Show
+            handler: handlers.DetailCloseContactReport
         }
     ]
 }

@@ -9,7 +9,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async Create(request, reply){
+        async CreateCloseContactReport(request, reply){
             server.methods.services.closeContactReport.create(
                 request.params.closeContactId,
                 request.auth.credentials.user,
@@ -33,7 +33,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async Show(request, reply) {
+        async DetailCloseContactReport(request, reply) {
             server.methods.services.closeContactReport.show(
                 request.params.closeContactId,
                 (err, result) => {
@@ -46,7 +46,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async Update(request, reply){
+        async UpdateCloseContactReport(request, reply){
             const currentHistory = request.pre.close_contact_report.latest_report_history
             const requestHistory = request.payload.latest_report_history
             const isDirty = Helper.isDirty(currentHistory, requestHistory)

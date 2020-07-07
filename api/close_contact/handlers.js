@@ -7,7 +7,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async List(request, reply){
+        async ListCloseContactCase(request, reply){
             server.methods.services.closeContacts.index(
                 request.params.caseId, 
                 (err, result) => {
@@ -20,7 +20,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async Create(request, reply){
+        async CreateCloseContact(request, reply){
             server.methods.services.closeContacts.create(
                 request.params.caseId,
                 request.auth.credentials.user,
@@ -35,7 +35,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async CreateWithReport(request, reply){
+        async CreateCloseContactWithReport(request, reply){
             server.methods.services.closeContacts.create(
                 request.params.caseId,
                 request.auth.credentials.user,
@@ -67,7 +67,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async Delete(request, reply) {          
+        async DeleteCloseContact(request, reply) {          
             server.methods.services.closeContacts.delete(
                 request.params.id,
                 request.auth.credentials.user,
