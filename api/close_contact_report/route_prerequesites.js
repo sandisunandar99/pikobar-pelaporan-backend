@@ -1,3 +1,4 @@
+const { ERRORS, HTTP } = require('../../helpers/constant')
 const replyHelper = require('../helpers')
 
 const getCloseContactbyId = server => {
@@ -5,12 +6,14 @@ const getCloseContactbyId = server => {
         method: (request, reply) => {
              let id = request.params.closeContactId
              server.methods.services.closeContacts
-                .show(id, (err, item) => {
-                    if (err) {
-                        return reply(replyHelper.constructErrorResponse(err))
-                            .code(422).takeover()
+                .show(id, (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err).takeover()
+                    if (!result) {
+                        return replyHelper.messageResponse(reply,
+                            ERRORS.INVALID.PARAMS_VALUE, HTTP.UNPROCESSABLE_ENTITY
+                        ).takeover()
                     }
-                    return reply(item)
+                    return reply(result)
                 })
         },
         assign: 'close_contact'
@@ -22,12 +25,14 @@ const getReportbyCloseContactId = server => {
         method: (request, reply) => {
              let id = request.params.closeContactId
              server.methods.services.closeContactReport
-                .show(id, (err, item) => {
-                    if (err) {
-                        return reply(replyHelper.constructErrorResponse(err))
-                            .code(422).takeover()
+                .show(id, (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err).takeover()
+                    if (!result) {
+                        return replyHelper.messageResponse(reply,
+                            ERRORS.INVALID.PARAMS_VALUE, HTTP.UNPROCESSABLE_ENTITY
+                        ).takeover()
                     }
-                    return reply(item)
+                    return reply(result)
                 })
         },
         assign: 'close_contact_report'

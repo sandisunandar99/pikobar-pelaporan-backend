@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const consts = require('../helpers/constant')
-const { TYPE } = require('../helpers/constant').MONGOOSE_SCHEMA
+const { TYPE } = require('./helpers').MONGOOSE_SCHEMA
 
 const REF_CLOSE_CONTACT = {
     type: mongoose.Schema.Types.ObjectId,
@@ -21,11 +21,13 @@ const REF_USER = {
 const CloseContactReportSchema = new mongoose.Schema({
     interviewer_name: TYPE.STRING.REQUIRED,
     contact_tracing_date: TYPE.DATE.NOW,
-    nik : TYPE.STRING.REQUIRED,
+    nik : TYPE.STRING.DEFAULT,
+    nik_note : TYPE.STRING.DEFAULT,
     name : TYPE.STRING.REQUIRED,
     phone_number : TYPE.STRING.DEFAULT,
+    phone_number_note : TYPE.STRING.DEFAULT,
     birth_date : TYPE.DATE.DEFAULT,
-    age : TYPE.NUMBER.DEFAULT,
+    age : TYPE.NUMBER.REQUIRED,
     gender: TYPE.STRING.ENUM([consts.GENDER.MALE, consts.GENDER.FEMALE]),
     address_province_code: TYPE.STRING.DEFAULT_VALUE(consts.DEFAULT_PROVINCE.CODE),
     address_province_name: TYPE.STRING.DEFAULT_VALUE(consts.DEFAULT_PROVINCE.NAME),
@@ -38,17 +40,17 @@ const CloseContactReportSchema = new mongoose.Schema({
     address_rw: TYPE.STRING.DEFAULT,
     address_rt: TYPE.STRING.DEFAULT,
     address_street : TYPE.STRING.DEFAULT,
-    relationship : TYPE.STRING.DEFAULT,
-    travel_contact_date: TYPE.DATE.DEFAULT,
+    relationship : TYPE.STRING.REQUIRED,
+    travel_contact_date: TYPE.DATE.REQUIRED,
     trevel_is_went_abroad: TYPE.BOOLEAN.DEFAULT,
     travel_visited_country: TYPE.STRING.DEFAULT,
     travel_is_went_other_city : TYPE.BOOLEAN.DEFAULT,
     travel_visited_city : TYPE.STRING.DEFAULT,
     travel_depart_date : TYPE.DATE.DEFAULT,
     travel_return_date : TYPE.DATE.DEFAULT,
-    travel_occupation: TYPE.STRING.DEFAULT,
+    travel_occupation: TYPE.STRING.REQUIRED,
     travel_address_office: TYPE.STRING.DEFAULT,
-    travel_transportations: TYPE.ARRAY.DEFAULT,
+    travel_transportations: TYPE.ARRAY.REQUIRED,
     home_contact_date: TYPE.DATE.DEFAULT,
     home_contact_durations: TYPE.STRING.DEFAULT,
     home_contact_days: TYPE.STRING.DEFAULT,
@@ -57,6 +59,8 @@ const CloseContactReportSchema = new mongoose.Schema({
     officer_protection_tools: TYPE.ARRAY,
     close_contact : REF_CLOSE_CONTACT,
     latest_report_history : REF_CLOSE_CONTACT_REPORT_HISTORY,
+    createdBy: REF_USER,
+    updatedBy: REF_USER,
     delete_status: TYPE.STRING.DEFAULT,
     deletedAt: TYPE.DATE.DEFAULT,
     deletedBy: REF_USER,

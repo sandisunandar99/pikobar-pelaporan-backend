@@ -1,7 +1,7 @@
 require('../models/User')
 require('../models/CloseContact')
 require('../models/CloseContactReport')
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const CloseContact = mongoose.model('CloseContact')
 const CloseContactReport = mongoose.model('CloseContactReport')
 
@@ -28,12 +28,12 @@ async function show (closeContact, callback) {
   }
 }
 
-async function create (closeContact, raw_payload, callback) {
+async function create (closeContact, authorized, raw_payload, callback) {
   try {
-    
     const { latest_report_history, ...payload } = raw_payload
     let result = new CloseContactReport(Object.assign(payload, {
-      close_contact: closeContact
+      close_contact: closeContact,
+      createdBy: authorized
     }))
     result = await result.save()
 
@@ -44,13 +44,12 @@ async function create (closeContact, raw_payload, callback) {
   }
 }
 
-async function update (closeContact, raw_payload, callback) {
+async function update (closeContact, authorized, raw_payload, callback) {
   try {
-    delete raw_payload.closeContact
     const { latest_report_history, ...payload } = raw_payload
     const params = { close_contact: closeContact }
     const result = await CloseContactReport.findOneAndUpdate(params,
-      { $set: payload },
+      { $set: { ...payload, updatedBy: authorized} },
       { new: true })
 
     return callback(null, result)

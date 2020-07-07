@@ -1,3 +1,4 @@
+const { ERRORS, HTTP } = require('../../helpers/constant')
 const replyHelper = require('../helpers')
 
 const getCasebyId = server => {
@@ -5,12 +6,14 @@ const getCasebyId = server => {
         method: (request, reply) => {
              let id = request.params.caseId
              server.methods.services.cases
-                .getById(id, (err, item) => {
-                    if (err) {
-                        return reply(replyHelper.constructErrorResponse(err))
-                            .code(422).takeover()
+                .getById(id, (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err).takeover()
+                    if (!result) {
+                        return replyHelper.messageResponse(reply,
+                            ERRORS.INVALID.PARAMS_VALUE, HTTP.UNPROCESSABLE_ENTITY
+                        ).takeover()
                     }
-                    return reply(item)
+                    return reply(result)
                 })
         },
         assign: 'cases'

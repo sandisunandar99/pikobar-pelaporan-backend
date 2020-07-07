@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { TYPE } = require('../helpers/constant').MONGOOSE_SCHEMA
+const { TYPE } = require('./helpers').MONGOOSE_SCHEMA
 
 const REF_CLOSE_CONTACT = {
     type: mongoose.Schema.Types.ObjectId,

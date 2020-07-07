@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const consts = require('../helpers/constant')
-const { TYPE } = require('../helpers/constant').MONGOOSE_SCHEMA
+const { TYPE } = require('./helpers').MONGOOSE_SCHEMA
 const REF_CASE = { 
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Case', 
@@ -14,7 +14,7 @@ const REF_USER = {
 
 const CloseContactSchema = new mongoose.Schema({
     case: REF_CASE,
-    name: TYPE.STRING.DEFAULT,
+    name: TYPE.STRING.REQUIRED,
     phone_number: TYPE.STRING.DEFAULT,
     gender: TYPE.STRING.ENUM([consts.GENDER.MALE, consts.GENDER.FEMALE]),
     age: TYPE.NUMBER.DEFAULT,
@@ -22,6 +22,8 @@ const CloseContactSchema = new mongoose.Schema({
     relationship: TYPE.STRING.DEFAULT,
     activity: TYPE.STRING.DEFAULT,
     is_reported: TYPE.BOOLEAN.DEFAULT,
+    createdBy: REF_USER,
+    updatedBy: REF_USER,
     delete_status: TYPE.STRING.DEFAULT,
     deletedAt: TYPE.DATE.DEFAULT,
     deletedBy: REF_USER,

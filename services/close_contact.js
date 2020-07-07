@@ -6,7 +6,11 @@ const CloseContact = mongoose.model('CloseContact')
 
 async function index (caseId, callback) {
   try {
-    const results = await CloseContact.find({ case: caseId })
+    const results = await CloseContact.find({
+      case: caseId,
+      delete_status: { $ne: 'deleted' }
+    })
+    
     return callback(null, results)
   } catch (e) {
     return callback(e, null)
@@ -22,10 +26,11 @@ async function show (id, callback) {
   }
 }
 
-async function create (caseId, payload, callback) {
+async function create (caseId, authorized, payload, callback) {
   try {
     let result = new CloseContact(Object.assign(payload, {
-      case: caseId
+      case: caseId,
+      createdBy: authorized
     }))
     result = await result.save()
 
@@ -35,9 +40,9 @@ async function create (caseId, payload, callback) {
   }
 }
 
-async function softDelete (id, author, callback) {
+async function softDelete (id, authorized, callback) {
   try {
-    const payload = custom.deletedSave({}, author)
+    const payload = custom.deletedSave({}, authorized)
     const result = CloseContact.findByIdAndUpdate(id, payload)
     return callback(null, result)
   } catch (e) {

@@ -94,11 +94,34 @@ function CommentReferenceError (message) {
         message: 'Success',
         data: data
     }).code(code)
-}
+  }
+
+  function messageResponse(reply, message, code) {
+    return reply({
+        status: code,
+        message: message
+    }).code(code)
+  }
 
   module.exports = {
     constructErrorResponse,
     CommentReferenceError,
     successResponse,
+    messageResponse,
     errorResponse
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

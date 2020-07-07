@@ -23,6 +23,7 @@ module.exports = (server) => {
         async Create(request, reply){
             server.methods.services.closeContacts.create(
                 request.params.caseId,
+                request.auth.credentials.user,
                 request.payload,
                 (err, result) => {
                     if (err) return replyHelper.errorResponse(reply, err)
@@ -37,12 +38,14 @@ module.exports = (server) => {
         async CreateWithReport(request, reply){
             server.methods.services.closeContacts.create(
                 request.params.caseId,
+                request.auth.credentials.user,
                 request.payload,
                 (err, closeContact) => {
                     if (err) return replyHelper.errorResponse(reply, err)
 
                     server.methods.services.closeContactReport.create(
                         closeContact._id,
+                        request.auth.credentials.user,
                         request.payload,
                         (err, report) => {
                             if (err) return replyHelper.errorResponse(reply, err)

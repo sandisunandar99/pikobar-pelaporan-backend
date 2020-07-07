@@ -12,6 +12,7 @@ module.exports = (server) => {
         async Create(request, reply){
             server.methods.services.closeContactReport.create(
                 request.params.closeContactId,
+                request.auth.credentials.user,
                 request.payload,
                 (err, result) => {
                     if (err) return replyHelper.errorResponse(reply, err)
@@ -51,6 +52,7 @@ module.exports = (server) => {
             const isDirty = Helper.isDirty(currentHistory, requestHistory)
             server.methods.services.closeContactReport.update(
                 request.params.closeContactId,
+                request.auth.credentials.user,
                 request.payload,
                 (err, result) => {
                     if (err) return replyHelper.errorResponse(reply, err)
