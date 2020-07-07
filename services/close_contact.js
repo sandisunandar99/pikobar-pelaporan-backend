@@ -1,8 +1,5 @@
-require('../models/User')
-require('../models/CloseContact')
-const mongoose = require('mongoose')
 const custom = require('../helpers/custom')
-const CloseContact = mongoose.model('CloseContact')
+const CloseContact = require('../models/CloseContact')
 
 async function index (caseId, callback) {
   try {

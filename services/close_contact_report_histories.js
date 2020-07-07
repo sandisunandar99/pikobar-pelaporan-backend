@@ -1,9 +1,5 @@
-require('../models/CloseContactReport')
-require('../models/CloseContactReportHistory')
-
-const mongoose = require('mongoose');
-const CloseContactReport = mongoose.model('CloseContactReport')
-const CloseContactReportHistory = mongoose.model('CloseContactReportHistory')
+const CloseContactReport = require('../models/CloseContactReport')
+const CloseContactReportHistory = require('../models/CloseContactReportHistory')
 
 async function eventCreate (closeContactReport, insertedReport) {
   try {

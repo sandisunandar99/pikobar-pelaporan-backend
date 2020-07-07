@@ -1,9 +1,5 @@
-require('../models/User')
-require('../models/CloseContact')
-require('../models/CloseContactReport')
-const mongoose = require('mongoose')
-const CloseContact = mongoose.model('CloseContact')
-const CloseContactReport = mongoose.model('CloseContactReport')
+const CloseContact = require('../models/CloseContact')
+const CloseContactReport = require('../models/CloseContactReport')
 
 async function eventCreate (closeContact) {
   try {
