@@ -16,6 +16,7 @@ const CaseSchema = new mongoose.Schema({
     id_case_related : {type:String},
     name_case_related : {type:String},
     name: {type:String},
+    name_parents: {type:String},
     interviewers_name: {type:String,default: null},
     interviewers_phone_number: {type:String,default: null},
     interview_date: { type: Date , default: Date.now()},
