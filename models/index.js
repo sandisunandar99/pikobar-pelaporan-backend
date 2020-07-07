@@ -22,8 +22,6 @@ const register = (server, options, next) => {
     require('./Notification'),
     require('./Unit'),
     require('./Lab'),
-    require('./CasesRevamp'),
-    require('./HistoryRevamp'),
     require('./CloseContact'),
     require('./CloseContactReport'),
     require('./CloseContactReportHistory'),
@@ -42,8 +40,6 @@ const register = (server, options, next) => {
       LocationTest: db.model('LocationTest'),
       Unit: db.model('Unit'),
       LocationTest: db.model('Lab'),
-      CaseRevamp: db.model('CaseRevamp'),
-      HistoryRevamp: db.model('HistoryRevamp'),
       CloseContact: db.model('CloseContact'),
     };
 

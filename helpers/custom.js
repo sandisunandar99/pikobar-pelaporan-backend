@@ -32,6 +32,10 @@ const jsonParse = (str) => {
     }
 }
 
+const convertDate = (dates) => {
+    return new Date(dates.getTime()).toLocaleDateString("id-ID");
+}
+
 const isDirty = (oldData, newData) => {     
     function isEqual (a, b) {
         if (Array.isArray(a))
@@ -55,5 +59,6 @@ const isDirty = (oldData, newData) => {
 }
 
 module.exports = {
-    setPwd, deletedSave, isObject, deleteProps, jsonParse, isDirty
+    setPwd, deletedSave, isObject, deleteProps, jsonParse,
+    convertDate, isDirty
 }

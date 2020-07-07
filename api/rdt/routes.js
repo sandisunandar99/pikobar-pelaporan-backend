@@ -19,6 +19,8 @@ module.exports = (server) =>{
     const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
     const getRegisteredUserfromExternal = require('./route_prerequesites').getRegisteredUserfromExternal(server)
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
+    const cekHistoryCases = require('./route_prerequesites').cekHistoryCases(server)
+    const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
     
     return [
         // Get list case for form
@@ -103,7 +105,9 @@ module.exports = (server) =>{
                     // validationBeforeInput,
                     countRdtCode,
                     // countCaseByDistrict,
-                    getCodeDinkes
+                    getCodeDinkes,
+                    cekHistoryCases,
+                    createHistoryWhenPositif
                 ]
             },
             handler: handlers.CreateRdt

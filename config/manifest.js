@@ -9,12 +9,12 @@ const envKey = key => {
       port: 3333,
     },
     staging: {
-      host: '52.74.74.33',
+      host: '0.0.0.0',
       port: 3333,
     },
     production: {
-      host: process.env.HOST,
-      port: process.env.PORT
+      host: '0.0.0.0',
+      port: 3333,
     }
   };
 

@@ -19,10 +19,8 @@ const HistorySchema = new mongoose.Schema({
     is_contact_with_positive : Boolean,
     history_notes: String,
     is_sample_taken : Boolean,
-
     report_source : { type: String, default: null },
     first_symptom_date : {type : Date, default: Date.now()},
-
     other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
     current_location_type: String,  // RS / RUMAH
@@ -33,6 +31,14 @@ const HistorySchema = new mongoose.Schema({
     current_location_subdistrict_code : String, //kecamatan
     current_location_district_code : String, //kab/kota
     current_location_province_code : {type: String, default: "32"},
+    diagnosis_ards : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
+    diagnosis_covid : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
+    diagnosis_pneumonia : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
+    other_diagnosis: String,
+    serum_check : { type: Boolean, default: null},
+    sputum_check : { type: Boolean, default: null},
+    swab_check : { type: Boolean, default: null},
+    physical_check : {type:Array , default:[]}
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {
