@@ -5,32 +5,19 @@ const CloseContact = require('../models/CloseContact');
 const User =  require('../models/User');
 const Notification = require('../models/Notification');
 const Notif = require('../helpers/notification');
+const Validate = require('../helpers/cases/revamp/handlerpost');
+const { VERIFIED_STATUS, ROLE } = require('../helpers/constant');
 
 const createCaseRevamp = async (raw_payload, author, pre, callback) => {
   let verified = {
-    'verified_status': 'verified',
+    'verified_status': VERIFIED_STATUS.VERIFIED,
   };
 
-  if (author.role === "faskes") {
-    verified.verified_status = 'pending';
+  if (author.role === ROLE.FASKES) {
+    verified.verified_status = VERIFIED_STATUS.PENDING;
   };
 
-  let date = new Date().getFullYear().toString();
-  let id_case;
-
-  if (author.role === 'faskes') {
-    id_case = "precovid-";
-    id_case += pre.count_case_pending.dinkes_code;
-    id_case += date.substr(2, 2);
-    id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length);
-    id_case += pre.count_case_pending.count_pasien;
-  } else {
-    id_case = "covid-";
-    id_case += pre.count_case.dinkes_code;
-    id_case += date.substr(2, 2);
-    id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length);
-    id_case += pre.count_case.count_pasien;
-  }
+  const id_case = Validate.generateIdCase(author, pre);
 
   //TODO: check is verified is not overwritten ?
   let insert_id_case = Object.assign(raw_payload, verified);
@@ -57,9 +44,7 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     const saveCase = await item.save();
     const c = {'case': saveCase._id};
 
-    if (raw_payload.current_hospital_id == "") {
-      raw_payload.current_hospital_id = null;
-    }
+    raw_payload = Validate.validatePost(raw_payload);
 
     const history = new HistoryRevamp(Object.assign(raw_payload, c));
     const saveHistory =  await history.save();
@@ -84,7 +69,7 @@ const checkIfExisting = async (query, callback) => {
     const gets = await CasesRevamp.find({
       $or: [{'nik': query.params }]
     });
-    check = (gets.length > 0 ? true : false);
+    check = gets.length > 0;
   } else {
     check = 'parameter not set';
   }

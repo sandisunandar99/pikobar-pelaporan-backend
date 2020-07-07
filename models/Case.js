@@ -12,6 +12,7 @@ const CaseSchema = new mongoose.Schema({
     // NIK sumber terkait kontak erat
     id_case_national : {type:String},
     nik : { type:String},
+    note_nik: {type: String},
     id_case_related : {type:String},
     name_case_related : {type:String},
     name: {type:String},
@@ -37,6 +38,7 @@ const CaseSchema = new mongoose.Schema({
     rw: { type: Number, default:null},
     office_address: {type:String},
     phone_number: {type:String},
+    note_phone_number: {type: String},
     nationality: {type:String},
     nationality_name: {type: String},
     occupation: {type:String},
