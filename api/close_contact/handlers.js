@@ -7,8 +7,22 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async ListCloseContactCase(request, reply){
+        async ListCloseContact(request, reply){
             server.methods.services.closeContacts.index(
+                request.query,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return replyHelper.errorResponse(reply, err)
+                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                })
+        },
+        /**
+         * GET /api/cases/{caseId}/close-contacts
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCloseContactCase(request, reply){
+            server.methods.services.closeContacts.getByCase(
                 request.params.caseId, 
                 (err, result) => {
                     if (err) return replyHelper.errorResponse(reply, err)

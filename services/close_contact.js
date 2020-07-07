@@ -1,7 +1,23 @@
 const custom = require('../helpers/custom')
+const paginate = require('../helpers/paginate')
 const CloseContact = require('../models/CloseContact')
+const filters = require('../helpers/filter/closecontactfilter')
 
-async function index (caseId, callback) {
+async function index (query, authorized, callback) {
+  try {
+    const sorts = (query.sort == "desc" ? { createdAt: "desc" } : custom.jsonParse(query.sort))
+    const options = paginate.optionsLabel(query, sorts, [])
+    const params = filters.filterCloseContact(query, authorized)
+    const search_params = filters.filterSearch(query)
+    const result = CloseContact.find(params).or(search_params).where('delete_status').ne('deleted')
+    const paginateResult = await CloseContact.paginate(result, options)
+    return callback(null, paginateResult)
+  } catch (e) {
+    return callback(e, null)
+  }
+}
+
+async function getByCase (caseId, callback) {
   try {
     const results = await CloseContact.find({
       case: caseId,
@@ -53,6 +69,10 @@ module.exports = [
     method: index
   },
   {
+    name: 'services.closeContacts.getByCase',
+    method: getByCase
+  },
+  {
     name: 'services.closeContacts.show',
     method: show
   },
@@ -64,5 +84,5 @@ module.exports = [
     name: 'services.closeContacts.create',
     method: create
   }
-];
+]
 

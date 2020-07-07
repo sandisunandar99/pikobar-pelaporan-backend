@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const consts = require('../helpers/constant')
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 const REF_CASE = { 
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Case', 
@@ -28,4 +30,5 @@ const CloseContactSchema = new mongoose.Schema({
     deletedBy: REF_USER,
 }, { timestamps : true });
 
+CloseContactSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('CloseContact', CloseContactSchema)

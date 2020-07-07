@@ -8,10 +8,20 @@ module.exports = (server) =>{
     return [
         {
             method: 'GET',
-            path: '/cases/{caseId}/close-contacts',
+            path: '/close-contacts',
             config: {
                 auth: 'jwt',
                 description: 'show list of all close-contacts',
+                tags: ['api', 'cases', 'close.contacts']
+            },
+            handler: handlers.ListCloseContact
+        },
+        {
+            method: 'GET',
+            path: '/cases/{caseId}/close-contacts',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all close-contacts per-case',
                 tags: ['api', 'cases', 'close.contacts']
             },
             handler: handlers.ListCloseContactCase
