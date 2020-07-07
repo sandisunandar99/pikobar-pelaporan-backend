@@ -18,17 +18,16 @@ const generateIdCase = (author, pre) => {
     let id_case;
     let pasienCount ='';
     let pendingCount = '';
-    let faskesCode = pre.count_case_pending.count_pasien.toString();
-    let maskedNumber = faskesCode.length.padStart(5, 0);
-    let otherCOde = pre.count_case.count_pasien.toString();
-    let otherMaskedNumber = otherCOde.length.padStart(4, 0);
     let dinkesCode = pre.count_case_pending.dinkes_code;
+    let zero = '0';
+    let faskesCode = pre.count_case_pending.count_pasien.toString().length;
+    let otherCode = pre.count_case.count_pasien.toString().length;
     if (author.role === ROLE.FASKES) {
-        pasienCount = maskedNumber;
+        pasienCount = zero.padStart(5 - faskesCode, 0);
         pendingCount = pre.count_case_pending.count_pasien;
         id_case = `${CASE.PRE}${dinkesCode}${dates}${pasienCount}${pendingCount}`;
     } else {
-        pasienCount = otherMaskedNumber;
+        pasienCount = zero.padStart(4 - otherCode, 0);
         pendingCount = pre.count_case.count_pasien;
         id_case = `${CASE.CODE}${dinkesCode}${dates}${pasienCount}${pendingCount}`;
     }
