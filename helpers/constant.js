@@ -30,5 +30,21 @@ module.exports = {
         CREATED: 201,
         UNPROCESSABLE_ENTITY: 422,
         INTERNAL_SERVER_ERROR: 500
+    },
+    REF: {
+        CLOSE_CONTACT: {
+            TYPES: {
+                OTHER: '1',
+                HOME: '2',
+                OFFICER: '3'
+            },
+            PLACES: {
+                OTHER: '1',
+                HOME: '2',
+                WORK: '3',
+                TOUR: '4',
+                MEDICAL: '5'
+            }
+        }
     }
 }

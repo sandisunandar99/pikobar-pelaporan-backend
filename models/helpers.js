@@ -36,6 +36,18 @@ module.exports = {
                     type: Number,
                     default: 0
                 },
+                DEFAULT_VALUE: (value) => {
+                    return {
+                        type: Number,
+                        default: value
+                    }
+                },
+                ENUM: (values) => {
+                    return {
+                        type: Number,
+                        enum: values
+                    }
+                },
                 REQUIRED: {
                     type: Number,
                     required: true
@@ -55,7 +67,7 @@ module.exports = {
                 ENUM: (values) => {
                     return {
                         type: String,
-                        enux: values
+                        enum: values
                     }
                 },
                 REQUIRED: {

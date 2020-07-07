@@ -9,6 +9,7 @@ const REF_CLOSE_CONTACT = {
 
 const CloseContactReportHistorySchema = new mongoose.Schema({
     diagnosis_symptoms: TYPE.ARRAY.DEFAULT,
+    diagnosis_symptoms_date: TYPE.DATE.DEFAULT,
     diagnosis_diseases: TYPE.ARRAY.DEFAULT,
     vaccination_influenza_vaccine: TYPE.BOOLEAN.DEFAULT,
     vaccination_influenza_vaccine_date: TYPE.DATE.DEFAULT,
@@ -16,12 +17,17 @@ const CloseContactReportHistorySchema = new mongoose.Schema({
     vaccination_pvc_vaccine_date: TYPE.DATE.DEFAULT,
     test_nasal_swab: TYPE.BOOLEAN.DEFAULT,
     test_nasal_swab_date: TYPE.DATE.DEFAULT,
+    test_nasal_swab_result: TYPE.STRING.DEFAULT,
     test_throat_swab: TYPE.BOOLEAN.DEFAULT,
     test_throat_swab_date: TYPE.DATE.DEFAULT,
+    test_throat_swab_result: TYPE.STRING.DEFAULT,
     test_nasopharyngeal_swab: TYPE.BOOLEAN.DEFAULT,
     test_nasopharyngeal_swab_date: TYPE.DATE.DEFAULT,
+    test_nasopharyngeal_swab_result: TYPE.STRING.DEFAULT,
     test_orofaringeal_swab: TYPE.BOOLEAN.DEFAULT,
     test_orofaringeal_swab_date: TYPE.DATE.DEFAULT,
+    test_orofaringeal_swab_result: TYPE.STRING.DEFAULT,
+    test_serum: TYPE.BOOLEAN.DEFAULT,
     close_contact_report : REF_CLOSE_CONTACT
 }, { timestamps : true })
 

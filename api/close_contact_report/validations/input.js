@@ -6,6 +6,7 @@ const {
 
 const historyPayload = {
   diagnosis_symptoms: Joi.array(),
+  diagnosis_symptoms_date: Joi.date().allow('', null),
   diagnosis_diseases: Joi.array(),
   vaccination_influenza_vaccine: Joi.boolean(),
   vaccination_influenza_vaccine_date: Joi.date().allow('', null),
@@ -13,12 +14,17 @@ const historyPayload = {
   vaccination_pvc_vaccine_date: Joi.date().allow('', null),
   test_nasal_swab: Joi.boolean(),
   test_nasal_swab_date: Joi.date().allow('', null),
+  test_nasal_swab_result: Joi.string().allow('', null),
   test_throat_swab: Joi.boolean(),
   test_throat_swab_date: Joi.date().allow('', null),
+  test_throat_swab_result: Joi.string().allow('', null),
   test_nasopharyngeal_swab: Joi.boolean(),
   test_nasopharyngeal_swab_date: Joi.date().allow('', null),
+  test_nasopharyngeal_swab_result: Joi.string().allow('', null),
   test_orofaringeal_swab: Joi.boolean(),
-  test_orofaringeal_swab_date: Joi.date().allow('', null)
+  test_orofaringeal_swab_date: Joi.date().allow('', null),
+  test_orofaringeal_swab_result: Joi.string().allow('', null),
+  test_serum: Joi.boolean()
 }
 
 const RequestPayload = {
@@ -58,11 +64,14 @@ const RequestPayload = {
       travel_occupation: Joi.string().required(),
       travel_address_office: Joi.string().allow('', null),
       travel_transportations: Joi.array().required(),
+      contact_type: Joi.number().allow('', null),
+      contact_place: Joi.number().allow('', null),
+      contact_date: Joi.date().allow('', null),
+      contact_durations: Joi.number().allow('', null),
       home_contact_date: Joi.date().allow('', null),
-      home_contact_durations: Joi.string().allow('', null),
-      home_contact_days: Joi.string().allow('', null),
+      home_contact_days: Joi.number().allow('', null),
       home_activities: Joi.array(),
-      is_contact_with_officer: Joi.boolean(),
+      officer_is_contact: Joi.boolean(),
       officer_protection_tools: Joi.array(),
       latest_report_history: historyPayload 
   }),
