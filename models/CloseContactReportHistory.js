@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { TYPE } = require('./helpers').MONGOOSE_SCHEMA
 
 const REF_CLOSE_CONTACT = {
     type: mongoose.Schema.Types.ObjectId,
@@ -8,26 +7,26 @@ const REF_CLOSE_CONTACT = {
 }
 
 const CloseContactReportHistorySchema = new mongoose.Schema({
-    diagnosis_symptoms: TYPE.ARRAY.DEFAULT,
-    diagnosis_symptoms_date: TYPE.DATE.DEFAULT,
-    diagnosis_diseases: TYPE.ARRAY.DEFAULT,
-    vaccination_influenza_vaccine: TYPE.BOOLEAN.DEFAULT,
-    vaccination_influenza_vaccine_date: TYPE.DATE.DEFAULT,
-    vaccination_pvc_vaccine: TYPE.BOOLEAN.DEFAULT,
-    vaccination_pvc_vaccine_date: TYPE.DATE.DEFAULT,
-    test_nasal_swab: TYPE.BOOLEAN.DEFAULT,
-    test_nasal_swab_date: TYPE.DATE.DEFAULT,
-    test_nasal_swab_result: TYPE.STRING.DEFAULT,
-    test_throat_swab: TYPE.BOOLEAN.DEFAULT,
-    test_throat_swab_date: TYPE.DATE.DEFAULT,
-    test_throat_swab_result: TYPE.STRING.DEFAULT,
-    test_nasopharyngeal_swab: TYPE.BOOLEAN.DEFAULT,
-    test_nasopharyngeal_swab_date: TYPE.DATE.DEFAULT,
-    test_nasopharyngeal_swab_result: TYPE.STRING.DEFAULT,
-    test_orofaringeal_swab: TYPE.BOOLEAN.DEFAULT,
-    test_orofaringeal_swab_date: TYPE.DATE.DEFAULT,
-    test_orofaringeal_swab_result: TYPE.STRING.DEFAULT,
-    test_serum: TYPE.BOOLEAN.DEFAULT,
+    diagnosis_symptoms: { type: Array, default: [] },
+    diagnosis_symptoms_date: { type: Date, default: null },
+    diagnosis_diseases: { type: Array, default: [] },
+    vaccination_influenza_vaccine: { type: Boolean, default: false },
+    vaccination_influenza_vaccine_date: { type: Date, default: null },
+    vaccination_pvc_vaccine: { type: Boolean, default: false },
+    vaccination_pvc_vaccine_date: { type: Date, default: null },
+    test_nasal_swab: { type: Boolean, default: false },
+    test_nasal_swab_date: { type: Date, default: null },
+    test_nasal_swab_result: { type: String, default: null },
+    test_throat_swab: { type: Boolean, default: false },
+    test_throat_swab_date: { type: Date, default: null },
+    test_throat_swab_result: { type: String, default: null },
+    test_nasopharyngeal_swab: { type: Boolean, default: false },
+    test_nasopharyngeal_swab_date: { type: Date, default: null },
+    test_nasopharyngeal_swab_result: { type: String, default: null },
+    test_orofaringeal_swab: { type: Boolean, default: false },
+    test_orofaringeal_swab_date: { type: Date, default: null },
+    test_orofaringeal_swab_result: { type: String, default: null },
+    test_serum: { type: Boolean, default: false },
     close_contact_report : REF_CLOSE_CONTACT
 }, { timestamps : true })
 
