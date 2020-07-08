@@ -194,8 +194,11 @@ function getIdCase (query,callback) {
   if(query.status){
     params.status = query.status;
   }
+  if(query.address_district_code){
+    params.address_district_code = query.address_district_code;
+  }
   Case.find(params).select('id_case name')
-  .where('delete_status').ne('deleted')
+  .where('delete_status').ne('deleted').limit(100)
   .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
   .catch(err => callback(err, null));
 }
