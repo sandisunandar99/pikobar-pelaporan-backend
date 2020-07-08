@@ -1,8 +1,16 @@
-const { HTTP } = require('../../helpers/constant')
 const Helper = require('../../helpers/custom')
 const replyHelper = require('../helpers')
 
 module.exports = (server) => {
+    function constructCloseContactResponse(user) {
+        let userResponse = { 
+          status : 200,
+          message: true,
+          data : user 
+        }
+        return userResponse;
+      }
+
     return {
         /**
          * GET /api/close-contacts
@@ -14,8 +22,10 @@ module.exports = (server) => {
                 request.query,
                 request.auth.credentials.user,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
         },
         /**
@@ -27,8 +37,10 @@ module.exports = (server) => {
             server.methods.services.closeContacts.getByCase(
                 request.params.caseId, 
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
         },
         /**
@@ -42,16 +54,18 @@ module.exports = (server) => {
                 request.auth.credentials.user,
                 request.payload,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
                     server.methods.services.closeContactHistories.create(
                         result._id,
                         request.payload.latest_history,
                         (err, resultChild) => {
-                            if (err) return replyHelper.errorResponse(reply, err)
+                            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                             
                             const res = Object.assign(result, { latest_history: resultChild })
-                            return replyHelper.successResponse(reply, res, HTTP.CREATED)
+                            return reply(
+                                constructCloseContactResponse(res,request)
+                            ).code(200)
                         })
                 })
         },
@@ -64,8 +78,10 @@ module.exports = (server) => {
             server.methods.services.closeContacts.show(
                 request.params.closeContactId,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
         },
         /**
@@ -82,20 +98,24 @@ module.exports = (server) => {
                 request.auth.credentials.user,
                 request.payload,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
                     if (!requestHistory || !isDirty) {
                         const res = Object.assign(result, { latest_history: currentHistory })
-                        return replyHelper.successResponse(reply, res, HTTP.OK)
+                        return reply(
+                            constructCloseContactResponse(res,request)
+                        ).code(200)
                     } else {
                         server.methods.services.closeContactHistories.create(
                             result._id,
                             requestHistory,
                             (err, resultChild) => {
-                                if (err) return replyHelper.errorResponse(reply, err)
+                                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                                 
                                 const res = Object.assign(result, { latest_history: resultChild })
-                                return replyHelper.successResponse(reply, res, HTTP.OK)
+                                return reply(
+                                    constructCloseContactResponse(res,request)
+                                ).code(200)
                             })
                     }
                 })
@@ -110,8 +130,10 @@ module.exports = (server) => {
                 request.params.closeContactId,
                 request.auth.credentials.user,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
         }
     }

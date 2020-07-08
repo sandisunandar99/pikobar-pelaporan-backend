@@ -1,4 +1,3 @@
-const { ERRORS, HTTP } = require('../../helpers/constant')
 const replyHelper = require('../helpers')
 
 const getCasebyId = server => {
@@ -7,11 +6,15 @@ const getCasebyId = server => {
              let id = request.params.caseId
              server.methods.services.cases
                 .getById(id, (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err).takeover()
+                    if (err) {
+                        return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                    }
                     if (!result) {
-                        return replyHelper.messageResponse(reply,
-                            ERRORS.INVALID.PARAMS_VALUE, HTTP.UNPROCESSABLE_ENTITY
-                        ).takeover()
+                        return reply({
+                            status: 422,
+                            message: 'Invalid case id',
+                            data: null
+                        }).code(422).takeover()
                     }
                     return reply(result)
                 })
@@ -26,11 +29,15 @@ const getCloseContactbyId = server => {
              let id = request.params.closeContactId
              server.methods.services.closeContacts
                 .show(id, (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err).takeover()
+                    if (err) {
+                        return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                    }
                     if (!result) {
-                        return replyHelper.messageResponse(reply,
-                            ERRORS.INVALID.PARAMS_VALUE, HTTP.UNPROCESSABLE_ENTITY
-                        ).takeover()
+                        return reply({
+                            status: 422,
+                            message: 'Invalid close contact id',
+                            data: null
+                        }).code(422).takeover()
                     }
                     return reply(result)
                 })
