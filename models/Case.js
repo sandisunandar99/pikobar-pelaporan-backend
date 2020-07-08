@@ -76,6 +76,7 @@ const CaseSchema = new mongoose.Schema({
     close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    health_workers : { type: String, lowercase: true },
     apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
