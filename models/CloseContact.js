@@ -73,5 +73,80 @@ const CloseContactSchema = new mongoose.Schema({
     deletedBy: REF_USER,
 }, { timestamps : true });
 
+
+CloseContactSchema.methods.toJSONFor = function () {
+    return {
+        _id: this._id,
+        case: this.case,
+        interviewer_name: this.interviewer_name,
+        contact_tracing_date: this.contact_tracing_date,
+        nik : this.nik,
+        nik_note : this.nik_note,
+        name : this.name,
+        phone_number : this.phone_number,
+        phone_number_note : this.phone_number_note,
+        birth_date : this.birth_date,
+        age : this.age,
+        gender: this.gender,
+        address_province_code: this.address_province_code,
+        address_province_name: this.address_province_name,
+        address_district_code: this.address_district_code,
+        address_district_name: this.address_district_name,
+        address_subdistrict_code: this.address_subdistrict_code,
+        address_subdistrict_name: this.address_subdistrict_name,
+        address_village_code: this.address_village_code,
+        address_village_name: this.address_village_name,
+        address_rw: this.address_rw,
+        address_rt: this.address_rt,
+        address_street : this.address_street,
+        relationship : this.relationship,
+        emergency_contact_name: this.emergency_contact_name,
+        emergency_contact_phone: this.emergency_contact_phone,
+        emergency_contact_relationship: this.emergency_contact_relationship,
+        travel_is_went_abroad: this.travel_is_went_abroad,
+        travel_visited_country: this.travel_visited_country,
+        travel_country_depart_date: this.travel_country_depart_date,
+        travel_country_return_date: this.travel_country_return_date,
+        travel_is_went_other_city : this.travel_is_went_other_city,
+        travel_visited_city : this.travel_visited_city,
+        travel_city_depart_date : this.travel_city_depart_date,
+        travel_city_return_date : this.travel_city_return_date,
+        travel_occupation: this.travel_occupation,
+        travel_address_office: this.travel_address_office,
+        travel_transportations: this.travel_transportations,
+        contact_type: this.contact_type,
+        contact_place: this.contact_place,
+        contact_date: this.contact_date,
+        contact_durations: this.contact_durations,
+        home_contact_date: this.home_contact_date,
+        home_contact_days: this.home_contact_days,
+        home_contact_activities: this.home_contact_activities,
+        officer_is_contact: this.officer_is_contact,
+        officer_protection_tools: this.officer_protection_tools,
+        is_reported: this.is_reported,
+        latest_history : this.latest_history.toJSONFor(),
+        createdAt: this.createdAt,
+        createdBy: this.createdBy,
+        updatedAt:this.updatedAt,
+        updatedBy:this.updatedBy
+    }
+}
+
+CloseContactSchema.methods.toJSONList = function () {
+    return {
+        _id: this._id,
+        case: this.case,
+        nik : this.nik,
+        name : this.name,
+        phone_number : this.phone_number,
+        birth_date : this.birth_date,
+        age : this.age,
+        gender: this.gender,
+        address_street : this.address_street,
+        createdAt: this.createdAt,
+        createdBy: this.createdBy
+    }
+}
+
 CloseContactSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('CloseContact', CloseContactSchema)
