@@ -2,14 +2,16 @@ const mongoose = require('mongoose')
 
 const REF_CLOSE_CONTACT = {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'CloseContactReport',
+    ref: 'CloseContact',
     required: true
 }
 
-const CloseContactReportHistorySchema = new mongoose.Schema({
-    diagnosis_symptoms: { type: Array, default: [] },
-    diagnosis_symptoms_date: { type: Date, default: null },
-    diagnosis_diseases: { type: Array, default: [] },
+const CloseContactHistorySchema = new mongoose.Schema({
+    symptoms: { type: Array, default: [] },
+    symptoms_date: { type: Date, default: null },
+    symptoms_other: { type: String, default: null },
+    diseases: { type: Array, default: [] },
+    diseases_other: { type: String, default: null },
     vaccination_influenza_vaccine: { type: Boolean, default: false },
     vaccination_influenza_vaccine_date: { type: Date, default: null },
     vaccination_pvc_vaccine: { type: Boolean, default: false },
@@ -27,9 +29,9 @@ const CloseContactReportHistorySchema = new mongoose.Schema({
     test_orofaringeal_swab_date: { type: Date, default: null },
     test_orofaringeal_swab_result: { type: String, default: null },
     test_serum: { type: Boolean, default: false },
-    close_contact_report : REF_CLOSE_CONTACT
+    close_contact : REF_CLOSE_CONTACT
 }, { timestamps : true })
 
 module.exports = mongoose.model(
-    'CloseContactReportHistory',
-    CloseContactReportHistorySchema)
+    'CloseContactHistory',
+    CloseContactHistorySchema)

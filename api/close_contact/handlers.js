@@ -1,9 +1,19 @@
-const { HTTP } = require('../../helpers/constant')
+const Helper = require('../../helpers/custom')
 const replyHelper = require('../helpers')
+
 module.exports = (server) => {
+    function constructCloseContactResponse(closeContact) {
+        let closeContactResponse = { 
+          status : 200,
+          message: true,
+          data : closeContact 
+        }
+        return closeContactResponse;
+      }
+
     return {
         /**
-         * GET /api/cases/{caseId}/close-contacts
+         * GET /api/close-contacts
          * @param {*} request
          * @param {*} reply
          */
@@ -12,8 +22,10 @@ module.exports = (server) => {
                 request.query,
                 request.auth.credentials.user,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
         },
         /**
@@ -25,12 +37,14 @@ module.exports = (server) => {
             server.methods.services.closeContacts.getByCase(
                 request.params.caseId, 
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
         },
         /**
-         * POST /api/cases/{id}/close-contacts
+         * POST /api/cases/{caseId}/close-contacts
          * @param {*} request
          * @param {*} reply
          */
@@ -40,40 +54,70 @@ module.exports = (server) => {
                 request.auth.credentials.user,
                 request.payload,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.CREATED)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                    server.methods.services.closeContactHistories.create(
+                        result._id,
+                        request.payload.latest_history,
+                        (err, resultChild) => {
+                            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                            
+                            const res = Object.assign(result, { latest_history: resultChild })
+                            return reply(
+                                constructCloseContactResponse(res,request)
+                            ).code(200)
+                        })
                 })
         },
         /**
-         * POST /api/cases/{id}/close-contacts-with-report
+         * GET /api/cases/{caseId}/close-contacts/{closeContactId}
          * @param {*} request
          * @param {*} reply
          */
-        async CreateCloseContactWithReport(request, reply){
-            server.methods.services.closeContacts.create(
-                request.params.caseId,
+        async DetailCloseContact(request, reply) {
+            server.methods.services.closeContacts.show(
+                request.params.closeContactId,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
+                })
+        },
+        /**
+         * PUT /api/cases/{caseId}/close-contacts/{closeContactId}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async UpdateCloseContact(request, reply){
+            const currentHistory = request.pre.close_contact.latest_history
+            const requestHistory = request.payload.latest_history
+            const isDirty = Helper.isDirty(currentHistory, requestHistory)
+            server.methods.services.closeContacts.update(
+                request.params.closeContactId,
                 request.auth.credentials.user,
                 request.payload,
-                (err, closeContact) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
-                    server.methods.services.closeContactReport.create(
-                        closeContact._id,
-                        request.auth.credentials.user,
-                        request.payload,
-                        (err, report) => {
-                            if (err) return replyHelper.errorResponse(reply, err)
-
-                            server.methods.services.closeContactReportHistories.create(
-                                report._id,
-                                request.payload.latest_report_history,
-                                (err, history) => {
-                                    if (err) return replyHelper.errorResponse(reply, err)
-
-                                    const res = Object.assign(report, { latest_report_history: history })
-                                    return replyHelper.successResponse(reply, res, HTTP.CREATED)
-                                })
-                        })
+                    if (!requestHistory || !isDirty) {
+                        const res = Object.assign(result, { latest_history: currentHistory })
+                        return reply(
+                            constructCloseContactResponse(res,request)
+                        ).code(200)
+                    } else {
+                        server.methods.services.closeContactHistories.create(
+                            result._id,
+                            requestHistory,
+                            (err, resultChild) => {
+                                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                                
+                                const res = Object.assign(result, { latest_history: resultChild })
+                                return reply(
+                                    constructCloseContactResponse(res,request)
+                                ).code(200)
+                            })
+                    }
                 })
         },
         /**
@@ -83,13 +127,14 @@ module.exports = (server) => {
          */
         async DeleteCloseContact(request, reply) {          
             server.methods.services.closeContacts.delete(
-                request.params.id,
+                request.params.closeContactId,
                 request.auth.credentials.user,
-                request.payload,
                 (err, result) => {
-                    if (err) return replyHelper.errorResponse(reply, err)
-                    return replyHelper.successResponse(reply, result, HTTP.OK)
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructCloseContactResponse(result,request)
+                    ).code(200)
                 })
-        },
+        }
     }
 }

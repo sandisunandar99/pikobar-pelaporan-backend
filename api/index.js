@@ -53,7 +53,6 @@ const register = (server, options, next) => {
   server.register(require('./case_related'));
   server.register(require('./cases_revamp'));
   server.register(require('./close_contact'));
-  server.register(require('./close_contact_report'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

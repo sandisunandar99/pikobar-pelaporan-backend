@@ -1,6 +1,6 @@
 'use strict';
 const filterCloseContact = (query, user) => {
-    let params = { createdBy: user }
+    let params = {}
     if (query.gender) {
         params.gender = query.gender;
     }

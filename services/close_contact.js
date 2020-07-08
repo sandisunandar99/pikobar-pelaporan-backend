@@ -32,20 +32,39 @@ async function getByCase (caseId, callback) {
 
 async function show (id, callback) {
   try {
-    const result = await CloseContact.findById(id)
+    const result = await CloseContact
+      .findById(id)
+      .where('delete_status').ne('deleted')
+      .populate('latest_history')
+
     return callback(null, result)
   } catch (e) {
     return callback(e, null)
   }
 }
 
-async function create (caseId, authorized, payload, callback) {
+async function create (caseId, authorized, raw_payload, callback) {
   try {
+    const { latest_history, ...payload } = raw_payload
     let result = new CloseContact(Object.assign(payload, {
       case: caseId,
-      createdBy: authorized
+      createdBy: authorized,
+      is_reported: true
     }))
+
     result = await result.save()
+    return callback(null, result)
+  } catch (e) {
+    return callback(e, null)
+  }
+}
+
+async function update (id, authorized, raw_payload, callback) {
+  try {
+    const { latest_history, ...payload } = raw_payload
+    const result = await CloseContact.findByIdAndUpdate(id,
+      { $set: { ...payload, updatedBy: authorized, is_reported: true } },
+      { new: true })
 
     return callback(null, result)
   } catch (e) {
@@ -56,7 +75,7 @@ async function create (caseId, authorized, payload, callback) {
 async function softDelete (id, authorized, callback) {
   try {
     const payload = custom.deletedSave({}, authorized)
-    const result = CloseContact.findByIdAndUpdate(id, payload)
+    const result = await CloseContact.findByIdAndUpdate(id, payload)
     return callback(null, result)
   } catch (e) {
     return callback(e, null)
@@ -77,12 +96,16 @@ module.exports = [
     method: show
   },
   {
-    name: 'services.closeContacts.delete',
-    method: softDelete
-  },
-  {
     name: 'services.closeContacts.create',
     method: create
+  },
+  {
+    name: 'services.closeContacts.update',
+    method: update
+  },
+  {
+    name: 'services.closeContacts.delete',
+    method: softDelete
   }
-]
+];
 
