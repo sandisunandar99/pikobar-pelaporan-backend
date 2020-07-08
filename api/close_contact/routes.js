@@ -12,7 +12,7 @@ module.exports = (server) =>{
             config: {
                 auth: 'jwt',
                 description: 'show list of all close-contacts',
-                tags: ['api', 'cases', 'close.contacts'],
+                tags: ['api', 'close_contacts'],
                 validate: inputValidations.QueryValidations
             },
             handler: handlers.ListCloseContact
@@ -23,7 +23,7 @@ module.exports = (server) =>{
             config: {
                 auth: 'jwt',
                 description: 'show list of all close-contacts per-case',
-                tags: ['api', 'cases', 'close.contacts']
+                tags: ['api', 'close_contacts']
             },
             handler: handlers.ListCloseContactCase
         },
@@ -33,7 +33,7 @@ module.exports = (server) =>{
             config: {
                 auth: 'jwt',
                 description: 'show a specific close contact',
-                tags: ['api', 'cases', 'close.contacts'],
+                tags: ['api', 'close_contacts'],
                 pre: [
                     getCaseById
                 ]
@@ -45,8 +45,8 @@ module.exports = (server) =>{
             path: '/cases/{caseId}/close-contacts',
             config: {
                 auth: 'jwt',
-                description: 'create new close contacts report',
-                tags: ['api', 'cases', 'close.contacts.reports'],
+                description: 'create new close contacts',
+                tags: ['api', 'close_contacts'],
                 validate: inputValidations.RequestPayload,
                 pre: [ getCaseById ]
             },
@@ -57,8 +57,8 @@ module.exports = (server) =>{
             path: '/cases/{caseId}/close-contacts/{closeContactId}',
             config: {
                 auth: 'jwt',
-                description: 'create new close contacts',
-                tags: ['api', 'cases', 'close.contacts'],
+                description: 'update close contacts',
+                tags: ['api', 'close_contacts'],
                 validate: inputValidations.RequestPayload,
                 pre: [
                     getCaseById,
@@ -72,8 +72,8 @@ module.exports = (server) =>{
             path: '/cases/{caseId}/close-contacts/{closeContactId}',
             config: {
                 auth: 'jwt',
-                description: 'show a specific close contact',
-                tags: ['api', 'cases', 'close.contacts'],
+                description: 'delete specific close contact',
+                tags: ['api', 'close_contacts'],
                 pre: [
                     getCaseById,
                     getCloseContactbyId
