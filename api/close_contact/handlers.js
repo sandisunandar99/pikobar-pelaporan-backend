@@ -1,6 +1,6 @@
 const { HTTP } = require('../../helpers/constant')
-const replyHelper = require('../helpers')
 const Helper = require('../../helpers/custom')
+const replyHelper = require('../helpers')
 
 module.exports = (server) => {
     return {
