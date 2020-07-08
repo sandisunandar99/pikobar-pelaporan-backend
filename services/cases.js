@@ -191,6 +191,9 @@ function getIdCase (query,callback) {
   if(query.name_case_related){
     params.name = new RegExp(query.name_case_related, "i");
   }
+  if(query.status){
+    params.status = query.status;
+  }
   Case.find(params).select('id_case name')
   .where('delete_status').ne('deleted')
   .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
