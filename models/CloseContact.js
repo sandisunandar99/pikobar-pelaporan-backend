@@ -23,6 +23,7 @@ const CloseContactSchema = new mongoose.Schema({
     relationship: { type: String, default: null },
     activity: { type: String, default: null },
     is_reported: { type: Boolean, default: false },
+    contact_date: { type:Date, default:null },
     createdBy: REF_USER,
     updatedBy: REF_USER,
     delete_status: { type: String, default: null },
