@@ -72,7 +72,7 @@ const CaseSchema = new mongoose.Schema({
     name_close_contact_confirm: {type:String},
     close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    public_place_date: { type: Date , default: Date.now()},
+    public_place_date: { type: Date , default: null},
     close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
