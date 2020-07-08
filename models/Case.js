@@ -16,11 +16,12 @@ const CaseSchema = new mongoose.Schema({
     id_case_related : {type:String},
     name_case_related : {type:String},
     name: {type:String},
-    name_parents: {type:String},
+    name_parents: {type:String, default: null},
     interviewers_name: {type:String,default: null},
     interviewers_phone_number: {type:String,default: null},
     interview_date: { type: Date , default: Date.now()},
     // tentatif jika diisi usia, required jika tidak
+    place_of_birth: {type: String, default: null},
     birth_date : { type: Date},
     age : {type:Number},
     gender : {type:String},
@@ -64,7 +65,11 @@ const CaseSchema = new mongoose.Schema({
     start_travel:{type:Date,default:Date.now()},
     end_travel:{type:Date,default:Date.now()},
     close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    id_close_contact : {type:String},
+    name_close_contact : {type:String},
     close_contact_confirm:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    id_close_contact_confirm : {type:String},
+    name_close_contact_confirm: {type:String},
     close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
