@@ -2,13 +2,13 @@ const Helper = require('../../helpers/custom')
 const replyHelper = require('../helpers')
 
 module.exports = (server) => {
-    function constructCloseContactResponse(user) {
-        let userResponse = { 
+    function constructCloseContactResponse(closeContact) {
+        let closeContactResponse = { 
           status : 200,
           message: true,
-          data : user 
+          data : closeContact 
         }
-        return userResponse;
+        return closeContactResponse;
       }
 
     return {
