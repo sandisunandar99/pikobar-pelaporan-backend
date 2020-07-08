@@ -16,11 +16,12 @@ const CaseSchema = new mongoose.Schema({
     id_case_related : {type:String},
     name_case_related : {type:String},
     name: {type:String},
-    name_parents: {type:String},
+    name_parents: {type:String, default: null},
     interviewers_name: {type:String,default: null},
     interviewers_phone_number: {type:String,default: null},
     interview_date: { type: Date , default: Date.now()},
     // tentatif jika diisi usia, required jika tidak
+    place_of_birth: {type: String, default: null},
     birth_date : { type: Date},
     age : {type:Number},
     gender : {type:String},
