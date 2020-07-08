@@ -7,9 +7,11 @@ const REF_CLOSE_CONTACT = {
 }
 
 const CloseContactHistorySchema = new mongoose.Schema({
-    diagnosis_symptoms: { type: Array, default: [] },
-    diagnosis_symptoms_date: { type: Date, default: null },
-    diagnosis_diseases: { type: Array, default: [] },
+    symptoms: { type: Array, default: [] },
+    symptoms_date: { type: Date, default: null },
+    symptoms_other: { type: String, default: null },
+    diseases: { type: Array, default: [] },
+    diseases_other: { type: String, default: null },
     vaccination_influenza_vaccine: { type: Boolean, default: false },
     vaccination_influenza_vaccine_date: { type: Date, default: null },
     vaccination_pvc_vaccine: { type: Boolean, default: false },

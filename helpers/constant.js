@@ -23,16 +23,16 @@ module.exports = {
     REF: {
         CLOSE_CONTACT: {
             TYPES: {
-                OTHER: '1',
-                HOME: '2',
-                OFFICER: '3'
+                OTHER: 1,
+                HOME: 2,
+                OFFICER: 3
             },
             PLACES: {
-                OTHER: '1',
-                HOME: '2',
-                WORK: '3',
-                TOUR: '4',
-                MEDICAL: '5'
+                OTHER: 1,
+                HOME: 2,
+                WORK: 3,
+                TOUR: 4,
+                MEDICAL: 5
             }
         }
     }
