@@ -66,6 +66,7 @@ const CloseContactSchema = new mongoose.Schema({
     officer_protection_tools: { type: Array, default: [] },
     is_reported: { type: Boolean, default: false },
     latest_history : REF_CLOSE_CONTACT_HISTORY,
+    contact_date: { type:Date, default:null },
     createdBy: REF_USER,
     updatedBy: REF_USER,
     delete_status: { type: String, default: null },
