@@ -1,17 +1,34 @@
 const mongoose = require('mongoose')
+const consts = require('../helpers/constant')
+const mongoosePaginate = require('mongoose-paginate-v2');
+
+const REF_CASE = { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Case', 
+    required: true
+}
+const REF_USER = { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Case', 
+    default: null
+}
 
 const CloseContactSchema = new mongoose.Schema({
-    case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case', required: [true, "can't be blank"]},
-    name : { type: String, required: [true, "can't be blank"]},
-    phone_number : { type: String, default:null},
-    gender : { type: String },
-    age : {type:Number, default:0},
-    address : {type:String},
-    related : {type:String},
-    activity : {type:String},
-    delete_status: String,
-    deletedAt: {type:Date, default:Date.now()},
-    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    case: REF_CASE,
+    name: { type: String, required: true },
+    phone_number: { type: String, default: null },
+    gender: { type: String, enum: [consts.GENDER.MALE, consts.GENDER.FEMALE] },
+    age: { type: Number, default: null },
+    address: { type: String, default: null },
+    relationship: { type: String, default: null },
+    activity: { type: String, default: null },
+    is_reported: { type: Boolean, default: false },
+    createdBy: REF_USER,
+    updatedBy: REF_USER,
+    delete_status: { type: String, default: null },
+    deletedAt: { type: Date, default: null },
+    deletedBy: REF_USER,
 }, { timestamps : true });
 
+CloseContactSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('CloseContact', CloseContactSchema)

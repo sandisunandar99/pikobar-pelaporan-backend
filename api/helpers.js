@@ -84,7 +84,29 @@ function CommentReferenceError (message) {
     return response
   }
 
+  function errorResponse(reply, err) {
+    return reply(constructErrorResponse(err))
+  }
+
+  function successResponse(reply, data, code) {
+    return reply({
+        status: code,
+        message: 'Success',
+        data: data
+    }).code(code)
+  }
+
+  function messageResponse(reply, message, code) {
+    return reply({
+        status: code,
+        message: message
+    }).code(code)
+  }
+
   module.exports = {
     constructErrorResponse,
-    CommentReferenceError
+    CommentReferenceError,
+    successResponse,
+    messageResponse,
+    errorResponse
   }
