@@ -65,7 +65,11 @@ const CaseSchema = new mongoose.Schema({
     start_travel:{type:Date,default:Date.now()},
     end_travel:{type:Date,default:Date.now()},
     close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    id_close_contact : {type:String},
+    name_close_contact : {type:String},
     close_contact_confirm:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    id_close_contact_confirm : {type:String},
+    name_close_contact_confirm: {type:String},
     close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
