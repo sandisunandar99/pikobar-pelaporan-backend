@@ -1,14 +1,11 @@
-const mongoose = require('mongoose');
-
-require('../models/Unit');
-const Unit = mongoose.model('Unit');
+const Unit = require('../models/Unit');
 const paginate = require('../helpers/paginate');
 const custom = require('../helpers/custom');
 const filters = require('../helpers/filter/unitfilter');
 
 const listUnit = async (query, callback) => {
     try {
-        const sorts = (query.sort == "desc" ? { createdAt: "desc" } : JSON.parse(query.sort));
+        const sorts = (query.sort == "desc" ? {createdAt: "desc"} : custom.jsonParse(query.sort));
         const populate = (['createdBy']);
         const options = paginate.optionsLabel(query, sorts, populate);
         const params = filters.filterUnit(query);
