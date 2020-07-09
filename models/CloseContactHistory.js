@@ -32,6 +32,33 @@ const CloseContactHistorySchema = new mongoose.Schema({
     close_contact : REF_CLOSE_CONTACT
 }, { timestamps : true })
 
+CloseContactHistorySchema.methods.toJSONFor = function () {
+    return {
+        symptoms: this.symptoms,
+        symptoms_date: this.symptoms_date,
+        symptoms_other: this.symptoms_other,
+        diseases: this.diseases,
+        diseases_other: this.diseases_other,
+        vaccination_influenza_vaccine: this.vaccination_influenza_vaccine,
+        vaccination_influenza_vaccine_date: this.vaccination_influenza_vaccine_date,
+        vaccination_pvc_vaccine: this.vaccination_pvc_vaccine,
+        vaccination_pvc_vaccine_date: this.vaccination_pvc_vaccine_date,
+        test_nasal_swab: this.test_nasal_swab,
+        test_nasal_swab_date: this.test_nasal_swab_date,
+        test_nasal_swab_result: this.test_nasal_swab_result,
+        test_throat_swab: this.test_throat_swab,
+        test_throat_swab_date: this.test_throat_swab_date,
+        test_throat_swab_result: this.test_throat_swab_result,
+        test_nasopharyngeal_swab: this.test_nasopharyngeal_swab,
+        test_nasopharyngeal_swab_date: this.test_nasopharyngeal_swab_date,
+        test_nasopharyngeal_swab_result: this.test_nasopharyngeal_swab_result,
+        test_orofaringeal_swab: this.test_orofaringeal_swab,
+        test_orofaringeal_swab_date: this.test_orofaringeal_swab_date,
+        test_orofaringeal_swab_result: this.test_orofaringeal_swab_result,
+        test_serum: this.test_serum
+    }
+}
+
 module.exports = mongoose.model(
     'CloseContactHistory',
     CloseContactHistorySchema)
