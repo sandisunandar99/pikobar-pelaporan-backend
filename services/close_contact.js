@@ -11,7 +11,11 @@ async function index (query, authorized, callback) {
     const search_params = filters.filterSearch(query)
     const result = CloseContact.find(params).or(search_params).where('delete_status').ne('deleted')
     const paginateResult = await CloseContact.paginate(result, options)
-    return callback(null, paginateResult)
+    const response = {
+      itemsList: paginateResult.itemsList.map(res => res.toJSONList()),
+      _meta: paginateResult._meta
+    }
+    return callback(null, response)
   } catch (e) {
     return callback(e, null)
   }
@@ -22,9 +26,9 @@ async function getByCase (caseId, callback) {
     const results = await CloseContact.find({
       case: caseId,
       delete_status: { $ne: 'deleted' }
-    })
+    }).populate('latest_history')
     
-    return callback(null, results)
+    return callback(null, results.map(res => res.toJSONList()))
   } catch (e) {
     return callback(e, null)
   }
@@ -37,7 +41,7 @@ async function show (id, callback) {
       .where('delete_status').ne('deleted')
       .populate('latest_history')
 
-    return callback(null, result)
+    return callback(null, result.toJSONFor())
   } catch (e) {
     return callback(e, null)
   }
