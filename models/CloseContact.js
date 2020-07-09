@@ -150,6 +150,7 @@ CloseContactSchema.methods.toJSONList = function () {
         address_rw: this.address_rw,
         address_rt: this.address_rt,
         address_street : this.address_street,
+        is_reported: this.is_reported,
         createdAt: this.createdAt,
         createdBy: this.createdBy
     }

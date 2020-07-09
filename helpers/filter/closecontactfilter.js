@@ -13,7 +13,7 @@ const filterCloseContact = (query, user) => {
     if (query.gender) {
         params.gender = query.gender;
     }
-    if (query.is_reported) {
+    if (typeof query.is_reported === "boolean") {
         params.is_reported = query.is_reported;
     }
     return params;
