@@ -36,12 +36,13 @@ async function getByCase (caseId, callback) {
 
 async function show (id, callback) {
   try {
-    const result = await CloseContact
+    let result = await CloseContact
       .findById(id)
       .where('delete_status').ne('deleted')
       .populate(['case', 'latest_history'])
 
-    return callback(null, result.toJSONFor())
+    result = result ? result.toJSONFor() : null
+    return callback(null, result)
   } catch (e) {
     return callback(e, null)
   }
