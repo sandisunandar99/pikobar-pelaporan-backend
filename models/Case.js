@@ -122,7 +122,6 @@ CaseSchema.methods.toJSONFor = function () {
         nationality: this.nationality,
         nationality_name: this.nationality_name,
         gender: this.gender,
-        current_location_address: this.last_history.current_location_address,
         address_district_name: this.address_district_name,
         address_district_code: this.address_district_code,
         phone_number: this.phone_number,
