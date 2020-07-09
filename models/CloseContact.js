@@ -27,8 +27,8 @@ const CloseContactSchema = new mongoose.Schema({
     phone_number : { type: String, default: null },
     phone_number_note : { type: String, default: null },
     birth_date : { type: Date, default: null },
-    age : { type: Number, default: null },
-    month : {type:Number},
+    age : { type: Number, default: 0 },
+    month : { type:Number, default: 0 },
     gender: { type: String, enum: [consts.GENDER.MALE, consts.GENDER.FEMALE] },
     address_province_code: { type: String, default: consts.DEFAULT_PROVINCE.CODE },
     address_province_name: { type: String, default: consts.DEFAULT_PROVINCE.NAME },
@@ -78,7 +78,7 @@ const CloseContactSchema = new mongoose.Schema({
 CloseContactSchema.methods.toJSONFor = function () {
     return {
         _id: this._id,
-        case: this.case,
+        case: this.case.JSONFormIdCase(),
         interviewer_name: this.interviewer_name,
         contact_tracing_date: this.contact_tracing_date,
         nik : this.nik,
@@ -136,14 +136,21 @@ CloseContactSchema.methods.toJSONFor = function () {
 CloseContactSchema.methods.toJSONList = function () {
     return {
         _id: this._id,
-        case: this.case,
+        case: this.case.JSONFormIdCase(),
         nik : this.nik,
         name : this.name,
         phone_number : this.phone_number,
         birth_date : this.birth_date,
         age : this.age,
         gender: this.gender,
+        address_province_name: this.address_province_name,
+        address_district_name: this.address_district_name,
+        address_subdistrict_name: this.address_subdistrict_name,
+        address_village_name: this.address_village_name,
+        address_rw: this.address_rw,
+        address_rt: this.address_rt,
         address_street : this.address_street,
+        is_reported: this.is_reported,
         createdAt: this.createdAt,
         createdBy: this.createdBy
     }

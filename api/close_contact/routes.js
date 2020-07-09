@@ -8,17 +8,6 @@ module.exports = (server) =>{
     return [
         {
             method: 'GET',
-            path: '/close-contacts',
-            config: {
-                auth: 'jwt',
-                description: 'show list of all close-contacts',
-                tags: ['api', 'close_contacts'],
-                validate: inputValidations.QueryValidations
-            },
-            handler: handlers.ListCloseContact
-        },
-        {
-            method: 'GET',
             path: '/cases/{caseId}/close-contacts',
             config: {
                 auth: 'jwt',
@@ -26,19 +15,6 @@ module.exports = (server) =>{
                 tags: ['api', 'close_contacts']
             },
             handler: handlers.ListCloseContactCase
-        },
-        {
-            method: 'GET',
-            path: '/cases/{caseId}/close-contacts/{closeContactId}',
-            config: {
-                auth: 'jwt',
-                description: 'show a specific close contact',
-                tags: ['api', 'close_contacts'],
-                pre: [
-                    getCaseById
-                ]
-            },
-            handler: handlers.DetailCloseContact
         },
         {
             method: 'POST',
@@ -53,15 +29,35 @@ module.exports = (server) =>{
             handler: handlers.CreateCloseContact
         },
         {
+            method: 'GET',
+            path: '/close-contacts',
+            config: {
+                auth: 'jwt',
+                description: 'show list of all close-contacts',
+                tags: ['api', 'close_contacts'],
+                validate: inputValidations.QueryValidations
+            },
+            handler: handlers.ListCloseContact
+        },
+        {
+            method: 'GET',
+            path: '/close-contacts/{closeContactId}',
+            config: {
+                auth: 'jwt',
+                description: 'show a specific close contact',
+                tags: ['api', 'close_contacts']
+            },
+            handler: handlers.DetailCloseContact
+        },
+        {
             method: 'PUT',
-            path: '/cases/{caseId}/close-contacts/{closeContactId}',
+            path: '/close-contacts/{closeContactId}',
             config: {
                 auth: 'jwt',
                 description: 'update close contacts',
                 tags: ['api', 'close_contacts'],
                 validate: inputValidations.RequestPayload,
                 pre: [
-                    getCaseById,
                     getCloseContactbyId
                 ]
             },
@@ -69,13 +65,12 @@ module.exports = (server) =>{
         },
         {
             method: 'DELETE',
-            path: '/cases/{caseId}/close-contacts/{closeContactId}',
+            path: '/close-contacts/{closeContactId}',
             config: {
                 auth: 'jwt',
                 description: 'delete specific close contact',
                 tags: ['api', 'close_contacts'],
                 pre: [
-                    getCaseById,
                     getCloseContactbyId
                 ]
             },
