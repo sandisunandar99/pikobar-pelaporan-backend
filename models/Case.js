@@ -24,6 +24,7 @@ const CaseSchema = new mongoose.Schema({
     place_of_birth: {type: String, default: null},
     birth_date : { type: Date},
     age : {type:Number},
+    month : {type:Number},
     gender : {type:String},
     address_street: {type:String},
     address_village_code: { type: String, required: [true, "can't be blank"]},
@@ -71,9 +72,14 @@ const CaseSchema = new mongoose.Schema({
     id_close_contact_confirm : {type:String},
     name_close_contact_confirm: {type:String},
     close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    animal_market_date: { type: Date , default: null},
+    animal_market_other: { type: String , default: null},
     close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     public_place_date: { type: Date , default: null},
+    public_place_other: { type: String , default: null},
     close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    medical_facility_date: { type: Date , default: null},
+    medical_facility_other: { type: String, default: null},
     close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
     health_workers : { type: String, lowercase: true },
