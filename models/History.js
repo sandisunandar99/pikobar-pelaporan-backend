@@ -42,7 +42,7 @@ const HistorySchema = new mongoose.Schema({
     physical_check_blood_pressure : {type:Number , default:0},
     physical_check_pulse : {type:Number , default:0},
     physical_check_respiration : {type:Number , default:0},
-    physical_check_high : {type:Number, default:0},
+    physical_check_height : {type:Number, default:0},
     physical_check_weight : {type:Number, default:0},
 }, { timestamps : true });
 
