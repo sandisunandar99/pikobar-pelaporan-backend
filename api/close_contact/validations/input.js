@@ -40,6 +40,7 @@ const RequestPayload = {
       phone_number_note: Joi.string().allow('', null),
       birth_date : Joi.date().allow('', null),
       age : Joi.number().required(),
+      month : Joi.number().required(),
       gender : Joi.string().allow('', null).valid(consts.GENDER.MALE, consts.GENDER.FEMALE),
       address_province_code: Joi.string().required(),
       address_province_name: Joi.string().required(),
