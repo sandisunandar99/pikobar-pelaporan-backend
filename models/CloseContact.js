@@ -156,5 +156,44 @@ CloseContactSchema.methods.toJSONList = function () {
     }
 }
 
+CloseContactSchema.methods.getByNik = function (nik) {
+    return mongoose.models["CloseContact"]
+        .findOne({ nik: nik })
+        .where('delete_status').ne('deleted')
+}
+
+/*
+ * REFERENCE: https://mongoosejs.com/docs/middleware.html#pre
+ *
+ * Only validate if NIK is set. (Allow Null/Empty string)
+ * If using { unique: true }, NULL/Empty string will be considered duplicate,
+ * this is why using custom validation.
+ */
+
+CloseContactSchema.pre('save', async function (next) {  
+    const nik = this.nik
+
+    if (nik) {
+        const exists = await this.schema.methods.getByNik(nik)
+        if (exists) {
+            throw new Error('NIK already exists')
+        }
+    }
+    next()
+})
+
+CloseContactSchema.pre('findOneAndUpdate', async function (next) {
+    const docToUpdate = await this.model.findOne(this.getQuery())
+    const nik = this.getUpdate().$set.nik
+
+    if (nik && nik !== docToUpdate.nik) {
+        const exists = await this.schema.methods.getByNik(nik)
+        if (exists) {
+            throw new Error('NIK already exists')
+        }
+    }    
+    next()
+})
+
 CloseContactSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('CloseContact', CloseContactSchema)
