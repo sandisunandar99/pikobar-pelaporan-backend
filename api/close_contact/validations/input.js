@@ -90,7 +90,10 @@ const QueryValidations = {
       page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
       sort: Joi.string().empty('', 'desc').default('desc').description('sorting by create date'),
       search: Joi.string().empty('', null).default('').description('search data'),
-      is_reported: Joi.string().empty('', null).default('').description('is_reported')
+      is_reported: Joi.string().empty('', null).default('').description('is_reported'),
+      address_district_code: Joi.string().empty('', null).default('').description('search data by Case name'),
+      address_subdistrict_code: Joi.string().empty('', null).default('').description('search data by Kecamatan'),
+      address_village_code: Joi.string().empty('', null).default('').description('search data by Keluarahan/Desa')
   },
   options: validateOptions.options,
   failAction: validateOptions.failAction
