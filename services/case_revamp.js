@@ -17,7 +17,7 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     verified.verified_status = VERIFIED_STATUS.PENDING;
   };
 
-  const id_case = Validate.generateIdCase(author, pre);
+  const id_case = await Validate.generateIdCase(author, pre);
 
   //TODO: check is verified is not overwritten ?
   let insert_id_case = Object.assign(raw_payload, verified);
