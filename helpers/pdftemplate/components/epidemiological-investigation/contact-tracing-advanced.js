@@ -3,6 +3,18 @@ const components = {
 }
 
 const render = (data) => {
+
+  const officer = data.health_workers
+  const protectionTools = data.apd_use.map(v => v.toLowerCase())
+
+  const isProtected = (value) => {
+    return protectionTools.includes(value) ? '√' : '  '
+  }
+
+  const isTrue = (value, n) => {
+    return value == n ? '√' : '  '
+  }
+
   const buildVisitedPlaces = (place) => {
     let visitedPlaces = [], visitedPlacesDoc = []
     for (i in data.histories) {
@@ -119,7 +131,7 @@ const render = (data) => {
             },
             {},
             {
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isTrue(officer, 1)}] Ya   [${isTrue(officer, 2)}] Tdk  [${isTrue(officer, 3)}] Tdk Tahu`,
               colSpan: 3,
               alignment: 'left'
             },{},{}
@@ -132,11 +144,11 @@ const render = (data) => {
             },
             {},
             {
-              text: `: [  ] Grown   [  ] Masker Medis   [  ] Sarung tangan
-                : [  ] Masker NI0SH-N95, AN EU STANDARD FFP2
-                : [  ] FFP3
-                : [  ] Kacamata pelindung (goggle)
-                : [  ] Tidak memakai APD`,
+              text: `: [${isProtected('gown')}] Gown   [${isProtected('masker bedah')}] Masker Medis   [${isProtected('sarung tangan')}] Sarung tangan
+                : [${isProtected('masker n95 standar ffp3')}] Masker NI0SH-N95, AN EU STANDARD FFP2
+                : [${isProtected('ffp3')}] FFP3
+                : [${isProtected('kacamata pelindung goggle')}] Kacamata pelindung (goggle)
+                : [${isProtected('tidak sama sekali')}] Tidak memakai APD`,
               colSpan: 3,
               alignment: 'left'
             },{},{}

@@ -716,8 +716,6 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   const pdfmaker = require('../helpers/pdfmaker')
   const histories = await History.find({ case: detailCase._id })
   const closeContacts = await CloseContact.find({ case: detailCase._id, delete_status: { $ne: 'deleted' } })
-  console.log(detailCase)
-  console.log(closeContacts)
   Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
