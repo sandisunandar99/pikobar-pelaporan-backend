@@ -5,7 +5,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const REF_CASE = { 
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Case', 
-    default: null
+    required: true
 }
 const REF_CLOSE_CONTACT_HISTORY = {
     type: mongoose.Schema.Types.ObjectId,
