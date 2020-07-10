@@ -11,6 +11,7 @@ const CaseSchema = new mongoose.Schema({
     id_case : {type: String, lowercase: true, unique: true, index: true},
     // NIK sumber terkait kontak erat
     id_case_national : {type:String},
+    is_nik_exists: { type: Boolean, default: false },
     nik : { type:String},
     note_nik: {type: String},
     id_case_related : {type:String},
@@ -40,6 +41,7 @@ const CaseSchema = new mongoose.Schema({
     rt: { type: Number, default:null},
     rw: { type: Number, default:null},
     office_address: {type:String},
+    is_phone_number_exists: { type: Boolean, default: false },
     phone_number: {type:String},
     note_phone_number: {type: String},
     nationality: {type:String},

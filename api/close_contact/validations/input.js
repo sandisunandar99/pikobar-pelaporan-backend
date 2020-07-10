@@ -33,9 +33,11 @@ const RequestPayload = {
   payload: Joi.object().keys({
       interviewer_name: Joi.string().allow('', null),
       contact_tracing_date: Joi.date().allow('', null),
+      is_nik_exists: Joi.boolean(),
       nik: Joi.string().allow('', null),
       nik_note: Joi.string().allow('', null),
       name: Joi.string().allow('', null).required(),
+      is_phone_number_exists: Joi.boolean(),
       phone_number: Joi.string().allow('', null),
       phone_number_note: Joi.string().allow('', null),
       birth_date : Joi.date().allow('', null),
