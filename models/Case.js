@@ -199,10 +199,9 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
  * Set 'is_case_deleted' in the CloseContact documents to TRUE
  */
 CaseSchema.pre('save', async function (next) {
-    const deleted = this.delete_status === 'deleted'
     const CloseContact = new mongoose.models["CloseContact"]
 
-    if (deleted) {
+    if (this.delete_status === 'deleted') {
         await CloseContact.onDeleteCase(this._id)
     }
 
