@@ -514,27 +514,28 @@ function getCountCaseByDistrict(callback) {
     .catch(err => callback(err, null))
 }
 
-function getCountByDistrict(code, callback) {
+async function getCountByDistrict(code, callback) {
   /* Get last number of current district id case order */
-  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-              .exec()
-              .then(dinkes =>{
-                Case.find({ address_district_code: code, verified_status: 'verified' })
-                    .sort({id_case: -1})
-                    .exec()
-                    .then(res =>{
-                        let count = 1;
-                        if (res.length > 0)
-                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
-                          count = (Number(res[0].id_case.substring(12)) + 1);
-                        let result = {
-                          prov_city_code: code,
-                          dinkes_code: dinkes.dinkes_kota_kode,
-                          count_pasien: count
-                        }
-                      return callback(null, result)
-                    }).catch(err => callback(err, null))
-              })
+  try {
+    const params = {
+      address_district_code: code, 
+      verified_status: 'verified'
+    }
+    const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
+    const res = await Case.find(params).sort({id_case: -1});
+    let count = 1;
+    if (res.length > 0){
+      count = (Number(res[0].id_case.substring(12)) + 1);
+    }
+    let result = {
+      prov_city_code: code,
+      dinkes_code: dinkes.dinkes_kota_kode,
+      count_pasien: count
+    }
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
 function getCountPendingByDistrict(code, callback) {
