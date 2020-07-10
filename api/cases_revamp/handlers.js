@@ -58,5 +58,18 @@ module.exports = (server) => {
                 }
             )
         },
+        async UpdateloseContact(request,reply){
+            server.methods.services.cases_revamp.update(
+                request.params.id,
+                request.auth.credentials.user,
+                request.payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesRevampResponse(result,request)
+                ).code(200)
+                }
+            )
+        },
     }
 }

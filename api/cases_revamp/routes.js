@@ -1,6 +1,7 @@
 module.exports = (server) =>{
     const handlers = require('./handlers')(server);
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server);
+    const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server);
     const countCaseByDistrict = require('../cases/route_prerequesites').countCaseByDistrict(server);
     const countCasePendingByDistrict = require('../cases/route_prerequesites').countCasePendingByDistrict(server);
 
@@ -42,6 +43,19 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.CreateCloseContact
+        },
+        {
+            method: 'PUT',
+            path: '/cases-revamp/{id}/contact',
+            config: {
+                auth: 'jwt',
+                description: 'update close contact only',
+                tags: ['api', 'cases_revamp'],
+                pre: [
+                    CheckRoleUpdate,
+                ]
+            },
+            handler: handlers.UpdateloseContact
         },
     ]
 }

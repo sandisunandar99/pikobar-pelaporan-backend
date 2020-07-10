@@ -84,9 +84,21 @@ async function createCaseContact (author, payload, callback) {
       return r;
     })
     const result = await CloseContact.create(mapingContact);
-    return callback(null, result);
+    callback(null, result);
   } catch (e) {
-    return callback(e, null);
+    callback(e, null);
+  }
+}
+
+async function update (id, author, payload, callback) {
+  try {
+    payload.updatedBy = author._id;
+    const result = await CloseContact.findByIdAndUpdate(id,
+      { $set: payload },
+      { new: true });
+    callback(null, result);
+  } catch (e) {
+    callback(e, null);
   }
 }
 
@@ -102,6 +114,10 @@ module.exports = [
   {
     name: "services.cases_revamp.createCaseContact",
     method: createCaseContact,
+  },
+  {
+    name: "services.cases_revamp.update",
+    method: update,
   },
 ];
 
