@@ -53,6 +53,7 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     const finalSave = await x.save();
     const mapingIdCase = raw_payload.close_contact_patient.map(r =>{
       r.case = saveCase._id;
+      r.createdBy = author._id;
       return r;
     })
     await CloseContact.create(mapingIdCase);
@@ -76,6 +77,19 @@ const checkIfExisting = async (query, callback) => {
   callback(null, check);
 }
 
+async function createCaseContact (author, payload, callback) {
+  try {
+    const mapingContact = payload.map(r =>{
+      r.createdBy = author._id;
+      return r;
+    })
+    const result = await CloseContact.create(mapingContact);
+    return callback(null, result);
+  } catch (e) {
+    return callback(e, null);
+  }
+}
+
 module.exports = [
   {
     name: 'services.cases_revamp.create',
@@ -84,6 +98,10 @@ module.exports = [
   {
     name: "services.cases_revamp.checkIfExisting",
     method: checkIfExisting,
+  },
+  {
+    name: "services.cases_revamp.createCaseContact",
+    method: createCaseContact,
   },
 ];
 
