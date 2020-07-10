@@ -1,6 +1,6 @@
 'use strict';
 const filterCloseContact = (query, user) => {
-    let params = {}
+    let params = { is_case_deleted: false }
     if (query.address_district_code) {
         params.address_district_code = query.address_district_code;
     }
