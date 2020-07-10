@@ -24,6 +24,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
 const Helper = require('../helpers/custom')
+const CloseContact = require('../models/CloseContact')
 
 async function ListCase (query, user, callback) {
 
@@ -714,7 +715,10 @@ async function healthCheck(payload, callback) {
 async function epidemiologicalInvestigationForm (detailCase, callback) {
   const pdfmaker = require('../helpers/pdfmaker')
   const histories = await History.find({ case: detailCase._id })
-  Object.assign(detailCase, { histories: histories })
+  const closeContacts = await CloseContact.find({ case: detailCase._id, delete_status: { $ne: 'deleted' } })
+  console.log(detailCase)
+  console.log(closeContacts)
+  Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 

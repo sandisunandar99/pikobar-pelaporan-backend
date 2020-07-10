@@ -1,4 +1,5 @@
-const layout = {
+const layout = (data) => {
+  return {
     header: [
         {
             text: 'FORMULIR PENYELIDIKAN EPIDIOMOLOGI',
@@ -12,18 +13,18 @@ const layout = {
     subheader: [
         {
             style: 'subheader',
-            text: 'Nama Fasyankes : '
+            text: `Nama Fasyankes : ${data.fasyankes_name || '-'}`
         },
         {
             columns: [
-                { text: 'Nama Pewawancara : ' },
-                { text: 'Tanggal Wawancara : '}
+                { text: `Nama Pewawancara : ${data.interviewers_name || '-'} ` },
+                { text: `Tanggal Wawancara : ${data.interview_date || '-'}` }
             ]
         },
         {
             columns: [
                 { text: 'Tempat Tugas : '},
-                { text: 'HP Pewawancara : '}
+                { text: `HP Pewawancara : ${data.interviewers_phone_number || '-'}` }
             ]
         }
     ],
@@ -119,6 +120,7 @@ const layout = {
         fontSize: 10
         // alignment: 'justify'
       }
+  }
 }
 
 module.exports = layout

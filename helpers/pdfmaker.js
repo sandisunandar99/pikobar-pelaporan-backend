@@ -29,7 +29,7 @@ const generate = (docDefinition, filePath) => {
 }
 
 const epidemiologicalInvestigationsForm = (data) => {
-  const layout = require('../helpers/pdftemplate/layouts/epidemiological-investigation')
+  const layout = require('../helpers/pdftemplate/layouts/epidemiological-investigation')(data)
   const components = {
     patientIdentity: require('../helpers/pdftemplate/components/epidemiological-investigation/patient-identity'),
     clinicalInformation: require('../helpers/pdftemplate/components/epidemiological-investigation/clinical-information'),
