@@ -30,5 +30,18 @@ module.exports = (server) =>{
             },
             handler: handlers.CheckIfExisting
         },
+        {
+            method: 'POST',
+            path: '/cases-revamp/{id}/contact',
+            config: {
+                auth: 'jwt',
+                description: 'create new close contact only',
+                tags: ['api', 'cases_revamp'],
+                pre: [
+                    CheckRoleCreate,
+                ]
+            },
+            handler: handlers.CreateCloseContact
+        },
     ]
 }

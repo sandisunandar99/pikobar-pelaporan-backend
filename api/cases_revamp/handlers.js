@@ -41,5 +41,22 @@ module.exports = (server) => {
                     return reply(constructCasesRevampResponse(listCase));
                 });
         },
+        /**
+         * {POST} /api/cases-revamp/{id}/contact
+         * @param {*} request
+         * @param {*} reply
+        */
+        async CreateCloseContact(request,reply){
+            server.methods.services.cases_revamp.createCaseContact(
+                request.auth.credentials.user,
+                request.payload,
+                (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCasesRevampResponse(result,request)
+                ).code(200)
+                }
+            )
+        },
     }
 }
