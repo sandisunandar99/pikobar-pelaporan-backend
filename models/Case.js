@@ -194,6 +194,21 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
     }
 }
 
+/*
+ * If case deleted,
+ * Set 'is_case_deleted' in the CloseContact documents to TRUE
+ */
+CaseSchema.pre('save', async function (next) {
+    const deleted = this.delete_status === 'deleted'
+    const CloseContact = new mongoose.models["CloseContact"]
+
+    if (deleted) {
+        await CloseContact.onDeleteCase(this._id)
+    }
+
+    next()
+})
+
 CaseSchema.methods.MapOutput = function () {
     // filter output untuk memperkecil line file tidak 
     // melebihi 250 di pecah di simpan di helper

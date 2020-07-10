@@ -9,7 +9,8 @@ const REF_CASE = {
 }
 const REF_CLOSE_CONTACT_HISTORY = {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'CloseContactHistory'
+    ref: 'CloseContactHistory',
+    default: null
 }
 const REF_USER = { 
     type: mongoose.Schema.Types.ObjectId,
@@ -66,6 +67,7 @@ const CloseContactSchema = new mongoose.Schema({
     officer_is_contact: { type: Boolean, default: false },
     officer_protection_tools: { type: Array, default: [] },
     is_reported: { type: Boolean, default: false },
+    is_case_deleted: { type: Boolean, default: false },
     latest_history : REF_CLOSE_CONTACT_HISTORY,
     createdBy: REF_USER,
     updatedBy: REF_USER,
@@ -125,7 +127,7 @@ CloseContactSchema.methods.toJSONFor = function () {
         officer_is_contact: this.officer_is_contact,
         officer_protection_tools: this.officer_protection_tools,
         is_reported: this.is_reported,
-        latest_history : this.latest_history.toJSONFor(),
+        latest_history : this.latest_history ? this.latest_history.toJSONFor() : null,
         createdAt: this.createdAt,
         createdBy: this.createdBy,
         updatedAt:this.updatedAt,
@@ -160,6 +162,14 @@ CloseContactSchema.methods.getByNik = function (nik) {
     return mongoose.models["CloseContact"]
         .findOne({ nik: nik })
         .where('delete_status').ne('deleted')
+}
+
+CloseContactSchema.methods.onDeleteCase = function (caseId) {
+    return mongoose.models["CloseContact"]
+        .updateMany(
+            { case: caseId },
+            { is_case_deleted: true }
+        )
 }
 
 /*
