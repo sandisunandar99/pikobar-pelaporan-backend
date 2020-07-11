@@ -23,6 +23,7 @@ const register = (server, options, next) => {
     require('./Unit'),
     require('./Lab'),
     require('./CloseContact'),
+    require('./CloseContactHistory'),
     
     server.app.db = {
       link: db.db,

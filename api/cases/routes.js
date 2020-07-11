@@ -28,7 +28,9 @@ module.exports = (server) =>{
                 description: 'show list of all cases',
                 tags: ['api', 'cases'],
                 validate: inputValidations.CaseQueryValidations,
-                response: outputValidations.ListCaseOutputValidationsConfig,
+                 // keterangan response ini gak perlu di pakai karena sudah di validation
+                // ketika input
+                // response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
                     CheckRoleView,
                     checkIfDataNotNull

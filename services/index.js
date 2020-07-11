@@ -17,6 +17,8 @@ const register = (server, options, next) => {
       require('./unit'),
       require('./case_related'),
       require('./case_revamp'),
+      require('./close_contact'),
+      require('./close_contact_histories')
     );
     server.method(services)
     return next()
