@@ -32,7 +32,7 @@ const CloseContactSchema = new mongoose.Schema({
     birth_date : { type: Date, default: null },
     age : { type: Number, default: 0 },
     month : { type:Number, default: 0 },
-    gender: { type: String, enum: [consts.GENDER.MALE, consts.GENDER.FEMALE] },
+    gender: { type: String, default: null },
     address_province_code: { type: String, default: consts.DEFAULT_PROVINCE.CODE },
     address_province_name: { type: String, default: consts.DEFAULT_PROVINCE.NAME },
     address_district_code: { type: String, default: null },
