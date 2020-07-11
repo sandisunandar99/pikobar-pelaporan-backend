@@ -153,7 +153,7 @@ const RequestPayload = {
         fasyankes_subdistrict_code: Joi.string().allow('', null).default(null),
         fasyankes_subdistrict_name: Joi.string().allow('', null).default(null),
         fasyankes_village_code: Joi.string().allow('', null).default(null),
-        fasyankes_village_name: Joi.string().empty('', 'desc').default(null),
+        fasyankes_village_name: Joi.string().allow('', null).default(null),
         ...historyPayload
     }).unknown(),
     options: validateOptions.options,
