@@ -24,6 +24,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
 const Helper = require('../helpers/custom')
+const CloseContact = require('../models/CloseContact')
 
 async function ListCase (query, user, callback) {
 
@@ -191,8 +192,14 @@ function getIdCase (query,callback) {
   if(query.name_case_related){
     params.name = new RegExp(query.name_case_related, "i");
   }
+  if(query.status){
+    params.status = query.status;
+  }
+  if(query.address_district_code){
+    params.address_district_code = query.address_district_code;
+  }
   Case.find(params).select('id_case name')
-  .where('delete_status').ne('deleted')
+  .where('delete_status').ne('deleted').limit(100)
   .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
   .catch(err => callback(err, null));
 }
@@ -508,27 +515,28 @@ function getCountCaseByDistrict(callback) {
     .catch(err => callback(err, null))
 }
 
-function getCountByDistrict(code, callback) {
+async function getCountByDistrict(code, callback) {
   /* Get last number of current district id case order */
-  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-              .exec()
-              .then(dinkes =>{
-                Case.find({ address_district_code: code, verified_status: 'verified' })
-                    .sort({id_case: -1})
-                    .exec()
-                    .then(res =>{
-                        let count = 1;
-                        if (res.length > 0)
-                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
-                          count = (Number(res[0].id_case.substring(12)) + 1);
-                        let result = {
-                          prov_city_code: code,
-                          dinkes_code: dinkes.dinkes_kota_kode,
-                          count_pasien: count
-                        }
-                      return callback(null, result)
-                    }).catch(err => callback(err, null))
-              })
+  try {
+    const params = {
+      address_district_code: code, 
+      verified_status: 'verified'
+    }
+    const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
+    const res = await Case.find(params).sort({id_case: -1});
+    let count = 1;
+    if (res.length > 0){
+      count = (Number(res[0].id_case.substring(12)) + 1);
+    }
+    let result = {
+      prov_city_code: code,
+      dinkes_code: dinkes.dinkes_kota_kode,
+      count_pasien: count
+    }
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
 function getCountPendingByDistrict(code, callback) {
@@ -708,7 +716,8 @@ async function healthCheck(payload, callback) {
 async function epidemiologicalInvestigationForm (detailCase, callback) {
   const pdfmaker = require('../helpers/pdfmaker')
   const histories = await History.find({ case: detailCase._id })
-  Object.assign(detailCase, { histories: histories })
+  const closeContacts = await CloseContact.find({ case: detailCase._id, delete_status: { $ne: 'deleted' } })
+  Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 

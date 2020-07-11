@@ -59,7 +59,7 @@ const render = (data) => {
               borderColor: ['black', 'black', 'white', 'black']
             },
             {
-              text: ': -',
+              text: `: ${data.name_parents || '-' } `,
               borderColor: ['white', 'black', 'black', 'black']
             },
             '',''
@@ -79,7 +79,7 @@ const render = (data) => {
           ],
           [
             { text: `\t\t\t RT/RW`, borderColor: ['black', 'white', 'white', 'white'] },
-            { text: `: -/-`, borderColor: ['black', 'white', 'white', 'white'] },
+            { text: `: ${data.rt || '-'} / ${data.rw || '-'}`, borderColor: ['black', 'white', 'white', 'white'] },
             { text: `Kabupaten/Kota`, borderColor: ['black', 'white', 'white', 'white'] },
             { text: `: ${data.address_district_name}`, borderColor: ['black', 'white', 'black', 'white'] },
           ],

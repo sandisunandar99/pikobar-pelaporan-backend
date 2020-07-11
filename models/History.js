@@ -25,7 +25,7 @@ const HistorySchema = new mongoose.Schema({
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
     current_location_type: String,  // RS / RUMAH
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
-    current_hospital_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit'},
+    current_hospital_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default:null},
     current_location_address: String, // or Number?
     current_location_village_code : String,
     current_location_subdistrict_code : String, //kecamatan
@@ -38,7 +38,12 @@ const HistorySchema = new mongoose.Schema({
     serum_check : { type: Boolean, default: null},
     sputum_check : { type: Boolean, default: null},
     swab_check : { type: Boolean, default: null},
-    physical_check : {type:Array , default:[]}
+    physical_check_temperature : {type:Number , default:0},
+    physical_check_blood_pressure : {type:Number , default:0},
+    physical_check_pulse : {type:Number , default:0},
+    physical_check_respiration : {type:Number , default:0},
+    physical_check_height : {type:Number, default:0},
+    physical_check_weight : {type:Number, default:0},
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {
