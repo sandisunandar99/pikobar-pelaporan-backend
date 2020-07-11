@@ -88,6 +88,7 @@ CloseContactSchema.methods.toJSONFor = function () {
         phone_number_note : this.phone_number_note,
         birth_date : this.birth_date,
         age : this.age,
+        month: this.month,
         gender: this.gender,
         address_province_code: this.address_province_code,
         address_province_name: this.address_province_name,
