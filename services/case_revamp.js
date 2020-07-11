@@ -13,6 +13,10 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     'verified_status': VERIFIED_STATUS.VERIFIED,
   };
 
+  if (raw_payload.travel === ""){
+    raw_payload.travel = 2;
+  }
+
   if (author.role === ROLE.FASKES) {
     verified.verified_status = VERIFIED_STATUS.PENDING;
   };
