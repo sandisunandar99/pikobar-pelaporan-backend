@@ -37,6 +37,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'create new cases transfer',
                 tags: ['api', 'cases'],
+                validate: inputValidations.RequestPayload,
                 pre: [
                     CheckRoleCreate,
                     CheckCredentialUnitIsExist,
@@ -85,6 +86,7 @@ module.exports = (server) =>{
                 auth: 'jwt',
                 description: 'update cases transfer',
                 tags: ['api', 'cases'],
+                validate: inputValidations.RequestPayload,
                 pre: [
                     CheckRoleUpdate,
                     CheckCredentialUnitIsExist,
