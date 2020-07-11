@@ -42,7 +42,7 @@ const epidemiologicalInvestigationsForm = (data) => {
   const docDefinition = {
       content: [
         layout.header,
-        layout.subheader,
+        layout.subheader(data),
         components.patientIdentity.render(data),
         components.clinicalInformation.render(data),
         components.inspectionInformation.render(data),

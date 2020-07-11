@@ -9,24 +9,26 @@ const layout = {
             style: 'header'
         }
     ],
-    subheader: [
+    subheader: (data) => {
+      return [
         {
             style: 'subheader',
-            text: 'Nama Fasyankes : '
+            text: `Nama Fasyankes : ${data.fasyankes_name || '-'}`
         },
         {
             columns: [
-                { text: 'Nama Pewawancara : ' },
-                { text: 'Tanggal Wawancara : '}
+                { text: `Nama Pewawancara : ${data.interviewers_name || '-'} ` },
+                { text: `Tanggal Wawancara : ${data.interview_date || '-'}` }
             ]
         },
         {
             columns: [
-                { text: 'Tempat Tugas : '},
-                { text: 'HP Pewawancara : '}
+                { text: 'Tempat Tugas : -'},
+                { text: `HP Pewawancara : ${data.interviewers_phone_number || '-'}` }
             ]
         }
-    ],
+      ]
+    },
     footnoteSectionOne: [
       {
         margin: [10, -5, 0, 0],

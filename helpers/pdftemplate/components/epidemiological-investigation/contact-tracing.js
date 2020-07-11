@@ -8,6 +8,12 @@ const render = (data) => {
     return !data.last_history[value] ? '√' : '  '
   }
 
+  const market = data.close_contact_animal_market
+  const faskes = data.close_contact_medical_facility
+  const isVisited = (value, n) => {
+    return value == n ? '√' : '  '
+  }
+
   const buildVisitedPlaces = (place) => {
     let visitedPlaces = [], visitedPlacesDoc = []
     for (i in data.histories) {
@@ -107,7 +113,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isVisited(faskes, 1)}] Ya   [${isVisited(faskes, 2)}] Tdk  [${isVisited(faskes, 3)}] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
@@ -129,7 +135,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isVisited(market, 1)}] Ya   [${isVisited(market, 2)}] Tdk  [${isVisited(market, 3)}] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
