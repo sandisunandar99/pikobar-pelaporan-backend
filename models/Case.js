@@ -63,7 +63,7 @@ const CaseSchema = new mongoose.Schema({
     consume_alcohol : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     income : { type: Number, default: null},
     //faktor kontak
-    travel:Boolean,
+    travel:{type:Number},
     visited:{type:String,default:null},
     start_travel:{type:Date,default:Date.now()},
     end_travel:{type:Date,default:Date.now()},

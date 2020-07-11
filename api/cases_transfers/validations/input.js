@@ -117,7 +117,7 @@ const RequestPayload = {
         smoking: Joi.number().allow('', null).empty(['', null]).default(0),
         consume_alcohol: Joi.number().allow('', null).empty(['', null]).default(0),
         income: Joi.number().allow('', null).empty(['', null]).default(0),
-        travel: Joi.boolean().allow('', null).empty(['', null]).default(false),
+        travel: Joi.number().allow('', null).empty(['', null]).default(2),
         visited: Joi.string().allow('', null).default(null),
         start_travel: Joi.date().allow('', null).empty(['', null]).default(null),
         end_travel: Joi.date().allow('', null).empty(['', null]).default(null),
