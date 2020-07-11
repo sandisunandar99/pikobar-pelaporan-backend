@@ -22,7 +22,7 @@ const render = (data) => {
           ],
           [
             { text: 'NIK (KTP) pasien' },
-            { text: '...', colSpan: 2 },
+            { text: `${data.nik || data.note_nik || '-'}`, colSpan: 2 },
             {}
           ],
           [

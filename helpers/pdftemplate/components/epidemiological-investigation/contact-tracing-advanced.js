@@ -5,6 +5,8 @@ const components = {
 const render = (data) => {
 
   const officer = data.health_workers
+  const ispaGroup = data.close_contact_heavy_ispa_group
+  const confirmedCase = data.close_contact_confirm
   const protectionTools = data.apd_use.map(v => v.toLowerCase())
 
   const isProtected = (value) => {
@@ -97,7 +99,7 @@ const render = (data) => {
             {},
             {
               // border: ['', '','black','black'],
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isTrue(confirmedCase, 1)}] Ya   [${isTrue(confirmedCase, 2)}] Tdk  [${isTrue(confirmedCase, 3)}] Tdk Tahu`,
               colSpan: 3,
               alignment: 'left'
             },{},{}
@@ -118,7 +120,7 @@ const render = (data) => {
             },
             {},
             {
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
+              text: `: [${isTrue(ispaGroup, 1)}] Ya   [${isTrue(ispaGroup, 2)}] Tdk  [${isTrue(ispaGroup, 3)}] Tdk Tahu`,
               colSpan: 3,
               alignment: 'left'
             },{},{}

@@ -1,4 +1,10 @@
 const render = (data) => {
+
+  const history = data.last_history
+  const isTrue = (key, n) => {
+    return history[key] == n ? '√' : '  '
+  }
+
   return [
     {
       colSpan: 4,
@@ -7,11 +13,11 @@ const render = (data) => {
         body: [
           [
             { text: 'Pneumonia (Klinis atau Radiologi)', border: [] },
-            { text: `: [  ] Ya   [  ] Tdk  [  ] Tdk tahu `, border: [] },
+            { text: `: [${isTrue('diagnosis_pneumonia', 1)}] Ya   [${isTrue('diagnosis_pneumonia', 2)}] Tdk  [${isTrue('diagnosis_pneumonia', 3)}] Tdk tahu `, border: [] },
           ],
           [
             { text: 'ARDS (Acute Respiratory Distress Syndrome)', border: [] },
-            { text: `: [  ] Ya   [  ] Tdk  [  ] Tdk tahu `, border: [] },
+            { text: `: [${isTrue('diagnosis_ards', 1)}] Ya   [${isTrue('diagnosis_ards', 2)}] Tdk  [${isTrue('diagnosis_ards', 3)}] Tdk tahu `, border: [] },
           ],
           [
             { text: `Diagnosis lainnya, Sebutkan!`, margin: [0, 0, 0, 5], border: [] },

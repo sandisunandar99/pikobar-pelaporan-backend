@@ -101,6 +101,7 @@ CloseContactSchema.methods.toJSONFor = function () {
         address_rt: this.address_rt,
         address_street : this.address_street,
         relationship : this.relationship,
+        activity: this.activity,
         emergency_contact_name: this.emergency_contact_name,
         emergency_contact_phone: this.emergency_contact_phone,
         emergency_contact_relationship: this.emergency_contact_relationship,
