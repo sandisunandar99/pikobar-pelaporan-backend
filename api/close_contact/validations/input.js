@@ -80,6 +80,7 @@ const RequestPayload = {
       home_contact_activities: Joi.array(),
       officer_is_contact: Joi.boolean(),
       officer_protection_tools: Joi.array(),
+      is_reported: Joi.boolean(),
       latest_history: historyPayload 
   }),
   options: validateOptions.options,

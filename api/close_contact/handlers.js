@@ -70,7 +70,7 @@ module.exports = (server) => {
                 })
         },
         /**
-         * GET /api/cases/{caseId}/close-contacts/{closeContactId}
+         * GET /api/close-contacts/{closeContactId}
          * @param {*} request
          * @param {*} reply
          */
@@ -85,7 +85,7 @@ module.exports = (server) => {
                 })
         },
         /**
-         * PUT /api/cases/{caseId}/close-contacts/{closeContactId}
+         * PUT /api/close-contacts/{closeContactId}
          * @param {*} request
          * @param {*} reply
          */
@@ -121,7 +121,7 @@ module.exports = (server) => {
                 })
         },
         /**
-         * DELETE /api/cases/{caseId}/close-contacts/{id}
+         * DELETE /api/close-contacts/{id}
          * @param {*} request
          * @param {*} reply
          */
