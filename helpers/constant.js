@@ -5,6 +5,7 @@ module.exports = {
     },
     "ROLE":{
         "ADMIN": "superadmin",
+        "PROVINCE": "dinkesprov",
         "KOTAKAB": "dinkeskota",
         "FASKES": "faskes",
     },

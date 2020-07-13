@@ -83,7 +83,7 @@ const CloseContactSchema = new mongoose.Schema({
 CloseContactSchema.methods.toJSONFor = function () {
     return {
         _id: this._id,
-        case: this.case.JSONFormIdCase(),
+        case: this.case ? this.case.JSONFormIdCase() : null,
         interviewer_name: this.interviewer_name,
         contact_tracing_date: this.contact_tracing_date,
         is_nik_exists: this.is_nik_exists,
@@ -145,7 +145,7 @@ CloseContactSchema.methods.toJSONFor = function () {
 CloseContactSchema.methods.toJSONList = function () {
     return {
         _id: this._id,
-        case: this.case.JSONFormIdCase(),
+        case: this.case ? this.case.JSONFormIdCase() : null,
         nik : this.nik,
         name : this.name,
         phone_number : this.phone_number,
