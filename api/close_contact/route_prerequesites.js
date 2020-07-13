@@ -59,7 +59,7 @@ const districtInputScope = server => {
                 }).code(422).takeover()
             } 
         },
-        assign: 'validation_before_input'
+        assign: 'district_input_scope'
     }
 }
 
