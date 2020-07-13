@@ -68,7 +68,7 @@ async function update (id, authorized, raw_payload, callback) {
   try {
     const { latest_history, ...payload } = raw_payload
     const result = await CloseContact.findByIdAndUpdate(id,
-      { $set: { ...payload, updatedBy: authorized, is_reported: true } },
+      { $set: { ...payload, updatedBy: authorized } },
       { new: true })
 
     return callback(null, result)

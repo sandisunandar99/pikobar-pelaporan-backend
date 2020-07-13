@@ -36,7 +36,11 @@ const convertDate = (dates) => {
     return new Date(dates.getTime()).toLocaleDateString("id-ID");
 }
 
-const isDirty = (oldData, newData) => {     
+const isDirty = (oldData, newData) => {    
+    if (!oldData) {
+        return true        
+    }
+
     function isEqual (a, b) {
         if (Array.isArray(a))
             return JSON.stringify(a) === JSON.stringify(b)
