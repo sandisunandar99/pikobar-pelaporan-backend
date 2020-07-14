@@ -64,6 +64,7 @@ const CaseSchema = new mongoose.Schema({
     income : { type: Number, default: null},
     //faktor kontak
     travel:{type:Number},
+    travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia
     visited:{type:String,default:null},
     start_travel:{type:Date,default:Date.now()},
     end_travel:{type:Date,default:Date.now()},
@@ -99,10 +100,11 @@ const CaseSchema = new mongoose.Schema({
     fasyankes_name: {type: String, default: null},
     fasyankes_province_code: {type: String, default: "32"},
     fasyankes_province_name: {type: String, default: "Jawa Barat"},
-    fasyankes_subdistrict_code: {type: String},
-    fasyankes_subdistrict_name: {type: String},
-    fasyankes_village_code: {type: String},
-    fasyankes_village_name: {type: String},
+    fasyankes_subdistrict_code: {type: String, default:null},
+    fasyankes_subdistrict_name: {type: String, default:null},
+    fasyankes_village_code: {type: String, default:null},
+    fasyankes_village_name: {type: String, default:null},
+    assignment_place : {type:String, default:null} //tempat tugas bisa diisi unit kerja
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.index({author: 1});
