@@ -99,10 +99,11 @@ const CaseSchema = new mongoose.Schema({
     fasyankes_name: {type: String, default: null},
     fasyankes_province_code: {type: String, default: "32"},
     fasyankes_province_name: {type: String, default: "Jawa Barat"},
-    fasyankes_subdistrict_code: {type: String},
-    fasyankes_subdistrict_name: {type: String},
-    fasyankes_village_code: {type: String},
-    fasyankes_village_name: {type: String},
+    fasyankes_subdistrict_code: {type: String, default:null},
+    fasyankes_subdistrict_name: {type: String, default:null},
+    fasyankes_village_code: {type: String, default:null},
+    fasyankes_village_name: {type: String, default:null},
+    assignment_place : {type:String, default:null}
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.index({author: 1});
