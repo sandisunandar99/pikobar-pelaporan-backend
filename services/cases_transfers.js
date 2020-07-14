@@ -40,7 +40,7 @@ async function ListCase (query, user, type, callback) {
 
     callback(null, response)
   } catch (error) {
-    callback(null, error)
+    callback(error, null)
   }
 }
 
@@ -50,7 +50,7 @@ async function getCasetransfers (caseId, callback) {
     let transferLogs = await CaseTransfer.aggregate(dbQuery)   
     return callback(null, transferLogs)
   } catch (error) {
-    return callback(null, error)
+    return callback(error, null)
   }
 }
 
@@ -82,7 +82,7 @@ async function createCaseTransfer (caseId, auth, pre, req, callback) {
     
     return callback(null, caseTransfer)
   } catch (error) {
-    return callback(null, error)
+    return callback(error, null)
   }
 }
 
@@ -121,7 +121,7 @@ async function processTransfer (transferId, caseId, act, auth, req = {}, callbac
 
     return callback(null, results)
   } catch (error) {
-    return callback(null, error)
+    return callback(error, null)
   }
 }
 
@@ -134,7 +134,7 @@ async function actionAbort (schema, caseId, auth, callback) {
 
     return callback(null, results)
   } catch (error) {
-    return callback(null, error)
+    return callback(error, null)
   }
 }
 
