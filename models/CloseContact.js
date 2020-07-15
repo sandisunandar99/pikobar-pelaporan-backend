@@ -134,11 +134,7 @@ CloseContactSchema.methods.toJSONFor = function () {
         officer_is_contact: this.officer_is_contact,
         officer_protection_tools: this.officer_protection_tools,
         is_reported: this.is_reported,
-        latest_history : this.latest_history ? this.latest_history.toJSONFor() : null,
-        createdAt: this.createdAt,
-        createdBy: this.createdBy,
-        updatedAt:this.updatedAt,
-        updatedBy:this.updatedBy
+        latest_history : this.latest_history ? this.latest_history.toJSONFor() : null
     }
 }
 
