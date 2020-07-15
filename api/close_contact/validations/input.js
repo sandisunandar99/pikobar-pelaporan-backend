@@ -44,6 +44,7 @@ const RequestPayload = {
       age : Joi.number().required(),
       month : Joi.number().required(),
       gender : Joi.string().allow('', null).valid(consts.GENDER.MALE, consts.GENDER.FEMALE),
+      is_patient_address_same: Joi.boolean(),
       address_province_code: Joi.string().required(),
       address_province_name: Joi.string().required(),
       address_district_code: Joi.string().required(),
