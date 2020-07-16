@@ -25,6 +25,7 @@ const HistorySchema = new mongoose.Schema({
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
     current_location_type: String,  // RS / RUMAH
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
+    is_patient_address_same: { type: Boolean, default: false },
     current_hospital_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default:null},
     current_location_address: String, // or Number?
     current_location_village_code : String,
@@ -70,7 +71,7 @@ HistorySchema.methods.toJSONFor = function () {
         report_source : this.report_source,
         first_symptom_date : this.first_symptom_date,
         other_notes: this.other_notes,
-
+        is_patient_address_same: this.is_patient_address_same,
         current_location_type: this.current_location_type,
         current_hospital_id: this.current_hospital_id,
         current_location_address : this.current_location_address,
