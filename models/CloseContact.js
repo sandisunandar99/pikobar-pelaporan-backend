@@ -14,7 +14,7 @@ const REF_CLOSE_CONTACT_HISTORY = {
 }
 const REF_USER = { 
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Case', 
+    ref: 'User', 
     default: null
 }
  
@@ -159,7 +159,7 @@ CloseContactSchema.methods.toJSONList = function () {
         address_street : this.address_street,
         is_reported: this.is_reported,
         createdAt: this.createdAt,
-        createdBy: this.createdBy
+        createdBy: this.createdBy ? this.createdBy.JSONCase() : null
     }
 }
 
