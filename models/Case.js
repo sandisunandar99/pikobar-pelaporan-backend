@@ -27,6 +27,7 @@ const CaseSchema = new mongoose.Schema({
     age : {type:Number},
     month : {type:Number},
     gender : {type:String},
+    is_patient_address_same: { type: Boolean, default: false },
     address_street: {type:String},
     address_village_code: { type: String, required: [true, "can't be blank"]},
     address_village_name: { type: String, required: [true, "can't be blank"]},
