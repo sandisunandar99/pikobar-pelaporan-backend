@@ -4,7 +4,6 @@ require('../models/History');
 require('../models/Case');
 
 const Helper = require('../helpers/custom');
-const { object } = require('joi');
 const History = mongoose.model('History');
 const Case = mongoose.model('Case');
 
@@ -77,8 +76,6 @@ function createHistoryIfChanged (payload, callback) {
          * array, and generic object */
         if (typeof a == 'undefined' || typeof b == 'undefined')
           return false;
-        if (a instanceof Date)
-          return a.getTime() == b.getTime();
         if (Array.isArray(a))
           return JSON.stringify(a) == JSON.stringify(b);
         if (typeof(a) == 'object')
@@ -162,8 +159,6 @@ function createHistoryFromInputTest(payload, callback){
          * array, and generic object */
         if (typeof a == 'undefined' || typeof b == 'undefined')
           return false;
-        if (a instanceof Date)
-          return a.getTime() == b.getTime();
         if (Array.isArray(a))
           return JSON.stringify(a) == JSON.stringify(b);
         if (typeof(a) == 'object')
