@@ -86,12 +86,17 @@ const checkIfExisting = async (query, callback) => {
 
 async function createCaseContact (id, author, payload, callback) {
   try {
-    const mapingContact = payload.map(r => {
-      r.case = id;
-      r.createdBy = author._id;
-      return r;
-    })
-    const result = await CloseContact.create(mapingContact);
+    if (payload instanceof Array) {
+      payload.map(r => {
+        r.case = id;
+        r.createdBy = author._id;
+        return r;
+      })
+    }else{
+      payload.case = id;
+      payload.createdBy = author._id;
+    }
+    const result = await CloseContact.create(payload);
     callback(null, result);
   } catch (e) {
     callback(e, null);
