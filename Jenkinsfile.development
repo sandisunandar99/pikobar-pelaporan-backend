@@ -37,6 +37,25 @@ pipeline {
                 
             }      
          }
+
+         stage('Run Docker on Development JabarCloud') {
+
+            environment {
+                SSH_COMMAND = "ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin development'"     
+            }
+
+            steps{
+                   sshagent (['']){
+                        // ssh block
+                    sh 'ssh -o StrictHostKeyChecking=no $USER_PIKOBAR@$HOST_PIKOBAR_DEV_JABARCLOUD "cd /home/ubuntu/app/pikobar-pelaporan-backend && $SSH_COMMAND \
+                                                                                    && docker-compose -f docker-compose-development.yml down \
+                                                                                    && docker-compose -f docker-compose-development.yml build --no-cache \
+                                                                                    && docker-compose -f docker-compose-development.yml up -d"'
+                                                                                        
+                    }
+                
+            }      
+         }
         
     } 
 
