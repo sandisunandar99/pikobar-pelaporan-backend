@@ -20,7 +20,7 @@ const CaseTransfer = mongoose.model('CaseTransfer')
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
-const ObjectId = require('mongoose').Types.ObjectId; 
+const ObjectId = require('mongoose').Types.ObjectId;
 const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
 const Helper = require('../helpers/custom')
@@ -34,10 +34,10 @@ async function ListCase (query, user, callback) {
     limit: 'perPage',
     page: 'currentPage',
     meta: '_meta'
-  };  
+  };
 
   const sorts = (query.sort == "desc" ? {createdAt:"desc"} : Helper.jsonParse(query.sort))
-  
+
   const options = {
     page: query.page,
     limit: query.limit,
@@ -83,7 +83,7 @@ async function ListCase (query, user, callback) {
     const verified_status = query.verified_status.split(',')
     params.verified_status = { $in: verified_status }
   }
-  
+
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {
@@ -121,14 +121,14 @@ async function ListCase (query, user, callback) {
 
 function listCaseExport (query, user, callback) {
   const params = {}
-  
+
   if(query.start_date && query.end_date){
     params.createdAt = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
   }
-  
+
   Check.exportByRole(params,user,query)
 
   if(query.status){
@@ -223,7 +223,7 @@ async function getCaseSummaryFinal (query, user, callback) {
   const searchingPositif = {status:"POSITIF", final_result : { $in: [0,"",null] }}
   const searchingSembuh = {status:"POSITIF",final_result:1}
   const searchingMeninggal = {status:"POSITIF",final_result:2}
-  
+
   try {
     const positif = await Case.find(Object.assign(searching,searchingPositif))
     .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
@@ -232,7 +232,7 @@ async function getCaseSummaryFinal (query, user, callback) {
     const meninggal = await Case.find(Object.assign(searching,searchingMeninggal))
     .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
     const result =  {
-      "SEMBUH":sembuh, 
+      "SEMBUH":sembuh,
       "MENINGGAL":meninggal,
       "POSITIF":positif
     }
@@ -260,28 +260,28 @@ async function getCaseSummary (query, user, callback) {
   if(query.address_subdistrict_code){
     searching.address_subdistrict_code = query.address_subdistrict_code;
   }
-  
+
   var aggStatus = [
-    { $match: { 
+    { $match: {
       $and: [  searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' } ]
     }},
-    { 
+    {
       $group: { _id: "$status", total: {$sum: 1}}
     }
   ];
 
   let result =  {
-    'OTG':0, 
+    'OTG':0,
     'OTG_PROCESS':0,
     'OTG_DONE':0,
-    'ODP':0, 
+    'ODP':0,
     'ODP_PROCESS':0,
     'ODP_DONE':0,
-    'PDP':0, 
+    'PDP':0,
     'PDP_PROCESS':0,
     'PDP_DONE':0,
-    'POSITIF':0, 
-    'KONTAKERAT' : 0, 
+    'POSITIF':0,
+    'KONTAKERAT' : 0,
     'PROBABEL' : 0
   }
   Case.aggregate(aggStatus).exec().then(async item => {
@@ -302,8 +302,8 @@ async function getCaseSummary (query, user, callback) {
           result.KONTAKERAT = item['total']
         }
       });
-      
-      // OTG 
+
+      // OTG
       result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
       result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
 
@@ -338,18 +338,18 @@ async function getCaseSummaryVerification (query, user, callback) {
   if(query.address_subdistrict_code){
     searching.address_subdistrict_code = query.address_subdistrict_code;
   }
-  
+
   var aggStatus = [
-    { $match: { 
+    { $match: {
       $and: [  searching, { delete_status: { $ne: 'deleted' } } ]
     }},
-    { 
+    {
       $group: { _id: "$verified_status", total: {$sum: 1}}
     }
   ];
 
   let result =  {
-    'PENDING': 0, 
+    'PENDING': 0,
     'DECLINED': 0,
     'VERIFIED': 0
   }
@@ -391,7 +391,7 @@ function createCase (raw_payload, author, pre, callback) {
     id_case += pre.count_case_pending.dinkes_code
     id_case += date.substr(2, 2)
     id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
-    id_case += pre.count_case_pending.count_pasien 
+    id_case += pre.count_case_pending.count_pasien
   } else {
     id_case = "covid-"
     id_case += pre.count_case.dinkes_code
@@ -405,7 +405,7 @@ function createCase (raw_payload, author, pre, callback) {
   if (!insert_id_case.hasOwnProperty('id_case') || [null, ""].includes(insert_id_case['id_case']) ) {
       insert_id_case = Object.assign(raw_payload, {id_case})
   }
-  
+
   insert_id_case.author_district_code = author.code_district_city
   insert_id_case.author_district_name = author.name_district_city
 
@@ -428,7 +428,7 @@ function createCase (raw_payload, author, pre, callback) {
       x = Object.assign(x, last_history)
       x.save().then(async final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
 
-        await Notif.send(Notification, User, x, author, 'case-created') 
+        await Notif.send(Notification, User, x, author, 'case-created')
         return callback(null, final)
       })
     })
@@ -455,7 +455,7 @@ function updateCase (id, pre, author, payload, callback) {
       id_case += pre.count_case_pending.dinkes_code
       id_case += date.substr(2, 2)
       id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
-      id_case += pre.count_case_pending.count_pasien 
+      id_case += pre.count_case_pending.count_pasien
     } else {
       id_case = "covid-"
       id_case += pre.count_case.dinkes_code
@@ -519,7 +519,7 @@ async function getCountByDistrict(code, callback) {
   /* Get last number of current district id case order */
   try {
     const params = {
-      address_district_code: code, 
+      address_district_code: code,
       verified_status: 'verified'
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
@@ -573,20 +573,20 @@ async function importCases (raw_payload, author, pre, callback) {
   const refHospitals = await Unit.find({unit_type: 'rumahsakit'})
   /**
    * # The method used temporarily
-   * Prevent duplicate id_case generated at another import process in the same time  
+   * Prevent duplicate id_case generated at another import process in the same time
    * Explanation:
    * - When counting cases, the resulting numbers will be the same if other users import simultaneously,
    *   this causes duplication in the case id.
    * current todo options:
    * 1. Make the import process in series can be entered into the queue first
    * 2. Check the current db model in process *(the current method is compared in 1 millisecond)
-   * 
+   *
    * to remember, this is only a temporary method to prevent :)
    */
   promise = delayIfAnotherImportProcessIsRunning(promise)
 
   for (i in dataSheet) {
-    
+
     let item = dataSheet[i]
 
     promise = promise.then(async () => {
@@ -613,7 +613,7 @@ async function importCases (raw_payload, author, pre, callback) {
       let verified  = {
         verified_status: 'verified'
       }
-    
+
       if (author.role === "faskes") {
         verified.verified_status = 'pending'
       }
@@ -643,7 +643,7 @@ async function importCases (raw_payload, author, pre, callback) {
       let hospitalId = null
 
       if (item && item.current_location_type === 'RS') {
-        
+
         const hospital = refHospitals.find((h) => h.name === item.current_location_address) || null
 
         hospitalId = hospital && hospital._id ? hospital._id : null
@@ -672,7 +672,7 @@ async function importCases (raw_payload, author, pre, callback) {
       savedCase = await savedCase.save()
 
       // savedCases.push(savedCase)
-  
+
       return new Promise(resolve => resolve())
 
     }).catch((e) => { throw new Error(e) })
@@ -697,16 +697,15 @@ function softDeleteCase(cases,deletedBy, payload, callback) {
      return callback(null, item)
    })
 
-} 
+}
 
 async function healthCheck(payload, callback) {
   try {
     let case_no_last_history = await Case.find({ last_history: {"$exists": false}})
-
+    .or({ last_history:null })
     let result = {
       'case_no_last_history' : case_no_last_history,
     }
-
     return callback(null, result);
   } catch (error) {
     return callback(error, null)
@@ -767,7 +766,7 @@ module.exports = [
   {
     name: 'services.cases.getSummary',
     method: getCaseSummary
-  },  
+  },
   {
     name: 'services.cases.GetSummaryFinal',
     method: getCaseSummaryFinal
@@ -775,11 +774,11 @@ module.exports = [
   {
     name: 'services.cases.getSummaryVerification',
     method: getCaseSummaryVerification
-  }, 
+  },
   {
     name: 'services.cases.getSummaryByDistrict',
     method: getCountCaseByDistrict
-  },  
+  },
   {
     name: 'services.cases.create',
     method: createCase

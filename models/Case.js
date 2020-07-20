@@ -55,6 +55,7 @@ const CaseSchema = new mongoose.Schema({
     stage: String,
     status: String,
     final_result: {type: String, default: null},
+    last_date_status_patient: {type:Date, default:Date.now()},
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -148,7 +149,7 @@ CaseSchema.methods.toJSONFor = function () {
 
 
 CaseSchema.methods.JSONFormCase = function () {
-    let covid = this.id_case 
+    let covid = this.id_case
     let nik = this.nik === null || this.nik === undefined ? "-" : this.nik
     let phone_number = this.phone_number === null || this.phone_number === undefined ? "-" : this.phone_number
     return {
@@ -213,7 +214,7 @@ CaseSchema.pre('save', async function (next) {
 })
 
 CaseSchema.methods.MapOutput = function () {
-    // filter output untuk memperkecil line file tidak 
+    // filter output untuk memperkecil line file tidak
     // melebihi 250 di pecah di simpan di helper
     return filtersMap.filterOutput(this);
 }
