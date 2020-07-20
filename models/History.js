@@ -36,6 +36,7 @@ const HistorySchema = new mongoose.Schema({
     diagnosis_covid : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     diagnosis_pneumonia : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     other_diagnosis: String,
+    there_are_symptoms :  { type: Boolean, default: false},
     serum_check : { type: Boolean, default: null},
     sputum_check : { type: Boolean, default: null},
     swab_check : { type: Boolean, default: null},
