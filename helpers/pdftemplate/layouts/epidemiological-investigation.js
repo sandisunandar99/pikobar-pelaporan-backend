@@ -10,24 +10,52 @@ const layout = {
         }
     ],
     subheader: (data) => {
-      return [
-        {
-            style: 'subheader',
-            text: `Nama Fasyankes : ${data.fasyankes_name || '-'}`
-        },
-        {
-            columns: [
-                { text: `Nama Pewawancara : ${data.interviewers_name || '-'} ` },
-                { text: `Tanggal Wawancara : ${data.interview_date || '-'}` }
-            ]
-        },
-        {
-            columns: [
-                { text: 'Tempat Tugas : -'},
-                { text: `HP Pewawancara : ${data.interviewers_phone_number || '-'}` }
-            ]
+      // return [
+      //   {
+      //       style: 'subheader',
+      //       text: `Nama Fasyankes : ${data.fasyankes_name || '-'}`
+      //   },
+      //   {
+      //       columns: [
+      //           { text: `Nama Pewawancara : ${data.interviewers_name || '-'} ` },
+      //           { text: `Tanggal Wawancara : ${data.interview_date || '-'}` }
+      //       ]
+      //   },
+      //   {
+      //       columns: [
+      //           { text: 'Tempat Tugas : -'},
+      //           { text: `HP Pewawancara : ${data.interviewers_phone_number || '-'}` }
+      //       ]
+      //   }
+      // ]
+      return {
+        style: 'tableExample',
+        color: '#444',
+        table: {
+          widths: [112, 160, 80, 120],
+          headerRows: 1,
+          body: [
+            [
+              {
+                text: 'Nama Fasyankes',
+                style: 'tableHeader'
+              },
+              {
+                text: `: ${data.fasyankes_name || '-'}`,
+                style: 'tableHeader'
+              },
+              {
+                text: 'Tanggal Wawancara',
+                style: 'tableHeader'
+              },
+              {
+                text: `: -`,
+                style: 'tableHeader'
+              }
+            ],
+          ]
         }
-      ]
+      }
     },
     footnoteSectionOne: [
       {
