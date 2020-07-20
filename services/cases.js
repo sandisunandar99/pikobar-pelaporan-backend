@@ -92,6 +92,8 @@ async function ListCase (query, user, callback) {
     caseAuthors = caseAuthors.map(obj => obj._id)
   }
 
+  params.last_history = { $exists: true, $ne: null }
+
   if(query.search){
     var search_params = [
       { id_case : new RegExp(query.search,"i") },
@@ -160,6 +162,7 @@ function listCaseExport (query, user, callback) {
   } else {
     var search = {}
   }
+  params.last_history = { $exists: true, $ne: null }
   Case.find(params)
     .where('delete_status').ne('deleted')
     .or(search)
