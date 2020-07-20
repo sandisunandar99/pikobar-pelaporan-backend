@@ -4,6 +4,7 @@ pipeline {
     environment {
         USER_PIKOBAR = "${env.USER_PIKOBAR}"
         HOST_PIKOBAR = "${env.HOST_PIKOBAR_DEV}"
+        HOST_PIKOBAR_DEV_JABARCLOUD = "${env.HOST_PIKOBAR_DEV_JABARCLOUD}"
  
     }
 
