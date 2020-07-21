@@ -40,7 +40,7 @@ const render = (data) => {
               borderColor: ['black', 'white', 'black', 'black'],  
             },{},{},{}
           ],
-          components.symptoms.render(data),
+          ...components.symptoms.render(data),
           [
             {
               text: 'Kondisi Penyerta',
@@ -49,7 +49,32 @@ const render = (data) => {
               alignment: 'left'
             },{},{},{}
           ],
-          components.diseases.render(data),
+          components.diseases.render(data)
+        ],
+      },
+      layout: {
+        paddingTop: (i, node) => -0.2,
+        paddingBottom: (i, node) => 0
+      }
+    },
+    // layout.footnoteSectionOne,
+    {
+      style: 'tableClinical',
+      margin: [0, 10, 0, 0],
+      color: '#444',
+      table: {
+        widths: [112, 150, 80, 140],
+        headerRows: 1,
+        body: [
+          [
+            {
+              text: 'Diagnosis',
+              style: 'tableSubHeader',
+              colSpan: 4,
+              alignment: 'left'
+            },{},{},{}
+          ],
+          components.diagnosis.render(data),
           [
             {
               text: 'Apakah pasien dirawat di rumah sakit' + `: [${isLocationTrue('RS')}] Ya   [${isLocationFalse('RS')}] Tdk`,
@@ -71,28 +96,7 @@ const render = (data) => {
               colSpan: 4,
               alignment: 'left'
             },{},{},{}
-          ],
-        ],
-      }
-    },
-    layout.footnoteSectionOne,
-    {
-      style: 'tableClinical',
-      margin: [0, 10, 0, 0],
-      color: '#444',
-      table: {
-        widths: [112, 150, 80, 140],
-        headerRows: 1,
-        body: [
-          [
-            {
-              text: 'Diagnosis',
-              style: 'tableSubHeader',
-              colSpan: 4,
-              alignment: 'left'
-            },{},{},{}
-          ],
-          components.diagnosis.render(data),
+          ]
         ],
       }
     },

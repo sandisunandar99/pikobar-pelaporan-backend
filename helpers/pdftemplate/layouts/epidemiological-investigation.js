@@ -10,29 +10,11 @@ const layout = {
         }
     ],
     subheader: (data) => {
-      // return [
-      //   {
-      //       style: 'subheader',
-      //       text: `Nama Fasyankes : ${data.fasyankes_name || '-'}`
-      //   },
-      //   {
-      //       columns: [
-      //           { text: `Nama Pewawancara : ${data.interviewers_name || '-'} ` },
-      //           { text: `Tanggal Wawancara : ${data.interview_date || '-'}` }
-      //       ]
-      //   },
-      //   {
-      //       columns: [
-      //           { text: 'Tempat Tugas : -'},
-      //           { text: `HP Pewawancara : ${data.interviewers_phone_number || '-'}` }
-      //       ]
-      //   }
-      // ]
       return {
         style: 'tableExample',
         color: '#444',
         table: {
-          widths: [112, 160, 80, 120],
+          widths: [112, 170, 100, 100],
           headerRows: 1,
           body: [
             [
@@ -45,13 +27,44 @@ const layout = {
                 style: 'tableHeader'
               },
               {
-                text: 'Tanggal Wawancara',
+                text: 'Tgl Wawancara',
                 style: 'tableHeader'
               },
               {
                 text: `: -`,
                 style: 'tableHeader'
               }
+            ],
+            [
+              {
+                text: 'Tempat Tugas',
+                style: 'tableHeader'
+              },
+              {
+                text: `: -`,
+                style: 'tableHeader'
+              },
+              {
+                text: 'HP Pewawancara',
+                style: 'tableHeader'
+              },
+              {
+                text: `${data.interviewers_phone_number || '-'}`,
+                style: 'tableHeader'
+              }
+            ],
+            [
+              {
+                text: 'Nama Pewawancara',
+                style: 'tableHeader'
+              },
+              {
+                text: `: ${data.interviewers_name || '-'}`,
+                style: 'tableHeader',
+                colSpan: 3
+              },
+              {},
+              {}
             ],
           ]
         }
@@ -131,7 +144,7 @@ const layout = {
           bold: true,
           fontSize: 12,
           color: 'black',
-          fillColor: '#e6e6e6'
+          fillColor: '#aaff80'
         },
         tableSubHeader: {
           bold: true,
