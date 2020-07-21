@@ -126,5 +126,20 @@ module.exports = (server) => {
                      return fs.unlinkSync(fileName);
                  })
          },
+          /**
+         * GET /api/dashboard/aggregate-input-test
+         * @param {*} request
+         * @param {*} reply
+         */
+        async summaryInputTest(request, reply) {
+            server.methods.services.dashboard.summaryInputTest(
+                request.query,
+                request.auth.credentials.user,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(dashboardResponse(result)).code(200);
+                }
+            )
+        },
     } //end
 }
