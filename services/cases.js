@@ -36,13 +36,15 @@ async function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
-  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : Helper.jsonParse(query.sort))
+  let splits = query.sort.split(':')
+  let sort = {};
+  sort[splits[0]] = splits[1];
 
   const options = {
     page: query.page,
     limit: query.limit,
     populate: (['last_history','author']),
-    sort: sorts,
+    sort: sort,
     leanWithId: true,
     customLabels: myCustomLabels
   };

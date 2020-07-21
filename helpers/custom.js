@@ -36,9 +36,9 @@ const convertDate = (dates) => {
     return new Date(dates.getTime()).toLocaleDateString("id-ID");
 }
 
-const isDirty = (oldData, newData) => {    
+const isDirty = (oldData, newData) => {
     if (!oldData) {
-        return true        
+        return true
     }
 
     function isEqual (a, b) {

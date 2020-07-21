@@ -42,7 +42,7 @@ const CaseQueryValidations = {
         limit: Joi.number().integer().empty('', 10).default(10).description('limit result set'),
         offset: Joi.number().integer().default(0).description('number of record to skip'),
         page: Joi.number().integer().empty('', 1).default(1).description('number of page'),
-        sort: Joi.string().empty('', 'desc').default('{"createdAt":"desc"}').description('sorting by create date'),
+        sort: Joi.string().description('sorting data'),
         address_village_code: Joi.string().empty('', null).default('').description('search data by Keluarahan/Desa'),
         address_subdistrict_code: Joi.string().empty('', null).default('').description('search data by Kecamatan'),
         address_district_code: Joi.string().empty('', null).default('').description('search data by Case name'),
