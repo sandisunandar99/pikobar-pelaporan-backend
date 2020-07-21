@@ -1,11 +1,7 @@
 const layout = {
     header: [
         {
-            text: 'FORMULIR PENYELIDIKAN EPIDIOMOLOGI',
-            style: 'header'
-        },
-        {
-            text: 'CORONAVIRUS DISEASE (COVID-19)',
+            text: 'Lampiran 6. Formulir Penyelidikan Epidemiologi Coronavirus Disease (COVID-19)',
             style: 'header'
         }
     ],
@@ -94,7 +90,17 @@ const layout = {
       {
         style: 'footer',
         margin: [15, 0, 0, 0],
-        text: '- Diisi sesuai dengan defenisi operasional (lihat pedoman)'
+        text: '*) Diisi sesuai dengan defenisi operasional (lihat pedoman)'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '**) Oksigenasi membran ekstrakorporea'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '***) Diisi jika kriteria suspek, konfirmasi, dan probabel.'
       },
       {
         style: 'footer',
@@ -122,7 +128,7 @@ const layout = {
           fontSize: 9
         },
         header: {
-          fontSize: 13,
+          fontSize: 12,
           bold: true,
           alignment: 'center'
         },
@@ -144,7 +150,7 @@ const layout = {
           bold: true,
           fontSize: 12,
           color: 'black',
-          fillColor: '#aaff80'
+          fillColor: '#92d050'
         },
         tableSubHeader: {
           bold: true,
@@ -152,10 +158,11 @@ const layout = {
           color: 'black'
         },
         tableColumnSubHeader: {
+          alignment: 'center',
           bold: true,
           fontSize: 10,
           color: 'black',
-          fillColor: '#e6e6e6'
+          fillColor: '#92d050'
         }
       },
       defaultStyle: {
