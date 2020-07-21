@@ -6,34 +6,44 @@ const render = (data) => {
   
   return [
     {
+      pageBreak: 'before',
       style: 'tableClinical',
       color: '#444',
       table: {
-        widths: [15, 125, 100, 100, 132],
+        widths: [13, 70, 78, 78, 25, 78, 78, 25],
         headerRows: 1,
         body: [
           [
             {
               text: 'C INFORMASI PEMERIKSAAN PENUNJANG',
               style: 'tableHeader',
-              colSpan: 5,
+              colSpan: 8,
               alignment: 'left'
-            },{},{},{},{}
+            },{},{},{},{},{},{},{}
           ],
           [
             { text: 'No', style: 'tableColumnSubHeader' },
-            { text: 'Jenis Pemeriksaan/Spesimen', style: 'tableColumnSubHeader'  },
-            { text: 'Tanggal Pengambilan Spesimen', style: 'tableColumnSubHeader'  },
+            { text: 'Jenis Pemeriksaan/Spesimen', style: 'tableColumnSubHeader' },
+            { text: 'Pengambilan Spesimen 1', style: 'tableColumnSubHeader', colSpan: 3  },{},{},
+            { text: 'Pengambilan Spesimen 2', style: 'tableColumnSubHeader', colSpan: 3  },{},{},
+          ],
+          [
+            { text: '', style: 'tableColumnSubHeader' },
+            { text: '', style: 'tableColumnSubHeader'  },
+            { text: 'Tanggal Pengambilan', style: 'tableColumnSubHeader'  },
             { text: 'Tempat Pemeriksaan', style: 'tableColumnSubHeader'  },
             { text: 'Hasil', style: 'tableColumnSubHeader'  },
+            { text: 'Tanggal Pengambilan', style: 'tableColumnSubHeader'  },
+            { text: 'Tempat Pemeriksaan', style: 'tableColumnSubHeader'  },
+            { text: 'Hasil', style: 'tableColumnSubHeader'  }
           ],
           [
             {
               text: 'Laboratorium konfirmasi',
               bold: true,
-              colSpan: 5,
+              colSpan: 8,
               alignment: 'left'
-            },{},{},{},{}
+            },{},{},{},{},{},{},{}
           ],
           [
             { text: '1.' },
@@ -41,6 +51,9 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
           [
             { text: '2.' },
@@ -48,6 +61,9 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
           [
             { text: '3.' },
@@ -55,6 +71,9 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
           [
             { text: '4.' },
@@ -62,14 +81,17 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
           [
             {
               text: 'Pemeriksaan lain',
               bold: true,
-              colSpan: 5,
+              colSpan: 8,
               alignment: 'left'
-            },{},{},{},{}
+            },{},{},{},{},{},{},{}
           ],
           [
             { text: '1.' },
@@ -77,6 +99,9 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
           [
             { text: '2.' },
@@ -84,6 +109,9 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
           [
             { text: '3.' },
@@ -91,6 +119,9 @@ const render = (data) => {
             { text: ''},
             { text: ''},
             { text: ''},
+            { text: ''},
+            { text: ''},
+            { text: ''}
           ],
         ],
       }
