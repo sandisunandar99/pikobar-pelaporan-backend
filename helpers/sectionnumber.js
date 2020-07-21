@@ -1,7 +1,5 @@
 const Check = require('../helpers/rolecheck');
 const Filter = require('../helpers/filter/casefilter');
-const { isObject } = require('lodash');
-const { is } = require('bluebird');
 
 const conditionConfirmResult = async (user, query) => {
   const search = Check.countByRole(user);
