@@ -1,10 +1,13 @@
-require('../models/Case');
-const Mongoose = require('mongoose');
-const Helpers = require('../helpers/dashboardbottom');
-const Case = Mongoose.model('Case');
+require('../models/Case')
+require('../models/Rdt')
+const Mongoose = require('mongoose')
+const Helpers = require('../helpers/dashboardbottom')
+const Case = Mongoose.model('Case')
+const Rdt = Mongoose.model('Rdt')
 const DistrictCity = Mongoose.model('Districtcity')
 const SubDistrict = Mongoose.model('SubDistrict')
-const Sql = require('../helpers/sectionnumber');
+const Sql = require('../helpers/sectionnumber')
+
 
 const summaryAggregateByDinkes = async (query, user, callback) =>{
   try {
@@ -1348,7 +1351,16 @@ const lapHarianExport = async (query, user, callback) => {
   }
 }
 
+const summaryInputTest = async (query, user, callback) =>{
+  try {
+   let querySummary = await Sql.summaryInputTest(user, query)
+   let result = await Rdt.aggregate(querySummary)
 
+   callback(null, result)
+  } catch (error) {
+    callback(error, null)
+  }
+}
 
 module.exports = [
   {
@@ -1378,5 +1390,9 @@ module.exports = [
   {
     name: "services.dashboard.lapHarianExport",
     method: lapHarianExport
+  },
+  {
+    name: "services.dashboard.summaryInputTest",
+    method: summaryInputTest
   }
 ]
