@@ -33,6 +33,27 @@ const filterCase = async (user, query) => {
     return params;
 }
 
+const filterRdt = async (user, query) => {
+    const params = {};
+
+    if (user.role == "dinkesprov" || user.role == "superadmin") {
+        if (query.address_district_code) {
+            params.address_district_code = query.address_district_code;
+        }
+    }
+
+    if (query.address_village_code) {
+        params.address_village_code = query.address_village_code;
+    }
+
+    if (query.address_subdistrict_code) {
+        params.address_subdistrict_code = query.address_subdistrict_code;
+    }
+
+    return params;
+}
+
 module.exports = {
-    filterCase
+    filterCase,
+    filterRdt
 }
