@@ -1261,34 +1261,36 @@ const summaryAgregatePerDinkes = async (user, query) => {
 }
 
 const summaryInputTest = async (user, query) =>{
+
+    let search = Check.countByRole(user);
+    let filter  = await Filter.filterRdt(user, query)
+    let searching = Object.assign(search, filter);
     
-    let inject = []
-    let NOT_NULL = 0
-    if(query.wilayah){
-        inject.push({address_district_name: {$eq: query.wilayah}},)
-    }
-    
+    let test_date = {}
     if (query.min_date && query.max_date) {
-        let searchRegExp = new RegExp('/', 'g')
-        let max = query.max_date
-        let maxDate = max.replace(searchRegExp, '-')
-        let min = query.min_date
-        let minDate = min.replace(searchRegExp, '-')
-        inject.push({
-            test_date: {
-                "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
-                "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
-            }
-        },)
-    }
-    
-    let match = {$match: {}}
-    if(Object.keys(query).length !== NOT_NULL){
-        match ={$match: { $and: inject }}
+      let searchRegExp = new RegExp('/', 'g')
+      let min = query.min_date
+      let max = query.max_date
+      let minDate = min.replace(searchRegExp, '-')
+      let maxDate = max.replace(searchRegExp, '-')
+      test_date = {
+        "test_date": {
+          "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+          "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+        }
+      }
     }
 
     let queryAgt = [
-        match,
+        {
+            $match : {
+                $and : [
+                    searching,
+                    {"status": {$ne: 'deleted'}},
+                    test_date
+                ]
+            },
+        },
         { 
             $group: { 
                 _id: 'data',
