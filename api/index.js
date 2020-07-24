@@ -33,7 +33,7 @@ const register = (server, options, next) => {
     var hours = Math.floor(seconds / (60*60));
     var minutes = Math.floor(seconds % (60*60) / 60);
     var seconds = Math.floor(seconds % 60);
-  
+
     return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
   }
 
@@ -53,6 +53,7 @@ const register = (server, options, next) => {
   server.register(require('./case_related'));
   server.register(require('./cases_revamp'));
   server.register(require('./close_contact'));
+  server.register(require('./case_dashboard'));
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
