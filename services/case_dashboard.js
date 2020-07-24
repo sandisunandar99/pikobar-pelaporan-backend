@@ -29,11 +29,11 @@ async function countSectionTop(query, user, callback) {
       { $match: {
         $and: [  searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' } ]
       }},
-      {'$lookup': {
-        'from': 'histories',
-        'localField': 'last_history',
-        'foreignField': '_id',
-        'as': 'last_history'
+      { $lookup: {
+        from: 'histories',
+        localField: 'last_history',
+        foreignField: '_id',
+        as: 'last_history'
       }},
       { $unwind: '$last_history' },
       {

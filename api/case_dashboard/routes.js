@@ -4,7 +4,7 @@ module.exports = (server) => {
   return [
     {
       method: 'GET',
-      path: '/dashboard/new-case',
+      path: '/dashboard/v2/summary-case-criteria',
       config: {
         auth: 'jwt',
         description: 'show dashboard case new revision',
