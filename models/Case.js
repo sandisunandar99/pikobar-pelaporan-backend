@@ -96,6 +96,8 @@ const CaseSchema = new mongoose.Schema({
     latest_faskes_unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     is_test_masif: {type: Boolean, default: false},
     input_source: String,
+     // untuk kebutuhan laporan harian
+    there_are_symptoms :  { type: Boolean, default: false},
     //medical officer
     fasyankes_type: {type: String, default: null},
     fasyankes_code: {type: String, default: null},
