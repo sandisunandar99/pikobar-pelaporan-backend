@@ -69,30 +69,7 @@ const render = (data) => {
           [
             {
               // border: ['black', '','','black'],
-              text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak erat dengan kasus pasien dalam pengawasan COVID-19?',
-              colSpan: 2,
-              alignment: 'left'
-            },
-            {},
-            {
-              // border: ['', '','black','black'],
-              text: ': [  ] Ya   [  ] Tdk  [  ] Tdk Tahu',
-              colSpan: 3,
-              alignment: 'left'
-            },{},{}
-          ],
-          [
-            { text: 'Nama', style: 'tableColumnSubHeader' },
-            { text: 'Alamat', style: 'tableColumnSubHeader'  },
-            { text: 'Hubungan', style: 'tableColumnSubHeader'  },
-            { text: 'Tgl kontak pertama', style: 'tableColumnSubHeader'  },
-            { text: 'Tgl kontak terakhir', style: 'tableColumnSubHeader'  },
-          ],
-          ...buildVisitedPlaces('contact_pdp'),
-          [
-            {
-              // border: ['black', '','','black'],
-              text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak erat dengan kasus konfirmasi COVID-19?',
+              text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak erat dengan kasus konfirmasi dan probable COVID-19?',
               colSpan: 2,
               alignment: 'left'
             },

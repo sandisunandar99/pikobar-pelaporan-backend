@@ -43,6 +43,37 @@ const render = (data) => {
     return visitedPlacesDoc
   }
 
+  const buildResidences = () => {
+    let residences = [], residencesDoc = []
+    if (!residences.length) {
+      for (let i = 0;  i < 2; i++) {
+        residencesDoc.push([
+          { text: '-', colSpan: 2 },{},
+          { text: '-', colSpan: 2 },{},
+      ])
+      }
+    }
+
+    return residencesDoc
+  }
+
+  const buildSuspectContact = () => {
+    let suspects = [], suspectsDoc = []
+    if (!suspects.length) {
+      for (let i = 0;  i < 2; i++) {
+        suspectsDoc.push([
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' }
+      ])
+      }
+    }
+
+    return suspectsDoc
+  }
+
   return [
     {
       style: 'tableClinical',
@@ -53,7 +84,7 @@ const render = (data) => {
         body: [
           [
             {
-              text: 'D FAKTOR KONTAK/PAPARAN',
+              text: 'D FAKTOR RIWAYAT PERJALANAN',
               style: 'tableHeader',
               colSpan: 4,
               alignment: 'left'
@@ -100,35 +131,13 @@ const render = (data) => {
             { text: 'Provinsi', style: 'tableColumnSubHeader' },
             { text: 'Kota', style: 'tableColumnSubHeader'  },
             { text: 'Tgl Perjalanan', style: 'tableColumnSubHeader'  },
-            { text: 'Tgl tiba di tempat sekarang', style: 'tableColumnSubHeader'  },
+            { text: 'Tgl tiba di tempat', style: 'tableColumnSubHeader'  },
           ],
           ...buildVisitedPlaces('visited_city'),
           [
             {
               border: ['black', 'black','','black'],
-              text: 'Dalam 14 hari sebelum sakit, apakah memiliki riwayat berkunjung ke fasilitas kesehatan, baik sebagai pasien, pekerja, atau berkunjung?',
-              colSpan: 2,
-              alignment: 'left'
-            },
-            {},
-            {
-              border: ['', 'black','black','black'],
-              text: `: [${isVisited(faskes, 1)}] Ya   [${isVisited(faskes, 2)}] Tdk  [${isVisited(faskes, 3)}] Tdk Tahu`,
-              colSpan: 2,
-              alignment: 'left'
-            },{}
-          ],
-          [
-            { text: 'Nama RS', style: 'tableColumnSubHeader' },
-            { text: 'Kota', style: 'tableColumnSubHeader'  },
-            { text: 'Provinsi/Negara', style: 'tableColumnSubHeader'  },
-            { text: 'Tgl Kunjungan', style: 'tableColumnSubHeader'  },
-          ],
-          ...buildVisitedPlaces('visited_hospital'),
-          [
-            {
-              border: ['black', 'black','','black'],
-              text: 'Dalam 14 hari sebelum sakit, mengunjungi pasar hewan?',
+              text: 'Dalam 14 hari sebelum sakit, apakah memiliki riwayat tinggal ke area transmisi lokal?',
               colSpan: 2,
               alignment: 'left'
             },
@@ -141,15 +150,49 @@ const render = (data) => {
             },{}
           ],
           [
-            { text: 'Nama Lokasi', style: 'tableColumnSubHeader' },
-            { text: 'Kota', style: 'tableColumnSubHeader'  },
-            { text: 'Provinsi/Negara', style: 'tableColumnSubHeader'  },
-            { text: 'Tgl Kunjungan', style: 'tableColumnSubHeader'  },
+            { text: 'Provinsi', colSpan: 2, style: 'tableColumnSubHeader' },
+            {},
+            { text: 'Kota', colSpan: 2, style: 'tableColumnSubHeader'  },
+            {},
           ],
-          ...buildVisitedPlaces('visited_market'),
+          ...buildResidences()
         ],
       }
     },
+    {
+      margin: [0, -15, 0, 0],
+      style: 'tableClinical',
+      color: '#444',
+      table: {
+        widths: [105, 157, 81, 65, 65],
+        headerRows: 1,
+        body: [
+          [
+            {
+              border: ['black', 'black','','black'],
+              text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak dengan kasus suspek/probable COVID-19 ?',
+              colSpan: 2,
+              alignment: 'left'
+            },
+            {},
+            {
+              border: ['', 'black','black','black'],
+              text: `: [${isVisited(faskes, 1)}] Ya   [${isVisited(faskes, 2)}] Tdk  [${isVisited(faskes, 3)}] Tdk Tahu`,
+              colSpan: 3,
+              alignment: 'left'
+            },{},{}
+          ],
+          [
+            { text: 'Nama', style: 'tableColumnSubHeader' },
+            { text: 'Alamat', style: 'tableColumnSubHeader'  },
+            { text: 'Hubungan', style: 'tableColumnSubHeader'  },
+            { text: 'Tgl Kontak Pertama', style: 'tableColumnSubHeader'  },
+            { text: 'Tgl Kontak Terakhir', style: 'tableColumnSubHeader'  },
+          ],
+          ...buildSuspectContact(),
+        ]
+      }
+    }
   ]
 }
 

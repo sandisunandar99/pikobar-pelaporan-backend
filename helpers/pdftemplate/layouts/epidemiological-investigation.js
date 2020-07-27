@@ -1,33 +1,70 @@
 const layout = {
     header: [
         {
-            text: 'FORMULIR PENYELIDIKAN EPIDIOMOLOGI',
-            style: 'header'
-        },
-        {
-            text: 'CORONAVIRUS DISEASE (COVID-19)',
+            text: 'Lampiran 6. Formulir Penyelidikan Epidemiologi Coronavirus Disease (COVID-19)',
             style: 'header'
         }
     ],
     subheader: (data) => {
-      return [
-        {
-            style: 'subheader',
-            text: `Nama Fasyankes : ${data.fasyankes_name || '-'}`
-        },
-        {
-            columns: [
-                { text: `Nama Pewawancara : ${data.interviewers_name || '-'} ` },
-                { text: `Tanggal Wawancara : ${data.interview_date || '-'}` }
-            ]
-        },
-        {
-            columns: [
-                { text: 'Tempat Tugas : -'},
-                { text: `HP Pewawancara : ${data.interviewers_phone_number || '-'}` }
-            ]
+      return {
+        style: 'tableExample',
+        color: '#444',
+        table: {
+          widths: [112, 170, 100, 100],
+          headerRows: 1,
+          body: [
+            [
+              {
+                text: 'Nama Fasyankes',
+                style: 'tableHeader'
+              },
+              {
+                text: `: ${data.fasyankes_name || '-'}`,
+                style: 'tableHeader'
+              },
+              {
+                text: 'Tgl Wawancara',
+                style: 'tableHeader'
+              },
+              {
+                text: `: -`,
+                style: 'tableHeader'
+              }
+            ],
+            [
+              {
+                text: 'Tempat Tugas',
+                style: 'tableHeader'
+              },
+              {
+                text: `: -`,
+                style: 'tableHeader'
+              },
+              {
+                text: 'HP Pewawancara',
+                style: 'tableHeader'
+              },
+              {
+                text: `${data.interviewers_phone_number || '-'}`,
+                style: 'tableHeader'
+              }
+            ],
+            [
+              {
+                text: 'Nama Pewawancara',
+                style: 'tableHeader'
+              },
+              {
+                text: `: ${data.interviewers_name || '-'}`,
+                style: 'tableHeader',
+                colSpan: 3
+              },
+              {},
+              {}
+            ],
+          ]
         }
-      ]
+      }
     },
     footnoteSectionOne: [
       {
@@ -53,7 +90,17 @@ const layout = {
       {
         style: 'footer',
         margin: [15, 0, 0, 0],
-        text: '- Diisi sesuai dengan defenisi operasional (lihat pedoman)'
+        text: '*) Diisi sesuai dengan defenisi operasional (lihat pedoman)'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '**) Oksigenasi membran ekstrakorporea'
+      },
+      {
+        style: 'footer',
+        margin: [15, 0, 0, 0],
+        text: '***) Diisi jika kriteria suspek, konfirmasi, dan probabel.'
       },
       {
         style: 'footer',
@@ -81,7 +128,7 @@ const layout = {
           fontSize: 9
         },
         header: {
-          fontSize: 13,
+          fontSize: 12,
           bold: true,
           alignment: 'center'
         },
@@ -103,7 +150,7 @@ const layout = {
           bold: true,
           fontSize: 12,
           color: 'black',
-          fillColor: '#e6e6e6'
+          fillColor: '#92d050'
         },
         tableSubHeader: {
           bold: true,
@@ -111,10 +158,11 @@ const layout = {
           color: 'black'
         },
         tableColumnSubHeader: {
+          alignment: 'center',
           bold: true,
           fontSize: 10,
           color: 'black',
-          fillColor: '#e6e6e6'
+          fillColor: '#92d050'
         }
       },
       defaultStyle: {
