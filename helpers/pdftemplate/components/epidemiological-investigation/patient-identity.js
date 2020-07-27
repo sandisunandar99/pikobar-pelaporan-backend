@@ -15,15 +15,13 @@ const render = (data) => {
               style: 'tableHeader',
               colSpan: 4,
               alignment: 'left',
-            },
-            {},
-            {},
+            },{},{},
             'Pasien Dalam Pengawasan'
           ],
           [
             {
               text: 'Nama Pasien',
-              borderColor: ['black', 'black', 'white', 'black']
+              borderColor: ['black', 'black', 'black', 'black']
             },
             {
               text: `: ${data.name}`,
@@ -45,7 +43,7 @@ const render = (data) => {
           [
             {
               text: 'Nomor ID',
-              borderColor: ['black', 'black', 'white', 'black']
+              borderColor: ['black', 'black', 'black', 'black']
             },
             {
               text: `: ${data.id_case.toUpperCase()}`,
@@ -56,7 +54,7 @@ const render = (data) => {
           [
             {
               text: 'Nama Orang tua/KK',
-              borderColor: ['black', 'black', 'white', 'black']
+              borderColor: ['black', 'black', 'black', 'black']
             },
             {
               text: `: ${data.name_parents || '-' } `,
@@ -72,23 +70,29 @@ const render = (data) => {
             { text: 'Pekerjaan: ' + (data.occupation || '-') },
           ],
           [
-            { text: `Alamat Jalan/Blok`, borderColor: ['black', 'black', 'white', 'white']},
-            { text: `: ${data.address_street || '-' }`, borderColor: ['white', 'black', 'white', 'white'] },
-            { text: `Kecamatan`, borderColor: ['white', 'black', 'white', 'white'] },
+            { text: `Alamat Jalan/Blok`, borderColor: ['black', 'black', 'black', 'white']},
+            { text: `: ${data.address_street || '-' }`, borderColor: ['white', 'black', 'black', 'white'] },
+            { text: `Kecamatan`, borderColor: ['white', 'black', 'black', 'white'] },
             { text: `: ${data.address_subdistrict_name}` },
           ],
           [
-            { text: `\t\t\t RT/RW`, borderColor: ['black', 'white', 'white', 'white'] },
-            { text: `: ${data.rt || '-'} / ${data.rw || '-'}`, borderColor: ['black', 'white', 'white', 'white'] },
-            { text: `Kabupaten/Kota`, borderColor: ['black', 'white', 'white', 'white'] },
+            { text: `\t\t\t RT/RW`, borderColor: ['black', 'white', 'black', 'white'] },
+            { text: `: ${data.rt || '-'} / ${data.rw || '-'}`, borderColor: ['black', 'white', 'black', 'white'] },
+            { text: `Kabupaten/Kota`, borderColor: ['black', 'white', 'black', 'white'] },
             { text: `: ${data.address_district_name}`, borderColor: ['black', 'white', 'black', 'white'] },
           ],
           [
-            { text: `\t\t Desa/Kelurahan`, borderColor: ['black', 'white', 'white', 'black'] },
-            { text: `: ${data.address_village_name}`, borderColor: ['black', 'white', 'white', 'black'] },
-            { text: `Telepon/Hp`, borderColor: ['black', 'white', 'white', 'black'] },
+            { text: `\t\t Desa/Kelurahan`, borderColor: ['black', 'white', 'black', 'black'] },
+            { text: `: ${data.address_village_name}`, borderColor: ['black', 'white', 'black', 'black'] },
+            { text: `Telepon/Hp`, borderColor: ['black', 'white', 'black', 'black'] },
             { text: `: ${data.phone_number || '-' }`, borderColor: ['black', 'white', 'black', 'black'] },
           ],
+          [
+            { text: `Longitude: -`, colSpan: 2 },
+            {},
+            { text: `Longitude: -`, colSpan: 2 },
+            {},
+          ]
         ],
       },
   }

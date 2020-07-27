@@ -27,6 +27,7 @@ const CaseSchema = new mongoose.Schema({
     age : {type:Number},
     month : {type:Number},
     gender : {type:String},
+    is_patient_address_same: { type: Boolean, default: false },
     address_street: {type:String},
     address_village_code: { type: String, required: [true, "can't be blank"]},
     address_village_name: { type: String, required: [true, "can't be blank"]},
@@ -54,6 +55,7 @@ const CaseSchema = new mongoose.Schema({
     stage: String,
     status: String,
     final_result: {type: String, default: null},
+    last_date_status_patient: {type:Date, default:Date.now()},
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -64,6 +66,7 @@ const CaseSchema = new mongoose.Schema({
     income : { type: Number, default: null},
     //faktor kontak
     travel:{type:Number},
+    travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia
     visited:{type:String,default:null},
     start_travel:{type:Date,default:Date.now()},
     end_travel:{type:Date,default:Date.now()},
@@ -93,16 +96,19 @@ const CaseSchema = new mongoose.Schema({
     latest_faskes_unit: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default: null },
     is_test_masif: {type: Boolean, default: false},
     input_source: String,
+     // untuk kebutuhan laporan harian
+    there_are_symptoms :  { type: Boolean, default: false},
     //medical officer
     fasyankes_type: {type: String, default: null},
     fasyankes_code: {type: String, default: null},
     fasyankes_name: {type: String, default: null},
     fasyankes_province_code: {type: String, default: "32"},
     fasyankes_province_name: {type: String, default: "Jawa Barat"},
-    fasyankes_subdistrict_code: {type: String},
-    fasyankes_subdistrict_name: {type: String},
-    fasyankes_village_code: {type: String},
-    fasyankes_village_name: {type: String},
+    fasyankes_subdistrict_code: {type: String, default:null},
+    fasyankes_subdistrict_name: {type: String, default:null},
+    fasyankes_village_code: {type: String, default:null},
+    fasyankes_village_name: {type: String, default:null},
+    assignment_place : {type:String, default:null} //tempat tugas bisa diisi unit kerja
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.index({author: 1});
@@ -145,7 +151,7 @@ CaseSchema.methods.toJSONFor = function () {
 
 
 CaseSchema.methods.JSONFormCase = function () {
-    let covid = this.id_case 
+    let covid = this.id_case
     let nik = this.nik === null || this.nik === undefined ? "-" : this.nik
     let phone_number = this.phone_number === null || this.phone_number === undefined ? "-" : this.phone_number
     return {
@@ -210,7 +216,7 @@ CaseSchema.pre('save', async function (next) {
 })
 
 CaseSchema.methods.MapOutput = function () {
-    // filter output untuk memperkecil line file tidak 
+    // filter output untuk memperkecil line file tidak
     // melebihi 250 di pecah di simpan di helper
     return filtersMap.filterOutput(this);
 }

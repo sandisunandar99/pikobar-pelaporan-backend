@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
-    stage : { type: String, uppercase: true, required: [true, "can't be blank"]}, // PROSES / SELESAI
+    stage : { type: String, uppercase: true , default: null}, // PROSES / SELESAI
     final_result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
     diagnosis : Array,
     diagnosis_other : String,
@@ -23,8 +23,9 @@ const HistorySchema = new mongoose.Schema({
     first_symptom_date : {type : Date, default: Date.now()},
     other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
-    current_location_type: String,  // RS / RUMAH
+    current_location_type: { type: String, uppercase: true, required: [true, "can't be blank"]},  //[RS, RUMAH, OTHERS]
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
+    is_patient_address_same: { type: Boolean, default: false },
     current_hospital_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default:null},
     current_location_address: String, // or Number?
     current_location_village_code : String,
@@ -35,6 +36,7 @@ const HistorySchema = new mongoose.Schema({
     diagnosis_covid : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     diagnosis_pneumonia : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     other_diagnosis: String,
+    there_are_symptoms :  { type: Boolean, default: false},
     serum_check : { type: Boolean, default: null},
     sputum_check : { type: Boolean, default: null},
     swab_check : { type: Boolean, default: null},
@@ -70,7 +72,7 @@ HistorySchema.methods.toJSONFor = function () {
         report_source : this.report_source,
         first_symptom_date : this.first_symptom_date,
         other_notes: this.other_notes,
-
+        is_patient_address_same: this.is_patient_address_same,
         current_location_type: this.current_location_type,
         current_hospital_id: this.current_hospital_id,
         current_location_address : this.current_location_address,
@@ -78,6 +80,19 @@ HistorySchema.methods.toJSONFor = function () {
         current_location_subdistrict_code : this.current_location_subdistrict_code,
         current_location_village_code : this.current_location_village_code,
         current_location_province_code : this.current_location_province_code,
+        diagnosis_ards : this.diagnosis_ards,
+        diagnosis_covid : this.diagnosis_covid,
+        diagnosis_pneumonia : this.diagnosis_pneumonia,
+        other_diagnosis: this.other_diagnosis,
+        serum_check : this.serum_check,
+        sputum_check : this.sputum_check,
+        swab_check : this.swab_check,
+        physical_check_temperature : this.physical_check_temperature,
+        physical_check_blood_pressure : this.physical_check_blood_pressure,
+        physical_check_pulse : this.physical_check_pulse,
+        physical_check_respiration : this.physical_check_respiration,
+        physical_check_height : this.physical_check_height,
+        physical_check_weight : this.physical_check_height,
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }

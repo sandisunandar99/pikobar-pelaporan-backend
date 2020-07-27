@@ -49,7 +49,7 @@ const epidemiologicalInvestigationsForm = (data) => {
         components.contactTracing.render(data),
         components.contactTracingAdvanced.render(data),
         components.closeContactList.render(data),
-        components.patientNotes.render(data),
+        // components.patientNotes.render(data),
         layout.footer,
       ],
       styles: layout.styles,

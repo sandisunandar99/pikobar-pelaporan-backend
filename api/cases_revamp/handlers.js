@@ -48,6 +48,7 @@ module.exports = (server) => {
         */
         async CreateCloseContact(request,reply){
             server.methods.services.cases_revamp.createCaseContact(
+                request.params.id,
                 request.auth.credentials.user,
                 request.payload,
                 (err, result) => {

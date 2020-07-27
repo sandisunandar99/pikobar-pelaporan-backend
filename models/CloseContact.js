@@ -14,7 +14,7 @@ const REF_CLOSE_CONTACT_HISTORY = {
 }
 const REF_USER = { 
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Case', 
+    ref: 'User', 
     default: null
 }
  
@@ -33,6 +33,7 @@ const CloseContactSchema = new mongoose.Schema({
     age : { type: Number, default: 0 },
     month : { type:Number, default: 0 },
     gender: { type: String, default: null },
+    is_patient_address_same: { type: Boolean, default: false },
     address_province_code: { type: String, default: consts.DEFAULT_PROVINCE.CODE },
     address_province_name: { type: String, default: consts.DEFAULT_PROVINCE.NAME },
     address_district_code: { type: String, default: null },
@@ -83,7 +84,7 @@ const CloseContactSchema = new mongoose.Schema({
 CloseContactSchema.methods.toJSONFor = function () {
     return {
         _id: this._id,
-        case: this.case.JSONFormIdCase(),
+        case: this.case ? this.case.JSONFormIdCase() : null,
         interviewer_name: this.interviewer_name,
         contact_tracing_date: this.contact_tracing_date,
         is_nik_exists: this.is_nik_exists,
@@ -97,6 +98,7 @@ CloseContactSchema.methods.toJSONFor = function () {
         age : this.age,
         month: this.month,
         gender: this.gender,
+        is_patient_address_same: this.is_patient_address_same,
         address_province_code: this.address_province_code,
         address_province_name: this.address_province_name,
         address_district_code: this.address_district_code,
@@ -134,18 +136,14 @@ CloseContactSchema.methods.toJSONFor = function () {
         officer_is_contact: this.officer_is_contact,
         officer_protection_tools: this.officer_protection_tools,
         is_reported: this.is_reported,
-        latest_history : this.latest_history ? this.latest_history.toJSONFor() : null,
-        createdAt: this.createdAt,
-        createdBy: this.createdBy,
-        updatedAt:this.updatedAt,
-        updatedBy:this.updatedBy
+        latest_history : this.latest_history ? this.latest_history.toJSONFor() : null
     }
 }
 
 CloseContactSchema.methods.toJSONList = function () {
     return {
         _id: this._id,
-        case: this.case.JSONFormIdCase(),
+        case: this.case ? this.case.JSONFormIdCase() : null,
         nik : this.nik,
         name : this.name,
         phone_number : this.phone_number,
@@ -161,7 +159,7 @@ CloseContactSchema.methods.toJSONList = function () {
         address_street : this.address_street,
         is_reported: this.is_reported,
         createdAt: this.createdAt,
-        createdBy: this.createdBy
+        createdBy: this.createdBy ? this.createdBy.JSONCase() : null
     }
 }
 

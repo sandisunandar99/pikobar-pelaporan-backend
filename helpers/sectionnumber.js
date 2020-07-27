@@ -1260,10 +1260,112 @@ const summaryAgregatePerDinkes = async (user, query) => {
   return queryAgt
 }
 
+const summaryInputTest = async (user, query) =>{
+
+    let search = Check.countByRole(user);
+    let filter  = await Filter.filterRdt(user, query)
+    let searching = Object.assign(search, filter);
+    
+    let test_date = {}
+    if (query.min_date && query.max_date) {
+      let searchRegExp = new RegExp('/', 'g')
+      let min = query.min_date
+      let max = query.max_date
+      let minDate = min.replace(searchRegExp, '-')
+      let maxDate = max.replace(searchRegExp, '-')
+      test_date = {
+        "test_date": {
+          "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+          "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+        }
+      }
+    }
+
+    let queryAgt = [
+        {
+            $match : {
+                $and : [
+                    searching,
+                    {"status": {$ne: 'deleted'}},
+                    test_date
+                ]
+            },
+        },
+        { 
+            $group: { 
+                _id: 'data',
+                PCR: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "PCR"] },
+                            ] },1,0 ] }},
+                PCR_POSITIF: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "PCR"] },
+                                { $eq: [ "$final_result","POSITIF"] }
+                            ] },1,0 ] }},
+                PCR_NEGATIF: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "PCR"] },
+                                { $eq: [ "$final_result","NEGATIF"] }
+                            ] },1,0 ] }},
+                PCR_INVALID: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "PCR"] },
+                                { $eq: [ "$final_result","INVALID"] }
+                            ] },1,0 ] }},
+                RDT: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "RDT"] },
+                            ] },1,0 ] }},
+                RDT_REAKTIF: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "RDT"] },
+                                { $eq: [ "$final_result","REAKTIF"] }
+                            ] },1,0 ] }},
+                RDT_NON_REAKTIF: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "RDT"] },
+                                { $eq: [ "$final_result","NON REAKTIF"] }
+                            ] },1,0 ] }},
+                RDT_INKONKLUSIF: {$sum: 
+                        { $cond: [ 
+                            { $and : [ 
+                                { $eq: [ "$tool_tester", "RDT"] },
+                                { $eq: [ "$final_result","INKONKLUSIF"] }
+                            ] },1,0 ] }},
+            } 
+        },
+        {
+            $project: {
+                _id : 0,
+                TOTAL : {$sum: ["$RDT", "$PCR"] },
+                PCR : 1,
+                PCR_POSITIF: 1,
+                PCR_NEGATIF: 1,
+                PCR_INVALID: 1,
+                RDT: 1,
+                RDT_REAKTIF: 1,
+                RDT_NON_REAKTIF: 1,
+                RDT_INKONKLUSIF: 1
+            }
+        }
+    ]
+
+    return queryAgt
+}
+
 module.exports = {
   sqlCondition, 
   conditionAge, 
   conditionGender, 
   conditionConfirmResult,
-  summaryAgregatePerDinkes
+  summaryAgregatePerDinkes,
+  summaryInputTest
 }

@@ -6,7 +6,7 @@ const filters = require('../helpers/filter/closecontactfilter')
 async function index (query, authorized, callback) {
   try {
     const sorts = (query.sort == "desc" ? { createdAt: "desc" } : custom.jsonParse(query.sort))
-    const options = paginate.optionsLabel(query, sorts, ['case'])
+    const options = paginate.optionsLabel(query, sorts, ['case', 'createdBy'])
     const params = filters.filterCloseContact(query, authorized)
     const search_params = filters.filterSearch(query)
     const result = CloseContact.find(params).or(search_params).where('delete_status').ne('deleted')
@@ -26,7 +26,7 @@ async function getByCase (caseId, callback) {
     const results = await CloseContact.find({
       case: caseId,
       delete_status: { $ne: 'deleted' }
-    }).populate('case')
+    }).populate(['case', 'createdBy'])
     
     return callback(null, results.map(res => res.toJSONList()))
   } catch (e) {
@@ -68,7 +68,7 @@ async function update (id, authorized, raw_payload, callback) {
   try {
     const { latest_history, ...payload } = raw_payload
     const result = await CloseContact.findByIdAndUpdate(id,
-      { $set: { ...payload, updatedBy: authorized, is_reported: true } },
+      { $set: { ...payload, updatedBy: authorized } },
       { new: true })
 
     return callback(null, result)

@@ -4,6 +4,7 @@ module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const getCaseById = require('./route_prerequesites').getCasebyId(server)
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
+    const districtInputScope = require('./route_prerequesites').districtInputScope(server)
 
     return [
         {
@@ -24,7 +25,7 @@ module.exports = (server) =>{
                 description: 'create new close contacts',
                 tags: ['api', 'close_contacts'],
                 validate: inputValidations.RequestPayload,
-                pre: [ getCaseById ]
+                pre: [ getCaseById, districtInputScope ]
             },
             handler: handlers.CreateCloseContact
         },
@@ -58,7 +59,7 @@ module.exports = (server) =>{
                 tags: ['api', 'close_contacts'],
                 validate: inputValidations.RequestPayload,
                 pre: [
-                    getCloseContactbyId
+                    getCloseContactbyId, districtInputScope
                 ]
             },
             handler: handlers.UpdateCloseContact

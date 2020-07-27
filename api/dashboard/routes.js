@@ -72,5 +72,15 @@ module.exports = (server) => {
             },
             handler: handlers.tableLapHarianExport,
         },
+        {
+            method: 'GET',
+            path: '/dashboard/summary-input-test',
+            config: {
+                auth: 'jwt',
+                description: 'show dashboard input test',
+                tags: ['api', 'dashboard statistik'],
+            },
+            handler: handlers.summaryInputTest,
+        },
 ]
 }

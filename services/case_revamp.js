@@ -30,6 +30,8 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     insert_id_case = Object.assign(raw_payload, { id_case });
   }
 
+  const unit_kerja = author.unit_id !== null ? author.unit_id.name : "";
+
   insert_id_case.author_district_code = author.code_district_city;
   insert_id_case.author_district_name = author.name_district_city;
   insert_id_case.fasyankes_type = author.role;
@@ -41,6 +43,7 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
   insert_id_case.fasyankes_subdistrict_name = author.address_subdistrict_name;
   insert_id_case.fasyankes_village_code = author.address_village_code;
   insert_id_case.fasyankes_village_name = author.address_village_name;
+  insert_id_case.assignment_place = unit_kerja;
 
   let item = new CasesRevamp(Object.assign(insert_id_case, { author }));
 
@@ -81,13 +84,19 @@ const checkIfExisting = async (query, callback) => {
   callback(null, check);
 }
 
-async function createCaseContact (author, payload, callback) {
+async function createCaseContact (id, author, payload, callback) {
   try {
-    const mapingContact = payload.map(r =>{
-      r.createdBy = author._id;
-      return r;
-    })
-    const result = await CloseContact.create(mapingContact);
+    if (payload instanceof Array) {
+      payload.map(r => {
+        r.case = id;
+        r.createdBy = author._id;
+        return r;
+      })
+    }else{
+      payload.case = id;
+      payload.createdBy = author._id;
+    }
+    const result = await CloseContact.create(payload);
     callback(null, result);
   } catch (e) {
     callback(e, null);

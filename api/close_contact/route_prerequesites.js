@@ -46,7 +46,25 @@ const getCloseContactbyId = server => {
     }
 }
 
+const districtInputScope = server => {
+    return {
+        method: (request, reply) => {
+            if (request.payload.address_district_code === request.auth.credentials.user.code_district_city) {
+                return reply(request.auth.credentials.user.code_district_city)
+            } else {
+                return reply({
+                    status: 422,
+                    message: 'Anda tidak dapat melakukan input Kontak Erat di luar wilayah anda.!',
+                    data: null
+                }).code(422).takeover()
+            } 
+        },
+        assign: 'district_input_scope'
+    }
+}
+
 module.exports = {
     getCasebyId,
-    getCloseContactbyId
+    getCloseContactbyId,
+    districtInputScope
 }
