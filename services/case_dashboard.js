@@ -38,10 +38,10 @@ async function countSectionTop(query, user, callback) {
       { $unwind: '$last_history' },
       {
         "$facet": {
-          'confrimed': [
+          'confirmed': [
             {
               $group: {
-                _id: 'confrimed',
+                _id: 'confirmed',
                 sick_home: {
                   $sum: {
                     $cond: [
@@ -193,7 +193,7 @@ async function countSectionTop(query, user, callback) {
       },
       {
         "$project": {
-          "confrimed": "$confrimed",
+          "confirmed": "$confirmed",
           "probable": "$probable",
           "suspect": "$suspect",
           "closeContact": "$closeContact"
