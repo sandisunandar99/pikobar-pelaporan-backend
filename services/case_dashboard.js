@@ -61,7 +61,7 @@ async function countSectionTop(query, user, callback) {
                         $and: [
                           { $eq: ['$final_result', '4'] },
                           { $eq: ['$status', CRITERIA.CONF] },
-                          { $in: ["$last_history.current_location_type", ["RS", "others"]] }
+                          { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
                         ]
                       }, 1, 0]
                   }
