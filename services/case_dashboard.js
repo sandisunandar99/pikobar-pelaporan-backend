@@ -180,7 +180,7 @@ async function countSectionTop(query, user, callback) {
                     $cond: [
                       {
                         $and: [
-                          { $eq: ['$final_result', '1'] },
+                          { $eq: ['$final_result', '3'] },
                           { $eq: ['$status', CRITERIA.CLOSE] },
                         ]
                       }, 1, 0]
