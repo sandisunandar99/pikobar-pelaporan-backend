@@ -23,7 +23,7 @@ const HistorySchema = new mongoose.Schema({
     first_symptom_date : {type : Date, default: Date.now()},
     other_notes: String,
     // current_location mandatory ketika pilih PDP atau Positif, option ketika ODP -> lokasi saat ini
-    current_location_type: String,  // RS / RUMAH
+    current_location_type: { type: String, uppercase: true, required: [true, "can't be blank"]},  //[RS, RUMAH, OTHERS]
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
     is_patient_address_same: { type: Boolean, default: false },
     current_hospital_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default:null},
