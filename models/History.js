@@ -4,7 +4,7 @@ const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true , default: null}, // PROSES / SELESAI
-    final_result : { type: String, uppercase: true, default: null}, // NEGATIF / MENINGGAL / SEMBUH
+    final_result : { type: String, uppercase: true, required: [true, "can't be blank"], default: null}, // NEGATIF / MENINGGAL / SEMBUH
     diagnosis : Array,
     diagnosis_other : String,
     diseases : Array, // Kondisi/Penyakit penyerta
