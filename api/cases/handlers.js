@@ -206,7 +206,7 @@ module.exports = (server) => {
          */
         async EpidemiologicalInvestigationForm(request, reply){
             const detailCase = request.pre.cases
-            const caseName = detailCase.name.replace(/\s/g, '-')
+            const caseName = detailCase.name.replace(/[\W_]+/g, '-')
             server.methods.services.cases.epidemiologicalInvestigationForm(
                 detailCase,
                 async (err, result) => {
