@@ -54,7 +54,7 @@ const CaseSchema = new mongoose.Schema({
     author_district_name : { type: String},
     stage: String,
     status: String,
-    final_result: {type: String, default: null},
+    final_result: {type: String, required: [true, "can't be blank"], default: null},
     last_date_status_patient: {type:Date, default:Date.now()},
     delete_status: String,
     deletedAt: Date,
