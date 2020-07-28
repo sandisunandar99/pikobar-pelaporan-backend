@@ -1,15 +1,22 @@
 'use strict';
 const check = require("../historycheck");
 const helpers = require("../custom");
+const { PATIENT_STATUS } = require("../constant");
 const excellOutput = (this_) => {
   let finals, stages, birthDate, createDate, diagnosis, diagnosis_other;
 
   if (this_.final_result == '0') {
-    finals = 'NEGATIF';
+    finals = PATIENT_STATUS.NEGATIVE;
   } else if (this_.final_result == '1') {
-    finals = 'SEMBUH';
+    finals = PATIENT_STATUS.DONE;
   } else if (this_.final_result == '2') {
-    finals = 'MENINGGAL';
+    finals = PATIENT_STATUS.DEAD;
+  } else if (this_.final_result == '3') {
+    finals = PATIENT_STATUS.DISCARDED;
+  } else if (this_.final_result == '4') {
+    finals = PATIENT_STATUS.SICK;
+  } else if (this_.final_result == '5') {
+    finals = PATIENT_STATUS.QUARANTINED;
   } else {
     finals = null;
   }
