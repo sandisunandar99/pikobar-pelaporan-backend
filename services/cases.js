@@ -36,9 +36,11 @@ async function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
-  let splits = query.sort.split(':')
-  let sort = {};
-  sort[splits[0]] = splits[1];
+  let sort = { updatedAt: 'desc' };
+  if (query.sort && query.sort.split) {
+    let splits = query.sort.split(':')
+    sort[splits[0]] = splits[1];
+  }
 
   const options = {
     page: query.page,
