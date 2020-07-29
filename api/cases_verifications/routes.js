@@ -15,10 +15,10 @@ module.exports = (server) =>{
                 description: 'Create case verifications revise',
                 tags: ['api', 'cases.verifications'],
                 pre: [
-                    countCaseByDistrict,
-                    countCasePendingByDistrict,
                     getCasebyId,
-                    getDetailCase
+                    getDetailCase,
+                    countCaseByDistrict,
+                    countCasePendingByDistrict
                 ]
             },
             handler: handlers.ReviseCaseVerification
