@@ -8,6 +8,8 @@ const register = (server, options, next) => {
     //console.log('RESPONSE_HEADER:', request.headers);
     //console.log('SERVER:', server.registrations);
     if (response.isBoom) {
+    console.log('RESPONSE :', response);
+
       Sentry.captureException(response)
 
       const reformated = {}
@@ -41,6 +43,7 @@ const register = (server, options, next) => {
   server.register(require('./areas'))
   server.register(require('./cases'))
   server.register(require('./cases_transfers'))
+  server.register(require('./cases_verifications'))
   server.register(require('./histories'))
   server.register(require('./occupations'))
   server.register(require('./rdt'))
