@@ -29,6 +29,8 @@ const render = (data) => {
           { text: '-' },
           { text: '-' },
           { text: '-' },
+          { text: '-' },
+          { text: '-' },
         ])
       }
     }
