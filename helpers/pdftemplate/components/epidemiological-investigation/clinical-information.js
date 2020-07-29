@@ -92,7 +92,7 @@ const render = (data) => {
           ],
           [
             {
-              text: `Status pasien terakhir : [${isFinalResult("1")}] Sembuh    [${isFinalResult(null)}] Masih Sakit   [${isFinalResult("2")}] Meninggal, tgl: -`,
+              text: `Status pasien terakhir : [${isFinalResult("1")}] Sembuh    [${isFinalResult("4")}] Masih Sakit   [${isFinalResult("2")}] Meninggal, tgl: -`,
               colSpan: 4,
               alignment: 'left'
             },{},{},{}

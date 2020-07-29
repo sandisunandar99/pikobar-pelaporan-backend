@@ -1,4 +1,5 @@
 const moment = require('moment')
+const { CRITERIA } = require('../../../constant')
 const render = (data) => {
   const ageInMonths = moment().diff(data.birth_date, 'months') || 0
   return {
@@ -34,10 +35,10 @@ const render = (data) => {
             },
             {
               rowSpan: 3,
-              text: `${data.status === 'PDP' ? '[√]' : '[  ]'} Pasien dalam pengawasan
-                ${data.status === 'ODP' ? '[√]' : '[  ]'} Orang Dalam Pemantauan
-                ${data.status === 'OTG' ? '[√]' : '[  ]'} Orang Tanpa Gejala
-                ${data.status === 'POSITIF' ? '[√]' : '[  ]'} Positif`,
+              text: `${data.status === CRITERIA.SUS ? '[√]' : '[  ]'} Suspek
+                ${data.status === CRITERIA.PROB ? '[√]' : '[  ]'} Kasus Probabel
+                ${data.status === CRITERIA.CONF ? '[√]' : '[  ]'} Kasus Konfirmasi
+                ${data.status === CRITERIA.CLOSE ? '[√]' : '[  ]'} Kontak Erat`,
             }
           ],
           [
