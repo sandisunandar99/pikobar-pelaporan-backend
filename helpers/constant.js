@@ -1,23 +1,31 @@
 module.exports = {
-  "VERIFIED_STATUS": {
-    "PENDING": "pending",
-    "VERIFIED": "verified",
+  VERIFIED_STATUS: {
+    PENDING: 'pending',
+    VERIFIED: 'verified',
   },
-  "ROLE": {
-    "ADMIN": "superadmin",
-    "PROVINCE": "dinkesprov",
-    "KOTAKAB": "dinkeskota",
-    "FASKES": "faskes",
+  ROLE: {
+    ADMIN: 'superadmin',
+    PROVINCE: 'dinkesprov',
+    KOTAKAB: 'dinkeskota',
+    FASKES: 'faskes',
   },
-  "CASE": {
-    "CODE": "covid-",
-    "PRE": "precovid-"
+  CASE: {
+    CODE: 'covid-',
+    PRE: 'precovid-'
   },
-  "CRITERIA":{
-    "CLOSE": "CLOSECONTACT",
-    "SUS": "SUSPECT",
-    "PROB": "PROBABLE",
-    "CONF": "CONFIRMATION"
+  CRITERIA:{
+    CLOSE: 'CLOSECONTACT',
+    SUS: 'SUSPECT',
+    PROB: 'PROBABLE',
+    CONF: 'CONFIRMATION'
+  },
+  PATIENT_STATUS: {
+    NEGATIVE: 'Negatif',
+    DONE: 'Selesai Isolasi/Sembuh',
+    DEAD: 'Meninggal',
+    DISCARDED: 'Discarded',
+    SICK: 'Masih Sakit',
+    QUARANTINED: 'Masih Dikarantina'
   },
   GENDER: {
     MALE: 'L',

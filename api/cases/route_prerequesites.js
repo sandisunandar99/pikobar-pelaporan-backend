@@ -96,6 +96,15 @@ const getCasebyId = server => {
              let id = request.params.id
              server.methods.services.cases.getById(id, (err, item) => {
                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+
+                 if (!item) {
+                    return reply({
+                        status: 404,
+                        message: 'Data Kasus tidak ditemukan!',
+                        data: null
+                    }).code(404).takeover()
+                 }
+
                  return reply(item)
              })
         },
