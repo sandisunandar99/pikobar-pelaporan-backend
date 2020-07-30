@@ -76,7 +76,7 @@ const checkIfExisting = async (query, callback) => {
   if (query.params) {
     const gets = await CasesRevamp.find({
       $or: [{'nik': query.params }]
-    });
+    }).where('delete_status').ne('deleted');
     check = gets.length > 0;
   } else {
     check = 'parameter not set';
