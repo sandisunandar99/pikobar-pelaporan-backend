@@ -28,7 +28,7 @@ const generateIdCase = (author, pre) => {
         pendingCount = pre.count_case_pending.count_pasien;
         id_case = `${CASE.PRE}${dinkesCodeFaskes}${dates}${pasienCount}${pendingCount}`;
     } else {
-        pasienCount = zero.repeat(4 - otherCode);
+        pasienCount = zero.repeat(7 - otherCode);
         pendingCount = pre.count_case.count_pasien;
         id_case = `${CASE.CODE}${dinkesCode}${dates}${pasienCount}${pendingCount}`;
     }
