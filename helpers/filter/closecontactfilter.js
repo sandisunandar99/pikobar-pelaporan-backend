@@ -2,17 +2,12 @@
 const consts = require('../constant')
 const filterCloseContact = (query, user) => {
     let params = { is_case_deleted: false }
-    /*
     if (user.role !== consts.ROLE.FASKES) {
         if (query.address_district_code) {
             params.address_district_code = query.address_district_code;
         }
     } else {
         params.address_district_code = user.code_district_city
-    }
-    */
-    if (query.address_district_code) {
-        params.address_district_code = query.address_district_code;
     }
 
     if (query.address_subdistrict_code) {
