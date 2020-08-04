@@ -403,7 +403,7 @@ function createCase (raw_payload, author, pre, callback) {
     id_case = "covid-"
     id_case += pre.count_case.dinkes_code
     id_case += date.substr(2, 2)
-    id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+    id_case += "0".repeat(7 - pre.count_case.count_pasien.toString().length)
     id_case += pre.count_case.count_pasien
   }
 
@@ -467,7 +467,7 @@ function updateCase (id, pre, author, payload, callback) {
       id_case = "covid-"
       id_case += pre.count_case.dinkes_code
       id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
+      id_case += "0".repeat(7 - pre.count_case.count_pasien.toString().length)
       id_case += pre.count_case.count_pasien
     }
 
