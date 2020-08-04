@@ -56,7 +56,7 @@ async function createCaseVerification (id, author, pre, payload, callback) {
       let id_case = "covid-"
       id_case += pre.dinkes_code
       id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_pasien.toString().length)
+      id_case += "0".repeat(7 - pre.count_pasien.toString().length)
       id_case += pre.count_pasien
       updatePayload.id_case = id_case
     }
@@ -125,7 +125,7 @@ async function createCasesVerification (callback) {
         let id_case = "covid-"
         id_case += district.dinkes_code
         id_case += date.substr(2, 2)
-        id_case += "0".repeat(4 - district.count_pasien.toString().length)
+        id_case += "0".repeat(7 - district.count_pasien.toString().length)
         id_case += district.count_pasien
         payload.id_case = id_case
       }
