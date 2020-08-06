@@ -25,6 +25,7 @@ const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
 const Helper = require('../helpers/custom')
 const CloseContact = require('../models/CloseContact')
+const moment = require('moment');
 
 async function ListCase (query, user, callback) {
 
@@ -390,21 +391,23 @@ function createCase (raw_payload, author, pre, callback) {
     verified.verified_status = 'pending'
   }
 
-  let date = new Date().getFullYear().toString()
+  let date = moment(new Date()).format("YY");
   let id_case
+  let preCovid = "precovid-"
+  let covid = "covid-"
+  let pendingCount = '';
+  let pad = "";
+  let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
+  let dinkesCode = pre.count_case.dinkes_code;
 
   if (author.role === 'faskes') {
-    id_case = "precovid-"
-    id_case += pre.count_case_pending.dinkes_code
-    id_case += date.substr(2, 2)
-    id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
-    id_case += pre.count_case_pending.count_pasien
+    pendingCount = pre.count_case_pending.count_pasien;
+    pad = pendingCount.toString().padStart(5, "0")
+    id_case = `${preCovid}${dinkesCodeFaskes}${date}${pad}`;
   } else {
-    id_case = "covid-"
-    id_case += pre.count_case.dinkes_code
-    id_case += date.substr(2, 2)
-    id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
-    id_case += pre.count_case.count_pasien
+    pendingCount = pre.count_case.count_pasien;
+    pad = pendingCount.toString().padStart(7, "0")
+    id_case = `${covid}${dinkesCode}${date}${pad}`;
   }
 
   let insert_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
@@ -454,21 +457,23 @@ function updateCase (id, pre, author, payload, callback) {
 
   // Regenerate id_case if district code address is changed.
   if (payload.address_district_code && (payload.address_district_code !== pre.cases.address_district_code)) {
-    let date = new Date().getFullYear().toString()
+    let date = moment(new Date()).format("YY");
     let id_case
+    let preCovid = "precovid-"
+    let covid = "covid-"
+    let pendingCount = '';
+    let pad = "";
+    let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
+    let dinkesCode = pre.count_case.dinkes_code;
 
     if (pre.cases.verified_status !== 'verified') {
-      id_case = "precovid-"
-      id_case += pre.count_case_pending.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
-      id_case += pre.count_case_pending.count_pasien
+      pendingCount = pre.count_case_pending.count_pasien;
+      pad = pendingCount.toString().padStart(5, "0")
+      id_case = `${preCovid}${dinkesCodeFaskes}${date}${pad}`;
     } else {
-      id_case = "covid-"
-      id_case += pre.count_case.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
-      id_case += pre.count_case.count_pasien
+      pendingCount = pre.count_case.count_pasien;
+      pad = pendingCount.toString().padStart(7, "0")
+      id_case = `${covid}${dinkesCode}${date}${pad}`;
     }
 
     payload.id_case = id_case

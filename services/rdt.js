@@ -269,12 +269,16 @@ function createRdt(query, payload, author, pre, callback) {
     code_tool_tester += pre.count_rdt.count
 
     let id_case = null
+    // let dates = moment(new Date()).format("YY");
+    // let covid = "covid-"
+    // let pendingCount = '';
+    // let pad = "";
+    // let dinkesCode = pre.code_dinkes.code;
+
     // if (payload.source_data === "external" || payload.source_data === "manual") {
-    //   id_case = "COVID-"
-    //   id_case += pre.code_dinkes.code
-    //   id_case += date.substr(2, 2)
-    //   id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
-    //   id_case += pre.count_rdt.count
+    // pendingCount = pre.count_rdt.count;
+    // pad = pendingCount.toString().padStart(7, "0")
+    // id_case = `${covid}${dinkesCode}${dates}${pad}`;
     // }
 
 
@@ -375,12 +379,16 @@ function createRdt(query, payload, author, pre, callback) {
             code_tool_tester += pre.count_rdt.count
 
             let id_case = null
+            // let dates = moment(new Date()).format("YY");
+            // let covid = "covid-"
+            // let pendingCount = '';
+            // let pad = "";
+            // let dinkesCode = pre.code_dinkes.code;
+
             // if (payload.source_data === "external" || payload.source_data === "manual") {
-            //         id_case = "COVID-"
-            //         id_case += pre.code_dinkes.code
-            //         id_case += date.substr(2, 2)
-            //         id_case += "0".repeat(4 - pre.count_rdt.count.toString().length)
-            //         id_case += pre.count_rdt.count
+            // pendingCount = pre.count_rdt.count;
+            // pad = pendingCount.toString().padStart(7, "0")
+            // id_case = `${covid}${dinkesCode}${dates}${pad}`;
             // }
 
             let code = {
@@ -475,14 +483,19 @@ function createRdtMultiple(payload, author, pre, callback) {
               code_tool_tester += "0".repeat(5 - countRdt.count.toString().length)
               code_tool_tester += countRdt.count
  
-              let id_case
-              if (result.final_result === "POSITIF") {
-                      id_case = "COVID-"
-                      id_case += countCase.dinkes_code
-                      id_case += date.substr(2, 2)
-                      id_case += "0".repeat(4 - countCase.count_pasien.toString().length)
-                      id_case += countCase.count_pasien
-              }
+              let id_case = null
+              // let dates = moment(new Date()).format("YY");
+              // let covid = "covid-"
+              // let pendingCount = '';
+              // let pad = "";
+              // let dinkesCode = countCase.dinkes_code;
+              
+              //sementara tidak digunakan dulu
+              // if (result.final_result === "POSITIF") {
+              // pendingCount = countCase.count_pasien;
+              // pad = pendingCount.toString().padStart(7, "0")
+              // id_case = `${covid}${dinkesCode}${dates}${pad}`;
+              // }
  
               let codes = {
                 code_test: (code_test === undefined ? "" : code_test),
