@@ -16,21 +16,22 @@ const validatePost = (raw_payload) => {
 const generateIdCase = (author, pre) => {
     let dates = moment(new Date()).format("YY");
     let id_case;
-    let pasienCount ='';
+    // let pasienCount ='';
     let pendingCount = '';
+    let pad="";
     let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
     let dinkesCode = pre.count_case.dinkes_code;
-    let zero = '0';
-    let faskesCode = pre.count_case_pending.count_pasien.toString().length;
-    let otherCode = pre.count_case.count_pasien.toString().length;
+   
     if (author.role === ROLE.FASKES) {
-        pasienCount = zero.repeat(5 - faskesCode);
+        
         pendingCount = pre.count_case_pending.count_pasien;
-        id_case = `${CASE.PRE}${dinkesCodeFaskes}${dates}${pasienCount}${pendingCount}`;
+        pad = pendingCount.toString().padStart(5, "0")
+        id_case = `${CASE.PRE}${dinkesCodeFaskes}${dates}${pad}`;
     } else {
-        pasienCount = zero.repeat(7 - otherCode);
+       
         pendingCount = pre.count_case.count_pasien;
-        id_case = `${CASE.CODE}${dinkesCode}${dates}${pasienCount}${pendingCount}`;
+        pad = pendingCount.toString().padStart(7, "0")
+        id_case = `${CASE.CODE}${dinkesCode}${dates}${pad}`;
     }
 
     return id_case;
