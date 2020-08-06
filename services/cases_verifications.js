@@ -58,7 +58,7 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     let verifiedCount = '';
     let pad = "";
     let dinkesCode = pre.dinkes_code;
-    console.log(pre)
+
     // generate new verified id_case
     if (payload.verified_status === 'verified') {
       verifiedCount = pre.count_pasien;
