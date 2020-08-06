@@ -17,6 +17,8 @@ const Notification = mongoose.model('Notification')
 
 const Notif = require('../helpers/notification')
 
+const moment = require('moment');
+
 var schedule = require('node-schedule');
 // running task every 1 hours
 schedule.scheduleJob('*/59 * * * *', function(){
@@ -38,7 +40,7 @@ async function getCaseVerifications (caseId, callback) {
     
     return callback(null, verifications)
   } catch (error) {
-    return callback(null, error)
+    return callback(error, null)
   }
 }
 
@@ -53,14 +55,14 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     let date = moment(new Date()).format("YY");
     let id_case
     let covid = "covid-"
-    let pendingCount = '';
+    let verifiedCount = '';
     let pad = "";
-    let dinkesCode = pre.count_case.dinkes_code;
+    let dinkesCode = pre.dinkes_code;
 
     // generate new verified id_case
     if (payload.verified_status === 'verified') {
-      pendingCount = pre.count_case.count_pasien;
-      pad = pendingCount.toString().padStart(7, "0")
+      verifiedCount = pre.count_pasien;
+      pad = verifiedCount.toString().padStart(7, "0")
       id_case = `${covid}${dinkesCode}${date}${pad}`;
       updatePayload.id_case = id_case
     }
@@ -82,7 +84,7 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     
     return callback(null, caseVerification)
   } catch (error) {
-    return callback(null, error)
+    return callback(error, null)
   }
 }
 
@@ -128,12 +130,12 @@ async function createCasesVerification (callback) {
         let date = moment(new Date()).format("YY");
         let id_case
         let covid = "covid-"
-        let pendingCount = '';
+        let verifiedCount = '';
         let pad = "";
         let dinkesCode = district.dinkes_code;
 
-        pendingCount = district.count_pasien;
-        pad = pendingCount.toString().padStart(7, "0")
+        verifiedCount = district.count_pasien;
+        pad = verifiedCount.toString().padStart(7, "0")
         id_case = `${covid}${dinkesCode}${date}${pad}`;
         payload.id_case = id_case
       }
