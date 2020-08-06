@@ -50,14 +50,18 @@ async function createCaseVerification (id, author, pre, payload, callback) {
       verified_status: payload.verified_status
     }
 
+    let date = moment(new Date()).format("YY");
+    let id_case
+    let covid = "covid-"
+    let pendingCount = '';
+    let pad = "";
+    let dinkesCode = pre.count_case.dinkes_code;
+
     // generate new verified id_case
     if (payload.verified_status === 'verified') {
-      let date = new Date().getFullYear().toString()
-      let id_case = "covid-"
-      id_case += pre.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(7 - pre.count_pasien.toString().length)
-      id_case += pre.count_pasien
+      pendingCount = pre.count_case.count_pasien;
+      pad = pendingCount.toString().padStart(7, "0")
+      id_case = `${covid}${dinkesCode}${date}${pad}`;
       updatePayload.id_case = id_case
     }
 
@@ -121,12 +125,16 @@ async function createCasesVerification (callback) {
           count_pasien: count
         }
 
-        let date = new Date().getFullYear().toString()
-        let id_case = "covid-"
-        id_case += district.dinkes_code
-        id_case += date.substr(2, 2)
-        id_case += "0".repeat(7 - district.count_pasien.toString().length)
-        id_case += district.count_pasien
+        let date = moment(new Date()).format("YY");
+        let id_case
+        let covid = "covid-"
+        let pendingCount = '';
+        let pad = "";
+        let dinkesCode = district.dinkes_code;
+
+        pendingCount = district.count_pasien;
+        pad = pendingCount.toString().padStart(7, "0")
+        id_case = `${covid}${dinkesCode}${date}${pad}`;
         payload.id_case = id_case
       }
       
