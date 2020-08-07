@@ -535,8 +535,9 @@ async function getCountByDistrict(code, callback) {
       verified_status: 'verified'
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
-    const res = await Case.find(params).sort({id_case: -1});
+    const res = await Case.find(params).sort({id_case: -1}).limit(1);
     let count = 1;
+    // find array data is not null
     if (res.length > 0){
       count = (Number(res[0].id_case.substring(12)) + 1);
     }
