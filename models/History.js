@@ -67,7 +67,20 @@ const HistorySchema = new mongoose.Schema({
         public_place_address: String,
         public_place_date_visited: Date,
         public_place_duration_visited: String
-    }]
+    }],
+    //faktor riwayat perjalanan
+    travelling_history_before_sick_14_days: {type: Boolean, default: false},
+    travelling_history: [{
+        travelling_type: String,
+        travelling_visited: String,
+        travelling_date: Date,
+        travelling_arrive: Date
+    }],
+    visited_local_area_before_sick_14_days: {type: Boolean, default: false},
+    visited_local_area: [{
+        visited_local_area_province: String,
+        visited_local_area_city: String, 
+    }],
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {
@@ -115,6 +128,38 @@ HistorySchema.methods.toJSONFor = function () {
         physical_check_respiration : this.physical_check_respiration,
         physical_check_height : this.physical_check_height,
         physical_check_weight : this.physical_check_height,
+        inspection_support: [{
+            inspection_type: this.inspection_type,
+            specimens_type: this.specimens_type,
+            inspection_date: this.inspection_date ,
+            inspection_location: this.inspection_location,
+            get_specimens_to: this.get_specimens_to,
+            inspection_result: this.inspection_result
+        }],
+        is_other_diagnosisr_respiratory_disease: this.is_other_diagnosisr_respiratory_disease, 
+        other_diagnosisr_respiratory_disease: this.other_diagnosisr_respiratory_disease,
+        // mengunjungi tempat public
+        has_visited_public_place: this.has_visited_public_place,
+        visited_public_place: [{
+            public_place_category: this.public_place_category,
+            public_place_name: this.public_place_name,
+            public_place_address: this.public_place_address,
+            public_place_date_visited: this.public_place_date_visited,
+            public_place_duration_visited: this.public_place_duration_visited
+        }],
+        //faktor riwayat perjalanan
+        travelling_history_before_sick_14_days: this.travelling_history_before_sick_14_days ,
+        travelling_history: [{
+            travelling_type:this.travelling_type,
+            travelling_visited:this.travelling_visited,
+            travelling_date:this.travelling_date,
+            travelling_arrive:this.travelling_arrive
+        }],
+        visited_local_area_before_sick_14_days: this.visited_local_area_before_sick_14_days,
+        visited_local_area: [{
+            visited_local_area_province: this.visited_local_area_province,
+            visited_local_area_city: this.visited_local_area_city,
+        }],
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }
