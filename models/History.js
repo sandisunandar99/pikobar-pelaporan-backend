@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
@@ -37,15 +37,37 @@ const HistorySchema = new mongoose.Schema({
     diagnosis_pneumonia : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     other_diagnosis: String,
     there_are_symptoms :  { type: Boolean, default: false},
+    is_other_diagnosisr_respiratory_disease: {type: Boolean, default: false},
+    other_diagnosisr_respiratory_disease: String,
+    //takeout
     serum_check : { type: Boolean, default: null},
     sputum_check : { type: Boolean, default: null},
     swab_check : { type: Boolean, default: null},
+    //takeout
+    //tab information investigation 
     physical_check_temperature : {type:Number , default:0},
     physical_check_blood_pressure : {type:Number , default:0},
     physical_check_pulse : {type:Number , default:0},
     physical_check_respiration : {type:Number , default:0},
     physical_check_height : {type:Number, default:0},
     physical_check_weight : {type:Number, default:0},
+    inspection_support :[{
+        inspection_type: String,
+        specimens_type: String,
+        inspection_date: Date,
+        inspection_location: String,
+        get_specimens_to: Number,
+        inspection_result: String
+    }],
+    // mengunjungi tempat public
+    has_visited_public_place :{type: Boolean, default: false},
+    visited_public_place: [{
+        public_place_category: String,
+        public_place_name: String,
+        public_place_address: String,
+        public_place_date_visited: Date,
+        public_place_duration_visited: String
+    }]
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {

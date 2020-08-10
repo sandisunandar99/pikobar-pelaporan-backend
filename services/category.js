@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
+
 require('../models/Category');
 const Category = mongoose.model('Category');
+require('../models/Specimen')
+const Specimen = mongoose.model('Specimen');
 
 function listTarget(callback) {
     Category.find()
@@ -28,6 +31,16 @@ function createCategory(request, callback){
   .catch(err => callback(err, null));
 }
 
+function typeSpeciment(callback){
+    Specimen.find({})
+            .exec()
+            .then((result)=>{
+              let res = result.map(q => q.toJSONFor())
+              return callback(null, res)
+            }).catch(err => callback(err, null))
+}
+
+
 module.exports = [
   {
     name: 'services.category.list',
@@ -40,6 +53,10 @@ module.exports = [
   {
     name: 'services.category.create',
     method: createCategory
+  },
+  {
+    name: 'services.category.typeSpeciment',
+    method: typeSpeciment
   },
 ];
 
