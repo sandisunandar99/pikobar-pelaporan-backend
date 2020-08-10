@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
@@ -58,6 +58,15 @@ const HistorySchema = new mongoose.Schema({
         inspection_location: String,
         get_specimens_to: Number,
         inspection_result: String
+    }],
+    // mengunjungi tempat public
+    has_visited_public_place :{type: Boolean, default: false},
+    visited_public_place: [{
+        public_place_category: String,
+        public_place_name: String,
+        public_place_address: String,
+        public_place_date_visited: Date,
+        public_place_duration_visited: String
     }]
 }, { timestamps : true });
 
