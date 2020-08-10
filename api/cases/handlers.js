@@ -103,7 +103,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseSummary(request, reply) {
-            server.methods.services.cases.getSummary(
+            server.methods.services.cases_revamp.getSummary(
                 request.query,
                 request.auth.credentials.user,
                 (err, item) => {
