@@ -1,13 +1,13 @@
 const replyHelper = require('../helpers')
 module.exports = (server) => {
-    function constructReportResponse(cases) {
-        let jsonCases = {
+    function constructReportResponse(report) {
+        let jsonReport = {
             status: 200,
             message: "Success",
-            data: cases
+            data: report
         }
-        // return survey
-        return jsonCases
+        // return report
+        return jsonReport
     }
 
     return {
