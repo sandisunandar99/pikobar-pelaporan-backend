@@ -3,13 +3,8 @@ const Case = require('../models/Case')
 const Check = require('../helpers/rolecheck')
 
 const { 
-  CRITERIA 
-} = require('../helpers/constant')
-
-const { 
-  sum,
-  sumBasedOnLocation
-} = require('../helpers/filter/dailyreportfilter')
+  generateGroupedDailyReport
+} = require('../helpers/reports/handler')
 
 async function dailyReport(query, user, callback) {
   try {
@@ -54,87 +49,7 @@ async function dailyReport(query, user, callback) {
 
     const unwind = { $unwind: '$last_history' }
 
-    const group = {
-      "$facet": {
-        'suspect': [
-          {
-            $group: {
-              _id: 'suspect',
-              ...sum([{ $eq: ['$status', CRITERIA.SUS] }], dates)
-            }
-          }
-        ],
-        'confirmed': [
-          {
-            $group: {
-              _id: 'confirmed',
-              ...sum([{ $eq: ['$status', CRITERIA.CONF] }], dates)
-            }
-          }
-        ],
-        'closeContact': [
-          {
-            $group: {
-              _id: 'suspect',
-              ...sum([{ $eq: ['$status', CRITERIA.CLOSE] }], dates)
-            }
-          }
-        ],
-        'deceaseConfirmed': [
-          {
-            $group: {
-              _id: 'decease',
-              ...sum([
-                { $eq: ['$status', CRITERIA.CONF] },
-                { $eq: ['$final_result', '2'] },
-              ], dates)
-            }
-          }
-        ],
-        'deceaseProbable': [
-          {
-            $group: {
-              _id: 'decease',
-              ...sum([
-                { $eq: ['$status', CRITERIA.PROB] },
-                { $eq: ['$final_result', '2'] },
-              ], dates)
-            }
-          }
-        ],
-        'suspectProbableIsolation': [
-          {
-            $group: {
-              _id: 'emergencyHospitalIsolation',
-              ...sumBasedOnLocation([
-                { $in: [ '$status', [CRITERIA.SUS, CRITERIA.PROB] ] },
-              ], dates)
-            }
-          }
-        ],
-        'confirmedIsolation': [
-          {
-            $group: {
-              _id: 'emergencyHospitalIsolation',
-              ...sumBasedOnLocation([
-                { $eq: [ '$status', CRITERIA.CONF ] },
-              ], dates)
-            }
-          }
-        ],
-        'closeContactIsolation': [
-          {
-            $group: {
-              _id: 'closeContactIsolation',
-              ...sumBasedOnLocation([
-                { $eq: [ '$status', CRITERIA.CLOSE ] },
-                { $ne: [ '$final_result', null ] },
-              ], dates)
-            }
-          }
-        ],
-      }
-    }
+    const group = generateGroupedDailyReport(dates)
 
     const conditions = [
       match,

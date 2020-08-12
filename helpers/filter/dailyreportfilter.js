@@ -29,14 +29,13 @@ const sum = (params, d) => {
 }
 
 const sumBasedOnLocation = (params, d) => {
-    const referralHosp = { '$eq': [ '$last_history.current_location_type', 'RS' ] }
-    const emergencyHosp = { '$eq': [ '$last_history.current_location_type', 'RS' ] }
-    const selfIsolation = { '$eq': [ '$last_history.current_location_type', 'RUMAH' ] }
+    const aDay = [d.aDay, d.aDueDay]
+    const loc = (v) => Object.assign({}, { '$eq': [ '$last_history.current_location_type', v ] })
 
     return {
-        referralHospital: filter([ ...params, referralHosp ]),
-        emergencyHospital: filter([ ...params, emergencyHosp ]),
-        selfIsolation: filter([ ...params, selfIsolation ]),
+        referralHospital: filter([ ...params, loc('RS') ], ...aDay),
+        emergencyHospital: filter([ ...params, loc('RS') ], ...aDay),
+        selfIsolation: filter([ ...params, loc('RUMAH') ], ...aDay),
     }
 }
 
