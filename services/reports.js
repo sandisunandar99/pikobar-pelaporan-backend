@@ -8,13 +8,14 @@ const {
 
 async function dailyReport(query, user, callback) {
   try {
+    const date = query.date ? new Date(query.date) : undefined
     const dates = {
-      aDay: moment().format('YYYY-MM-DD'),
-      aDueDay: moment().add(1,'days').format('YYYY-MM-DD'),
-      aWeek: moment(this.aDay).subtract(7,'days').format('YYYY-MM-DD'),
-      aMonth: moment(this.aDay).subtract(1,'months').format('YYYY-MM-DD')
+      aDay: moment(date).format('YYYY-MM-DD'),
+      aDueDay: moment(date).add(1,'days').format('YYYY-MM-DD'),
+      aWeek: moment(date).subtract(7,'days').format('YYYY-MM-DD'),
+      aMonth: moment(date).subtract(1,'months').format('YYYY-MM-DD')
     }
-    
+
     const searching = Check.countByRole(user)
 
     const match = {
@@ -26,39 +27,26 @@ async function dailyReport(query, user, callback) {
     }
 
     const lookup = {
-      $lookup:
-      {
+      $lookup: {
         from: 'histories',
-        let: { lastHistory: "$last_history" },
-        pipeline: [
-          { $match:
-              { $expr:
-                { $and:
-                    [
-                      { $eq: [ "$_id",  "$$lastHistory" ] },
-                      { $gte: [ "$createdAt", new Date(dates.aMonth) ] },
-                      { $lt: ["$createdAt", new Date(dates.aDueDay) ] }
-                    ]
-                }
-              },
-          }
-        ],
+        localField: 'last_history',
+        foreignField: '_id',
         as: 'last_history'
-      },
+      }
     }
 
     const unwind = { $unwind: '$last_history' }
 
     const group = generateGroupedDailyReport(dates)
 
-    const conditions = [
+    const aggQuery = [
       match,
       lookup,
       unwind,
       group
     ]
 
-    const result = await Case.aggregate(conditions)
+    const result = await Case.aggregate(aggQuery)
     callback(null, result)
   } catch (e) {
     callback(e, null)
