@@ -65,30 +65,51 @@ const CaseSchema = new mongoose.Schema({
     consume_alcohol : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     income : { type: Number, default: null},
     //faktor kontak
-    travel:{type:Number},
-    travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia
-    visited:{type:String,default:null},
-    start_travel:{type:Date,default:Date.now()},
-    end_travel:{type:Date,default:Date.now()},
-    close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    id_close_contact : {type:String},
-    name_close_contact : {type:String},
-    close_contact_confirm:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    id_close_contact_confirm : {type:String},
-    name_close_contact_confirm: {type:String},
-    close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    animal_market_date: { type: Date , default: null},
-    animal_market_other: { type: String , default: null},
-    close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    public_place_date: { type: Date , default: null},
-    public_place_other: { type: String , default: null},
-    close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    medical_facility_date: { type: Date , default: null},
-    medical_facility_other: { type: String, default: null},
-    close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-    health_workers : { type: String, lowercase: true },
-    apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
+        // travel:{type:Number}, //takeout
+        // travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia // takeout
+        // visited:{type:String,default:null}, //takeout
+        // start_travel:{type:Date,default:Date.now()}, // takeout
+        // end_travel:{type:Date,default:Date.now()}, // takeout 
+        // close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu // takeout
+        // id_close_contact: { type: String }, // takeout
+        // name_close_contact: { type: String }, // takeout
+        // close_contact_confirm: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
+        // id_close_contact_confirm: { type: String }, // takeout
+        // name_close_contact_confirm: { type: String }, // takeout
+        // close_contact_animal_market: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
+        // animal_market_date: { type: Date, default: null }, // takeout
+        // animal_market_other: { type: String, default: null }, // takeout
+        // close_contact_public_place: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
+        // public_place_date: { type: Date, default: null }, // takeout
+        // public_place_other: { type: String, default: null }, // takeout
+        // close_contact_medical_facility: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
+        // medical_facility_date: { type: Date, default: null }, // takeout
+        // medical_facility_other: { type: String, default: null }, // takeout
+        // close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+        // close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+        // health_workers : { type: String, lowercase: true },
+        // apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
+    //faktor kontak
+    // new faktor kontak/ paparan
+    close_contacted_before_sick_14_days : {type: Boolean,  default: false},
+    close_contact_premier : [{
+        close_contact_name: String,
+        close_contact_criteria: String,
+        close_contact_address: String,
+        close_contact_relation: String,
+        close_contact_relation_id: String,
+        close_contact_first_date: Date,
+        close_contact_last_date: Date,
+    }],
+    close_contact_heavy_ispa_group: {type: Boolean, default: false},
+    close_contact_have_pets: {type: Boolean, default: false},
+    close_contact_pets: String,
+    close_contact_health_worker: {type: Boolean, default: false},
+    apd_use: { type: Array, default: [] },
+    close_contact_performing_aerosol_procedures: {type: Boolean, default: false},
+    close_contact_performing_aerosol: String, 
+    // new faktor kontak/ paparan
+    //verifikasi status
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
     transfer_status: { type: String, lowercase: true, default: null },
