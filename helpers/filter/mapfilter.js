@@ -70,7 +70,6 @@ const filterOutput = async (this_) => {
     kode_kel: this_.address_village_code,
     nama_kel: this_.address_village_name,
     status: this_.status,
-    stage: (this_.stage == 0 ? "Proses" : "Selesai"),
     umur: this_.age,
     gender: this_.gender,
     final_result: finalResult,
