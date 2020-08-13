@@ -17,7 +17,7 @@ const filterEdges = (this_) => {
   if (this_.status == CRITERIA.CONF && this_.final_result == 1) {
     status = 'positive_recovery'
   }
-  if (this_.status == 'POSITIF' && this_.final_result == 2) {
+  if (this_.status == CRITERIA.CONF && this_.final_result == 2) {
     status = 'positive_dead'
   }
   // logic image label by age
@@ -37,7 +37,8 @@ const filterEdges = (this_) => {
     image = `avatar/elderly-${gender}-${status}.svg`
   }
   return {
-    id: this_._id,
+    _id: this_._id,
+    id: this_.id_case,
     label: replaceString,
     shape: 'image',
     image: image,
