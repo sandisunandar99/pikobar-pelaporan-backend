@@ -46,7 +46,8 @@ const CloseContactSchema = new mongoose.Schema({
     address_rt: { type: String, default: null },
     address_street: { type: String, default: null },
     relationship: { type: String, default: null },
-    activity: { type: String, default: null },
+    relationship_other: { type: String, default: null },
+    activity: { type: Array, default: [] }, // berubah yang tadinya string jadi array
     emergency_contact_name: { type: String, default: null },
     emergency_contact_phone: { type: String, default: null },
     emergency_contact_relationship: { type: String, default: null },
@@ -65,6 +66,8 @@ const CloseContactSchema = new mongoose.Schema({
     contact_place: { type: Number, default: 0 },
     contact_date: { type: Date, default: null },
     contact_durations: { type: Number, default: 0 },
+    start_contact_date: {type: Date, default: null},
+    end_contact_date: {type: Date, default: null},
     home_contact_date: { type: Date, default: null },
     home_contact_days: { type: Number, default: 0 },
     home_contact_activities: { type: Array, default: [] },
