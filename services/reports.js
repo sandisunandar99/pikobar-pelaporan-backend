@@ -12,8 +12,8 @@ async function dailyReport(query, user, callback) {
     const dates = {
       aDay: moment(date).format('YYYY-MM-DD'),
       aDueDay: moment(date).add(1,'days').format('YYYY-MM-DD'),
-      aWeek: moment(date).subtract(7,'days').format('YYYY-MM-DD'),
-      aMonth: moment(date).subtract(1,'months').format('YYYY-MM-DD')
+      aWeek: moment(date).subtract(1,'weeks').add(1,'days').format('YYYY-MM-DD'),
+      aMonth: moment(date).subtract(1,'months').add(1, 'days').format('YYYY-MM-DD')
     }
 
     const searching = Check.countByRole(user)
