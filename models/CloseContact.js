@@ -48,6 +48,7 @@ const CloseContactSchema = new mongoose.Schema({
     relationship: { type: String, default: null },
     relationship_other: { type: String, default: null },
     activity: { type: Array, default: [] }, // berubah yang tadinya string jadi array
+    activity_other: String, // aktifitas lainnya
     emergency_contact_name: { type: String, default: null },
     emergency_contact_phone: { type: String, default: null },
     emergency_contact_relationship: { type: String, default: null },
