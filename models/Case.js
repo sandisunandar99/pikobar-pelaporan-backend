@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
-const filtersMap = require("../helpers/filter/mapfilter");
 const filtersRelated = require("../helpers/filter/relatedfilter");
 const filtersExport = require("../helpers/filter/exportfilter");
 var uniqueValidator = require('mongoose-unique-validator');
@@ -215,22 +214,16 @@ CaseSchema.pre('save', async function (next) {
     next()
 })
 
-CaseSchema.methods.MapOutput = function () {
-    // filter output untuk memperkecil line file tidak
-    // melebihi 250 di pecah di simpan di helper
-    return filtersMap.filterOutput(this);
-}
-
 CaseSchema.methods.EdgesOutput = function () {
-    return filtersRelated.filterEdges(this);
+  return filtersRelated.filterEdges(this);
 }
 
 CaseSchema.methods.NodesOutput = function () {
-    return filtersRelated.filterNodes(this);
+  return filtersRelated.filterNodes(this);
 }
 
 CaseSchema.methods.JSONExcellOutput = function () {
-    return filtersExport.excellOutput(this);
+  return filtersExport.excellOutput(this);
 }
 
 module.exports = mongoose.model('Case', CaseSchema);
