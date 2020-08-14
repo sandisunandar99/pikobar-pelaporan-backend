@@ -1,5 +1,6 @@
 const Case = require('../models/Case')
 const maps = require('../helpers/filter/mapfilter')
+const { PATIENT_STATUS } = require('../helpers/constant')
 
 const listMap = async (query, user, callback) => {
   try {
@@ -8,17 +9,17 @@ const listMap = async (query, user, callback) => {
     result.map(res => {
       let finalResult
       if (res.final_result === "1") {
-        finalResult = 'Selesai Isolasi/Sembuh'
+        finalResult = PATIENT_STATUS.DONE
       } else if (res.final_result === "2") {
-        finalResult = 'Meninggal'
+        finalResult = PATIENT_STATUS.DEAD
       } else if (res.final_result === "3") {
-        finalResult = 'Discarded'
+        finalResult = PATIENT_STATUS.DISCARDED
       } else if (res.final_result === "4") {
-        finalResult = 'Masih Sakit'
+        finalResult = PATIENT_STATUS.SICK
       } else if (res.final_result === "5") {
-        finalResult = 'Masih Dikarantina'
+        finalResult = PATIENT_STATUS.QUARANTINED
       } else if (res.final_result === '' || res.final_result === null || res.final_result === "0") {
-        finalResult = 'Negatif'
+        finalResult = PATIENT_STATUS.NEGATIVE
       } else {
         finalResult = ''
       }
