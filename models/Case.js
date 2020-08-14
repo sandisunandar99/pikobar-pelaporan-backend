@@ -27,7 +27,7 @@ const CaseSchema = new mongoose.Schema({
     month : {type:Number},
     gender : {type:String},
     is_patient_address_same: { type: Boolean, default: false },
-    address_street: {type:String},
+    address_street: {type:String}, // alamat lengkap
     address_village_code: { type: String, required: [true, "can't be blank"]},
     address_village_name: { type: String, required: [true, "can't be blank"]},
     // kecamatan
@@ -40,6 +40,8 @@ const CaseSchema = new mongoose.Schema({
     address_province_name: { type: String, default:"Jawa Barat"},
     rt: { type: Number, default:null},
     rw: { type: Number, default:null},
+    latitude: {type: String, default: null},
+    longitude: { type: String, default: null },
     office_address: {type:String},
     is_phone_number_exists: { type: Boolean, default: false },
     phone_number: {type:String},
@@ -94,7 +96,19 @@ const CaseSchema = new mongoose.Schema({
     close_contact_premier : [{
         close_contact_name: String,
         close_contact_criteria: String,
-        close_contact_address: String,
+        //address
+        close_contact_address_street: String,
+        is_close_contact_address_same: { type: Boolean, default: false },
+        close_contact_address_village_code: { type: String, required: [true, "can't be blank"] },
+        close_contact_address_village_name: { type: String, required: [true, "can't be blank"] },
+        close_contact_address_subdistrict_code: { type: String, required: [true, "can't be blank"] },
+        close_contact_address_subdistrict_name: { type: String, required: [true, "can't be blank"] },
+        close_contact_address_district_code: { type: String, required: [true, "can't be blank"] },
+        close_contact_address_district_name: { type: String, required: [true, "can't be blank"] },
+        close_contact_address_province_code: { type: String, default: 32 },
+        close_contact_address_province_name: { type: String, default: "Jawa Barat" },
+        close_contact_rt: { type: Number, default: null },
+        close_contact_rw: { type: Number, default: null },
         close_contact_relation: String,
         close_contact_relation_id: String,
         close_contact_first_date: Date,
