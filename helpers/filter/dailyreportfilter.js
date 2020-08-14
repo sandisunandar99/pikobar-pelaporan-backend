@@ -39,7 +39,27 @@ const sumBasedOnLocation = (params, d) => {
     }
 }
 
+const buildProject = (fields) => {
+    let project = {}
+
+    for (let i in fields) {
+        
+        const field = fields[i]
+
+        project[field] = {
+            $cond: [ 
+                { $eq: [ { "$size": `$${field}` }, 0 ] }, 
+                { $literal: null }, 
+                { $arrayElemAt: [ `$${field}`, 0 ] }
+            ]
+        }
+    }
+
+    return { "$project": project }
+}
+
 module.exports = {
     sum,
-    sumBasedOnLocation
+    sumBasedOnLocation,
+    buildProject,
 }
