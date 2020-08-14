@@ -1,10 +1,15 @@
 const moment = require('moment')
+const Rdt = require('../models/Rdt')
 const Case = require('../models/Case')
 const Check = require('../helpers/rolecheck')
 
 const { 
-  generateGroupedDailyReport
-} = require('../helpers/reports/handler')
+  aggCaseDailyReport
+} = require('../helpers/reports/case')
+
+const { 
+  aggRdtDailyReport
+} = require('../helpers/reports/rdt')
 
 async function dailyReport(query, user, callback) {
   try {
@@ -18,35 +23,17 @@ async function dailyReport(query, user, callback) {
 
     const searching = Check.countByRole(user)
 
-    const match = {
-      $match: {
-        $and: [
-          searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified'},
-        ]
-      }
+    const aggQueryCase = aggCaseDailyReport(searching, dates)
+    const aggQueryRdt = aggRdtDailyReport(searching, dates)
+
+    const caseReport = await Case.aggregate(aggQueryCase)
+    const rdtReport = await Rdt.aggregate(aggQueryRdt)
+
+    const result = {
+      ...caseReport.shift(),
+      ...rdtReport.shift()
     }
 
-    const lookup = {
-      $lookup: {
-        from: 'histories',
-        localField: 'last_history',
-        foreignField: '_id',
-        as: 'last_history'
-      }
-    }
-
-    const unwind = { $unwind: '$last_history' }
-
-    const group = generateGroupedDailyReport(dates)
-
-    const aggQuery = [
-      match,
-      lookup,
-      unwind,
-      group
-    ]
-
-    const result = await Case.aggregate(aggQuery)
     callback(null, result)
   } catch (e) {
     callback(e, null)

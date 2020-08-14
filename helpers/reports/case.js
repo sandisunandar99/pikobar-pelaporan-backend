@@ -4,11 +4,30 @@ const {
 
 const {
     sum,
-    sumBasedOnLocation
+    sumBasedOnLocation,
+    buildProject
 } = require('../filter/dailyreportfilter')
 
-const generateGroupedDailyReport = (dates) => {
-    return {
+const aggCaseDailyReport = (searching, dates) => {
+
+    const match = {
+        $match: {
+            $and: [
+                searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified'},
+            ]
+        }
+    }
+  
+    const lookup = {
+        $lookup: {
+            from: 'histories',
+            localField: 'last_history',
+            foreignField: '_id',
+            as: 'last_history'
+        }
+    }
+
+    const group = {
         "$facet": {
             'suspect': [{
                 $group: {
@@ -158,8 +177,39 @@ const generateGroupedDailyReport = (dates) => {
             }],
         }
     }
+
+    const unwind = { $unwind: '$last_history' }
+
+    const project = buildProject([
+        "suspect",
+        "probable",
+        "suspectIsolated",
+        "suspectDiscarded",
+        "confirmed",
+        "confirmedSymptomatic",
+        "confirmedAsymptomatic",
+        "confirmedTravel",
+        "confirmedNoTravel",
+        "confirmedRecovered",
+        "closeContact",
+        "deceaseConfirmed",
+        "deceaseProbable",
+        "suspectProbableIsolation",
+        "confirmedIsolation",
+        "closeContactIsolation",
+    ])
+
+    const aggCaseQuery = [
+        match,
+        lookup,
+        unwind,
+        group,
+        project
+    ]
+
+    return aggCaseQuery
 }
 
 module.exports = {
-    generateGroupedDailyReport
+    aggCaseDailyReport
 }
