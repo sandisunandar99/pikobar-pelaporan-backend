@@ -23,8 +23,8 @@ const filter = (params, gte, lt) => {
 const sum = (params, d) => {
     return {
         aDay: filter(params, d.aDay, d.aDueDay),
-        aWeek: filter(params, d.aWeek, d.aDay),
-        aMonth: filter(params, d.aMonth, d.aDay),
+        aWeek: filter(params, d.aWeek, d.aDueDay),
+        aMonth: filter(params, d.aMonth, d.aDueDay),
     }
 }
 

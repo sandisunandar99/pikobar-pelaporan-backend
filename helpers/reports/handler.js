@@ -65,6 +65,46 @@ const generateGroupedDailyReport = (dates) => {
                     ], dates)
                 }
             }],
+            'confirmedTravel': [{
+                $group: {
+                    _id: 'confirmedTravel',
+                    ...sum([
+                        { $eq: ['$status', CRITERIA.CONF] },
+                        { $or: [
+                            { $eq: ["$last_history.has_visited_public_place", true] },
+                            { $eq: ["$last_history.travelling_history_before_sick_14_days", true] },
+                            { $eq: ["$last_history.visited_local_area_before_sick_14_days", true] }
+                          ]
+                        }
+                    ], dates)
+                }
+            }],
+            'confirmedNoTravel': [{
+                $group: {
+                    _id: 'confirmedNoTravel',
+                    ...sum([
+                        { $eq: ['$status', CRITERIA.CONF] },
+                        { $or: [
+                            {$and: [
+                                { $eq: ["$last_history.has_visited_public_place", true] },
+                                { $eq: ["$last_history.travelling_history_before_sick_14_days", true] },
+                                { $eq: ["$last_history.visited_local_area_before_sick_14_days", true] }
+                            ]},
+                            { $ne: ["$close_contact", 1] }
+                          ]
+                        }
+                    ], dates)
+                }
+            }],
+            'confirmedRecovered': [{
+                $group: {
+                    _id: 'confirmedRecovered',
+                    ...sum([
+                        { $eq: ['$status', CRITERIA.CONF] },
+                        { $eq: ['$final_result', '1'] }
+                    ], dates)
+                }
+            }],
             'closeContact': [{
                 $group: {
                     _id: 'suspect',
