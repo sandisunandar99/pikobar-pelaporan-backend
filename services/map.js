@@ -1,16 +1,30 @@
 const Case = require('../models/Case')
-const check = require('../helpers/rolecheck')
-const filter = require('../helpers/filter/casefilter')
-const filterMap = require('../helpers/filter/mapfilter')
+const maps = require('../helpers/filter/mapfilter')
+const { PATIENT_STATUS } = require('../helpers/constant')
 
 const listMap = async (query, user, callback) => {
   try {
-    const search = check.countByRole(user)
-    const filters = await filter.filterCase(user, query)
-    const searching = Object.assign(search, filters)
-    // const filterSearch = Object.assign(searching, filterMap.filterDefault(query))
-    const res = await Case.find(searching).where("delete_status").ne("deleted").limit(200)
-    const result = await Promise.all(res.map(async r => await r.MapOutput()))
+    const aggregateWhere = await maps.aggregateCondition(user, query)
+    const result = await Case.aggregate(aggregateWhere)
+    result.map(res => {
+      let finalResult
+      if (res.final_result === "1") {
+        finalResult = PATIENT_STATUS.DONE
+      } else if (res.final_result === "2") {
+        finalResult = PATIENT_STATUS.DEAD
+      } else if (res.final_result === "3") {
+        finalResult = PATIENT_STATUS.DISCARDED
+      } else if (res.final_result === "4") {
+        finalResult = PATIENT_STATUS.SICK
+      } else if (res.final_result === "5") {
+        finalResult = PATIENT_STATUS.QUARANTINED
+      } else if (res.final_result === '' || res.final_result === null || res.final_result === "0") {
+        finalResult = PATIENT_STATUS.NEGATIVE
+      } else {
+        finalResult = ''
+      }
+      res.final_result = finalResult
+    })
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -19,8 +33,8 @@ const listMap = async (query, user, callback) => {
 
 module.exports = [
   {
-    name: 'services.map.listMap',
-    method: listMap
+    name:'services.map.listMap',
+    method:listMap
   }
 ];
 
