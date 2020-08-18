@@ -3,6 +3,7 @@ const Check = require('../helpers/rolecheck')
 const Filter = require('../helpers/filter/casefilter')
 const { WHERE_GLOBAL } = require('../helpers/constant')
 const { filterEdges, filterNodes } = require('../helpers/filter/relatedfilter')
+const { patientStatus } = require('../helpers/custom')
 
 const listCaseRelated = async (query, user, callback) => {
   try {
@@ -79,6 +80,9 @@ const getByCaseRelated = async (id_case, callback) => {
       }
     ]
     const result = await Case.aggregate(conditionAggregate);
+    result.map(res => {
+      res.final_result = patientStatus(res)
+    })
     callback(null, result);
   } catch (error) {
     callback(error, null);
