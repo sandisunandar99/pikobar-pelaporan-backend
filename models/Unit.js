@@ -5,6 +5,8 @@ const UnitSchema = new mongoose.Schema({
     unit_level: Number,
     unit_code: String, //null sementara
     unit_type: String, //puskesmas, rs, klinik
+    rs_type: String, // rs rujukan, non rujukan, darurat
+    faskes_code: String, 
     name: String,
     description: String,
     code_district_code: { type: String, default: null},
