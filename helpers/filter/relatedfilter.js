@@ -9,9 +9,7 @@ const filterEdges = (this_) => {
   if (this_.status === CRITERIA.SUS || this_.status === CRITERIA.PROB || this_.status === CRITERIA.CLOSE) {
     status = 'normal'
   }
-  if (this_.status === CRITERIA.CONF &&
-    this_.final_result === '' || this_.final_result === null
-    || this_.final_result === 0) {
+  if (this_.status === CRITERIA.CONF && !this_.final_result) {
     status = 'positive_active'
   }
   if (this_.status === CRITERIA.CONF && this_.final_result === 1) {
