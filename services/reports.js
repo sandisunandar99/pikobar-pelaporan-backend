@@ -4,7 +4,7 @@ const Check = require('../helpers/rolecheck')
 
 const { 
   aggCaseDailyReport
-} = require('../helpers/reports/case')
+} = require('../helpers/reports/handler')
 
 async function dailyReport(query, user, callback) {
   try {
