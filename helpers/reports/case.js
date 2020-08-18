@@ -226,28 +226,8 @@ const aggCaseDailyReport = (searching, dates) => {
 
     const unwind = { $unwind: '$last_history' }
 
-    const project = buildProject([
-        "suspect",
-        "probable",
-        "suspectIsolated",
-        "suspectDiscarded",
-        "confirmed",
-        "confirmedSymptomatic",
-        "confirmedAsymptomatic",
-        "confirmedTravel",
-        "confirmedNoTravel",
-        "confirmedRecovered",
-        "closeContact",
-        "closeContactNew",
-        "closeContactSuspect",
-        "closeContactConfirmed",
-        "closeContactDiscarded",
-        "deceaseConfirmed",
-        "deceaseProbable",
-        "suspectProbableIsolation",
-        "confirmedIsolation",
-        "closeContactIsolation",
-    ])
+    const attributes = Object.keys(group.$facet).map((key) => key)
+    const project = buildProject(attributes)
 
     const aggCaseQuery = [
         match,
