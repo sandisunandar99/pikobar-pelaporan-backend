@@ -25,6 +25,8 @@ UnitSchema.methods.toJSONFor = function () {
         unit_level : this.unit_level,
         unit_code: this.unit_code,
         unit_type: this.unit_type,
+        rs_type : this.rs_type,
+        faskes_code : this.faskes_code,
         name : this.name,
         description: this.description,
         address: this.address,
