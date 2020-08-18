@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
-const filtersRelated = require("../helpers/filter/relatedfilter");
 const filtersExport = require("../helpers/filter/exportfilter");
 var uniqueValidator = require('mongoose-unique-validator');
 
@@ -70,7 +69,7 @@ const CaseSchema = new mongoose.Schema({
         // travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia // takeout
         // visited:{type:String,default:null}, //takeout
         // start_travel:{type:Date,default:Date.now()}, // takeout
-        // end_travel:{type:Date,default:Date.now()}, // takeout 
+        // end_travel:{type:Date,default:Date.now()}, // takeout
         // close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu // takeout
         // id_close_contact: { type: String }, // takeout
         // name_close_contact: { type: String }, // takeout
@@ -120,7 +119,7 @@ const CaseSchema = new mongoose.Schema({
     close_contact_health_worker: {type: Boolean, default: false},
     apd_use: { type: Array, default: [] },
     close_contact_performing_aerosol_procedures: {type: Boolean, default: false},
-    close_contact_performing_aerosol: String, 
+    close_contact_performing_aerosol: String,
     // new faktor kontak/ paparan
     //verifikasi status
     verified_status: { type: String, lowercase: true },
@@ -248,14 +247,6 @@ CaseSchema.pre('save', async function (next) {
 
     next()
 })
-
-CaseSchema.methods.EdgesOutput = function () {
-  return filtersRelated.filterEdges(this);
-}
-
-CaseSchema.methods.NodesOutput = function () {
-  return filtersRelated.filterNodes(this);
-}
 
 CaseSchema.methods.JSONExcellOutput = function () {
   return filtersExport.excellOutput(this);
