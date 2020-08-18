@@ -2,22 +2,20 @@
 const { GENDER, CRITERIA } = require('../constant')
 const filterEdges = (this_) => {
   const replaceString = this_.id_case.replace("covid-", "")
-  const gender = (this_.gender == 'L' ? GENDER.M : GENDER.F)
+  const gender = (this_.gender === 'L' ? GENDER.M : GENDER.F)
   let image
   let status
   // logic status label
-  if (this_.status == CRITERIA.SUS || this_.status == CRITERIA.PROB || this_.status == CRITERIA.CLOSE) {
+  if (this_.status === CRITERIA.SUS || this_.status === CRITERIA.PROB || this_.status === CRITERIA.CLOSE) {
     status = 'normal'
   }
-  if (this_.status == CRITERIA.CONF &&
-    this_.final_result == '' || this_.final_result == null
-    || this_.final_result == 0) {
+  if (this_.status === CRITERIA.CONF && !this_.final_result) {
     status = 'positive_active'
   }
-  if (this_.status == CRITERIA.CONF && this_.final_result == 1) {
+  if (this_.status === CRITERIA.CONF && this_.final_result === 1) {
     status = 'positive_recovery'
   }
-  if (this_.status == CRITERIA.CONF && this_.final_result == 2) {
+  if (this_.status === CRITERIA.CONF && this_.final_result === 2) {
     status = 'positive_dead'
   }
   // logic image label by age
@@ -42,13 +40,13 @@ const filterEdges = (this_) => {
     label: replaceString,
     shape: 'image',
     image: image,
-    size: (this_.status == CRITERIA.CONF ? 50 : '')
+    size: (this_.status === CRITERIA.CONF ? 50 : '')
   }
 }
 const filterNodes = (this_) => {
   return {
-    from: this_.id_case,
-    to: this_.id_case_related,
+    from: this_.id_case_related,
+    to: this_.id_case,
   }
 }
 module.exports = {
