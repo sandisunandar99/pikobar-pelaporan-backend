@@ -50,10 +50,11 @@ const listCaseRelated = async (query, user, callback) => {
 }
 
 const getByCaseRelated = async (id_case, callback) => {
+  const wheres = { ...WHERE_GLOBAL, 'id_case': id_case }
   try {
     const conditionAggregate = [
       {
-        $match: { 'id_case': id_case }
+        $match: wheres
       },
       {
         $lookup: {
