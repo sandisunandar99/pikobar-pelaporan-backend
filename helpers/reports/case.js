@@ -21,9 +21,22 @@ const aggCaseDailyReport = (searching, dates) => {
     const lookup = {
         $lookup: {
             from: 'histories',
-            localField: 'last_history',
-            foreignField: '_id',
-            as: 'last_history'
+            localField: '_id',
+            foreignField: 'case',
+            as: 'histories'
+        }
+    }
+
+    const addFields = {
+        $addFields: {
+            last_history: { $arrayElemAt: [ `$histories`, 0 ] },
+            prev_history: {
+                $cond: [ 
+                    { $lt: [ { "$size": `$histories` }, 2 ] }, 
+                    { $literal: null }, 
+                    { $arrayElemAt: [ `$histories`, 1 ] }
+                ]
+            }
         }
     }
 
@@ -130,6 +143,39 @@ const aggCaseDailyReport = (searching, dates) => {
                     ...sum([{ $eq: ['$status', CRITERIA.CLOSE] }], dates)
                 }
             }],
+            'closeContactNew': [{
+                $group: {
+                    _id: 'suspect',
+                    ...sum([{ $eq: ['$status', CRITERIA.CLOSE] }], dates)
+                }
+            }],
+            'closeContactSuspect': [{
+                $group: {
+                    _id: 'suspect',
+                    ...sum([
+                        { $eq: ['$status', CRITERIA.SUS] },
+                        { $eq: ['$prev_history.status', CRITERIA.CLOS] },
+                    ], dates)
+                }
+            }],
+            'closeContactConfirmed': [{
+                $group: {
+                    _id: 'suspect',
+                    ...sum([
+                        { $eq: ['$status', CRITERIA.CONF] },
+                        { $eq: ['$prev_history.status', CRITERIA.CLOS] },
+                    ], dates)
+                }
+            }],
+            'closeContactDiscarded': [{
+                $group: {
+                    _id: 'suspect',
+                    ...sum([
+                        { $in: ['$status', [ CRITERIA.CONF, CRITERIA.CLOSE ] ] },
+                        { $eq: ['$final_result', '1'] },
+                    ], dates)
+                }
+            }],
             'deceaseConfirmed': [
             {
                 $group: {
@@ -192,6 +238,10 @@ const aggCaseDailyReport = (searching, dates) => {
         "confirmedNoTravel",
         "confirmedRecovered",
         "closeContact",
+        "closeContactNew",
+        "closeContactSuspect",
+        "closeContactConfirmed",
+        "closeContactDiscarded",
         "deceaseConfirmed",
         "deceaseProbable",
         "suspectProbableIsolation",
@@ -202,6 +252,7 @@ const aggCaseDailyReport = (searching, dates) => {
     const aggCaseQuery = [
         match,
         lookup,
+        addFields,
         unwind,
         group,
         project

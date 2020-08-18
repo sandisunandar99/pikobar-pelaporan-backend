@@ -83,6 +83,8 @@ const HistorySchema = new mongoose.Schema({
     }],
 }, { timestamps : true });
 
+HistorySchema.index({case: 1});
+
 HistorySchema.methods.toJSONFor = function () {
     return {
         case: this.case,
