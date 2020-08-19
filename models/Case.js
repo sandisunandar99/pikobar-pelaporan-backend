@@ -120,6 +120,7 @@ const CaseSchema = new mongoose.Schema({
     apd_use: { type: Array, default: [] },
     close_contact_performing_aerosol_procedures: {type: Boolean, default: false},
     close_contact_performing_aerosol: String,
+        // ==> faktor kontak paparan pindah ke history
     // new faktor kontak/ paparan
     //verifikasi status
     verified_status: { type: String, lowercase: true },
