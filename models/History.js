@@ -79,9 +79,40 @@ const HistorySchema = new mongoose.Schema({
     visited_local_area_before_sick_14_days: {type: Boolean, default: false},
     visited_local_area: [{
         visited_local_area_province: String,
-        visited_local_area_city: String, 
+        visited_local_area_city: String,
     }],
     //faktor riwayat perjalanan
+    //faktor kontak paparan
+    close_contacted_before_sick_14_days: { type: Boolean, default: false },
+    close_contact_premier: [{
+      close_contact_name: String,
+      close_contact_criteria: String,
+      //address
+      close_contact_address_street: String,
+      is_close_contact_address_same: { type: Boolean, default: false },
+      close_contact_address_village_code: { type: String, required: [true, "can't be blank"] },
+      close_contact_address_village_name: { type: String, required: [true, "can't be blank"] },
+      close_contact_address_subdistrict_code: { type: String, required: [true, "can't be blank"] },
+      close_contact_address_subdistrict_name: { type: String, required: [true, "can't be blank"] },
+      close_contact_address_district_code: { type: String, required: [true, "can't be blank"] },
+      close_contact_address_district_name: { type: String, required: [true, "can't be blank"] },
+      close_contact_address_province_code: { type: String, default: 32 },
+      close_contact_address_province_name: { type: String, default: "Jawa Barat" },
+      close_contact_rt: { type: Number, default: null },
+      close_contact_rw: { type: Number, default: null },
+      close_contact_relation: String,
+      close_contact_relation_id: String,
+      close_contact_first_date: Date,
+      close_contact_last_date: Date,
+    }],
+    close_contact_heavy_ispa_group: { type: Boolean, default: false },
+    close_contact_have_pets: { type: Boolean, default: false },
+    close_contact_pets: String,
+    close_contact_health_worker: { type: Boolean, default: false },
+    apd_use: { type: Array, default: [] },
+    close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
+    close_contact_performing_aerosol: String,
+    //faktor kontak paparan
 }, { timestamps : true });
 
 HistorySchema.index({case: 1});
@@ -139,7 +170,7 @@ HistorySchema.methods.toJSONFor = function () {
             get_specimens_to: this.get_specimens_to,
             inspection_result: this.inspection_result
         }],
-        is_other_diagnosisr_respiratory_disease: this.is_other_diagnosisr_respiratory_disease, 
+        is_other_diagnosisr_respiratory_disease: this.is_other_diagnosisr_respiratory_disease,
         other_diagnosisr_respiratory_disease: this.other_diagnosisr_respiratory_disease,
         // mengunjungi tempat public
         has_visited_public_place: this.has_visited_public_place,
