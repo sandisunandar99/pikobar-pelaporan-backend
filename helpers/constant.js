@@ -32,7 +32,9 @@ module.exports = {
     MALE: 'L',
     FEMALE: 'P',
     M: 'male',
-    F: 'female'
+    F: 'female',
+    INDO_L: 'Laki-Laki',
+    INDO_P: 'Perempuan'
   },
   DEFAULT_PROVINCE: {
     CODE: '32',
