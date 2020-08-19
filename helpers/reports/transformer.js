@@ -13,12 +13,12 @@ const addFields = {
 
 /*
  * Why using transformer?
- * Firstly, inspection_support is an array of objects fields
- * Daily report need to calculate inspection_support based on child field (type, result)
- * the problem is, we need to sum it only if, the array of inspection_supprt(type/result) has specified one match
- * so, the quick solve problem to transform an array of objects to a single needed informative value that is boolean  
+ * Firstly, "inspection_support" is an array of objects fields
+ * Daily report need to calculate inspection_support based on child field of an array of objects (type/result)
+ * the problem is, we just need to sum it, only if the array of inspection_supprt(type/result) has specified one match
+ * so, the quick solve problem to transform an array of objects to a single needed informative value that's boolean  
  */
-const transformFields = {
+const transformedFields = {
     $addFields: {
         rapidTest: { $toBool: {
             $arrayElemAt: [{
@@ -68,5 +68,5 @@ const transformFields = {
 
 module.exports = {
     addFields,
-    transformFields
+    transformedFields
 }

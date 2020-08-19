@@ -10,8 +10,8 @@ const {
 
 const {
     addFields,
-    transformFields
-} = require('./transform')
+    transformedFields
+} = require('./transformer')
 
 const aggCaseDailyReport = (searching, dates) => {
 
@@ -138,15 +138,15 @@ const aggCaseDailyReport = (searching, dates) => {
 
     const unwind = { $unwind: '$lastHis' }
 
-    const attributes = Object.keys(facet.$facet).map((key) => key)
+    const props = Object.keys(facet.$facet).map((key) => key)
     
-    const project = buildProject(attributes)
+    const project = buildProject(props)
 
     const aggCaseQuery = [
         match,
         lookup,
         addFields,
-        transformFields,
+        transformedFields,
         unwind,
         facet,
         project

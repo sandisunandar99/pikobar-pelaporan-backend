@@ -20,11 +20,11 @@ const filter = (params, gte, lt) => {
     }
 }
 
-const sum = (attribute, params, d) => {
+const sum = (prop, params, d) => {
     return {
-        [attribute]: [{
+        [prop]: [{
             $group: {
-                _id: attribute,
+                _id: prop,
                 aDay: filter(params, d.aDay, d.aDueDay),
                 aWeek: filter(params, d.aWeek, d.aDueDay),
                 aMonth: filter(params, d.aMonth, d.aDueDay),
@@ -33,14 +33,14 @@ const sum = (attribute, params, d) => {
     }
 }
 
-const sumBasedOnLocation = (attribute, params, d) => {
+const sumBasedOnLocation = (prop, params, d) => {
     const aDay = [d.aDay, d.aDueDay]
     const loc = (v) => Object.assign({}, { '$eq': [ '$lastHis.current_location_type', v ] })
 
     return {
-        [attribute]: [{
+        [prop]: [{
             $group: {
-                _id: attribute,
+                _id: prop,
                 referralHospital: filter([ ...params, loc('RS') ], ...aDay),
                 emergencyHospital: filter([ ...params, loc('RS') ], ...aDay),
                 selfIsolation: filter([ ...params, loc('RUMAH') ], ...aDay),
@@ -49,18 +49,18 @@ const sumBasedOnLocation = (attribute, params, d) => {
     }
 }
 
-const buildProject = (fields) => {
+const buildProject = (props) => {
     let project = {}
 
-    for (let i in fields) {
+    for (let i in props) {
         
-        const field = fields[i]
+        const prop = props[i]
 
-        project[field] = {
+        project[prop] = {
             $cond: [ 
-                { $eq: [ { "$size": `$${field}` }, 0 ] }, 
+                { $eq: [ { "$size": `$${prop}` }, 0 ] }, 
                 { $literal: null }, 
-                { $arrayElemAt: [ `$${field}`, 0 ] }
+                { $arrayElemAt: [ `$${prop}`, 0 ] }
             ]
         }
     }
