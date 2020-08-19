@@ -12,8 +12,7 @@ const filterEdges = (this_) => {
   if (this_.status === CRITERIA.CONF && !this_.final_result) {
     status = 'positive_active'
   }
-  if (this_.status === CRITERIA.CONF && this_.final_result === "1" || this_.final_result === "3"
-    || this_.final_result === "4" || this_.final_result === "5") {
+  if (this_.status === CRITERIA.CONF && ["1", "3", "4", "5"].includes(this_.final_result)) {
     status = 'positive_recovery'
   }
   if (this_.status === CRITERIA.CONF && this_.final_result === "2") {
