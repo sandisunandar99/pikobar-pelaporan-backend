@@ -9,6 +9,7 @@ const Notif = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
+const { WHERE_GLOBAL } = require('../helpers/constant')
 const moment = require('moment')
 
 async function ListCase (query, user, callback) {
@@ -113,7 +114,7 @@ async function ListCase (query, user, callback) {
 const listCaseExport = async (query, user, callback) => {
   const filter = await Filter.filterCase(user, query)
   const filterRole = Check.exportByRole({}, user, query)
-  const params = { ...filter, ...filterRole }
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
   let search
   if(query.search){
     let search_params = [
