@@ -1,5 +1,6 @@
 const { 
-    CRITERIA 
+    CRITERIA,
+    WHERE_GLOBAL
 } = require('../constant')
 
 const {
@@ -18,7 +19,7 @@ const aggCaseDailyReport = (searching, dates) => {
     const match = {
         $match: {
             $and: [
-                searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified'},
+                searching, WHERE_GLOBAL,
             ]
         }
     }
