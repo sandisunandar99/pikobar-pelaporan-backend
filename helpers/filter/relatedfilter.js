@@ -12,10 +12,10 @@ const filterEdges = (this_) => {
   if (this_.status === CRITERIA.CONF && !this_.final_result) {
     status = 'positive_active'
   }
-  if (this_.status === CRITERIA.CONF && this_.final_result === 1) {
+  if (this_.status === CRITERIA.CONF && ["1", "3", "4", "5"].includes(this_.final_result)) {
     status = 'positive_recovery'
   }
-  if (this_.status === CRITERIA.CONF && this_.final_result === 2) {
+  if (this_.status === CRITERIA.CONF && this_.final_result === "2") {
     status = 'positive_dead'
   }
   // logic image label by age
@@ -40,7 +40,7 @@ const filterEdges = (this_) => {
     label: replaceString,
     shape: 'image',
     image: image,
-    size: (this_.status === CRITERIA.CONF ? 50 : '')
+    size: this_.status === CRITERIA.CONF ? 50 : ''
   }
 }
 const filterNodes = (this_) => {
