@@ -21,7 +21,7 @@ const render = (data) => {
           ],
           [
             { text: `Diagnosis lainnya, Sebutkan!`, margin: [0, 0, 0, 5], border: [] },
-            { text: ': ...', margin: [0, 0, 0, 5], border: [] },
+            { text: `: ${history.other_diagnosis || '-' } `, margin: [0, 0, 0, 5], border: [] },
           ],
           [
             { text: 'Apakah pasien mempunyai diagnosis atau', margin: [0, 5, 0, 0], border: ['', 'black', '', ''] },
@@ -42,7 +42,7 @@ const render = (data) => {
         paddingTop: (i, node) => -0.2,
         paddingBottom: (i, node) => 0
       }
-      // 
+      //
     },{},{},{}
   ]
 }
