@@ -3,6 +3,7 @@ const SubDistrict = require('../models/SubDistrict')
 const Village = require('../models/Village')
 const Unit = require('../models/Unit')
 const Lab = require('../models/Lab')
+const Province = require('../models/Province')
 
 const getDistrictCity = async (request, callback) => {
   let params = new Object();
@@ -11,6 +12,10 @@ const getDistrictCity = async (request, callback) => {
 
   if (request.kota_kode) {
     params.kemendagri_kabupaten_kode = request.kota_kode;
+  }
+
+  if (request.provice_code) {
+    params.kemendagri_provinsi_kode = request.provice_code
   }
 
   try {
@@ -110,6 +115,15 @@ const getLab = async (query, callback) => {
   }
 }
 
+const province = async(query, callback) =>{
+  try {
+    const result = await Province.find({})
+    callback(null, result.map(x => x.toJSONFor()))
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.areas.getDistrictCity',
@@ -138,5 +152,9 @@ module.exports = [
   {
     name: 'services.areas.getLab',
     method: getLab
-  }
+  },
+  {
+    name: 'services.areas.province',
+    method: province
+  },
 ]

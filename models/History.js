@@ -39,12 +39,12 @@ const HistorySchema = new mongoose.Schema({
     there_are_symptoms :  { type: Boolean, default: false},
     is_other_diagnosisr_respiratory_disease: {type: Boolean, default: false},
     other_diagnosisr_respiratory_disease: String,
-    //takeout
-    serum_check : { type: Boolean, default: null},
-    sputum_check : { type: Boolean, default: null},
-    swab_check : { type: Boolean, default: null},
-    //takeout
-    //tab information investigation 
+    //takeout from db
+    // serum_check : { type: Boolean, default: null},
+    // sputum_check : { type: Boolean, default: null},
+    // swab_check : { type: Boolean, default: null},
+    //takeout from db
+    //pemeriksaan penunjang
     physical_check_temperature : {type:Number , default:0},
     physical_check_blood_pressure : {type:Number , default:0},
     physical_check_pulse : {type:Number , default:0},
@@ -59,7 +59,8 @@ const HistorySchema = new mongoose.Schema({
         get_specimens_to: Number,
         inspection_result: String
     }],
-    // mengunjungi tempat public
+    //pemeriksaan penunjang
+    //faktor riwayat perjalanan
     has_visited_public_place :{type: Boolean, default: false},
     visited_public_place: [{
         public_place_category: String,
@@ -68,7 +69,6 @@ const HistorySchema = new mongoose.Schema({
         public_place_date_visited: Date,
         public_place_duration_visited: String
     }],
-    //faktor riwayat perjalanan
     travelling_history_before_sick_14_days: {type: Boolean, default: false},
     travelling_history: [{
         travelling_type: String,
@@ -81,6 +81,7 @@ const HistorySchema = new mongoose.Schema({
         visited_local_area_province: String,
         visited_local_area_city: String, 
     }],
+    //faktor riwayat perjalanan
 }, { timestamps : true });
 
 HistorySchema.index({case: 1});
@@ -121,9 +122,9 @@ HistorySchema.methods.toJSONFor = function () {
         diagnosis_covid : this.diagnosis_covid,
         diagnosis_pneumonia : this.diagnosis_pneumonia,
         other_diagnosis: this.other_diagnosis,
-        serum_check : this.serum_check,
-        sputum_check : this.sputum_check,
-        swab_check : this.swab_check,
+        // serum_check : this.serum_check,
+        // sputum_check : this.sputum_check,
+        // swab_check : this.swab_check,
         physical_check_temperature : this.physical_check_temperature,
         physical_check_blood_pressure : this.physical_check_blood_pressure,
         physical_check_pulse : this.physical_check_pulse,

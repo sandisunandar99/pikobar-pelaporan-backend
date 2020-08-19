@@ -70,6 +70,16 @@ module.exports = (server) => {
         tags: ['api', 'areas'],
       },
       handler: handlers.Lab
+    },
+    {
+      method: 'GET',
+      path: '/areas/province',
+      config: {
+        auth: 'jwt',
+        description: 'get lab in west java',
+        tags: ['api', 'areas'],
+      },
+      handler: handlers.getProvince
     }
   ]
 }

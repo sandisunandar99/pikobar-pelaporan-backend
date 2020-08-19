@@ -27,9 +27,12 @@ module.exports = {
     SICK: 'Masih Sakit',
     QUARANTINED: 'Masih Dikarantina'
   },
+  WHERE_GLOBAL: { delete_status: { $ne: 'deleted' }, verified_status: 'verified' },
   GENDER: {
     MALE: 'L',
-    FEMALE: 'P'
+    FEMALE: 'P',
+    M: 'male',
+    F: 'female'
   },
   DEFAULT_PROVINCE: {
     CODE: '32',
