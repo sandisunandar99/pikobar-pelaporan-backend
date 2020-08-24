@@ -1,5 +1,5 @@
 'use strict'
-const { PATIENT_STATUS } = require('./constant')
+const { PATIENT_STATUS, CRITERIA, ANSWER, PYSICHAL, INCOME } = require('./constant')
 const setPwd = (payload) => {
   const crypto = require('crypto');
   payload.salt = crypto.randomBytes(16).toString('hex');
@@ -82,7 +82,74 @@ const patientStatus = (res) => {
   return finalResult
 }
 
+const criteriaConvert = (res) => {
+  let criteria
+  if (res.status === CRITERIA.CONF) {
+    criteria = CRITERIA.CONF_ID
+  } else if (res.status === CRITERIA.PROB) {
+    criteria = CRITERIA.PROB_ID
+  } else if (res.status === CRITERIA.SUS) {
+    criteria = CRITERIA.SUS_ID
+  } else if (res.status === CRITERIA.CLOSE) {
+    criteria = CRITERIA.CLOSE_ID
+  } else {
+    criteria = ''
+  }
+
+  return criteria
+}
+
+const convertYesOrNO = (param) => {
+  let result
+  if (param === 1) {
+    result = ANSWER.YA
+  } else if (param === 2) {
+    result = ANSWER.TIDAK
+  } else if (param === 3) {
+    result = ANSWER.TIDAK_TAHU
+  } else {
+    result = ''
+  }
+
+  return result
+}
+
+const convertIncome = (param) => {
+  let result
+  if (param === 0) {
+    result = INCOME.NO_INCONME
+  } else if (param === 1) {
+    result = INCOME.SMALLER
+  } else if (param === 2) {
+    result = INCOME.ONE_TO3
+  } else if (param === 3) {
+    result =INCOME.THREET_O5
+  } else if (param === 4) {
+    result = INCOME.GREATHER_5
+  } else {
+    result = ''
+  }
+
+  return result
+}
+
+const convertPysichal = (param) => {
+  let result
+  if (param === 0) {
+    result = PYSICHAL.SEDENTER
+  } else if (param === 1) {
+    result = PYSICHAL.SMALLER_150MINUTE
+  } else if (param === 2) {
+    result = PYSICHAL.GREATHER_150MINUTE
+  } else {
+    result = ''
+  }
+
+  return result
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
-  convertDate, isDirty, patientStatus
+  convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
+  convertIncome, convertPysichal
 }

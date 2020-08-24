@@ -17,7 +17,18 @@ module.exports = {
     CLOSE: 'CLOSECONTACT',
     SUS: 'SUSPECT',
     PROB: 'PROBABLE',
-    CONF: 'CONFIRMATION'
+    CONF: 'CONFIRMATION',
+    CLOSE_ID: 'Kontak Erat',
+    SUS_ID: 'Suspek',
+    PROB_ID: 'Probable',
+    CONF_ID: 'Konfirmasi'
+  },
+  INCOME:{
+    NO_INCONME: 'Tidak ber penghasilan',
+    SMALLER: '< 1juta',
+    ONE_TO3: '1 s/d 3 juta',
+    THREET_O5: '3 s/d 5 juta',
+    GREATHER_5: '> 5juta'
   },
   PATIENT_STATUS: {
     NEGATIVE: 'Negatif',
@@ -32,7 +43,21 @@ module.exports = {
     MALE: 'L',
     FEMALE: 'P',
     M: 'male',
-    F: 'female'
+    F: 'female',
+    ID_L: 'Laki-Laki',
+    ID_P: 'Perempuan'
+  },
+  PYSICHAL: {
+    SEDENTER: 'Sedenter',
+    SMALLER_150MINUTE: 'Latihan fisik < 150 menit',
+    GREATHER_150MINUTE: 'Latihan fisik > 150 menit'
+  },
+  ANSWER: {
+    YES: 'Yes',
+    NO: 'No',
+    YA: 'Ya',
+    TIDAK: 'Tidak',
+    TIDAK_TAHU: 'Tidak Tahu'
   },
   DEFAULT_PROVINCE: {
     CODE: '32',

@@ -249,8 +249,4 @@ CaseSchema.pre('save', async function (next) {
     next()
 })
 
-CaseSchema.methods.JSONExcellOutput = function () {
-  return filtersExport.excellOutput(this);
-}
-
 module.exports = mongoose.model('Case', CaseSchema);
