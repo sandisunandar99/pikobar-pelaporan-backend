@@ -1,5 +1,5 @@
 const helpers = require("../custom")
-const { GENDER } = require("../constant")
+const { GENDER, ANSWER } = require("../constant")
 
 const excellOutput = (this_) => {
   let finals = helpers.patientStatus(this_)
@@ -27,7 +27,7 @@ const excellOutput = (this_) => {
     "Tanggal Lahir": birthDate,
     "Usia Tahun": this_.age,
     "Usia Bulan": this_.month,
-    "Jenis Kelamin": this_.gender === "L" ? GENDER.INDO_L : GENDER.INDO_P,
+    "Jenis Kelamin": this_.gender === "L" ? GENDER.ID_L : GENDER.ID_P,
     "Kota/Kab": this_.address_district_name,
     "Kecamatan": this_.address_subdistrict_name,
     "Kel/Desa": this_.address_village_name,
@@ -38,7 +38,7 @@ const excellOutput = (this_) => {
     "Kriteria": criteria,
     "Status Pasien Terakhir": finals,
     "Lokasi Saat Ini": this_.history_list[0] !== null ? this_.history_list[0].current_location_address : null,
-    "Terdapat Gejala": this_.history_list[0].there_are_symptoms ? "Ya" : "Tidak",
+    "Terdapat Gejala": this_.history_list[0].there_are_symptoms ? ANSWER.YA : ANSWER.TIDAK,
     "Tanggal Muncul Gejala": symptomsDate,
     "Gejala": diagnosis,
     "Kondisi Penyerta": diagnosisOther,
@@ -46,25 +46,25 @@ const excellOutput = (this_) => {
     "Diagnosis Pneumonia": helpers.convertYesOrNO(this_.history_list[0].diagnosis_pneumonia),
     "Diagnosis Lainnya": this_.history_list[0].other_diagnosis,
     // "Data Kontak Erat": this_.close_contact_premier.close_contact_name,
-    "Dari Luar Negeri": this_.is_went_abroad ? "Ya" : "Tidak",
+    "Dari Luar Negeri": this_.is_went_abroad ? ANSWER.YA : ANSWER.TIDAK,
     // "Negara Yang Dikunjungi": this_.history_list[0].travelling_history.travelling_visited,
     // "Tanggal Mulai Perjalanan": this_.history_list[0].travelling_history.travelling_date,
     // "Tanggal Pulang Perjalanan": this_.history_list[0].travelling_history.travelling_arrive,
-    "Dari Luar Kota": this_.history_list[0].is_went_other_city ? "Ya" : "Tidak",
+    "Dari Luar Kota": this_.history_list[0].is_went_other_city ? ANSWER.YA : ANSWER.TIDAK,
     // "Kota Yang Dikunjungi": this_.id_case,
     // "Tanggal Mulai Perjalanan": this_.id_case,
     // "Tanggal Pulang Perjalanan": this_.id_case,
     // "Kontak Dengan Kasus Suspek ": this_.id_case,
     // "Kontak Dengan Nama Kasus Suspek": this_.id_case,
-    "Kontak Dengan Kasus Konfirmasi": this_.close_contacted_before_sick_14_days ? "Ya" : "Tidak",
+    "Kontak Dengan Kasus Konfirmasi": this_.close_contacted_before_sick_14_days ? ANSWER.YA : ANSWER.TIDAK,
     // "Mengunjungi Pasar Hewan": this_.id_case, di takeout gak ada di database
     // "Nama Lokasi Pasar Hewan": this_.id_case,
     // "Tgl Kunjungan Ke Pasar Hewan": this_.id_case,
-    // "Mengunjungi Tempat Publik": this_.history_list[0].has_visited_public_place ? "Ya" : "Tidak",
-    // "Nama Lokasi Tempat Publik": this_.history_list[0].visited_public_place.public_place_name,
-    // "Tgl Kunjungan Ke Tempat Publik": this_.history_list[0].visited_public_place.public_place_date_visited ? "Ya" : "Tidak" ,
-    "Kelompok ISPA Berat": this_.close_contact_heavy_ispa_group ? "Ya" : "Tidak",
-    "Petugas Kesehatan": this_.close_contact_health_worker ? "Ya" : "Tidak",
+    "Mengunjungi Tempat Publik": this_.history_list[0].has_visited_public_place ? ANSWER.YA : ANSWER.TIDAK,
+    "Nama Lokasi Tempat Publik": this_.history_list[0].visited_public_place.public_place_name,
+    "Tgl Kunjungan Ke Tempat Publik": this_.history_list[0].visited_public_place.public_place_date_visited,
+    "Kelompok ISPA Berat": this_.close_contact_heavy_ispa_group ? ANSWER.YA : ANSWER.TIDAK,
+    "Petugas Kesehatan": this_.close_contact_health_worker ? ANSWER.YA : ANSWER.TIDAK,
     "Alat Pelindung yang Digunakan": apdUse,
     // "Pemeriksaan Serum": this_.id_case, // di takeout gak ada di database
     // "Pemeriksaan Sputum": this_.id_case,

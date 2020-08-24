@@ -1,5 +1,5 @@
 'use strict'
-const { PATIENT_STATUS, CRITERIA } = require('./constant')
+const { PATIENT_STATUS, CRITERIA, ANSWER, PYSICHAL, INCOME } = require('./constant')
 const setPwd = (payload) => {
   const crypto = require('crypto');
   payload.salt = crypto.randomBytes(16).toString('hex');
@@ -85,13 +85,13 @@ const patientStatus = (res) => {
 const criteriaConvert = (res) => {
   let criteria
   if (res.status === CRITERIA.CONF) {
-    criteria = 'Konfirmasi'
+    criteria = CRITERIA.CONF_ID
   } else if (res.status === CRITERIA.PROB) {
-    criteria = 'Probable'
+    criteria = CRITERIA.PROB_ID
   } else if (res.status === CRITERIA.SUS) {
-    criteria = 'Suspek'
+    criteria = CRITERIA.SUS_ID
   } else if (res.status === CRITERIA.CLOSE) {
-    criteria = 'Kontak Erat'
+    criteria = CRITERIA.CLOSE_ID
   } else {
     criteria = ''
   }
@@ -102,11 +102,11 @@ const criteriaConvert = (res) => {
 const convertYesOrNO = (param) => {
   let result
   if (param === 1) {
-    result = 'Ya'
+    result = ANSWER.YA
   } else if (param === 2) {
-    result = 'Tidak'
+    result = ANSWER.TIDAK
   } else if (param === 3) {
-    result = 'Tidak Tahu'
+    result = ANSWER.TIDAK_TAHU
   } else {
     result = ''
   }
@@ -117,15 +117,15 @@ const convertYesOrNO = (param) => {
 const convertIncome = (param) => {
   let result
   if (param === 0) {
-    result = 'Tidak ber penghasilan'
+    result = INCOME.NO_INCONME
   } else if (param === 1) {
-    result = '< 1juta'
+    result = INCOME.SMALLER
   } else if (param === 2) {
-    result = '1 s/d 3 juta'
+    result = INCOME.ONE_TO3
   } else if (param === 3) {
-    result = '3 s/d 5 juta'
+    result =INCOME.THREET_O5
   } else if (param === 4) {
-    result = '> 5juta'
+    result = INCOME.GREATHER_5
   } else {
     result = ''
   }
@@ -136,11 +136,11 @@ const convertIncome = (param) => {
 const convertPysichal = (param) => {
   let result
   if (param === 0) {
-    result = 'Sedenter'
+    result = PYSICHAL.SEDENTER
   } else if (param === 1) {
-    result = 'Latihan fisik < 150 menit'
+    result = PYSICHAL.SMALLER_150MINUTE
   } else if (param === 2) {
-    result = 'Latihan fisik > 150 menit'
+    result = PYSICHAL.GREATHER_150MINUTE
   } else {
     result = ''
   }
