@@ -1,4 +1,5 @@
-const { ROLE } = require('../../constant');
+const User = require('../../../models/User')
+const { ROLE } = require('../../constant')
 async function thisUnitCaseAuthors (user) {
     let caseAuthors = []
     if (user.role === ROLE.FASKES && user.unit_id) {
