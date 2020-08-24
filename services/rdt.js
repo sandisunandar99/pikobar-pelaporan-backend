@@ -17,12 +17,9 @@ const User = mongoose.model('User')
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
-const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
-const { log } = require('console');
-const { isArray } = require('lodash');
 
 
 async function ListRdt (query, user, callback) {
@@ -237,9 +234,9 @@ function GetRdtHistoryByRdtId (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function createRdt(query, payload, author, pre, callback) {
+async function createRdt(query, payload, author, pre, callback) {
 
-  if (payload.nik === null && payload.phone_number === null) {
+  if ((payload.nik === null && payload.phone_number === null) || (payload.nik === '' && payload.phone_number === '')) {
 
      if (payload.source_data === "external" || payload.source_data === "manual") {
        delete payload.id
@@ -280,7 +277,6 @@ function createRdt(query, payload, author, pre, callback) {
     // pad = pendingCount.toString().padStart(7, "0")
     // id_case = `${covid}${dinkesCode}${dates}${pad}`;
     // }
-
 
     let code = {
       code_test: code_test,
