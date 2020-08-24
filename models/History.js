@@ -73,6 +73,7 @@ const HistorySchema = new mongoose.Schema({
     travelling_history: [{
         travelling_type: String,
         travelling_visited: String,
+        travelling_city: String,
         travelling_date: Date,
         travelling_arrive: Date
     }],
