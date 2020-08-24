@@ -347,10 +347,6 @@ function createRdt(query, payload, author, pre, callback) {
 
           } else {
             // if rdt not found, create new rdt
-
-            // "code_test": "PST-100012000001"
-            // "code_tool_tester": "RDT-10012000001",
-            // "code_tool_tester": "PCR-10012000001",
             if (payload.source_data === "external" || payload.source_data === "manual") {
               delete payload.id
               delete payload.id_case
