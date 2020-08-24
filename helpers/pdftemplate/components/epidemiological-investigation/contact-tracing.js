@@ -31,8 +31,8 @@ const render = (data) => {
       if (rec.travelling_type === exception) continue
 
       res.push([
-          { alignment: 'center', text: type !== 'domestic' ? rec.travelling_visited : '-' },
-          { alignment: 'center', text: type === 'domestic' ? rec.travelling_visited : '-' },
+          { alignment: 'center', text: rec.travelling_visited || '-' },
+          { alignment: 'center', text: rec.travelling_city || '-' },
           { alignment: 'center', text: formattedDate(rec.travelling_date) },
           { alignment: 'center', text: formattedDate(rec.travelling_arrive) },
       ])
