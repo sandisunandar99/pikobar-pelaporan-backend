@@ -107,7 +107,7 @@ const sqlCondition = (params, search) => {
         foreignField: "case",
         as: "close_contact_list"
       },
-    },{ $sort: { "history_list._id": -1, "cases._id": -1 } }, { $limit: 2 },
+    },{ $sort: { "history_list._id": -1, "cases._id": -1 } },
     { $unwind: '$author_list' },
     { $unwind: '$history_list' },
     {
