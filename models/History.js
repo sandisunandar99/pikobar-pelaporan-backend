@@ -187,6 +187,7 @@ HistorySchema.methods.toJSONFor = function () {
         travelling_history: [{
             travelling_type:this.travelling_type,
             travelling_visited:this.travelling_visited,
+            travelling_visited: this.travelling_visited,
             travelling_date:this.travelling_date,
             travelling_arrive:this.travelling_arrive
         }],
@@ -195,6 +196,37 @@ HistorySchema.methods.toJSONFor = function () {
             visited_local_area_province: this.visited_local_area_province,
             visited_local_area_city: this.visited_local_area_city,
         }],
+        //faktor kontak paparan
+        close_contacted_before_sick_14_days: this.close_contacted_before_sick_14_days,
+        close_contact_premier: [{
+          close_contact_name: this.close_contact_name,
+          close_contact_criteria: this.close_contact_criteria,
+          //address
+          close_contact_address_street: this.close_contact_address_street,
+          is_close_contact_address_same: this.is_close_contact_address_same,
+          close_contact_address_village_code:this.close_contact_address_village_code,
+          close_contact_address_village_name:this.close_contact_address_village_name,
+          close_contact_address_subdistrict_code:this.close_contact_address_subdistrict_code,
+          close_contact_address_subdistrict_name:this.close_contact_address_subdistrict_name,
+          close_contact_address_district_code:this.close_contact_address_district_code,
+          close_contact_address_district_name:this.close_contact_address_district_name,
+          close_contact_address_province_code: this.close_contact_address_province_code,
+          close_contact_address_province_name: this.close_contact_address_province_name ,
+          close_contact_rt: this.close_contact_rt,
+          close_contact_rw: this.close_contact_rw,
+          close_contact_relation: this.close_contact_relation,
+          close_contact_relation_id: this.close_contact_relation_id,
+          close_contact_first_date: this.close_contact_first_date,
+          close_contact_last_date: this.close_contact_last_date,
+        }],
+        close_contact_heavy_ispa_group:this.close_contact_heavy_ispa_group,
+        close_contact_have_pets:this.close_contact_have_pets,
+        close_contact_pets: this.close_contact_pets,
+        close_contact_health_worker: this.close_contact_health_worker,
+        apd_use: this.apd_use,
+        close_contact_performing_aerosol_procedures: this.close_contact_performing_aerosol_procedures,
+        close_contact_performing_aerosol: this.close_contact_performing_aerosol,
+
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }
