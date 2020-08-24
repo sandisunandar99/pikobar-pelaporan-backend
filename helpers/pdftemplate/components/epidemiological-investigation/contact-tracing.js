@@ -120,7 +120,7 @@ const render = (data) => {
 
     let records = []
     if (data.last_history && data.last_history.close_contact_premier) {
-      records = data.last_history.close_contact_premier || []
+      records = data.last_history.close_contact_premier
     }
 
     for (i in records) {
