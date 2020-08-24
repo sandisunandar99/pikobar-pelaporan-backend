@@ -55,6 +55,7 @@ const register = (server, options, next) => {
   server.register(require('./cases_revamp'));
   server.register(require('./close_contact'));
   server.register(require('./case_dashboard'));
+  server.register(require('./reports'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

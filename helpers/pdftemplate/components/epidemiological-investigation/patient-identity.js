@@ -89,9 +89,9 @@ const render = (data) => {
             { text: `: ${data.phone_number || '-' }`, borderColor: ['black', 'white', 'black', 'black'] },
           ],
           [
-            { text: `Longitude: -`, colSpan: 2 },
+            { text: `Latitude: ${data.latitude || '-' }`, colSpan: 2 },
             {},
-            { text: `Longitude: -`, colSpan: 2 },
+            { text: `Longitude: ${data.longitude || '-' }`, colSpan: 2 },
             {},
           ]
         ],

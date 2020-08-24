@@ -1,30 +1,16 @@
-const mongoose = require('mongoose');
-
-require('../models/Case');
-const Case = mongoose.model('Case');
-
-require('../models/Unit');
-const Unit = mongoose.model('Unit');
-
-require('../models/History')
-const History = mongoose.model('History')
-
-require('../models/User')
-const User = mongoose.model('User')
-
-require('../models/Notification')
-const Notification = mongoose.model('Notification')
-
-require('../models/CaseTransfer')
-const CaseTransfer = mongoose.model('CaseTransfer')
-
-require('../models/DistrictCity')
-const DistrictCity = mongoose.model('Districtcity')
-const ObjectId = require('mongoose').Types.ObjectId;
+const Case = require('../models/Case');
+const Unit =require('../models/Unit')
+const History = require('../models/History')
+const User = require('../models/User')
+const Notification = require('../models/Notification')
+const DistrictCity = require('../models/DistrictCity')
 const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
-const Helper = require('../helpers/custom')
+const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
+const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
+const { WHERE_GLOBAL } = require('../helpers/constant')
+const moment = require('moment')
 
 async function ListCase (query, user, callback) {
 
@@ -125,55 +111,28 @@ async function ListCase (query, user, callback) {
   }).catch(err => callback(err, null))
 }
 
-function listCaseExport (query, user, callback) {
-  const params = {}
-
-  if(query.start_date && query.end_date){
-    params.createdAt = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
-      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
-    }
-  }
-
-  Check.exportByRole(params,user,query)
-
-  if(query.status){
-    params.status = query.status;
-  }
-  if(query.final_result){
-    params.final_result = query.final_result;
-  }
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      params.address_district_code = query.address_district_code;
-    }
-  }
-  if(query.address_village_code){
-    params.address_village_code = query.address_village_code;
-  }
-  if(query.address_subdistrict_code){
-    params.address_subdistrict_code = query.address_subdistrict_code;
-  }
-  if (query.verified_status && query.verified_status.split) {
-    params.verified_status = { $in: query.verified_status.split(',') }
-  }
+const listCaseExport = async (query, user, callback) => {
+  const filter = await Filter.filterCase(user, query)
+  const filterRole = Check.exportByRole({}, user, query)
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
+  let search
   if(query.search){
-    var search_params = [
+    let search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
-    var search = search_params
+    search = search_params
   } else {
-    var search = {}
+    search = {}
   }
   params.last_history = { $exists: true, $ne: null }
-  Case.find(params)
-    .where('delete_status').ne('deleted')
-    .or(search)
-    .populate('author').populate('last_history')
-    .exec()
-    .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
-    .catch(err => callback(err, null));
+  const condition = sqlCondition(params, search)
+  try {
+    const resultExport = await Case.aggregate(condition)
+    callback (null, resultExport.map(cases => excellOutput(cases)))
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
 function getCaseById (id, callback) {
@@ -390,21 +349,23 @@ function createCase (raw_payload, author, pre, callback) {
     verified.verified_status = 'pending'
   }
 
-  let date = new Date().getFullYear().toString()
+  let date = moment(new Date()).format("YY");
   let id_case
+  let preCovid = "precovid-"
+  let covid = "covid-"
+  let pendingCount = '';
+  let pad = "";
+  let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
+  let dinkesCode = pre.count_case.dinkes_code;
 
   if (author.role === 'faskes') {
-    id_case = "precovid-"
-    id_case += pre.count_case_pending.dinkes_code
-    id_case += date.substr(2, 2)
-    id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
-    id_case += pre.count_case_pending.count_pasien
+    pendingCount = pre.count_case_pending.count_pasien;
+    pad = pendingCount.toString().padStart(5, "0")
+    id_case = `${preCovid}${dinkesCodeFaskes}${date}${pad}`;
   } else {
-    id_case = "covid-"
-    id_case += pre.count_case.dinkes_code
-    id_case += date.substr(2, 2)
-    id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
-    id_case += pre.count_case.count_pasien
+    pendingCount = pre.count_case.count_pasien;
+    pad = pendingCount.toString().padStart(7, "0")
+    id_case = `${covid}${dinkesCode}${date}${pad}`;
   }
 
   let insert_id_case = Object.assign(raw_payload, verified) //TODO: check is verified is not overwritten ?
@@ -454,21 +415,23 @@ function updateCase (id, pre, author, payload, callback) {
 
   // Regenerate id_case if district code address is changed.
   if (payload.address_district_code && (payload.address_district_code !== pre.cases.address_district_code)) {
-    let date = new Date().getFullYear().toString()
+    let date = moment(new Date()).format("YY");
     let id_case
+    let preCovid = "precovid-"
+    let covid = "covid-"
+    let pendingCount = '';
+    let pad = "";
+    let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
+    let dinkesCode = pre.count_case.dinkes_code;
 
     if (pre.cases.verified_status !== 'verified') {
-      id_case = "precovid-"
-      id_case += pre.count_case_pending.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(5 - pre.count_case_pending.count_pasien.toString().length)
-      id_case += pre.count_case_pending.count_pasien
+      pendingCount = pre.count_case_pending.count_pasien;
+      pad = pendingCount.toString().padStart(5, "0")
+      id_case = `${preCovid}${dinkesCodeFaskes}${date}${pad}`;
     } else {
-      id_case = "covid-"
-      id_case += pre.count_case.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(4 - pre.count_case.count_pasien.toString().length)
-      id_case += pre.count_case.count_pasien
+      pendingCount = pre.count_case.count_pasien;
+      pad = pendingCount.toString().padStart(7, "0")
+      id_case = `${covid}${dinkesCode}${date}${pad}`;
     }
 
     payload.id_case = id_case
@@ -530,8 +493,9 @@ async function getCountByDistrict(code, callback) {
       verified_status: 'verified'
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
-    const res = await Case.find(params).sort({id_case: -1});
+    const res = await Case.find(params).sort({id_case: -1}).limit(1);
     let count = 1;
+    // find array data is not null
     if (res.length > 0){
       count = (Number(res[0].id_case.substring(12)) + 1);
     }
