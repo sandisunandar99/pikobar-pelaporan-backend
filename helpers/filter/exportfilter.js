@@ -57,18 +57,12 @@ const excellOutput = (this_) => {
     // "Kontak Dengan Kasus Suspek ": this_.id_case,
     // "Kontak Dengan Nama Kasus Suspek": this_.id_case,
     "Kontak Dengan Kasus Konfirmasi": this_.close_contacted_before_sick_14_days ? ANSWER.YA : ANSWER.TIDAK,
-    // "Mengunjungi Pasar Hewan": this_.id_case, di takeout gak ada di database
-    // "Nama Lokasi Pasar Hewan": this_.id_case,
-    // "Tgl Kunjungan Ke Pasar Hewan": this_.id_case,
     "Mengunjungi Tempat Publik": this_.history_list[0].has_visited_public_place ? ANSWER.YA : ANSWER.TIDAK,
     "Nama Lokasi Tempat Publik": this_.history_list[0].visited_public_place.public_place_name,
     "Tgl Kunjungan Ke Tempat Publik": this_.history_list[0].visited_public_place.public_place_date_visited,
     "Kelompok ISPA Berat": this_.close_contact_heavy_ispa_group ? ANSWER.YA : ANSWER.TIDAK,
     "Petugas Kesehatan": this_.close_contact_health_worker ? ANSWER.YA : ANSWER.TIDAK,
     "Alat Pelindung yang Digunakan": apdUse,
-    // "Pemeriksaan Serum": this_.id_case, // di takeout gak ada di database
-    // "Pemeriksaan Sputum": this_.id_case,
-    // "Pemeriksaan Swab Nasofaring/Orofaring": this_.id_case,
     "Merokok": helpers.convertYesOrNO(this_.smoking),
     "Konsumsi Alkohol": helpers.convertYesOrNO(this_.consume_alcohol),
     "Aktifitas Fisik": helpers.convertPysichal(this_.pysichal_activity),
