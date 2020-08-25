@@ -78,5 +78,34 @@ module.exports = {
         MEDICAL: 5
       }
     }
+  },
+  DAILY_REPORT: {
+    DAY: 'Hari ini',
+    WEEK: 'Jumlah Dalam 1 minggu terakhir',
+    MONTH: 'Jumlah Dalam 1 bukan terakhir',
+    SUSPECT: 'Jumlah kasus suspek',
+    PROBABLE: 'Jumlah kasus probable',
+    SUSPECT_ISOLATED: 'Jumlah kasus suspek diisolasi',
+    SUSPECT_DISCARDED: 'Jumlah kasus suspek discarded',
+    CONFIRMED: 'Jumlah kasus konfrmasi',
+    CONFIRMED_SYMPTOMATIC: 'Jumlah kasus konfirmasi bergejala',
+    CONFIRMED_ASYMPTOMATIC: 'Jumlah kasus konfirmasi tanpa bergejala',
+    CONFIRMED_TRAVEL: 'Jumlah kasus konfirmasi perjalanan(impor)',
+    CONFIRMED_NO_TRAVEL: 'Jumlah kasus konfirmasi tidak ada riwayat perjalanan atau kontak erat	',
+    CONFIRMED_RECOVERED: 'Selesai isolasi kasus konfirmasi hari ini',
+    CLOSE_CONTACT: 'Jumlah kasus konfirmasi dilakukan pelacakan kontak erat',
+    CLOSE_CONTACT_NEW: 'Jumlah kontak erat baru',
+    CLOSE_CONTACT_SUSPECT: 'Jumlah kontak erat menjadi kasus suspek',
+    CLOSE_CONTACT_CONFIRMED: 'Jumlah kontak erat menjadi kasus konfirmasi',
+    CLOSE_CONTACT_DISCARDED: 'Jumlah kontak erat discarded',
+    DECEASE_CONFIRMED: 'Meninggal RT-PCR(+)',
+    DECEASE_PROBABLE: 'Meninggal Probabel',
+    RAPID_TEST: 'Jumlah rapid test',
+    RAPID_TEST_REACTIVE: 'Jumlah rapid test reaktif',
+    PCR: 'Jumlah reaktif periksa RTPCR',
+    PCR_POSITIVE: 'Jumlah reaktif dengan RTPCR(+)',
+    SUSPECT_PROBABLE_ISOLATION: 'Jumlah kasus suspek + kasus probabel',
+    CONFIRMED_ISOLATION: 'Jumlah kasus konfirmasi',
+    CLOSE_CONTACT_ISOLATION: 'Jumlah kontak erat sedang dipantau'
   }
 }
