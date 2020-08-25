@@ -90,38 +90,7 @@ const CaseSchema = new mongoose.Schema({
         // health_workers : { type: String, lowercase: true },
         // apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
     //faktor kontak
-    // new faktor kontak/ paparan
-    close_contacted_before_sick_14_days : {type: Boolean,  default: false},
-    close_contact_premier : [{
-        close_contact_name: String,
-        close_contact_criteria: String,
-        //address
-        close_contact_address_street: String,
-        is_close_contact_address_same: { type: Boolean, default: false },
-        close_contact_address_village_code: { type: String, required: [true, "can't be blank"] },
-        close_contact_address_village_name: { type: String, required: [true, "can't be blank"] },
-        close_contact_address_subdistrict_code: { type: String, required: [true, "can't be blank"] },
-        close_contact_address_subdistrict_name: { type: String, required: [true, "can't be blank"] },
-        close_contact_address_district_code: { type: String, required: [true, "can't be blank"] },
-        close_contact_address_district_name: { type: String, required: [true, "can't be blank"] },
-        close_contact_address_province_code: { type: String, default: 32 },
-        close_contact_address_province_name: { type: String, default: "Jawa Barat" },
-        close_contact_rt: { type: Number, default: null },
-        close_contact_rw: { type: Number, default: null },
-        close_contact_relation: String,
-        close_contact_relation_id: String,
-        close_contact_first_date: Date,
-        close_contact_last_date: Date,
-    }],
-    close_contact_heavy_ispa_group: {type: Boolean, default: false},
-    close_contact_have_pets: {type: Boolean, default: false},
-    close_contact_pets: String,
-    close_contact_health_worker: {type: Boolean, default: false},
-    apd_use: { type: Array, default: [] },
-    close_contact_performing_aerosol_procedures: {type: Boolean, default: false},
-    close_contact_performing_aerosol: String,
-        // ==> faktor kontak paparan pindah ke history
-    // new faktor kontak/ paparan
+    // ==> faktor kontak paparan pindah ke history
     //verifikasi status
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
