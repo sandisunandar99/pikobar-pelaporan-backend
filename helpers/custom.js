@@ -148,8 +148,12 @@ const convertPysichal = (param) => {
   return result
 }
 
+const checkExistColumn = (param) => {
+  return param ? param : null
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
-  convertIncome, convertPysichal
+  convertIncome, convertPysichal, checkExistColumn
 }

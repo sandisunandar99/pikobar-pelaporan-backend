@@ -1,45 +1,43 @@
-const mongoose = require('mongoose');
+const Category = require('../models/Category')
+const Specimen = require('../models/Specimen')
 
-
-require('../models/Category');
-const Category = mongoose.model('Category');
-require('../models/Specimen')
-const Specimen = mongoose.model('Specimen');
-
-function listTarget(callback) {
-    Category.find()
-    .then(result => {
-        let res = result.map(q => q.toJSONForTarget())
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null));
+const listTarget = async (callback) => {
+  try {
+    result = await Category.find()
+    callback(null,  result)
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
-function listTargetByCategory (category_name,callback) {
-    Category.find({category_name: category_name})
-    .then(result => {
-        let res = result.map(q => q.toJSONForTarget())
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null));
+const listTargetByCategory = async (category_name, callback) => {
+
+  try {
+    const result = await Category.find({ category_name: category_name })
+    callback(null,  result)
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
-function createCategory(request, callback){
-  const category = new Category(request.payload);
-  category.save()
-  .then(result => { return callback(null, result)})
-  .catch(err => callback(err, null));
+const createCategory = async (request, callback) => {
+  try {
+    const category = new Category(request.payload);
+    const save = await category.save()
+    callback(null, save)
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
-function typeSpeciment(callback){
-    Specimen.find({})
-            .exec()
-            .then((result)=>{
-              let res = result.map(q => q.toJSONFor())
-              return callback(null, res)
-            }).catch(err => callback(err, null))
+const typeSpeciment = async (callback) => {
+  try {
+    const result = await Specimen.find()
+    callback(null, result.map(q => q.toJSONFor()))
+  } catch (error) {
+    callback(err, null)
+  }
 }
-
 
 module.exports = [
   {
