@@ -4,14 +4,14 @@ const { GENDER, ANSWER } = require("../constant")
 const excellOutput = (this_) => {
   let finals = helpers.patientStatus(this_)
   let criteria = helpers.criteriaConvert(this_)
-  let birthDate = this_.birth_date != null ? helpers.convertDate(this_.birth_date) : null
-  let updatedDate = this_.updatedAt != null ? helpers.convertDate(this_.updatedAt) : null
-  let createdDate = this_.createdAt != null ? helpers.convertDate(this_.createdAt) : null
-  let interviewDate = this_.interview_date != null ? helpers.convertDate(this_.interview_date) : null
-  let symptomsDate = this_.first_symptom_date != null ? helpers.convertDate(this_.first_symptom_date) : null
-  let diagnosis = this_.diagnosis.toString()
-  let diagnosisOther = this_.diseases.toString()
-  let apdUse = this_.apd_use.toString()
+  let birthDate = this_.birth_date ? helpers.convertDate(this_.birth_date) : null
+  let updatedDate = this_.updatedAt ? helpers.convertDate(this_.updatedAt) : null
+  let createdDate = this_.createdAt ? helpers.convertDate(this_.createdAt) : null
+  let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
+  let symptomsDate = this_.first_symptom_date ? helpers.convertDate(this_.first_symptom_date) : null
+  let diagnosis = this_.diagnosis ? this_.diagnosis.toString() : null
+  let diagnosisOther = this_.diseases ? this_.diseases.toString() : null
+  let apdUse = this_.apd_use ? this_.apd_use.toString() : null
   let close_contact_name = []
   this_.close_contact_list.map(r => {
     close_contact_name.push(r.name)
@@ -19,15 +19,15 @@ const excellOutput = (this_) => {
   })
 
   return {
-    "Nama Pewawancara": this_.interviewers_name,
-    "No HP Pewawancara": this_.interviewers_phone_number,
+    "Nama Pewawancara": helpers.checkExistColumn(this_.interviewers_name),
+    "No HP Pewawancara": helpers.checkExistColumn(this_.interviewers_phone_number),
     "Tanggal Wawancara": interviewDate,
     "Nama Pasien": this_.name,
     "NIK": this_.nik,
-    "Alasan tidak ada NIK": this_.note_nik,
-    "No Telepon": this_.phone_number,
-    "Alasan Tidak Ada No Telepon": this_.note_phone_number,
-    "Nama Orangtua": this_.name_parents,
+    "Alasan tidak ada NIK": helpers.checkExistColumn(this_.note_nik),
+    "No Telepon": helpers.checkExistColumn(this_.phone_number),
+    "Alasan Tidak Ada No Telepon": helpers.checkExistColumn(this_.note_phone_number),
+    "Nama Orangtua": helpers.checkExistColumn(this_.name_parents),
     "Tempat Lahir": this_.place_of_birth,
     "Tanggal Lahir": birthDate,
     "Usia Tahun": this_.age,
