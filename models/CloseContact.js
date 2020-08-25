@@ -2,9 +2,9 @@ const mongoose = require('mongoose')
 const consts = require('../helpers/constant')
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const REF_CASE = { 
+const REF_CASE = {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Case', 
+    ref: 'Case',
     required: true
 }
 const REF_CLOSE_CONTACT_HISTORY = {
@@ -12,12 +12,12 @@ const REF_CLOSE_CONTACT_HISTORY = {
     ref: 'CloseContactHistory',
     default: null
 }
-const REF_USER = { 
+const REF_USER = {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
+    ref: 'User',
     default: null
 }
- 
+
 const CloseContactSchema = new mongoose.Schema({
     case: REF_CASE,
     interviewer_name: { type: String, default: null },
@@ -117,6 +117,7 @@ CloseContactSchema.methods.toJSONFor = function () {
         relationship : this.relationship,
         relationship_other: this.relationship_other,
         activity: this.activity,
+        activity_other: this.activity_other,
         start_contact_date: this.start_contact_date,
         end_contact_date: this.end_contact_date,
         emergency_contact_name: this.emergency_contact_name,
@@ -163,7 +164,11 @@ CloseContactSchema.methods.toJSONList = function () {
         address_village_name: this.address_village_name,
         address_rw: this.address_rw,
         address_rt: this.address_rt,
-        address_street : this.address_street,
+        address_street: this.address_street,
+        relationship: this.relationship,
+        relationship_other: this.relationship_other,
+        start_contact_date: this.start_contact_date,
+        end_contact_date: this.end_contact_date,
         is_reported: this.is_reported,
         createdAt: this.createdAt,
         createdBy: this.createdBy ? this.createdBy.JSONCase() : null
@@ -192,7 +197,7 @@ CloseContactSchema.methods.onDeleteCase = function (caseId) {
  * this is why using custom validation.
  */
 
-CloseContactSchema.pre('save', async function (next) {  
+CloseContactSchema.pre('save', async function (next) {
     const nik = this.nik
 
     if (nik) {
@@ -213,7 +218,7 @@ CloseContactSchema.pre('findOneAndUpdate', async function (next) {
         if (exists) {
             throw new Error('NIK already exists')
         }
-    }    
+    }
     next()
 })
 
