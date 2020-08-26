@@ -1,4 +1,4 @@
-const { 
+const {
     CRITERIA,
     WHERE_GLOBAL
 } = require('../constant')
@@ -23,7 +23,7 @@ const aggCaseDailyReport = (searching, dates) => {
             ]
         }
     }
-  
+
     const lookup = {
         $lookup: {
             from: 'histories',
@@ -111,6 +111,9 @@ const aggCaseDailyReport = (searching, dates) => {
             { $eq: ['$status', CRITERIA.PROB] },
             { $eq: ['$final_result', '2'] },
         ], dates),
+        ...sum('pcrSwab', [
+          { $eq: ['$pcrSwab', true] },
+        ], dates),
         ...sum('rapidTest', [
             { $eq: ['$rapidTest', true] },
         ], dates),
@@ -140,7 +143,7 @@ const aggCaseDailyReport = (searching, dates) => {
     const unwind = { $unwind: '$lastHis' }
 
     const props = Object.keys(facet.$facet).map((key) => key)
-    
+
     const project = buildProject(props)
 
     const aggCaseQuery = [

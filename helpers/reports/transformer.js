@@ -20,6 +20,15 @@ const addFields = {
  */
 const transformedFields = {
   $addFields: {
+    pcrSwab: { $toBool: {
+      $arrayElemAt: [{
+        $filter: {
+          input: "$lastHis.inspection_support",
+          as: "item",
+          cond: { $in: [ "$$item.specimens_type", ["Swab Nasofaring", "Swab Orofaring", "Swab Naso - Orofaring" ] ] }
+        }
+      }, 0]
+    } },
     rapidTest: { $toBool: {
       $arrayElemAt: [{
         $filter: {
@@ -71,8 +80,18 @@ const transformedFields = {
  * @param {object} docs
  */
 const transformedXlsFor = (docs) => {
-  let res = []
   const lang = require('../constant')['DAILY_REPORT']
+
+  const buildHeader = (section, d = null, w = null, m = null) => {
+    return {
+      status: section,
+      [lang.DAY]: d,
+      [lang.WEEK]: w,
+      [lang.MONTH]: m
+    }
+  }
+
+  let res = [buildHeader('DATA KASUS SUSPEK')]
 
   for (i in docs) {
     const v = docs[i]
@@ -88,11 +107,33 @@ const transformedXlsFor = (docs) => {
     } else {
       res.push({
         status: lang[prop],
-        referralHospital: v.referralHospital,
-        emergencyHospital: v.emergencyHospital,
-        selfIsolation: v.selfIsolation
+        [lang.DAY]: v.referralHospital,
+        [lang.WEEK]: v.emergencyHospital,
+        [lang.MONTH]: v.selfIsolation
       })
     }
+
+    if (v._id === 'suspectDiscarded') {
+      res.push(buildHeader(''))
+      res.push(buildHeader('DATA KASUS KONFIRMASI'))
+    } else if (v._id === 'confirmedRecovered') {
+      res.push(buildHeader(''))
+      res.push(buildHeader('DATA PEMANTAUAN KONTAK ERAT'))
+    } else if (v._id === 'closeContactDiscarded') {
+      res.push(buildHeader(''))
+      res.push(buildHeader('DATA KASUS MENINGGAL'))
+    } else if (v._id === 'deceaseProbable') {
+      res.push(buildHeader(''))
+      res.push(buildHeader('PEMERIKSAAN RT-PCR'))
+    } else if (v._id === 'pcrSwab') {
+      res.push(buildHeader(''))
+      res.push(buildHeader('SURVEIILANS SEROLOGI'))
+    } else if (v._id === 'pcrPositive') {
+      res.push(buildHeader(''))
+      res.push(buildHeader('SURVEIILANS SEROLOGI'))
+      res.push(buildHeader('KLASIFIKASI', 'RS Rujukan', 'RS Darurat', 'Isolasi / Karantina Mandiri'))
+    }
+
   }
 
   return res
