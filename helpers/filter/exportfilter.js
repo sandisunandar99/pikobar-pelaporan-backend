@@ -9,6 +9,8 @@ const excellOutput = (this_) => {
   let createdDate = this_.createdAt ? helpers.convertDate(this_.createdAt) : null
   let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
   let symptomsDate = this_.first_symptom_date ? helpers.convertDate(this_.first_symptom_date) : null
+  let travelDate = this_.travelling_date ? helpers.convertDate(this_.travelling_date) : null
+  let travelArrive = this_.travelling_arrive ? helpers.convertDate(this_.travelling_arrive) : null
   let diagnosis = this_.diagnosis ? this_.diagnosis.toString() : null
   let diagnosisOther = this_.diseases ? this_.diseases.toString() : null
   let apdUse = this_.apd_use ? this_.apd_use.toString() : null
@@ -53,12 +55,12 @@ const excellOutput = (this_) => {
     "Data Kontak Erat": close_contact_name.toString(),
     "Dari Luar Negeri": this_.is_went_abroad ? ANSWER.YA : ANSWER.TIDAK,
     "Negara Yang Dikunjungi": this_.travelling_visited,
-    "Tanggal Mulai Perjalanan": this_.travelling_date,
-    "Tanggal Pulang Perjalanan": this_.travelling_arrive,
+    "Tanggal Mulai Perjalanan": travelDate,
+    "Tanggal Pulang Perjalanan": travelArrive,
     "Dari Luar Kota": this_.is_went_other_city ? ANSWER.YA : ANSWER.TIDAK,
     "Kota Yang Dikunjungi": this_.travelling_visited,
-    "Tanggal Mulai Perjalanan": this_.travelling_date,
-    "Tanggal Pulang Perjalanan": this_.travelling_arrive,
+    "Tanggal Mulai Perjalanan": travelDate,
+    "Tanggal Pulang Perjalanan": travelArrive,
     "Kontak Dengan Kasus Suspek ": this_.close_contact_criteria,
     "Kontak Dengan Nama Kasus Suspek": this_.close_contact_name,
     "Kontak Dengan Kasus Konfirmasi": this_.close_contacted_before_sick_14_days ? ANSWER.YA : ANSWER.TIDAK,
