@@ -261,7 +261,7 @@ const render = (data) => {
             { text: 'Tgl Kontak Pertama', style: 'tableColumnSubHeader'  },
             { text: 'Tgl Kontak Terakhir', style: 'tableColumnSubHeader'  },
           ],
-          ...buildSuspectContact([CRITERIA.SUS]),
+          ...buildSuspectContact([CRITERIA.SUS, CRITERIA.PROB]),
         ]
       }
     }

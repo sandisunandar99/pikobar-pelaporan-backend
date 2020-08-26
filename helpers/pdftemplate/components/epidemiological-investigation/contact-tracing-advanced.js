@@ -10,7 +10,7 @@ const render = (data) => {
   const ispaGroup = data.close_contact_heavy_ispa_group
   const aerosol = data.close_contact_performing_aerosol_procedures
   const aerosolSubject = data.close_contact_performing_aerosol
-  const protectionTools = data.apd_use.map(v => v.toLowerCase())
+  const protectionTools = data.apd_use ? data.apd_use.map(v => v.toLowerCase()) : []
 
   const isProtected = (value) => {
     return protectionTools.includes(value) ? '√' : '  '
