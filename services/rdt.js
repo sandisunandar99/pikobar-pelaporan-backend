@@ -446,6 +446,13 @@ function createRdtMultiple(payload, author, pre, callback) {
               // if rdt found, update rdt
               result.author_district_code = author.code_district_city
               result.author_district_name = author.name_district_city
+              let pcr_count = rdt.pcr_count
+              let rdt_count = rdt.rdt_count
+              if (rdt.tool_tester === "PCR") {
+                result.pcr_count = pcr_count += 1
+              } else {
+                result.rdt_count = rdt_count += 1
+              }
 
               rdt = Object.assign(rdt, result);
 
@@ -465,9 +472,13 @@ function createRdtMultiple(payload, author, pre, callback) {
                   code_test += countRdt.count
 
               let code_tool_tester
+              let pcr_count = 0
+              let rdt_count = 0
               if (result.tool_tester === "PCR") {
+                pcr_count += 1
                 code_tool_tester = "PCR-"
-              }else{
+              } else {
+                rdt_count += 1
                 code_tool_tester = "RDT-"
               }
               code_tool_tester += countRdt.dinkes_code
@@ -494,7 +505,10 @@ function createRdtMultiple(payload, author, pre, callback) {
                 code_tool_tester: (code_tool_tester === undefined? "": code_tool_tester),
                 id_case: (id_case === undefined ? "": id_case),
                 author_district_code: author.code_district_city,
-                author_district_name: author.name_district_city
+                author_district_name: author.name_district_city,
+                rdt_count: rdt_count,
+                pcr_count: pcr_count,
+                source_data: "external"
               }
 
               let rdt = new Rdt(Object.assign(codes, result))
@@ -502,7 +516,6 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 
               return rdt.save();
-
 
             }
         }).then((rdts) => {
@@ -512,6 +525,9 @@ function createRdtMultiple(payload, author, pre, callback) {
               if (err) console.log(err)
               // sendMessagesSMS(rdts)
               // sendMessagesWA(rdts)
+              let last_history = { last_history: item._id }
+              rdts = Object.assign(rdts, last_history)
+              rdts.save()
             });
 
 
@@ -519,7 +535,6 @@ function createRdtMultiple(payload, author, pre, callback) {
 
     }
   }
-
 
   const returnPayload = x =>{
     return new Promise((resolve,reject) =>{
