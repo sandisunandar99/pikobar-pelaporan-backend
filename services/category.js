@@ -3,7 +3,7 @@ const Specimen = require('../models/Specimen')
 
 const listTarget = async (callback) => {
   try {
-    result = await Category.find()
+    const result = await Category.find()
     callback(null,  result)
   } catch (error) {
     callback(error, null)

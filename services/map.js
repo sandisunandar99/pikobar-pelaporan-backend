@@ -1,6 +1,5 @@
 const Case = require('../models/Case')
 const maps = require('../helpers/filter/mapfilter')
-const { PATIENT_STATUS } = require('../helpers/constant')
 const { patientStatus } = require('../helpers/custom')
 
 const listMap = async (query, user, callback) => {
