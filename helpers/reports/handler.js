@@ -35,7 +35,8 @@ const aggCaseDailyReport = (searching, dates) => {
               $expr: { $eq: ["$case",  "$$id"] }
             }
           },
-          { $sort: { createdAt: -1 } }
+          { $sort: { createdAt: -1 } },
+          { $limit: 2 }, // prev history needs
         ],
         as: 'histories'
       },
@@ -70,7 +71,7 @@ const aggCaseDailyReport = (searching, dates) => {
         ], dates),
         ...sum('confirmedTravel', [
             { $eq: ['$status', CRITERIA.CONF] },
-            { $eq: ["$lastHis.visited_local_area_before_sick_14_days", true] }
+            { $eq: ["$lastHis.travelling_history_before_sick_14_days", true] }
         ], dates),
         ...sum('confirmedContact', [
           { $eq: ['$status', CRITERIA.CONF] },

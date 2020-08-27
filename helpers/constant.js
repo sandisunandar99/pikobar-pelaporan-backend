@@ -79,6 +79,10 @@ module.exports = {
       }
     }
   },
+  RS_TYPE: {
+    REFERRAL: 'RS RUJUKAN',
+    NON_REFERRAL: 'RS NON RUJUKAN'
+  },
   DAILY_REPORT: {
     DAY: 'Hari ini',
     WEEK: '1 minggu terakhir',
