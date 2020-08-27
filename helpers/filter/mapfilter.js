@@ -7,7 +7,6 @@ const aggregateCondition = async (user, query) => {
   const search = check.countByRole(user)
   const filters = await filter.filterCase(user, query)
   const searching = {...search, ...filters, ...WHERE_GLOBAL, ...filterDefault(query) }
-  console.log(searching);
   return [
     {
       $match: {
