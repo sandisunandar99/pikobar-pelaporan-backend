@@ -1,7 +1,7 @@
 const addFields = {
   $addFields: {
     lastHis: { $arrayElemAt: [ `$histories`, 0 ] },
-    prevhis: {
+    prevHis: {
       $cond: [
         { $lt: [ { "$size": `$histories` }, 2 ] },
         { $literal: null },

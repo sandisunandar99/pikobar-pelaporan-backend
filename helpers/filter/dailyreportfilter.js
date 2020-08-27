@@ -53,13 +53,13 @@ const buildProject = (props) => {
     let project = {}
 
     for (let i in props) {
-        
+
         const prop = props[i]
 
         project[prop] = {
-            $cond: [ 
-                { $eq: [ { "$size": `$${prop}` }, 0 ] }, 
-                { $literal: null }, 
+            $cond: [
+                { $eq: [ { "$size": `$${prop}` }, 0 ] },
+                { $literal: null },
                 { $arrayElemAt: [ `$${prop}`, 0 ] }
             ]
         }

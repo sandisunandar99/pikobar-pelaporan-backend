@@ -25,12 +25,20 @@ const aggCaseDailyReport = (searching, dates) => {
     }
 
     const lookup = {
-        $lookup: {
-            from: 'histories',
-            localField: '_id',
-            foreignField: 'case',
-            as: 'histories'
-        }
+      $lookup:
+      {
+        from: 'histories',
+        let: { id: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$case",  "$$id"] }
+            }
+          },
+          { $sort: { createdAt: -1 } }
+        ],
+        as: 'histories'
+      },
     }
 
     const group = {
@@ -62,23 +70,18 @@ const aggCaseDailyReport = (searching, dates) => {
         ], dates),
         ...sum('confirmedTravel', [
             { $eq: ['$status', CRITERIA.CONF] },
-            { $or: [
-                { $eq: ["$lastHis.has_visited_public_place", true] },
-                { $eq: ["$lastHis.travelling_history_before_sick_14_days", true] },
-                { $eq: ["$lastHis.visited_local_area_before_sick_14_days", true] }
-                ]
-            }
+            { $eq: ["$lastHis.visited_local_area_before_sick_14_days", true] }
         ], dates),
+        ...sum('confirmedContact', [
+          { $eq: ['$status', CRITERIA.CONF] },
+          { $eq: ['$prevHis.status', CRITERIA.CLOSE] },
+      ], dates),
         ...sum('confirmedNoTravel', [
             { $eq: ['$status', CRITERIA.CONF] },
             { $or: [
-                {$and: [
-                    { $eq: ["$lastHis.has_visited_public_place", true] },
-                    { $eq: ["$lastHis.travelling_history_before_sick_14_days", true] },
-                    { $eq: ["$lastHis.visited_local_area_before_sick_14_days", true] }
-                ]},
-                { $ne: ["$close_contact", 1] }
-                ]
+                { $eq: ["$lastHis.travelling_history_before_sick_14_days", false] },
+                { $ne: ["$prevHis.status", CRITERIA.CLOSE] }
+              ]
             }
         ], dates),
         ...sum('confirmedRecovered', [
@@ -86,18 +89,19 @@ const aggCaseDailyReport = (searching, dates) => {
             { $eq: ['$final_result', '1'] }
         ], dates),
         ...sum('closeContact', [
-            { $eq: ['$status', CRITERIA.CLOSE] }
+            { $eq: ['$status', CRITERIA.CONF] },
+            { $eq: ['$final_result', '4'] },
         ], dates),
         ...sum('closeContactNew', [
             { $eq: ['$status', CRITERIA.CLOSE] }
         ], dates),
         ...sum('closeContactSuspect', [
             { $eq: ['$status', CRITERIA.SUS] },
-            { $eq: ['$prevHis.status', CRITERIA.CLOS] },
+            { $eq: ['$prevHis.status', CRITERIA.CLOSE] },
         ], dates),
         ...sum('closeContactConfirmed', [
             { $eq: ['$status', CRITERIA.CONF] },
-            { $eq: ['$prev_history.status', CRITERIA.CLOS] },
+            { $eq: ['$prevHis.status', CRITERIA.CLOSE] },
         ], dates),
         ...sum('closeContactDiscarded', [
             { $in: ['$status', [ CRITERIA.CONF, CRITERIA.CLOSE ] ] },

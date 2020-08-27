@@ -2,7 +2,7 @@ const moment = require('moment')
 const Case = require('../models/Case')
 const Check = require('../helpers/rolecheck')
 
-const { 
+const {
   aggCaseDailyReport
 } = require('../helpers/reports/handler')
 
