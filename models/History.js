@@ -27,6 +27,7 @@ const HistorySchema = new mongoose.Schema({
     // nama rumah sakit kalau di rumah sakit, nama kecamatan kalau di tempat tinggal
     is_patient_address_same: { type: Boolean, default: false },
     current_hospital_id : { type: mongoose.Schema.Types.ObjectId, ref: 'Unit', default:null},
+    current_hospital_type: { type: String, default: null },
     current_location_address: String, // or Number?
     current_location_village_code : String,
     current_location_subdistrict_code : String, //kecamatan
@@ -145,6 +146,7 @@ HistorySchema.methods.toJSONFor = function () {
         is_patient_address_same: this.is_patient_address_same,
         current_location_type: this.current_location_type,
         current_hospital_id: this.current_hospital_id,
+        current_hospital_type: this.current_hospital_type,
         current_location_address : this.current_location_address,
         current_location_district_code : this.current_location_district_code,
         current_location_subdistrict_code : this.current_location_subdistrict_code,
@@ -239,5 +241,30 @@ HistorySchema.methods.JSONCaseTransfer = function () {
         final_result : this.final_result
     }
 }
+
+HistorySchema.pre('save', async function (next) {
+
+  try {
+    const hospitalId = this.current_hospital_id
+    if (!hospitalId) return
+
+    const unit = await mongoose.models["Unit"]
+      .findById(hospitalId)
+      .select('rs_type')
+
+    if (!unit || !unit.rs_type) return
+
+    const source = {
+      current_hospital_type: unit.rs_type
+    }
+
+    Object.assign(this, source)
+
+  } catch (e) {
+    throw new Error(e)
+  }
+
+  next()
+})
 
 module.exports = mongoose.model('History', HistorySchema)
