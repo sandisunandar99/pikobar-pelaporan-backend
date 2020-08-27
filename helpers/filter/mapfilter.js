@@ -1,12 +1,13 @@
 'use strict'
 const check = require('../rolecheck')
 const filter = require('../filter/casefilter')
-const { WHERE_GLOBAL, CRITERIA} = require('../constant')
+const { WHERE_GLOBAL } = require('../constant')
 
 const aggregateCondition = async (user, query) => {
   const search = check.countByRole(user)
   const filters = await filter.filterCase(user, query)
-  const searching = {...search, ...filters, ...WHERE_GLOBAL }
+  const searching = {...search, ...filters, ...WHERE_GLOBAL, ...filterDefault(query) }
+  console.log(searching);
   return [
     {
       $match: {
@@ -43,24 +44,18 @@ const aggregateCondition = async (user, query) => {
     }
   ]
 }
+
 const filterDefault = (query) => {
-  let queryStrings;
+  let queryStrings
   if (query.status_patient) {
     const splits = query.status_patient.split('-');
-    if (splits[0] == CRITERIA.CONF && splits[1] !== "3") {
+    if(splits[0] && splits[1]) {
       queryStrings = { "status": splits[0], "final_result": splits[1] }
-    } else if (splits[0] == CRITERIA.CONF && splits[1] == "3") {
+    }else{
       queryStrings = { "status": splits[0] }
-    } else if (query.status_patient == "all") {
-      queryStrings = {};
-    } else {
-      queryStrings = { "status": splits[0], "stage": splits[1] }
     }
   } else {
-    queryStrings = {
-      "status": CRITERIA.CONF,
-      "final_result": { "$in": [null, "", "0"] }
-    };
+    queryStrings = { }
   }
   return queryStrings;
 }
