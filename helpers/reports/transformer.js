@@ -80,59 +80,93 @@ const transformedFields = {
  * @param {object} docs
  */
 const transformedXlsFor = (docs) => {
-  const lang = require('../constant')['DAILY_REPORT']
+  const $t = require('../constant')['DAILY_REPORT']
 
-  const buildHeader = (section, d = null, w = null, m = null) => {
-    return {
-      status: section,
-      [lang.DAY]: d,
-      [lang.WEEK]: w,
-      [lang.MONTH]: m
+  const header = (label, isolation = false) => {
+    sect++; num = 1;
+
+    res.push(row())
+
+    res.push(row(`${sect}.`, label))
+
+    if (isolation) {
+      res.push(row(
+        null,
+        $t.CLASSIFICATION,
+        $t.REFERRAL_HOSPITAL,
+        $t.EMERGENCY_HOSPITAL,
+        $t.SELF_ISOLATION
+      ))
     }
   }
 
-  let res = [buildHeader('DATA KASUS SUSPEK')]
+  const row =(no, stat, day, week, month) => {
+    return {
+      no: no,
+      status: stat,
+      [$t.DAY]: day,
+      [$t.WEEK]: week,
+      [$t.MONTH]: month
+    }
+  }
+
+  let sect = 1, num = 1
+
+  let res = [
+    row(`${sect}.`, $t.SECT_SUSPECT)
+  ]
 
   for (i in docs) {
+
     const v = docs[i]
-    const prop = (v._id.replace(/[A-Z]/g, v => `_${v}`)).toUpperCase()
+
+    const prop = (v._id
+      .replace(/[A-Z]/g, v => `_${v}`))
+      .toUpperCase()
+
+    let param, subNum
+
+    switch (v._id) {
+      case 'confirmed':
+        header($t.SECT_CONFIRMED); break;
+      case 'closeContact':
+        header($t.SECT_DECEASE); break;
+      case 'deceaseConfirmed':
+        header($t.SECT_DECEASE); break;
+      case 'pcrSwab':
+        header($t.SECT_PCR); break;
+      case 'rapidTest':
+        header($t.SECT_SEROLOGY); break;
+      case 'suspectProbableIsolation':
+        header($t.SELF_ISOLATION, true)
+    }
+
+    subNum = `${sect}.${num}`
+
+    param = [
+      subNum,
+      $t[prop],
+    ]
 
     if (v.hasOwnProperty('aDay')) {
-      res.push({
-        status: lang[prop],
-        [lang.DAY]: v.aDay,
-        [lang.WEEK]: v.aWeek,
-        [lang.MONTH]: v.aMonth
-      })
+      param = [
+        ...param,
+        v.aDay,
+        v.aWeek,
+        v.aMonth
+      ]
     } else {
-      res.push({
-        status: lang[prop],
-        [lang.DAY]: v.referralHospital,
-        [lang.WEEK]: v.emergencyHospital,
-        [lang.MONTH]: v.selfIsolation
-      })
+      param = [
+        ...param,
+        v.referralHospital,
+        v.emergencyHospital,
+        v.selfIsolation
+      ]
     }
 
-    if (v._id === 'suspectDiscarded') {
-      res.push(buildHeader(''))
-      res.push(buildHeader('DATA KASUS KONFIRMASI'))
-    } else if (v._id === 'confirmedRecovered') {
-      res.push(buildHeader(''))
-      res.push(buildHeader('DATA PEMANTAUAN KONTAK ERAT'))
-    } else if (v._id === 'closeContactDiscarded') {
-      res.push(buildHeader(''))
-      res.push(buildHeader('DATA KASUS MENINGGAL'))
-    } else if (v._id === 'deceaseProbable') {
-      res.push(buildHeader(''))
-      res.push(buildHeader('PEMERIKSAAN RT-PCR'))
-    } else if (v._id === 'pcrSwab') {
-      res.push(buildHeader(''))
-      res.push(buildHeader('SURVEIILANS SEROLOGI'))
-    } else if (v._id === 'pcrPositive') {
-      res.push(buildHeader(''))
-      res.push(buildHeader('SURVEIILANS SEROLOGI'))
-      res.push(buildHeader('KLASIFIKASI', 'RS Rujukan', 'RS Darurat', 'Isolasi / Karantina Mandiri'))
-    }
+    res.push(row(...param))
+
+    num++
 
   }
 
