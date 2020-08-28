@@ -1,3 +1,5 @@
+const { RS } = require('../constant')
+
 const filter = (params, gte, lt) => {
     let dateRange = []
     if (gte && lt) {
@@ -36,13 +38,14 @@ const sum = (prop, params, d) => {
 const sumBasedOnLocation = (prop, params, d) => {
     const aDay = [d.aDay, d.aDueDay]
     const loc = (v) => Object.assign({}, { '$eq': [ '$lastHis.current_location_type', v ] })
+    const type = (v) => Object.assign({}, { '$eq': [ '$lastHis.rs_type', v ] })
 
     return {
         [prop]: [{
             $group: {
                 _id: prop,
-                referralHospital: filter([ ...params, loc('RS') ], ...aDay),
-                emergencyHospital: filter([ ...params, loc('RS') ], ...aDay),
+                referralHospital: filter([ ...params, loc('RS'), type(RS.REFERRAL) ], ...aDay),
+                emergencyHospital: filter([ ...params, loc('RS'), type(RS.NON_REFERRAL) ], ...aDay),
                 selfIsolation: filter([ ...params, loc('RUMAH') ], ...aDay),
             }
         }]

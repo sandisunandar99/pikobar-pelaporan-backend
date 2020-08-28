@@ -79,7 +79,7 @@ module.exports = {
       }
     }
   },
-  RS_TYPE: {
+  RS: {
     REFERRAL: 'RS RUJUKAN',
     NON_REFERRAL: 'RS NON RUJUKAN'
   },
