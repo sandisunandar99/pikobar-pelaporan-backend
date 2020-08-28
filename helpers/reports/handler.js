@@ -1,4 +1,5 @@
 const {
+    ROLE,
     CRITERIA,
     WHERE_GLOBAL
 } = require('../constant')
@@ -14,7 +15,13 @@ const {
     transformedFields
 } = require('./transformer')
 
-const aggCaseDailyReport = (searching, dates) => {
+const aggCaseDailyReport = (user, query, searching, dates) => {
+
+    if(user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN){
+      if(query.address_district_code){
+        searching.author_district_code = query.address_district_code
+      }
+    }
 
     const match = {
         $match: {
@@ -35,7 +42,8 @@ const aggCaseDailyReport = (searching, dates) => {
               $expr: { $eq: ["$case",  "$$id"] }
             }
           },
-          { $sort: { createdAt: -1 } }
+          { $sort: { createdAt: -1 } },
+          { $limit: 2 }, // prev history needs
         ],
         as: 'histories'
       },
@@ -70,7 +78,7 @@ const aggCaseDailyReport = (searching, dates) => {
         ], dates),
         ...sum('confirmedTravel', [
             { $eq: ['$status', CRITERIA.CONF] },
-            { $eq: ["$lastHis.visited_local_area_before_sick_14_days", true] }
+            { $eq: ["$lastHis.travelling_history_before_sick_14_days", true] }
         ], dates),
         ...sum('confirmedContact', [
           { $eq: ['$status', CRITERIA.CONF] },
