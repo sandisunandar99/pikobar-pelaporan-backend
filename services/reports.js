@@ -18,7 +18,7 @@ async function dailyReport(query, user, callback) {
 
     const searching = Check.countByRole(user)
 
-    const aggQueryCase = aggCaseDailyReport(searching, dates)
+    const aggQueryCase = aggCaseDailyReport(user, query, searching, dates)
 
     const caseReport = await Case.aggregate(aggQueryCase)
 
