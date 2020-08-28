@@ -38,7 +38,7 @@ const sum = (prop, params, d) => {
 const sumBasedOnLocation = (prop, params, d) => {
     const aDay = [d.aDay, d.aDueDay]
     const loc = (v) => Object.assign({}, { '$eq': [ '$lastHis.current_location_type', v ] })
-    const type = (v) => Object.assign({}, { '$eq': [ '$lastHis.rs_type', v ] })
+    const type = (v) => Object.assign({}, { '$eq': [ '$lastHis.current_hospital_type', v ] })
 
     return {
         [prop]: [{
