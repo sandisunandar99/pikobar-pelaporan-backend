@@ -15,7 +15,7 @@ const render = (data) => {
     ageInMonths = moment().diff(data.birth_date, 'months')
   } else {
     age = parseInt(data.age) || 0
-    ageInMonths = (Number(data.age) - age) * 12
+    ageInMonths = Math.round((Number(data.age) - age) * 12)
   }
 
   return {
