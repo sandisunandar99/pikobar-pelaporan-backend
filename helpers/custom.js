@@ -34,7 +34,8 @@ const jsonParse = (str) => {
 }
 
 const convertDate = (dates) => {
-  return new Date(dates.getTime()).toLocaleDateString("id-ID");
+  const moment = require('moment')
+  return moment(dates).format('YYYY/MM/DD')
 }
 
 const isDirty = (oldData, newData) => {
