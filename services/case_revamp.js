@@ -9,7 +9,7 @@ const Notif = require('../helpers/notification');
 const Filter = require('../helpers/filter/casefilter');
 const { thisUnitCaseAuthors } = require('../helpers/cases/revamp/handlerget');
 const Validate = require('../helpers/cases/revamp/handlerpost');
-const { CRITERIA, VERIFIED_STATUS, ROLE } = require('../helpers/constant');
+const { CRITERIA, VERIFIED_STATUS, ROLE, WHERE_GLOBAL } = require('../helpers/constant');
 
 const createCaseRevamp = async (raw_payload, author, pre, callback) => {
   let verified = {
@@ -127,7 +127,7 @@ async function getCaseSummary(query, user, callback) {
 
     const conditions = [
       { $match: {
-        $and: [  searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' } ]
+        $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
       }},
       {
         $group: {
