@@ -1,148 +1,77 @@
-const moment = require('moment')
-const {
-  CRITERIA
-} = require('../../../constant')
 const render = (data) => {
 
   const isTrue = (value) => {
     return data.last_history[value] ? '√' : '  '
   }
-
+  
   const isFalse = (value) => {
     return !data.last_history[value] ? '√' : '  '
   }
 
-  const formattedDate = (d) => {
-    return d ? moment(d).format('YYYY/MM/DD') : '-'
+  const market = data.close_contact_animal_market
+  const faskes = data.close_contact_medical_facility
+  const isVisited = (value, n) => {
+    return value == n ? '√' : '  '
   }
 
-  const buildTravelPlaces = (place, type) => {
-    let res = []
+  const buildVisitedPlaces = (place) => {
+    let visitedPlaces = [], visitedPlacesDoc = []
+    for (i in data.histories) {
+      const visitedPlace = data.histories[i][place]
+      if (visitedPlaces.includes(visitedPlace) || !visitedPlace) continue
 
-    const records = data.last_history[place] || []
-
-    const exception = type === 'domestic'
-      ? 'Dari Luar Negeri'
-      : 'Dari Luar Kota'
-
-    for (i in records) {
-      const rec = records[i]
-
-      if (rec.travelling_type === exception) continue
-
-      res.push([
-          { alignment: 'center', text: rec.travelling_visited || '-' },
-          { alignment: 'center', text: rec.travelling_city || '-' },
-          { alignment: 'center', text: formattedDate(rec.travelling_date) },
-          { alignment: 'center', text: formattedDate(rec.travelling_arrive) },
+      visitedPlaces.push(visitedPlace)
+      visitedPlacesDoc.push([
+          { text: visitedPlace },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
       ])
     }
 
-    if (!res.length) {
-      res.push([
-        { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 4 },{},{},{},
+    if (!visitedPlaces.length) {
+      for (let i = 0;  i < 2; i++) {
+        visitedPlacesDoc.push([
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
       ])
+      }
     }
 
-    return res
+    return visitedPlacesDoc
   }
 
   const buildResidences = () => {
-    let res = []
-
-    const records = data.last_history.visited_local_area || []
-
-    for (i in records) {
-      const rec = records[i]
-      res.push([
-          { alignment: 'center', colSpan: 2, text: rec.visited_local_area_province || '-' },{},
-          { alignment: 'center', colSpan: 2, text: rec.visited_local_area_city || '-' },{}
+    let residences = [], residencesDoc = []
+    if (!residences.length) {
+      for (let i = 0;  i < 2; i++) {
+        residencesDoc.push([
+          { text: '-', colSpan: 2 },{},
+          { text: '-', colSpan: 2 },{},
       ])
-    }
-
-    if (!res.length) {
-      res.push([
-        { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 4 },{},{},{},
-      ])
-    }
-
-    return res
-  }
-
-  const travelType = (type) => {
-    let res = false
-    let records = data.last_history
-    if (!records) {
-      return false
-    }
-
-    records = records.travelling_history
-    if (!records || !records.length) {
-      return false
-    }
-
-    type = type === 'INTL'
-      ? 'Dari Luar Negeri'
-      : 'Dari Luar Kota'
-
-    records.forEach(v => {
-      if (v.travelling_type === type) {
-        res = true
       }
-    })
+    }
 
-    return res
+    return residencesDoc
   }
 
-  const suspectContact = (criterias) => {
-    let res = false
-    let records = data.last_history
-    if (!records) {
-      return false
-    }
-
-    records = records.close_contact_premier
-    if (!records || !records.length) {
-      return false
-    }
-
-    records.forEach(v => {
-      if (criterias.includes(v.close_contact_criteria)) {
-        res = true
+  const buildSuspectContact = () => {
+    let suspects = [], suspectsDoc = []
+    if (!suspects.length) {
+      for (let i = 0;  i < 2; i++) {
+        suspectsDoc.push([
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' },
+          { text: '-' }
+      ])
       }
-    })
-
-    return res
-  }
-
-  const buildSuspectContact = (criterias) => {
-    let res = []
-
-    let records = []
-    if (data.last_history && data.last_history.close_contact_premier) {
-      records = data.last_history.close_contact_premier
     }
 
-    for (i in records) {
-      const rec = records[i]
-      if (!criterias.includes(rec.close_contact_criteria)) continue
-
-      res.push([
-          { alignment: 'left', text: rec.close_contact_name || '-' },
-          { alignment: 'left', text: rec.close_contact_address_street || '-' },
-          { alignment: 'center', text: rec.close_contact_relation || '-' },
-          { alignment: 'center', text: formattedDate(rec.close_contact_first_date) },
-          { alignment: 'center', text: formattedDate(rec.close_contact_last_date) },
-      ])
-    }
-
-    if (!res.length) {
-      res.push([
-        { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{},
-      ])
-    }
-
-    return res
+    return suspectsDoc
   }
 
   return [
@@ -171,7 +100,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: `: [${travelType('INTL') ? '√' : '  ' }] Ya   [${!travelType('INTL') ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
+              text: `: [${isTrue('is_went_abroad')}] Ya   [${isFalse('is_went_abroad')}] Tdk  [  ] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
@@ -182,7 +111,7 @@ const render = (data) => {
             { text: 'Tgl Perjalanan', style: 'tableColumnSubHeader'  },
             { text: 'Tgl tiba di Indonesia', style: 'tableColumnSubHeader'  },
           ],
-          ...buildTravelPlaces('travelling_history', 'international'),
+          ...buildVisitedPlaces('visited_country'),
           [
             {
               border: ['black', 'black','','black'],
@@ -193,7 +122,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: `: [${travelType('DOM') ? '√' : '  ' }] Ya   [${!travelType('DOM') ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
+              text: `: [${isTrue('is_went_other_city')}] Ya   [${isFalse('is_went_other_city')}] Tdk  [  ] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
@@ -204,7 +133,7 @@ const render = (data) => {
             { text: 'Tgl Perjalanan', style: 'tableColumnSubHeader'  },
             { text: 'Tgl tiba di tempat', style: 'tableColumnSubHeader'  },
           ],
-          ...buildTravelPlaces('travelling_history', 'domestic'),
+          ...buildVisitedPlaces('visited_city'),
           [
             {
               border: ['black', 'black','','black'],
@@ -215,7 +144,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: `: [${isTrue('visited_local_area_before_sick_14_days')}] Ya   [${isFalse('visited_local_area_before_sick_14_days')}] Tdk  [  ] Tdk Tahu`,
+              text: `: [${isVisited(market, 1)}] Ya   [${isVisited(market, 2)}] Tdk  [${isVisited(market, 3)}] Tdk Tahu`,
               colSpan: 2,
               alignment: 'left'
             },{}
@@ -248,8 +177,7 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: '',
-              text: `: [${suspectContact([CRITERIA.SUS]) ? '√' : '  ' }] Ya   [${!suspectContact([CRITERIA.SUS]) ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
+              text: `: [${isVisited(faskes, 1)}] Ya   [${isVisited(faskes, 2)}] Tdk  [${isVisited(faskes, 3)}] Tdk Tahu`,
               colSpan: 3,
               alignment: 'left'
             },{},{}
@@ -261,7 +189,7 @@ const render = (data) => {
             { text: 'Tgl Kontak Pertama', style: 'tableColumnSubHeader'  },
             { text: 'Tgl Kontak Terakhir', style: 'tableColumnSubHeader'  },
           ],
-          ...buildSuspectContact([CRITERIA.SUS, CRITERIA.PROB]),
+          ...buildSuspectContact(),
         ]
       }
     }

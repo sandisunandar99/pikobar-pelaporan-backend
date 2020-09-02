@@ -3,7 +3,7 @@ const components = {
 }
 
 const render = (data) => {
-
+  
   const buildContactPlaces = (data) => {
     let closeContacts = [], closeContactsDoc = []
     for (i in data.closeContacts) {
@@ -43,7 +43,7 @@ const render = (data) => {
       style: 'tableClinical',
       color: '#444',
       table: {
-        widths: [85, 25, 17, 60, 75, 70, 123],
+        widths: [105, 25, 17, 70, 85, 70, 83],
         headerRows: 1,
         body: [
           [
