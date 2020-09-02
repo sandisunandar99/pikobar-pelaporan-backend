@@ -42,14 +42,6 @@ module.exports = (server) => {
                     ).code(200)
                 }
             )
-        },
-        async getTypeSpeciment(request, reply){
-            server.methods.services.category.typeSpeciment((err, result) =>{
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCategoryResponse(result)
-                ).code(200)
-            })
         }
     }
 }
