@@ -249,7 +249,7 @@ const render = (data) => {
             {
               border: ['', 'black','black','black'],
               text: '',
-              text: `: [${suspectContact([CRITERIA.SUS]) ? '√' : '  ' }] Ya   [${!suspectContact([CRITERIA.SUS]) ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
+              text: `: [${suspectContact([CRITERIA.SUS, CRITERIA.PROB]) ? '√' : '  ' }] Ya   [${!suspectContact([CRITERIA.SUS, CRITERIA.PROB]) ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
               colSpan: 3,
               alignment: 'left'
             },{},{}
