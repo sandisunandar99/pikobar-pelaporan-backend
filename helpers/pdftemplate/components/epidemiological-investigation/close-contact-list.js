@@ -23,7 +23,7 @@ const render = (data) => {
 
     if (!closeContacts.length) {
       closeContactsDoc.push([
-        { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 7 },{},{},{},{},{},{},
+        { alignment: 'center', text: '- Tidak ada kontak erat -', colSpan: 7 },{},{},{},{},{},{},
       ])
     }
 
