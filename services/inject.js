@@ -1,6 +1,5 @@
 const Case = require('../models/Case')
 const History = require('../models/History')
-const { CASE } = require('../helpers/constant')
 
 const lastHistory = async (query, callback) => {
   try {
@@ -23,9 +22,9 @@ const lastHistory = async (query, callback) => {
         last_history: saveHistory._id
       }, { upsert: true })
     })
-    callback(null, result);
+    callback(null, result.length)
   } catch (error) {
-    callback(error, null);
+    callback(error, null)
   }
 }
 

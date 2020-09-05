@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
@@ -72,11 +72,11 @@ const HistorySchema = new mongoose.Schema({
     }],
     travelling_history_before_sick_14_days: {type: Boolean, default: false},
     travelling_history: [{
-        travelling_type: String,
-        travelling_visited: String,
-        travelling_city: String,
-        travelling_date: Date,
-        travelling_arrive: Date
+        travelling_type: { type: String, default: null },
+        travelling_visited: { type: String, default: null },
+        travelling_city: { type: String, default: null },
+        travelling_date: { type : Date, default: '' },
+        travelling_arrive: { type : Date, default: '' }
     }],
     visited_local_area_before_sick_14_days: {type: Boolean, default: false},
     visited_local_area: [{
@@ -241,7 +241,7 @@ HistorySchema.methods.JSONCaseTransfer = function () {
         final_result : this.final_result
     }
 }
-
+HistorySchema.plugin(mongoosePaginate);
 HistorySchema.pre('save', async function (next) {
 
   try {
