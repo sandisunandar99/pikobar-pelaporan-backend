@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+const filtersMap = require("../helpers/filter/mapfilter");
+const filtersRelated = require("../helpers/filter/relatedfilter");
 const filtersExport = require("../helpers/filter/exportfilter");
 var uniqueValidator = require('mongoose-unique-validator');
 
@@ -26,7 +28,7 @@ const CaseSchema = new mongoose.Schema({
     month : {type:Number},
     gender : {type:String},
     is_patient_address_same: { type: Boolean, default: false },
-    address_street: {type:String}, // alamat lengkap
+    address_street: {type:String},
     address_village_code: { type: String, required: [true, "can't be blank"]},
     address_village_name: { type: String, required: [true, "can't be blank"]},
     // kecamatan
@@ -39,8 +41,6 @@ const CaseSchema = new mongoose.Schema({
     address_province_name: { type: String, default:"Jawa Barat"},
     rt: { type: Number, default:null},
     rw: { type: Number, default:null},
-    latitude: {type: String, default: null},
-    longitude: { type: String, default: null },
     office_address: {type:String},
     is_phone_number_exists: { type: Boolean, default: false },
     phone_number: {type:String},
@@ -65,33 +65,30 @@ const CaseSchema = new mongoose.Schema({
     consume_alcohol : { type: Number, default: null}, // 1 ya 2 tidak 3 tidak tahu
     income : { type: Number, default: null},
     //faktor kontak
-        // travel:{type:Number}, //takeout
-        // travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia // takeout
-        // visited:{type:String,default:null}, //takeout
-        // start_travel:{type:Date,default:Date.now()}, // takeout
-        // end_travel:{type:Date,default:Date.now()}, // takeout
-        // close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu // takeout
-        // id_close_contact: { type: String }, // takeout
-        // name_close_contact: { type: String }, // takeout
-        // close_contact_confirm: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
-        // id_close_contact_confirm: { type: String }, // takeout
-        // name_close_contact_confirm: { type: String }, // takeout
-        // close_contact_animal_market: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
-        // animal_market_date: { type: Date, default: null }, // takeout
-        // animal_market_other: { type: String, default: null }, // takeout
-        // close_contact_public_place: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
-        // public_place_date: { type: Date, default: null }, // takeout
-        // public_place_other: { type: String, default: null }, // takeout
-        // close_contact_medical_facility: { type: Number }, // 1 ya 2 tidak 3 tidak tahu // takeout
-        // medical_facility_date: { type: Date, default: null }, // takeout
-        // medical_facility_other: { type: String, default: null }, // takeout
-        // close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-        // close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
-        // health_workers : { type: String, lowercase: true },
-        // apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
-    //faktor kontak
-    // ==> faktor kontak paparan pindah ke history
-    //verifikasi status
+    travel:{type:Number},
+    travel_is_went_abroad: { type: Number, default: 0 }, //1 luar negeri 2 indonesia
+    visited:{type:String,default:null},
+    start_travel:{type:Date,default:Date.now()},
+    end_travel:{type:Date,default:Date.now()},
+    close_contact:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    id_close_contact : {type:String},
+    name_close_contact : {type:String},
+    close_contact_confirm:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    id_close_contact_confirm : {type:String},
+    name_close_contact_confirm: {type:String},
+    close_contact_animal_market:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    animal_market_date: { type: Date , default: null},
+    animal_market_other: { type: String , default: null},
+    close_contact_public_place:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    public_place_date: { type: Date , default: null},
+    public_place_other: { type: String , default: null},
+    close_contact_medical_facility:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    medical_facility_date: { type: Date , default: null},
+    medical_facility_other: { type: String, default: null},
+    close_contact_heavy_ispa_group:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    close_contact_health_worker:{type:Number}, // 1 ya 2 tidak 3 tidak tahu
+    health_workers : { type: String, lowercase: true },
+    apd_use:{type:Array,default:[]}, // 1 ya 2 tidak 3 tidak tahu
     verified_status: { type: String, lowercase: true },
     verified_comment: {type: String, default: null},
     transfer_status: { type: String, lowercase: true, default: null },
@@ -217,5 +214,23 @@ CaseSchema.pre('save', async function (next) {
 
     next()
 })
+
+CaseSchema.methods.MapOutput = function () {
+    // filter output untuk memperkecil line file tidak
+    // melebihi 250 di pecah di simpan di helper
+    return filtersMap.filterOutput(this);
+}
+
+CaseSchema.methods.EdgesOutput = function () {
+    return filtersRelated.filterEdges(this);
+}
+
+CaseSchema.methods.NodesOutput = function () {
+    return filtersRelated.filterNodes(this);
+}
+
+CaseSchema.methods.JSONExcellOutput = function () {
+    return filtersExport.excellOutput(this);
+}
 
 module.exports = mongoose.model('Case', CaseSchema);
