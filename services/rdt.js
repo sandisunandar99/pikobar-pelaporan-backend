@@ -437,7 +437,6 @@ function createRdt(query, payload, author, pre, callback) {
 
 function createRdtMultiple(payload, author, pre, callback) {
   let resultForResnpose =[]
-
   const process = async () =>{
     for (const payloads of payload) {
       const result = await returnPayload(payloads)
