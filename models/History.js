@@ -64,19 +64,19 @@ const HistorySchema = new mongoose.Schema({
     //faktor riwayat perjalanan
     has_visited_public_place :{type: Boolean, default: false},
     visited_public_place: [{
-        public_place_category: String,
-        public_place_name: String,
-        public_place_address: String,
-        public_place_date_visited: Date,
-        public_place_duration_visited: String
+      public_place_category: { type: String, default: null },
+      public_place_name: { type: String, default: null },
+      public_place_address: { type: String, default: null },
+      public_place_date_visited: { type : Date, default: '' },
+      public_place_duration_visited: { type: String, default: null }
     }],
     travelling_history_before_sick_14_days: {type: Boolean, default: false},
     travelling_history: [{
-        travelling_type: { type: String, default: null },
-        travelling_visited: { type: String, default: null },
-        travelling_city: { type: String, default: null },
-        travelling_date: { type : Date, default: '' },
-        travelling_arrive: { type : Date, default: '' }
+      travelling_type: { type: String, default: null },
+      travelling_visited: { type: String, default: null },
+      travelling_city: { type: String, default: null },
+      travelling_date: { type : Date, default: '' },
+      travelling_arrive: { type : Date, default: '' }
     }],
     visited_local_area_before_sick_14_days: {type: Boolean, default: false},
     visited_local_area: [{

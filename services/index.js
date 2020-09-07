@@ -22,7 +22,8 @@ const register = (server, options, next) => {
     require('./case_dashboard'),
     require('./reports'),
     require('./inject'),
-    require('./history_travel')
+    require('./history_travel'),
+    require('./public_place')
   );
   server.method(services)
   return next()
