@@ -46,17 +46,18 @@ const register = (server, options, next) => {
   server.register(require('./occupations'))
   server.register(require('./rdt'))
   server.register(require('./category'))
-  server.register(require('./country'));
-  server.register(require('./dashboard'));
-  server.register(require('./logistics'));
-  server.register(require('./map'));
-  server.register(require('./unit'));
-  server.register(require('./case_related'));
-  server.register(require('./cases_revamp'));
-  server.register(require('./close_contact'));
-  server.register(require('./case_dashboard'));
+  server.register(require('./country'))
+  server.register(require('./dashboard'))
+  server.register(require('./logistics'))
+  server.register(require('./map'))
+  server.register(require('./unit'))
+  server.register(require('./case_related'))
+  server.register(require('./cases_revamp'))
+  server.register(require('./close_contact'))
+  server.register(require('./case_dashboard'))
   server.register(require('./reports'))
   server.register(require('./inject'))
+  server.register(require('./history_travel'))
 
 
   server.ext('onPreResponse', preResponse)

@@ -22,17 +22,9 @@ const render = (data) => {
     }
 
     if (!closeContacts.length) {
-      for (let i = 0;  i < 2; i++) {
-        closeContactsDoc.push([
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-        ])
-      }
+      closeContactsDoc.push([
+        { alignment: 'center', text: '- Tidak ada kontak erat -', colSpan: 7 },{},{},{},{},{},{},
+      ])
     }
 
     return closeContactsDoc

@@ -177,7 +177,8 @@ const render = (data) => {
             {},
             {
               border: ['', 'black','black','black'],
-              text: `: [${isVisited(faskes, 1)}] Ya   [${isVisited(faskes, 2)}] Tdk  [${isVisited(faskes, 3)}] Tdk Tahu`,
+              text: '',
+              text: `: [${suspectContact([CRITERIA.SUS, CRITERIA.PROB]) ? '√' : '  ' }] Ya   [${!suspectContact([CRITERIA.SUS, CRITERIA.PROB]) ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
               colSpan: 3,
               alignment: 'left'
             },{},{}

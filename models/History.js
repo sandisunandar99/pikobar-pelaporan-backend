@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const mongoosePaginate = require('mongoose-paginate-v2')
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
@@ -46,6 +46,69 @@ const HistorySchema = new mongoose.Schema({
     physical_check_respiration : {type:Number , default:0},
     physical_check_height : {type:Number, default:0},
     physical_check_weight : {type:Number, default:0},
+    inspection_support :[{
+        inspection_type: String,
+        specimens_type: String,
+        inspection_date: Date,
+        inspection_location: String,
+        get_specimens_to: Number,
+        inspection_result: String
+    }],
+    //pemeriksaan penunjang
+    //faktor riwayat perjalanan
+    has_visited_public_place :{type: Boolean, default: false},
+    visited_public_place: [{
+        public_place_category: String,
+        public_place_name: String,
+        public_place_address: String,
+        public_place_date_visited: Date,
+        public_place_duration_visited: String
+    }],
+    travelling_history_before_sick_14_days: {type: Boolean, default: false},
+    travelling_history: [{
+        travelling_type: { type: String, default: null },
+        travelling_visited: { type: String, default: null },
+        travelling_city: { type: String, default: null },
+        travelling_date: { type : Date, default: '' },
+        travelling_arrive: { type : Date, default: '' }
+    }],
+    visited_local_area_before_sick_14_days: {type: Boolean, default: false},
+    visited_local_area: [{
+        visited_local_area_province: String,
+        visited_local_area_city: String,
+    }],
+    //faktor riwayat perjalanan
+    //faktor kontak paparan
+    close_contacted_before_sick_14_days: { type: Boolean, default: false },
+    close_contact_premier: [{
+      close_contact_name: String,
+      close_contact_criteria: String,
+      //address
+      close_contact_address_street: String,
+      is_close_contact_address_same: { type: Boolean, default: false },
+      close_contact_address_village_code: { type: String },
+      close_contact_address_village_name: { type: String },
+      close_contact_address_subdistrict_code: { type: String },
+      close_contact_address_subdistrict_name: { type: String },
+      close_contact_address_district_code: { type: String },
+      close_contact_address_district_name: { type: String },
+      close_contact_address_province_code: { type: String, default: 32 },
+      close_contact_address_province_name: { type: String, default: "Jawa Barat" },
+      close_contact_rt: { type: Number, default: null },
+      close_contact_rw: { type: Number, default: null },
+      close_contact_relation: String,
+      close_contact_relation_id: String,
+      close_contact_first_date: Date,
+      close_contact_last_date: Date,
+    }],
+    close_contact_heavy_ispa_group: { type: Boolean, default: false },
+    close_contact_have_pets: { type: Boolean, default: false },
+    close_contact_pets: String,
+    close_contact_health_worker: { type: Boolean, default: false },
+    apd_use: { type: Array, default: [] },
+    close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
+    close_contact_performing_aerosol: String,
+    //faktor kontak paparan
 }, { timestamps : true });
 
 HistorySchema.methods.toJSONFor = function () {
@@ -105,5 +168,30 @@ HistorySchema.methods.JSONCaseTransfer = function () {
         final_result : this.final_result
     }
 }
+HistorySchema.plugin(mongoosePaginate);
+HistorySchema.pre('save', async function (next) {
+
+  try {
+    const hospitalId = this.current_hospital_id
+    if (!hospitalId) return
+
+    const unit = await mongoose.models["Unit"]
+      .findById(hospitalId)
+      .select('rs_type')
+
+    if (!unit || !unit.rs_type) return
+
+    const source = {
+      current_hospital_type: unit.rs_type
+    }
+
+    Object.assign(this, source)
+
+  } catch (e) {
+    throw new Error(e)
+  }
+
+  next()
+})
 
 module.exports = mongoose.model('History', HistorySchema)
