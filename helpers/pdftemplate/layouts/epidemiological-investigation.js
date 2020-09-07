@@ -1,4 +1,3 @@
-const moment = require('moment')
 const layout = {
     header: [
         {
@@ -28,7 +27,7 @@ const layout = {
                 style: 'tableHeader'
               },
               {
-                text: `: ${data.interview_date ? moment(data.interview_date).format('YYYY/MM/DD') : '-' }`,
+                text: `: -`,
                 style: 'tableHeader'
               }
             ],
@@ -38,7 +37,7 @@ const layout = {
                 style: 'tableHeader'
               },
               {
-                text: `: ${data.fasyankes_name || '-'}`,
+                text: `: -`,
                 style: 'tableHeader'
               },
               {

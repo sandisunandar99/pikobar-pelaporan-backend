@@ -59,6 +59,7 @@ const register = (server, options, next) => {
   server.register(require('./inject'))
   server.register(require('./history_travel'))
 
+
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
 
