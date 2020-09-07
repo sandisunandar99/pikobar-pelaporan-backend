@@ -58,6 +58,7 @@ const register = (server, options, next) => {
   server.register(require('./reports'))
   server.register(require('./inject'))
   server.register(require('./history_travel'))
+  server.register(require('./public_place'))
 
 
 
