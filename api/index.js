@@ -61,7 +61,6 @@ const register = (server, options, next) => {
   server.register(require('./public_place'))
 
 
-
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
 
