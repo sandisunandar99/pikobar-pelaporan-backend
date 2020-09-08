@@ -111,7 +111,9 @@ const CaseSchema = new mongoose.Schema({
     fasyankes_subdistrict_name: {type: String, default:null},
     fasyankes_village_code: {type: String, default:null},
     fasyankes_village_name: {type: String, default:null},
-    assignment_place : {type:String, default:null} //tempat tugas bisa diisi unit kerja
+    assignment_place : {type:String, default:null}, //tempat tugas bisa diisi unit kerja
+    close_contact_origin: { type: Boolean, default: false },
+    close_contact_reported: { type: Boolean, default: false },
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.index({author: 1});

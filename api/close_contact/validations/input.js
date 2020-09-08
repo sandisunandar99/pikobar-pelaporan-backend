@@ -59,7 +59,6 @@ const RequestPayload = {
       relationship: Joi.string().required(),
       relationship_other: Joi.string().allow('', null),
       activity: Joi.array().allow('', null),
-      activity_other: Joi.string().allow('', null),
       emergency_contact_name: Joi.string().required(),
       emergency_contact_phone: Joi.string().required(),
       emergency_contact_relationship: Joi.string().allow('', null),
@@ -86,7 +85,7 @@ const RequestPayload = {
       officer_is_contact: Joi.boolean(),
       officer_protection_tools: Joi.array(),
       is_reported: Joi.boolean(),
-      latest_history: historyPayload
+      latest_history: historyPayload 
   }),
   options: validateOptions.options,
   failAction: validateOptions.failAction

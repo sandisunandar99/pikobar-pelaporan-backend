@@ -1,7 +1,12 @@
+const Case = require('../models/Case')
 const custom = require('../helpers/custom')
+const History = require('../models/History')
 const paginate = require('../helpers/paginate')
+const { CRITERIA } = require('../helpers/constant')
 const CloseContact = require('../models/CloseContact')
+const DistrictCity = require('../models/DistrictCity')
 const filters = require('../helpers/filter/closecontactfilter')
+const Validate = require('../helpers/cases/revamp/handlerpost')
 
 async function index (query, authorized, callback) {
   try {
@@ -27,7 +32,7 @@ async function getByCase (caseId, callback) {
       case: caseId,
       delete_status: { $ne: 'deleted' }
     }).populate(['case', 'createdBy'])
-    
+
     return callback(null, results.map(res => res.toJSONList()))
   } catch (e) {
     return callback(e, null)
@@ -87,6 +92,200 @@ async function softDelete (id, authorized, callback) {
   }
 }
 
+// temporary func, delete after migrate
+const syncCase = async (callback) => {
+  const result = await CloseContact.find({
+    delete_status: { $ne: "deleted" },
+    is_migrated: { $exists: false },
+  }).populate(['case', 'latest_history'])
+
+  let promise = Promise.resolve()
+
+  for (i in result) {
+    const res = result[i]
+    promise = promise.then(async () => {
+      let foundedCase = null
+      if (res.nik || res.phone_number) {
+        foundedCase = await Case.findOne({
+          phone_number: res.phone_number
+        })
+      }
+
+
+      if (!foundedCase && res.address_district_code && res.is_reported) {
+
+          const code = res.address_district_code
+          const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+          const districtCases = await Case.findOne({ address_district_code: code, verified_status: 'verified' }).sort({id_case: -1})
+
+          let pre = {
+            count_case: {
+              prov_city_code: code,
+              dinkes_code: dinkes.dinkes_kota_kode,
+              count_pasien: (Number(districtCases.id_case.substring(12)) + 1)
+            },
+            count_case_pending: {}
+          }
+
+          // generate idcase
+          const idCase = Validate.generateIdCase(res.createdBy, pre)
+
+          // prepare mapping
+          // console.log(res)
+          const lastHis = res.latest_history || {}
+
+          // transform inspection support
+          const inspects = []
+
+          if (lastHis.test_nasopharyngeal_swab) {
+            inspects.push({
+              specimens_type: 'Swab Nasofaring',
+              inspection_date: lastHis.test_nasopharyngeal_swab_date,
+              inspection_location: null,
+              get_specimens_to: null,
+              inspection_result: lastHis.test_nasopharyngeal_swab_result,
+              inspection_type: 'lab_cofirm',
+            })
+          }
+
+          if (lastHis.test_orofaringeal_swab) {
+            inspects.push({
+              specimens_type: 'Swab Orofaring',
+              inspection_date: lastHis.test_orofaringeal_swab_date,
+              inspection_location: null,
+              get_specimens_to: null,
+              inspection_result: lastHis.test_orofaringeal_swab_result,
+              inspection_type: 'lab_cofirm',
+            })
+          }
+
+          if (lastHis.test_serum) {
+            inspects.push({
+              specimens_type: 'Serum',
+              inspection_date: null,
+              inspection_location: null,
+              get_specimens_to: null,
+              inspection_result: null,
+              inspection_type: 'other_checks',
+            })
+          }
+
+          // transoform to traveling history
+          const travels = []
+          if (res.travel_is_went_abroad) {
+            travels.push({
+              travelling_type: "Dari Luar Negeri",
+              travelling_visited: res.travel_visited_country,
+              travelling_city: null,
+              travelling_date: res.travel_country_depart_date,
+              travelling_arrive: res.travel_country_return_date,
+            })
+          }
+
+          if (res.travel_is_went_other_city) {
+            travels.push({
+              travelling_type: "Dari Luar Kota",
+              travelling_visited: res.travel_visited_city,
+              travelling_city: res.travel_visited_city,
+              travelling_date: res.travel_city_depart_date,
+              travelling_arrive: res.travel_city_depart_date,
+            })
+          }
+
+          // transform close_contact_premier
+          const premierContacts = []
+          if (res.case) {
+            premierContacts.push({
+              close_contact_name: res.case.name,
+              close_contact_criteria: res.case.status,
+              close_contact_address_village_code: res.case.address_village_code,
+              close_contact_address_village_name: res.case.address_village_name,
+              close_contact_address_subdistrict_code: res.case.address_subdistrict_code,
+              close_contact_address_subdistrict_name: res.case.address_subdistrict_name,
+              close_contact_address_district_code: res.case.address_district_code,
+              close_contact_address_district_name: res.case.address_district_name,
+              close_contact_address_province_code: '32',
+              close_contact_address_province_name: 'Jawa Barat',
+              close_contact_rt: res.case.rt,
+              close_contact_rw: res.case.rw,
+              close_contact_address_street: res.case.address_street,
+              close_contact_relation: res.relationship,
+              close_contact_first_date: res.createdAt,
+              close_contact_last_date: res.createdAt,
+            })
+          }
+
+          const mappedToCasePayload = {
+            verified_status: 'verified',
+            interviewers_name: res.interviewer_name,
+            interview_date: res.contact_tracing_date,
+            is_nik_exists: res.is_nik_exists,
+            nik: res.nik,
+            name: res.name,
+            is_phone_number_exists: res.is_phone_number_exists,
+            phone_number: res.phone_number,
+            gender: this.gender,
+            birth_date: res.birth_date,
+            age: res.age,
+            month: res.month,
+            address_district_code: res.address_district_code,
+            address_district_name: res.address_district_name,
+            address_subdistrict_code: res.address_subdistrict_code,
+            address_subdistrict_name: res.address_subdistrict_name,
+            address_village_code: res.address_village_code,
+            address_village_name: res.address_village_name,
+            rt: parseInt(res.address_rw) || null,
+            rw: parseInt(res.address_rt) || null,
+            occupation: res.travel_occupation,
+            office_address: res.travel_address_office,
+            first_symptom_date: lastHis.symptoms_date,
+            diagnosis: lastHis.symptoms,
+            diagnosis_other: lastHis.symptoms_other,
+            inspection_support: inspects,
+            travelling_history_before_sick_14_days: !!travels.length,
+            travelling_history: travels,
+            close_contact_premier: premierContacts,
+            final_result: '5',
+            current_location_type: 'RUMAH',
+            current_location_address: res.address_street,
+            current_location_village_code: res.address_village_code,
+            current_location_subdistrict_code: res.address_subdistrict_code,
+            current_location_district_code: res.address_district_code,
+            status: CRITERIA.CLOSE,
+            input_source: 'sync-from-closecontact',
+          }
+
+          const newCase = new Case({
+            id_case: idCase,
+            ...mappedToCasePayload,
+          })
+          const insertedCase = await newCase.save()
+          console.log("INSERTED_CASE", insertedCase)
+
+          // insert history
+          const newHistory = new History({
+            case: insertedCase._id,
+            ...mappedToCasePayload,
+          })
+
+          // console.log("HISTORY", newHistory)
+          const insertedHistory = await newHistory.save(res)
+          console.log("INSERTED_HIS", insertedHistory)
+
+          const updatedLastHis = await Case.findOneAndUpdate({ _id: insertedCase._id }, {
+            last_history: insertedHistory._id
+          }, { upsert: true })
+          console.log("UPDATED_LASTHIS", updatedLastHis)
+      }
+      return new Promise(resolve => resolve())
+    })
+  }
+
+  promise
+  .then(() => callback(null, null))
+  .catch(err => callback(err, null))
+}
+
 module.exports = [
   {
     name: 'services.closeContacts.index',
@@ -111,6 +310,9 @@ module.exports = [
   {
     name: 'services.closeContacts.delete',
     method: softDelete
-  }
-];
-
+  },
+  {
+    name: 'services.closeContacts.syncCase',
+    method: syncCase
+  },
+]

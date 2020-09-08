@@ -1,3 +1,7 @@
+/*
+ * Deprecated API, Todo Delete
+ * closecontact is a case criteria not a singular feature
+ */
 const inputValidations = require('./validations/input')
 
 module.exports = (server) =>{
@@ -77,5 +81,15 @@ module.exports = (server) =>{
             },
             handler: handlers.DeleteCloseContact
         },
+        {
+          method: 'PATCH',
+          path: '/close-contacts/sync-case',
+          config: {
+              auth: 'jwt',
+              description: 'temporary func: case sync',
+              tags: ['api', 'close_contacts']
+          },
+          handler: handlers.SyncCase
+      },
     ]
 }

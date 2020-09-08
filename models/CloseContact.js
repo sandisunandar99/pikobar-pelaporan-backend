@@ -82,6 +82,7 @@ const CloseContactSchema = new mongoose.Schema({
     delete_status: { type: String, default: null },
     deletedAt: { type: Date, default: null },
     deletedBy: REF_USER,
+    is_migrated: { type: Boolean, default: false },
 }, { timestamps : true });
 
 

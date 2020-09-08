@@ -3,10 +3,10 @@ const replyHelper = require('../helpers')
 
 module.exports = (server) => {
     function constructCloseContactResponse(closeContact) {
-        let closeContactResponse = { 
+        let closeContactResponse = {
           status : 200,
           message: true,
-          data : closeContact 
+          data : closeContact
         }
         return closeContactResponse;
       }
@@ -35,7 +35,7 @@ module.exports = (server) => {
          */
         async ListCloseContactCase(request, reply){
             server.methods.services.closeContacts.getByCase(
-                request.params.caseId, 
+                request.params.caseId,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -61,7 +61,7 @@ module.exports = (server) => {
                         request.payload.latest_history,
                         (err, resultChild) => {
                             if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                            
+
                             const res = Object.assign(result, { latest_history: resultChild })
                             return reply(
                                 constructCloseContactResponse(res,request)
@@ -111,7 +111,7 @@ module.exports = (server) => {
                             requestHistory,
                             (err, resultChild) => {
                                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                                
+
                                 const res = Object.assign(result, { latest_history: resultChild })
                                 return reply(
                                     constructCloseContactResponse(res,request)
@@ -125,7 +125,7 @@ module.exports = (server) => {
          * @param {*} request
          * @param {*} reply
          */
-        async DeleteCloseContact(request, reply) {          
+        async DeleteCloseContact(request, reply) {
             server.methods.services.closeContacts.delete(
                 request.params.closeContactId,
                 request.auth.credentials.user,
@@ -135,6 +135,20 @@ module.exports = (server) => {
                         constructCloseContactResponse(result,request)
                     ).code(200)
                 })
-        }
+        },
+        /**
+         * PATCH /api/sync-case
+         * @param {*} request
+         * @param {*} reply
+         */
+        async SyncCase(request, reply) {
+          server.methods.services.closeContacts.syncCase(
+              (err, result) => {
+                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                  return reply(
+                      constructCloseContactResponse(result,request)
+                  ).code(200)
+              })
+      },
     }
 }
