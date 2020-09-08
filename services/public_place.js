@@ -1,15 +1,22 @@
 const PublicPlace = require('../models/History')
 const ObjectId = require('mongodb').ObjectID
 
-const createPublicPlace = async (payload, id_case, callback) => {
-  payload.case = id_case
-  payload.status = 'null'
-  payload.final_result = 'null'
-  payload.current_location_type = 'OTHERS'
-  payload.has_visited_public_place = true
+const createPublicPlace = async (payload, id_history, callback) => {
   try {
-    const result = await PublicPlace.create(payload)
-    callback(null, result)
+    const inserted = await PublicPlace.update(
+      { "_id": ObjectId(id_history) },
+      { $set: { 'has_visited_public_place': true },
+        $addToSet: {
+          "visited_public_place": {
+            "public_place_category": payload.public_place_category,
+            "public_place_name": payload.public_place_name,
+            "public_place_address": payload.public_place_address,
+            "public_place_date_visited": payload.public_place_date_visited,
+            "public_place_duration_visited": payload.public_place_duration_visited
+          }
+        }
+      }, { $new: true })
+    callback(null, inserted)
   } catch (error) {
     callback(error, null)
   }
@@ -33,12 +40,12 @@ const updatePublicPlace = async (id_public_place, payload, callback) => {
         "visited_public_place._id": ObjectId(id_public_place)
       },
       {
-        '$set': {
-        'visited_public_place.$.public_place_category': payload.public_place_category,
-        'visited_public_place.$.public_place_name': payload.public_place_name,
-        'visited_public_place.$.public_place_address': payload.public_place_address,
-        'visited_public_place.$.public_place_date_visited': payload.public_place_date_visited,
-        'visited_public_place.$.public_place_duration_visited': payload.public_place_duration_visited
+        "$set": {
+        "visited_public_place.$.public_place_category": payload.public_place_category,
+        "visited_public_place.$.public_place_name": payload.public_place_name,
+        "visited_public_place.$.public_place_address": payload.public_place_address,
+        "visited_public_place.$.public_place_date_visited": payload.public_place_date_visited,
+        "visited_public_place.$.public_place_duration_visited": payload.public_place_duration_visited
       }}, { $new : true })
     callback(null, updated)
   } catch (error) {

@@ -8,47 +8,47 @@ module.exports = (server) => {
   return [
     {
       method: 'POST',
-      path: '/history-travel/{id_history}',
+      path: '/local-transmission/{id_history}',
       config: {
         auth: 'jwt',
-        description: 'create history-travel',
-        tags: ['api', 'history-travel'],
+        description: 'create local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleCreate ]
       },
-      handler: handlers.createHistoryTravel
+      handler: handlers.createLocalTransmission
     },
     {
       method: 'GET',
-      path: '/history-travel/{id_history}',
+      path: '/local-transmission/{id_history}',
       config: {
         auth: 'jwt',
-        description: 'show list history-travel',
-        tags: ['api', 'history-travel'],
+        description: 'show list local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getHistoryTravel
+      handler:  handlers.getLocalTransmission
     },
     {
       method: 'PUT',
-      path: '/history-travel/{id_history_travel}',
+      path: '/local-transmission/{id_local_transmission}',
       config: {
         auth: 'jwt',
-        description: 'update history-travel',
-        tags: ['api', 'history-travel'],
+        description: 'update local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleUpdate ],
       },
-      handler:  handlers.updateHistoryTravel
+      handler:  handlers.updateLocalTransmission
     },
     {
       method: 'DELETE',
-      path: '/history-travel/{id_history}/{id_history_travel}',
+      path: '/local-transmission/{id_history}/{id_local_transmission}',
       config: {
         auth: 'jwt',
-        description: 'delete history-travel',
-        tags: ['api', 'history-travel'],
+        description: 'delete local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleDelete ],
       },
-      handler: handlers.deleteHistoryTravel
+      handler: handlers.deleteLocalTransmission
     }
   ]
 }

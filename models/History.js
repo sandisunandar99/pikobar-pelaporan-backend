@@ -78,10 +78,10 @@ const HistorySchema = new mongoose.Schema({
       travelling_date: { type : Date, default: '' },
       travelling_arrive: { type : Date, default: '' }
     }],
-    visited_local_area_before_sick_14_days: {type: Boolean, default: false},
+    visited_local_area_before_sick_14_days: { type: Boolean, default: false },
     visited_local_area: [{
-        visited_local_area_province: String,
-        visited_local_area_city: String,
+      visited_local_area_province: { type: String, default: null },
+      visited_local_area_city: { type: String, default: null },
     }],
     //faktor riwayat perjalanan
     //faktor kontak paparan

@@ -18,7 +18,7 @@ module.exports = (server) => {
     async createHistoryTravel(request, reply) {
       server.methods.services.history_travel.create(
         request.payload,
-        request.params.id_case,
+        request.params.id_history,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
           return reply(
