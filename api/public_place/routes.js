@@ -8,7 +8,7 @@ module.exports = (server) => {
   return [
     {
       method: 'POST',
-      path: '/public-place/{id_case}',
+      path: '/public-place/{id_history}',
       config: {
         auth: 'jwt',
         description: 'create public-place',

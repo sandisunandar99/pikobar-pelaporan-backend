@@ -1,13 +1,22 @@
 const Travel = require('../models/History')
 const ObjectId = require('mongodb').ObjectID
 
-const createTravel = async (payload, id_case, callback) => {
-  payload.case = id_case
-  payload.status = 'null'
-  payload.final_result = 'null'
-  payload.current_location_type = 'OTHERS'
-  payload.travelling_history_before_sick_14_days = true
+const createTravel = async (payload, id_history, callback) => {
   try {
+    const inserted = await Travel.update(
+      { "_id": ObjectId(id_history) },
+      { $set: { 'travelling_history_before_sick_14_days': true },
+        $addToSet: {
+          'travelling_history': {
+            "travelling_type": payload.travelling_type,
+            "travelling_visited": payload.travelling_visited,
+            "travelling_city": payload.travelling_city,
+            "travelling_date": payload.travelling_date,
+            "travelling_arrive": payload.travelling_arrive
+          }
+        }
+      }, { $new: true })
+    callback(null, inserted)
     const result = await Travel.create(payload)
     callback(null, result)
   } catch (error) {
@@ -32,13 +41,12 @@ const updateTravel = async (id_history_travel, payload, callback) => {
       {
         "travelling_history._id": ObjectId(id_history_travel)
       },
-      {
-        '$set': {
-        'travelling_history.$.travelling_type': payload.travelling_type,
-        'travelling_history.$.travelling_visited': payload.travelling_visited,
-        'travelling_history.$.travelling_city': payload.travelling_city,
-        'travelling_history.$.travelling_date': payload.travelling_date,
-        'travelling_history.$.travelling_arrive': payload.travelling_arrive
+      { "$set": {
+        "travelling_history.$.travelling_type": payload.travelling_type,
+        "travelling_history.$.travelling_visited": payload.travelling_visited,
+        "travelling_history.$.travelling_city": payload.travelling_city,
+        "travelling_history.$.travelling_date": payload.travelling_date,
+        "travelling_history.$.travelling_arrive": payload.travelling_arrive
       }}, { $new : true })
     callback(null, updated)
   } catch (error) {
