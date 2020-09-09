@@ -15,10 +15,8 @@ const createTravel = async (payload, id_history, callback) => {
             "travelling_arrive": payload.travelling_arrive
           }
         }
-      }, { $new: true })
+      }, { new: true })
     callback(null, inserted)
-    const result = await Travel.create(payload)
-    callback(null, result)
   } catch (error) {
     callback(error, null)
   }
@@ -47,7 +45,7 @@ const updateTravel = async (id_history_travel, payload, callback) => {
         "travelling_history.$.travelling_city": payload.travelling_city,
         "travelling_history.$.travelling_date": payload.travelling_date,
         "travelling_history.$.travelling_arrive": payload.travelling_arrive
-      }}, { $new : true })
+      }}, { new : true })
     callback(null, updated)
   } catch (error) {
     callback(error, null)

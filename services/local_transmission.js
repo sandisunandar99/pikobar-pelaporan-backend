@@ -12,7 +12,7 @@ const createLocalTransmission = async (payload, id_history, callback) => {
             "visited_local_area_city": payload.visited_local_area_city
           }
         }
-      }, { $new: true })
+      }, { new: true })
     callback(null, inserted)
   } catch (error) {
     callback(error, null)
@@ -40,7 +40,7 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
           "visited_local_area.$.visited_local_area_province": payload.visited_local_area_province,
           "visited_local_area.$.visited_local_area_city": payload.visited_local_area_city
         }
-      }, { $new: true })
+      }, { new: true })
     callback(null, updated)
   } catch (error) {
     callback(error, null)

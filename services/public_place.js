@@ -15,7 +15,7 @@ const createPublicPlace = async (payload, id_history, callback) => {
             "public_place_duration_visited": payload.public_place_duration_visited
           }
         }
-      }, { $new: true })
+      }, { new: true })
     callback(null, inserted)
   } catch (error) {
     callback(error, null)
@@ -46,7 +46,7 @@ const updatePublicPlace = async (id_public_place, payload, callback) => {
         "visited_public_place.$.public_place_address": payload.public_place_address,
         "visited_public_place.$.public_place_date_visited": payload.public_place_date_visited,
         "visited_public_place.$.public_place_duration_visited": payload.public_place_duration_visited
-      }}, { $new : true })
+      }}, { new : true })
     callback(null, updated)
   } catch (error) {
     callback(error, null)
