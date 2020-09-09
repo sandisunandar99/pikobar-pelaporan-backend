@@ -6,7 +6,7 @@ const formattedDate = (d) => {
 
 let inspects = {}
 const groupByType = (data) => {
-  const records = data.last_history.inspection_support || []
+  const records = data.inspection_support || []
 
   records.forEach(x => {
     const type = x.specimens_type
