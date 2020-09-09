@@ -8,7 +8,7 @@ module.exports = (server) => {
   return [
     {
       method: 'POST',
-      path: '/local-transmission/{id_history}',
+      path: '/local-transmission/{id_case}',
       config: {
         auth: 'jwt',
         description: 'create local-transmission',
@@ -19,7 +19,7 @@ module.exports = (server) => {
     },
     {
       method: 'GET',
-      path: '/local-transmission/{id_history}',
+      path: '/local-transmission/{id_case}',
       config: {
         auth: 'jwt',
         description: 'show list local-transmission',
@@ -41,7 +41,7 @@ module.exports = (server) => {
     },
     {
       method: 'DELETE',
-      path: '/local-transmission/{id_history}/{id_local_transmission}',
+      path: '/local-transmission/{id_case}/{id_local_transmission}',
       config: {
         auth: 'jwt',
         description: 'delete local-transmission',

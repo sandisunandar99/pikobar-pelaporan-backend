@@ -1,10 +1,10 @@
-const LocalTransmission = require('../models/History')
+const LocalTransmission = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 
-const createLocalTransmission = async (payload, id_history, callback) => {
+const createLocalTransmission = async (payload, id_case, callback) => {
   try {
     const inserted = await LocalTransmission.update(
-      { "_id": ObjectId(id_history) },
+      { "_id": ObjectId(id_case) },
       { $set: { 'visited_local_area_before_sick_14_days': true },
         $addToSet: {
           'visited_local_area': {
@@ -19,9 +19,9 @@ const createLocalTransmission = async (payload, id_history, callback) => {
   }
 }
 
-const listLocalTransmission = async (id_history, callback) => {
+const listLocalTransmission = async (id_case, callback) => {
   try {
-    const result = await LocalTransmission.find({ _id: id_history })
+    const result = await LocalTransmission.find({ _id: id_case })
       .select(["visited_local_area"])
       .sort({ updatedAt: -1 })
     callback(null, result)
@@ -47,9 +47,9 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
   }
 }
 
-const deleteLocalTransmission = async (id_history, id_local_transmission, callback) => {
+const deleteLocalTransmission = async (id_case, id_local_transmission, callback) => {
   try {
-    const result = await LocalTransmission.findOneAndUpdate({ _id: id_history },
+    const result = await LocalTransmission.findOneAndUpdate({ _id: id_case },
       { $pull: { visited_local_area: { _id: ObjectId(id_local_transmission) } } }
     )
     callback(null, result)

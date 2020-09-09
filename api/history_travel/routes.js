@@ -8,7 +8,7 @@ module.exports = (server) => {
   return [
     {
       method: 'POST',
-      path: '/history-travel/{id_history}',
+      path: '/history-travel/{id_case}',
       config: {
         auth: 'jwt',
         description: 'create history-travel',
@@ -19,7 +19,7 @@ module.exports = (server) => {
     },
     {
       method: 'GET',
-      path: '/history-travel/{id_history}',
+      path: '/history-travel/{id_case}',
       config: {
         auth: 'jwt',
         description: 'show list history-travel',
@@ -41,7 +41,7 @@ module.exports = (server) => {
     },
     {
       method: 'DELETE',
-      path: '/history-travel/{id_history}/{id_history_travel}',
+      path: '/history-travel/{id_case}/{id_history_travel}',
       config: {
         auth: 'jwt',
         description: 'delete history-travel',

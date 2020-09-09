@@ -8,7 +8,7 @@ module.exports = (server) => {
   return [
     {
       method: 'POST',
-      path: '/public-place/{id_history}',
+      path: '/public-place/{id_case}',
       config: {
         auth: 'jwt',
         description: 'create public-place',
@@ -19,7 +19,7 @@ module.exports = (server) => {
     },
     {
       method: 'GET',
-      path: '/public-place/{id_history}',
+      path: '/public-place/{id_case}',
       config: {
         auth: 'jwt',
         description: 'show list public-place',
@@ -41,7 +41,7 @@ module.exports = (server) => {
     },
     {
       method: 'DELETE',
-      path: '/public-place/{id_history}/{id_public_place}',
+      path: '/public-place/{id_case}/{id_public_place}',
       config: {
         auth: 'jwt',
         description: 'delete public-place',

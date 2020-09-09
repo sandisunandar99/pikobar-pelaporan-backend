@@ -1,10 +1,10 @@
-const Travel = require('../models/History')
+const Travel = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 
-const createTravel = async (payload, id_history, callback) => {
+const createTravel = async (payload, id_case, callback) => {
   try {
     const inserted = await Travel.update(
-      { "_id": ObjectId(id_history) },
+      { "_id": ObjectId(id_case) },
       { $set: { 'travelling_history_before_sick_14_days': true },
         $addToSet: {
           'travelling_history': {
@@ -22,9 +22,9 @@ const createTravel = async (payload, id_history, callback) => {
   }
 }
 
-const listTravel = async (id_history, callback) => {
+const listTravel = async (id_case, callback) => {
   try {
-    const result = await Travel.find({_id: id_history})
+    const result = await Travel.find({_id: id_case})
     .select(["travelling_history"])
     .sort({ updatedAt:-1 })
     callback(null, result)
@@ -52,9 +52,9 @@ const updateTravel = async (id_history_travel, payload, callback) => {
   }
 }
 
-const deleteTravel = async (id_history, id_history_travel, callback) => {
+const deleteTravel = async (id_case, id_history_travel, callback) => {
   try {
-    const result = await Travel.findOneAndUpdate({_id : id_history},
+    const result = await Travel.findOneAndUpdate({_id : id_case},
       { $pull: { travelling_history: { _id: ObjectId(id_history_travel) }}}
     )
     callback(null, result)
