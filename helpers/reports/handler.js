@@ -78,7 +78,7 @@ const aggCaseDailyReport = (user, query, searching, dates) => {
         ], dates),
         ...sum('confirmedTravel', [
             { $eq: ['$status', CRITERIA.CONF] },
-            { $eq: ["$lastHis.travelling_history_before_sick_14_days", true] }
+            { $eq: ["$travelling_history_before_sick_14_days", true] }
         ], dates),
         ...sum('confirmedContact', [
           { $eq: ['$status', CRITERIA.CONF] },
@@ -87,7 +87,7 @@ const aggCaseDailyReport = (user, query, searching, dates) => {
         ...sum('confirmedNoTravel', [
             { $eq: ['$status', CRITERIA.CONF] },
             { $or: [
-                { $eq: ["$lastHis.travelling_history_before_sick_14_days", false] },
+                { $eq: ["$travelling_history_before_sick_14_days", false] },
                 { $ne: ["$prevHis.status", CRITERIA.CLOSE] }
               ]
             }
