@@ -18,7 +18,7 @@ module.exports = (server) => {
     async createPublicPlace(request, reply) {
       server.methods.services.public_place.create(
         request.payload,
-        request.params.id_history,
+        request.params.id_case,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
           return reply(
@@ -29,7 +29,7 @@ module.exports = (server) => {
     },
     async getPublicPlace(request, reply) {
       server.methods.services.public_place.read(
-        request.params.id_history,
+        request.params.id_case,
         (err, result) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
           return reply(
@@ -52,7 +52,7 @@ module.exports = (server) => {
     },
     async deletePublicPlace(request, reply) {
       server.methods.services.public_place.delete(
-        request.params.id_history,
+        request.params.id_case,
         request.params.id_public_place,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

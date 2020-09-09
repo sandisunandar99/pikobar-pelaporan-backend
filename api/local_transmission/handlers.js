@@ -18,7 +18,7 @@ module.exports = (server) => {
     async createLocalTransmission(request, reply) {
       server.methods.services.local_transmission.create(
         request.payload,
-        request.params.id_history,
+        request.params.id_case,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
           return reply(
@@ -29,7 +29,7 @@ module.exports = (server) => {
     },
     async getLocalTransmission(request, reply) {
       server.methods.services.local_transmission.read(
-        request.params.id_history,
+        request.params.id_case,
         (err, result) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
           return reply(
@@ -52,7 +52,7 @@ module.exports = (server) => {
     },
     async deleteLocalTransmission(request, reply) {
       server.methods.services.local_transmission.delete(
-        request.params.id_history,
+        request.params.id_case,
         request.params.id_local_transmission,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
