@@ -96,7 +96,8 @@ async function softDelete (id, authorized, callback) {
 const syncCase = async (callback) => {
   const result = await CloseContact.find({
     delete_status: { $ne: "deleted" },
-    is_migrated: { $exists: false },
+    is_reported: true,
+    is_migrated: { $ne: true }
   }).populate(['case', 'latest_history'])
 
   let promise = Promise.resolve()
@@ -111,7 +112,6 @@ const syncCase = async (callback) => {
         })
       }
 
-
       if (!foundedCase && res.address_district_code && res.is_reported) {
 
           const code = res.address_district_code
@@ -122,7 +122,7 @@ const syncCase = async (callback) => {
             count_case: {
               prov_city_code: code,
               dinkes_code: dinkes.dinkes_kota_kode,
-              count_pasien: (Number(districtCases.id_case.substring(12)) + 1)
+              count_pasien: districtCases ? (Number(districtCases.id_case.substring(12)) + 1) : 1
             },
             count_case_pending: {}
           }
@@ -253,6 +253,9 @@ const syncCase = async (callback) => {
             current_location_district_code: res.address_district_code,
             status: CRITERIA.CLOSE,
             input_source: 'sync-from-closecontact',
+            is_reported: true,
+            origin_closecontact: true,
+            // parents: [],
           }
 
           const newCase = new Case({
@@ -272,10 +275,20 @@ const syncCase = async (callback) => {
           const insertedHistory = await newHistory.save(res)
           console.log("INSERTED_HIS", insertedHistory)
 
-          const updatedLastHis = await Case.findOneAndUpdate({ _id: insertedCase._id }, {
-            last_history: insertedHistory._id
-          }, { upsert: true })
+          const updatedLastHis = await Case.findOneAndUpdate({ _id: insertedCase._id },
+            { $set: { last_history: insertedHistory._id } }, { upsert: true, new: true })
           console.log("UPDATED_LASTHIS", updatedLastHis)
+
+          // update flag is_migrated true
+          console.log("inserted", insertedCase)
+          const isMigrated = await CloseContact.findOneAndUpdate(
+            { _id: res._id },
+            { $set: {
+                is_migrated: true,
+                caseCreated: insertedCase._id
+              }
+            }, { upsert: true, new: true })
+          console.log("isMigrated", isMigrated)
       }
       return new Promise(resolve => resolve())
     })

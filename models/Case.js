@@ -114,6 +114,8 @@ const CaseSchema = new mongoose.Schema({
     assignment_place : {type:String, default:null}, //tempat tugas bisa diisi unit kerja
     close_contact_origin: { type: Boolean, default: false },
     close_contact_reported: { type: Boolean, default: false },
+    is_reported: { type: Boolean, default: true },
+    origin_closecontact: { type: Boolean, default: false },
 },{ timestamps:true, usePushEach: true })
 
 CaseSchema.index({author: 1});
