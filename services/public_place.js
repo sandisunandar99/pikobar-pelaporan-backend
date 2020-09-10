@@ -51,12 +51,14 @@ const updatePublicPlace = async (id_public_place, payload, callback) => {
   }
 }
 
-const deletePublicPlace = async (id_case, id_public_place, callback) => {
+const deletePublicPlace = async (id_public_place, callback) => {
   try {
-    const result = await PublicPlace.findOneAndUpdate({_id : id_case},
-      { $pull: { visited_public_place: { _id: ObjectId(id_public_place) }}}
-    )
-    callback(null, result)
+    const deleted = await PublicPlace.update(
+    {
+      "visited_public_place._id": ObjectId(id_public_place)
+    },
+    { $pull: { visited_public_place: { _id: ObjectId(id_public_place) } } })
+    callback(null, deleted)
   } catch (error) {
     callback(error, null)
   }

@@ -41,7 +41,7 @@ module.exports = (server) => {
     },
     {
       method: 'DELETE',
-      path: '/local-transmission/{id_case}/{id_local_transmission}',
+      path: '/local-transmission/{id_local_transmission}',
       config: {
         auth: 'jwt',
         description: 'delete local-transmission',

@@ -52,7 +52,6 @@ module.exports = (server) => {
     },
     async deleteHistoryTravel(request, reply) {
       server.methods.services.history_travel.delete(
-        request.params.id_case,
         request.params.id_history_travel,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

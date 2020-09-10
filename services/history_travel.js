@@ -52,12 +52,14 @@ const updateTravel = async (id_history_travel, payload, callback) => {
   }
 }
 
-const deleteTravel = async (id_case, id_history_travel, callback) => {
+const deleteTravel = async (id_history_travel, callback) => {
   try {
-    const result = await Travel.findOneAndUpdate({_id : id_case},
-      { $pull: { travelling_history: { _id: ObjectId(id_history_travel) }}}
-    )
-    callback(null, result)
+    const deleted  = await Travel.update(
+    {
+      "travelling_history._id": ObjectId(id_history_travel)
+    },
+    { $pull: { travelling_history: { _id: ObjectId(id_history_travel) } } })
+    callback(null, deleted)
   } catch (error) {
     callback(error, null)
   }
