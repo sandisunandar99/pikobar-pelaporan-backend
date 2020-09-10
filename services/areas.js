@@ -8,8 +8,6 @@ const Province = require('../models/Province')
 const getDistrictCity = async (request, callback) => {
   let params = new Object();
 
-  params.kemendagri_provinsi_kode = "32";
-
   if (request.kota_kode) {
     params.kemendagri_kabupaten_kode = request.kota_kode;
   }
@@ -17,6 +15,17 @@ const getDistrictCity = async (request, callback) => {
   if (request.provice_code) {
     params.kemendagri_provinsi_kode = request.provice_code
   }
+
+  if (!request.status) {
+    params.kemendagri_provinsi_kode = '32'
+  }
+
+  if (request.kemendagri_provinsi_nama) {
+    params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
+  }
+
+
+  console.log(params)
 
   try {
     const res = await Districtcity.find(params).sort({ kemendagri_kabupaten_nama: 'asc' })
