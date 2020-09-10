@@ -47,12 +47,14 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
   }
 }
 
-const deleteLocalTransmission = async (id_case, id_local_transmission, callback) => {
+const deleteLocalTransmission = async (id_local_transmission, callback) => {
   try {
-    const result = await LocalTransmission.findOneAndUpdate({ _id: id_case },
-      { $pull: { visited_local_area: { _id: ObjectId(id_local_transmission) } } }
-    )
-    callback(null, result)
+    const deleted = await LocalTransmission.update(
+    {
+      "visited_local_area._id": ObjectId(id_local_transmission)
+    },
+    { $pull: { visited_local_area: { _id: ObjectId(id_local_transmission) } } })
+    callback(null, deleted)
   } catch (error) {
     callback(error, null)
   }

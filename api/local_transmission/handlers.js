@@ -52,7 +52,6 @@ module.exports = (server) => {
     },
     async deleteLocalTransmission(request, reply) {
       server.methods.services.local_transmission.delete(
-        request.params.id_case,
         request.params.id_local_transmission,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

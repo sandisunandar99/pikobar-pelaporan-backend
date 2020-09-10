@@ -41,7 +41,7 @@ module.exports = (server) => {
     },
     {
       method: 'DELETE',
-      path: '/history-travel/{id_case}/{id_history_travel}',
+      path: '/history-travel/{id_history_travel}',
       config: {
         auth: 'jwt',
         description: 'delete history-travel',

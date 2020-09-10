@@ -41,7 +41,7 @@ module.exports = (server) => {
     },
     {
       method: 'DELETE',
-      path: '/public-place/{id_case}/{id_public_place}',
+      path: '/public-place/{id_public_place}',
       config: {
         auth: 'jwt',
         description: 'delete public-place',

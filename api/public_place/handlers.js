@@ -52,7 +52,6 @@ module.exports = (server) => {
     },
     async deletePublicPlace(request, reply) {
       server.methods.services.public_place.delete(
-        request.params.id_case,
         request.params.id_public_place,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
