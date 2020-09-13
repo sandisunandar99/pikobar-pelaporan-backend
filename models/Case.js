@@ -149,7 +149,10 @@ const CaseSchema = new mongoose.Schema({
   visited_local_area: [{
     visited_local_area_province: { type: String, default: null },
     visited_local_area_city: { type: String, default: null },
-  }]
+  }],
+  parents: { type: Array, default: [] },
+  is_reported: { type: Boolean, default: true },
+  origin_closecontact: { type: Boolean, default: false },
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });
