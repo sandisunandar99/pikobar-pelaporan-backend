@@ -255,6 +255,7 @@ const syncCase = async (callback) => {
             input_source: 'sync-from-closecontact',
             is_reported: true,
             origin_closecontact: true,
+            author: res.createdBy,
             // parents: [],
           }
 
