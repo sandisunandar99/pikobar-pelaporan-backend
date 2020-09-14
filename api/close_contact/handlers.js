@@ -160,6 +160,7 @@ module.exports = (server) => {
       async CreateCloseContactV2(request, reply){
           server.methods.services.closeContacts.v2.create(
               request.params.caseId,
+              request.pre,
               request.auth.credentials.user,
               request.payload,
               (err, result) => {

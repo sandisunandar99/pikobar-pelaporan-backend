@@ -7,13 +7,27 @@ const DistrictCity = require('../models/DistrictCity')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 
 // scope helper
-const appendParent = async (req, caseId) => {
+const appendParent = async (req, cases) => {
   const rules = req.nik
     ? { nik: req.nik }
     : { phone_number: req.phone_number }
 
   return await Case.findOneAndUpdate(rules, {
-    $addToSet: { parents: caseId }
+    $addToSet: { close_contact_premier: {
+      is_west_java: true,
+      close_contact_id_case: cases.id_case,
+      close_contact_criteria: cases.status,
+      close_contact_name: cases.name,
+      close_contact_phone: cases.phone_number,
+      close_contact_birth_date: cases.birth_date,
+      close_contact_age: cases.age,
+      close_contact_gender: cases.gender,
+      close_contact_address_street: cases.address_street,
+      close_contact_relation: cases.relationship,
+      close_contact_activity: cases.activity_other,
+      close_contact_first_date: new Date(),
+      close_contact_last_date: new Date(),
+    } }
   })
 }
 
@@ -43,7 +57,11 @@ async function getByCase (caseId, callback) {
   try {
     const results = await Case.find({
       status: CRITERIA.CLOSE,
-      parents: { $elemMatch: { $eq: new  ObjectId(caseId) } },
+      close_contact_premier: {
+        $elemMatch: {
+          close_contact_id_case: caseId
+        }
+      },
       delete_status: { $ne: 'deleted' }
     }).populate(['author'])
 
@@ -54,7 +72,8 @@ async function getByCase (caseId, callback) {
 }
 
 // annoying multiple closecontacts report based on ui
-const create = async (caseId, author, payload, callback) => {
+const create = async (caseId, pre, author, payload, callback) => {
+  const cases = pre.cases
   const insertedIds = []
 
   /**
@@ -70,7 +89,7 @@ const create = async (caseId, author, payload, callback) => {
     promise = promise.then(async () => {
       let foundedCase = null
       if (req.nik || req.phone_number) {
-        foundedCase = await appendParent(req, caseId)
+        foundedCase = await appendParent(req, cases)
       }
 
       if (!foundedCase) {
@@ -85,7 +104,23 @@ const create = async (caseId, author, payload, callback) => {
             final_result: '5',
             is_reported: false,
             verified_status: 'verified',
+            status: CRITERIA.CLOSE,
             origin_closecontact: true,
+            close_contact_premier: {
+              is_west_java: true,
+              close_contact_id_case: cases.id_case,
+              close_contact_criteria: cases.status,
+              close_contact_name: cases.name,
+              close_contact_phone: cases.phone_number,
+              close_contact_birth_date: cases.birth_date,
+              close_contact_age: cases.age,
+              close_contact_gender: cases.gender,
+              close_contact_address_street: cases.address_street,
+              close_contact_relation: cases.relationship,
+              close_contact_activity: cases.activity_other,
+              close_contact_first_date: new Date(),
+              close_contact_last_date: new Date(),
+            },
             ...req,
           })
 
