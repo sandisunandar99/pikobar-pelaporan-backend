@@ -77,5 +77,40 @@ module.exports = (server) =>{
             },
             handler: handlers.DeleteCloseContact
         },
+        // v2
+        {
+          method: 'GET',
+          path: '/cases/{caseId}/close-contacts-v2',
+          config: {
+              auth: 'jwt',
+              description: 'show list of all close-contacts per-case',
+              tags: ['api', 'close_contacts']
+          },
+          handler: handlers.ListCloseContactCaseV2
+      },
+      {
+          method: 'POST',
+          path: '/cases/{caseId}/close-contacts-v2',
+          config: {
+              auth: 'jwt',
+              description: 'create new close contacts',
+              tags: ['api', 'close_contacts'],
+              // validate: inputValidations.RequestPayload,
+              pre: [ getCaseById, /*districtInputScope*/ ]
+          },
+          handler: handlers.CreateCloseContactV2
+      },
+      {
+        method: 'PUT',
+        path: '/cases/{caseId}/close-contacts-v2',
+        config: {
+            auth: 'jwt',
+            description: 'update close contacts',
+            tags: ['api', 'close_contacts'],
+            // validate: inputValidations.RequestPayload,
+            pre: [ getCaseById, /*districtInputScope*/ ]
+        },
+        handler: handlers.updateCloseContactV2
+      },
     ]
 }
