@@ -23,7 +23,7 @@ const transformedFields = {
     pcrSwab: { $toBool: {
       $arrayElemAt: [{
         $filter: {
-          input: "$lastHis.inspection_support",
+          input: "$inspection_support",
           as: "item",
           cond: { $in: [ "$$item.specimens_type", ["Swab Nasofaring", "Swab Orofaring", "Swab Naso - Orofaring" ] ] }
         }
@@ -32,7 +32,7 @@ const transformedFields = {
     rapidTest: { $toBool: {
       $arrayElemAt: [{
         $filter: {
-          input: "$lastHis.inspection_support",
+          input: "$inspection_support",
           as: "item",
           cond: { $eq: [ "$$item.inspection_type", "other_checks" ] }
         }
@@ -41,7 +41,7 @@ const transformedFields = {
     rapidTestReactive: { $toBool: {
       $arrayElemAt: [{
         $filter: {
-          input: "$lastHis.inspection_support",
+          input: "$inspection_support",
           as: "item",
           cond: { $and:[
             { $eq: [ "$$item.inspection_type", "other_checks" ] },
@@ -54,7 +54,7 @@ const transformedFields = {
     pcr: { $toBool: {
         $arrayElemAt: [{
           $filter: {
-            input: "$lastHis.inspection_support",
+            input: "$inspection_support",
             as: "item",
             cond: { $eq: [ "$$item.inspection_type", "lab_confirm" ] }
           }
@@ -63,7 +63,7 @@ const transformedFields = {
     pcrPositive: { $toBool: {
       $arrayElemAt: [{
         $filter: {
-            input: "$lastHis.inspection_support",
+            input: "$inspection_support",
             as: "item",
             cond: { $and:[
                 { $eq: [ "$$item.inspection_type", "lab_confirm" ] },

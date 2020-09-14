@@ -8,47 +8,47 @@ module.exports = (server) => {
   return [
     {
       method: 'POST',
-      path: '/public-place/{id_case}',
+      path: '/local-transmission/{id_case}',
       config: {
         auth: 'jwt',
-        description: 'create public-place',
-        tags: ['api', 'public-place'],
+        description: 'create local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleCreate ]
       },
-      handler: handlers.createPublicPlace
+      handler: handlers.createLocalTransmission
     },
     {
       method: 'GET',
-      path: '/public-place/{id_case}',
+      path: '/local-transmission/{id_case}',
       config: {
         auth: 'jwt',
-        description: 'show list public-place',
-        tags: ['api', 'public-place'],
+        description: 'show list local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getPublicPlace
+      handler:  handlers.getLocalTransmission
     },
     {
       method: 'PUT',
-      path: '/public-place/{id_public_place}',
+      path: '/local-transmission/{id_local_transmission}',
       config: {
         auth: 'jwt',
-        description: 'update public-place',
-        tags: ['api', 'public-place'],
+        description: 'update local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleUpdate ],
       },
-      handler:  handlers.updatePublicPlace
+      handler:  handlers.updateLocalTransmission
     },
     {
       method: 'DELETE',
-      path: '/public-place/{id_public_place}',
+      path: '/local-transmission/{id_local_transmission}',
       config: {
         auth: 'jwt',
-        description: 'delete public-place',
-        tags: ['api', 'public-place'],
+        description: 'delete local-transmission',
+        tags: ['api', 'local-transmission'],
         pre: [ CheckRoleDelete ],
       },
-      handler: handlers.deletePublicPlace
+      handler: handlers.deleteLocalTransmission
     }
   ]
 }

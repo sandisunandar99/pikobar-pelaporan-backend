@@ -30,7 +30,7 @@ const render = (data) => {
 
   const confirmedContact = (criterias) => {
     let res = false
-    let records = data.last_history
+    let records = data
     if (!records) {
       return false
     }
@@ -53,8 +53,8 @@ const render = (data) => {
     let res = []
 
     let records = []
-    if (data.last_history && data.last_history.close_contact_premier) {
-      records = data.last_history.close_contact_premier
+    if (data && data.close_contact_premier) {
+      records = data.close_contact_premier
     }
 
     for (i in records) {

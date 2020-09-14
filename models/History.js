@@ -40,81 +40,6 @@ const HistorySchema = new mongoose.Schema({
     there_are_symptoms :  { type: Boolean, default: false},
     is_other_diagnosisr_respiratory_disease: {type: Boolean, default: false},
     other_diagnosisr_respiratory_disease: String,
-    //takeout from db
-    // serum_check : { type: Boolean, default: null},
-    // sputum_check : { type: Boolean, default: null},
-    // swab_check : { type: Boolean, default: null},
-    //takeout from db
-    //pemeriksaan penunjang
-    physical_check_temperature : {type:Number , default:0},
-    physical_check_blood_pressure : {type:Number , default:0},
-    physical_check_pulse : {type:Number , default:0},
-    physical_check_respiration : {type:Number , default:0},
-    physical_check_height : {type:Number, default:0},
-    physical_check_weight : {type:Number, default:0},
-    inspection_support :[{
-        inspection_type: String,
-        specimens_type: String,
-        inspection_date: Date,
-        inspection_location: String,
-        get_specimens_to: Number,
-        inspection_result: String
-    }],
-    //pemeriksaan penunjang
-    //faktor riwayat perjalanan
-    has_visited_public_place :{type: Boolean, default: false},
-    visited_public_place: [{
-      public_place_category: { type: String, default: null },
-      public_place_name: { type: String, default: null },
-      public_place_address: { type: String, default: null },
-      public_place_date_visited: { type : Date, default: '' },
-      public_place_duration_visited: { type: String, default: null }
-    }],
-    travelling_history_before_sick_14_days: {type: Boolean, default: false},
-    travelling_history: [{
-      travelling_type: { type: String, default: null },
-      travelling_visited: { type: String, default: null },
-      travelling_city: { type: String, default: null },
-      travelling_date: { type : Date, default: '' },
-      travelling_arrive: { type : Date, default: '' }
-    }],
-    visited_local_area_before_sick_14_days: {type: Boolean, default: false},
-    visited_local_area: [{
-        visited_local_area_province: String,
-        visited_local_area_city: String,
-    }],
-    //faktor riwayat perjalanan
-    //faktor kontak paparan
-    close_contacted_before_sick_14_days: { type: Boolean, default: false },
-    close_contact_premier: [{
-      close_contact_name: String,
-      close_contact_criteria: String,
-      //address
-      close_contact_address_street: String,
-      is_close_contact_address_same: { type: Boolean, default: false },
-      close_contact_address_village_code: { type: String },
-      close_contact_address_village_name: { type: String },
-      close_contact_address_subdistrict_code: { type: String },
-      close_contact_address_subdistrict_name: { type: String },
-      close_contact_address_district_code: { type: String },
-      close_contact_address_district_name: { type: String },
-      close_contact_address_province_code: { type: String, default: 32 },
-      close_contact_address_province_name: { type: String, default: "Jawa Barat" },
-      close_contact_rt: { type: Number, default: null },
-      close_contact_rw: { type: Number, default: null },
-      close_contact_relation: String,
-      close_contact_relation_id: String,
-      close_contact_first_date: Date,
-      close_contact_last_date: Date,
-    }],
-    close_contact_heavy_ispa_group: { type: Boolean, default: false },
-    close_contact_have_pets: { type: Boolean, default: false },
-    close_contact_pets: String,
-    close_contact_health_worker: { type: Boolean, default: false },
-    apd_use: { type: Array, default: [] },
-    close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
-    close_contact_performing_aerosol: String,
-    //faktor kontak paparan
 }, { timestamps : true });
 
 HistorySchema.index({case: 1});
@@ -130,7 +55,6 @@ HistorySchema.methods.toJSONFor = function () {
         diseases : this.diseases,
         diseases_other : this.diseases_other,
         last_changed: this.last_changed,
-
         is_went_abroad : this.is_went_abroad,
         visited_country : this.visited_country,
         return_date : this.return_date,
@@ -139,7 +63,6 @@ HistorySchema.methods.toJSONFor = function () {
         is_contact_with_positive : this.is_contact_with_positive,
         history_notes: this.history_notes,
         is_sample_taken : this.is_sample_taken,
-
         report_source : this.report_source,
         first_symptom_date : this.first_symptom_date,
         other_notes: this.other_notes,
@@ -156,79 +79,6 @@ HistorySchema.methods.toJSONFor = function () {
         diagnosis_covid : this.diagnosis_covid,
         diagnosis_pneumonia : this.diagnosis_pneumonia,
         other_diagnosis: this.other_diagnosis,
-        // serum_check : this.serum_check,
-        // sputum_check : this.sputum_check,
-        // swab_check : this.swab_check,
-        physical_check_temperature : this.physical_check_temperature,
-        physical_check_blood_pressure : this.physical_check_blood_pressure,
-        physical_check_pulse : this.physical_check_pulse,
-        physical_check_respiration : this.physical_check_respiration,
-        physical_check_height : this.physical_check_height,
-        physical_check_weight : this.physical_check_height,
-        inspection_support: [{
-            inspection_type: this.inspection_type,
-            specimens_type: this.specimens_type,
-            inspection_date: this.inspection_date ,
-            inspection_location: this.inspection_location,
-            get_specimens_to: this.get_specimens_to,
-            inspection_result: this.inspection_result
-        }],
-        is_other_diagnosisr_respiratory_disease: this.is_other_diagnosisr_respiratory_disease,
-        other_diagnosisr_respiratory_disease: this.other_diagnosisr_respiratory_disease,
-        // mengunjungi tempat public
-        has_visited_public_place: this.has_visited_public_place,
-        visited_public_place: [{
-            public_place_category: this.public_place_category,
-            public_place_name: this.public_place_name,
-            public_place_address: this.public_place_address,
-            public_place_date_visited: this.public_place_date_visited,
-            public_place_duration_visited: this.public_place_duration_visited
-        }],
-        //faktor riwayat perjalanan
-        travelling_history_before_sick_14_days: this.travelling_history_before_sick_14_days ,
-        travelling_history: [{
-            travelling_type:this.travelling_type,
-            travelling_visited:this.travelling_visited,
-            travelling_visited: this.travelling_visited,
-            travelling_date:this.travelling_date,
-            travelling_arrive:this.travelling_arrive
-        }],
-        visited_local_area_before_sick_14_days: this.visited_local_area_before_sick_14_days,
-        visited_local_area: [{
-            visited_local_area_province: this.visited_local_area_province,
-            visited_local_area_city: this.visited_local_area_city,
-        }],
-        //faktor kontak paparan
-        close_contacted_before_sick_14_days: this.close_contacted_before_sick_14_days,
-        close_contact_premier: [{
-          close_contact_name: this.close_contact_name,
-          close_contact_criteria: this.close_contact_criteria,
-          //address
-          close_contact_address_street: this.close_contact_address_street,
-          is_close_contact_address_same: this.is_close_contact_address_same,
-          close_contact_address_village_code:this.close_contact_address_village_code,
-          close_contact_address_village_name:this.close_contact_address_village_name,
-          close_contact_address_subdistrict_code:this.close_contact_address_subdistrict_code,
-          close_contact_address_subdistrict_name:this.close_contact_address_subdistrict_name,
-          close_contact_address_district_code:this.close_contact_address_district_code,
-          close_contact_address_district_name:this.close_contact_address_district_name,
-          close_contact_address_province_code: this.close_contact_address_province_code,
-          close_contact_address_province_name: this.close_contact_address_province_name ,
-          close_contact_rt: this.close_contact_rt,
-          close_contact_rw: this.close_contact_rw,
-          close_contact_relation: this.close_contact_relation,
-          close_contact_relation_id: this.close_contact_relation_id,
-          close_contact_first_date: this.close_contact_first_date,
-          close_contact_last_date: this.close_contact_last_date,
-        }],
-        close_contact_heavy_ispa_group:this.close_contact_heavy_ispa_group,
-        close_contact_have_pets:this.close_contact_have_pets,
-        close_contact_pets: this.close_contact_pets,
-        close_contact_health_worker: this.close_contact_health_worker,
-        apd_use: this.apd_use,
-        close_contact_performing_aerosol_procedures: this.close_contact_performing_aerosol_procedures,
-        close_contact_performing_aerosol: this.close_contact_performing_aerosol,
-
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }

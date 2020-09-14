@@ -5,11 +5,11 @@ const {
 const render = (data) => {
 
   const isTrue = (value) => {
-    return data.last_history[value] ? '√' : '  '
+    return data[value] ? '√' : '  '
   }
 
   const isFalse = (value) => {
-    return !data.last_history[value] ? '√' : '  '
+    return !data[value] ? '√' : '  '
   }
 
   const formattedDate = (d) => {
@@ -19,7 +19,7 @@ const render = (data) => {
   const buildTravelPlaces = (place, type) => {
     let res = []
 
-    const records = data.last_history[place] || []
+    const records = data[place] || []
 
     const exception = type === 'domestic'
       ? 'Dari Luar Negeri'
@@ -50,7 +50,7 @@ const render = (data) => {
   const buildResidences = () => {
     let res = []
 
-    const records = data.last_history.visited_local_area || []
+    const records = data.visited_local_area || []
 
     for (i in records) {
       const rec = records[i]
@@ -71,7 +71,7 @@ const render = (data) => {
 
   const travelType = (type) => {
     let res = false
-    let records = data.last_history
+    let records = data
     if (!records) {
       return false
     }
@@ -96,7 +96,7 @@ const render = (data) => {
 
   const suspectContact = (criterias) => {
     let res = false
-    let records = data.last_history
+    let records = data
     if (!records) {
       return false
     }
@@ -119,8 +119,8 @@ const render = (data) => {
     let res = []
 
     let records = []
-    if (data.last_history && data.last_history.close_contact_premier) {
-      records = data.last_history.close_contact_premier
+    if (data && data.close_contact_premier) {
+      records = data.close_contact_premier
     }
 
     for (i in records) {

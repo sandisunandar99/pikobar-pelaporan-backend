@@ -29,7 +29,7 @@ module.exports = (server) => {
     },
     async getHistoryTravel(request, reply) {
       server.methods.services.history_travel.read(
-        request.params.id_history,
+        request.params.id_case,
         (err, result) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
           return reply(
@@ -52,7 +52,6 @@ module.exports = (server) => {
     },
     async deleteHistoryTravel(request, reply) {
       server.methods.services.history_travel.delete(
-        request.params.id_history,
         request.params.id_history_travel,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)

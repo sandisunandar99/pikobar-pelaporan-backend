@@ -23,7 +23,8 @@ const register = (server, options, next) => {
     require('./reports'),
     require('./inject'),
     require('./history_travel'),
-    require('./public_place')
+    require('./public_place'),
+    require('./local_transmission')
   );
   server.method(services)
   return next()
