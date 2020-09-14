@@ -96,7 +96,6 @@ async function softDelete (id, authorized, callback) {
 const syncCase = async (callback) => {
   const result = await CloseContact.find({
     delete_status: { $ne: "deleted" },
-    is_reported: true,
     is_migrated: { $ne: true }
   }).populate(['case', 'latest_history'])
 
@@ -112,7 +111,25 @@ const syncCase = async (callback) => {
         })
       }
 
-      if (!foundedCase && res.address_district_code && res.is_reported) {
+      if (!res.address_district_code) {
+        await CloseContact.findOneAndUpdate(
+          { _id: res._id },
+          { $set: {
+              migration_note: "INVALID_DISTRICT_CODE"
+            }
+          }, { upsert: true, new: true })
+      }
+
+      if (foundedCase) {
+        await CloseContact.findOneAndUpdate(
+          { _id: res._id },
+          { $set: {
+              is_case_exists: true,
+            }
+          }, { upsert: true, new: true })
+      }
+
+      if (!foundedCase && res.address_district_code) {
 
           const code = res.address_district_code
           const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
@@ -131,7 +148,6 @@ const syncCase = async (callback) => {
           const idCase = Validate.generateIdCase(res.createdBy, pre)
 
           // prepare mapping
-          // console.log(res)
           const lastHis = res.latest_history || {}
 
           // transform inspection support
@@ -196,20 +212,16 @@ const syncCase = async (callback) => {
           const premierContacts = []
           if (res.case) {
             premierContacts.push({
+              close_contact_id_case: res.case.id_case,
               close_contact_name: res.case.name,
+              close_contact_phone: res.case.phone_number,
               close_contact_criteria: res.case.status,
-              close_contact_address_village_code: res.case.address_village_code,
-              close_contact_address_village_name: res.case.address_village_name,
-              close_contact_address_subdistrict_code: res.case.address_subdistrict_code,
-              close_contact_address_subdistrict_name: res.case.address_subdistrict_name,
-              close_contact_address_district_code: res.case.address_district_code,
-              close_contact_address_district_name: res.case.address_district_name,
-              close_contact_address_province_code: '32',
-              close_contact_address_province_name: 'Jawa Barat',
-              close_contact_rt: res.case.rt,
-              close_contact_rw: res.case.rw,
+              close_contact_birth_date: res.case.birth_date,
+              close_contact_age: res.case.age,
+              close_contact_gender: res.case.gender,
               close_contact_address_street: res.case.address_street,
               close_contact_relation: res.relationship,
+              close_contact_activity: res.activity_other,
               close_contact_first_date: res.createdAt,
               close_contact_last_date: res.createdAt,
             })
@@ -256,7 +268,6 @@ const syncCase = async (callback) => {
             is_reported: true,
             origin_closecontact: true,
             author: res.createdBy,
-            // parents: [],
           }
 
           const newCase = new Case({
@@ -320,7 +331,7 @@ module.exports = [
   {
     name: 'services.closeContacts.update',
     method: update
-  },
+  } ,
   {
     name: 'services.closeContacts.delete',
     method: softDelete
