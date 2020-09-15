@@ -11,17 +11,60 @@ const {
 
 async function getByCase (pre, callback) {
   try {
-    const results = await Case.find({
-      status: CRITERIA.CLOSE,
-      close_contact_premier: {
-        $elemMatch: {
-          close_contact_id_case: pre.id_case
-        }
-      },
-      delete_status: { $ne: 'deleted' }
-    }).populate(['author'])
 
-    return callback(null, results.map(res => res.toJSONFor()))
+    const match = {
+      $match: {
+        status: CRITERIA.CLOSE,
+        delete_status: { $ne: 'deleted' },
+        close_contact_premier: {
+          $elemMatch: {
+            close_contact_id_case: pre.id_case
+          }
+        },
+      }
+    }
+
+    const lookupAuthor = {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author'
+      }
+    }
+
+    const project = {
+      $project: {
+        _id: 1,
+        id_case: 1,
+        name: 1,
+        nik: 1,
+        phone_number: 1,
+        age: 1,
+        gender: 1,
+        status: 1,
+        address_district_name: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        author: {
+          _id: 1,
+          username: 1,
+          fullname: 1,
+          code_district_city: 1,
+          name_district_city: 1,
+        },
+      }
+    }
+
+    const aggCaseQuery = [
+      match,
+      lookupAuthor,
+      project,
+    ]
+
+    const results = await Case.aggregate(aggCaseQuery)
+
+    return callback(null, results)
   } catch (e) {
     return callback(e, null)
   }
