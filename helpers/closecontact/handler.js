@@ -20,10 +20,10 @@ const premierContactPayload = (v) => {
       close_contact_age: v.age,
       close_contact_gender: v.gender,
       close_contact_address_street: v.address_street,
-      close_contact_relation: v.relationship,
-      close_contact_activity: v.activity_other,
-      close_contact_first_date: new Date(),
-      close_contact_last_date: new Date(),
+      close_contact_relation: null,
+      close_contact_activity: null,
+      close_contact_first_date: null,
+      close_contact_last_date: null,
     }
   }
 }

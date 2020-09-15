@@ -144,7 +144,7 @@ module.exports = (server) => {
          */
         async ListCloseContactCaseV2(request, reply){
           server.methods.services.closeContacts.v2.getByCase(
-              request.params.caseId,
+              request.pre.cases,
               (err, result) => {
                   if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                   return reply(
@@ -195,6 +195,22 @@ module.exports = (server) => {
             ).code(200)
           })
         })
-    }
+    },
+      /**
+       * DELETE api/cases/{caseId}/close-contacts-v2/{contactCaseId}
+       * @param {*} request
+       * @param {*} reply
+       */
+      async DeleteCloseContactV2(request, reply) {
+        server.methods.services.closeContacts.v2.pullCaseContact(
+            request.pre.cases,
+            request.params.contactCaseId,
+            (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCloseContactResponse(result,request)
+                ).code(200)
+            })
+    },
   }
 }
