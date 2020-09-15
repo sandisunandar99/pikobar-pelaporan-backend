@@ -9,13 +9,13 @@ const {
   premierContactPayload,
 } = require('../helpers/closecontact/handler')
 
-async function getByCase (caseId, callback) {
+async function getByCase (pre, callback) {
   try {
     const results = await Case.find({
       status: CRITERIA.CLOSE,
       close_contact_premier: {
         $elemMatch: {
-          close_contact_id_case: caseId
+          close_contact_id_case: pre.id_case
         }
       },
       delete_status: { $ne: 'deleted' }
@@ -89,13 +89,27 @@ const create = async (services, pre, author, payload, callback) => {
         res.push(foundedCase)
       }
     } catch (e) {
-      await rollback(Case, insertedIds)
-      return callback(err, null)
+      rollback(Case, insertedIds)
+      return callback(e, null)
     }
   }
 
   return callback(null, res)
+}
 
+async function pullCaseContact (parent, contactCaseId, callback) {
+  try {
+    const result = await Case.findByIdAndUpdate(contactCaseId, {
+      $pull: {
+        close_contact_premier: {
+          close_contact_id_case: parent.id_case
+        }
+      }
+    })
+    return callback(null, result)
+  } catch (e) {
+    return callback(e, null)
+  }
 }
 
 module.exports = [
@@ -106,5 +120,9 @@ module.exports = [
   {
     name: 'services.closeContacts.v2.create',
     method: create
+  },
+  {
+    name: 'services.closeContacts.v2.pullCaseContact',
+    method: pullCaseContact
   },
 ]
