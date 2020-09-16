@@ -2,8 +2,6 @@ const InspectionSupport = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 
 const createInspectionSupport = async (payload, id_case, callback) => {
-  console.log(id_case);
-  console.log(payload);
   try {
     const inserted = await InspectionSupport.update(
       { "_id": ObjectId(id_case) },
