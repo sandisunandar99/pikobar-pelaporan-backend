@@ -136,6 +136,7 @@ module.exports = (server) => {
                     ).code(200)
                 })
         },
+        // V2
         /**
          * PATCH /api/sync-case
          * @param {*} request
@@ -149,6 +150,81 @@ module.exports = (server) => {
                       constructCloseContactResponse(result,request)
                   ).code(200)
               })
+        },
+        /**
+         * GET /api/cases/{caseId}/close-contacts-v2
+         * @param {*} request
+         * @param {*} reply
+         */
+        async ListCloseContactCaseV2(request, reply){
+          server.methods.services.closeContacts.v2.getByCase(
+              request.pre.cases,
+              (err, result) => {
+                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                  return reply(
+                      constructCloseContactResponse(result,request)
+                  ).code(200)
+              })
       },
-    }
+      /**
+       * POST /api/cases/{caseId}/close-contacts-v2
+       * @param {*} request
+       * @param {*} reply
+       */
+      async CreateCloseContactV2(request, reply){
+          server.methods.services.closeContacts.v2.create(
+              server.methods.services,
+              request.pre,
+              request.auth.credentials.user,
+              request.payload,
+              (err, result) => {
+                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+                  return reply(
+                    constructCloseContactResponse(result, request)
+                ).code(200)
+              })
+      },
+      /**
+       * PUT /api/cases/{caseId}/close-contacts-v2
+       * @param {*} request
+       * @param {*} reply
+       */
+      async updateCloseContactV2(request, reply){
+        const pre = request.pre
+        const id = request.params.caseId
+        const payload = request.payload
+        const author = request.auth.credentials.user
+
+        server.methods.services.cases.update(id, pre, author, payload, (errCase, resultCase) => {
+          if (errCase) return reply(replyHelper.constructErrorResponse(errCase)).code(422)
+
+          server.methods.services.histories.createIfChanged(
+            Object.assign(payload, {case: id}),
+            (err, result) => {
+            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+
+            return reply(
+              constructCloseContactResponse(result, request)
+            ).code(200)
+          })
+        })
+    },
+      /**
+       * DELETE api/cases/{caseId}/close-contacts-v2/{contactCaseId}
+       * @param {*} request
+       * @param {*} reply
+       */
+      async DeleteCloseContactV2(request, reply) {
+        server.methods.services.closeContacts.v2.pullCaseContact(
+            request.pre.cases,
+            request.params.contactCaseId,
+            (err, result) => {
+                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                return reply(
+                    constructCloseContactResponse(result,request)
+                ).code(200)
+            })
+    },
+  }
 }
