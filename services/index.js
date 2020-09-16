@@ -24,7 +24,8 @@ const register = (server, options, next) => {
     require('./inject'),
     require('./history_travel'),
     require('./public_place'),
-    require('./local_transmission')
+    require('./local_transmission'),
+    require('./case_exposure')
   );
   server.method(services)
   return next()
