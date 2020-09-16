@@ -62,6 +62,7 @@ const register = (server, options, next) => {
   server.register(require('./local_transmission'))
   server.register(require('./case_exposure'))
   server.register(require('./inspection_support'))
+  server.register(require('./search'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)
