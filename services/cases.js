@@ -74,6 +74,10 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
 
+  if(query.is_reported) {
+    params.is_reported = query.is_reported
+  }
+
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {
