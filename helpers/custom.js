@@ -153,8 +153,15 @@ const checkExistColumn = (param) => {
   return param ? param : null
 }
 
+const rollback = async (schema, insertedIds) => {
+  const ids = insertedIds.map(c => c._id)
+  return await schema.deleteMany({
+    _id: { $in: ids }
+  })
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
-  convertIncome, convertPysichal, checkExistColumn
+  convertIncome, convertPysichal, checkExistColumn, rollback
 }

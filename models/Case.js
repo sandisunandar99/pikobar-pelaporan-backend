@@ -87,22 +87,17 @@ const CaseSchema = new mongoose.Schema({
   //faktor kontak paparan
   close_contacted_before_sick_14_days: { type: Boolean, default: false },
   close_contact_premier: [{
-    close_contact_name: { type: String, default: null },
+    is_west_java: { type: Boolean, default: true },
+    close_contact_id_case: { type: String, default: null },
     close_contact_criteria: { type: String, default: null },
+    close_contact_name: { type: String, default: null },
+    close_contact_phone: { type: String, default: null },
+    close_contact_birth_date: { type: Date },
+    close_contact_age: { type: Number },
+    close_contact_gender: { type: String },
     close_contact_address_street: { type: String, default: null },
-    is_close_contact_address_same: { type: Boolean, default: false },
-    close_contact_address_village_code: { type: String, default: null },
-    close_contact_address_village_name: { type: String, default: null },
-    close_contact_address_subdistrict_code: { type: String, default: null },
-    close_contact_address_subdistrict_name: { type: String, default: null },
-    close_contact_address_district_code: { type: String, default: null },
-    close_contact_address_district_name: { type: String, default: null },
-    close_contact_address_province_code: { type: String, default: 32 },
-    close_contact_address_province_name: { type: String, default: "Jawa Barat" },
-    close_contact_rt: { type: Number, default: null },
-    close_contact_rw: { type: Number, default: null },
     close_contact_relation: { type: String, default: null },
-    close_contact_relation_id: { type: String, default: null },
+    close_contact_activity: { type: String, default: null },
     close_contact_first_date: { type: Date, default: null },
     close_contact_last_date: { type: Date, default: null },
   }],
@@ -149,7 +144,9 @@ const CaseSchema = new mongoose.Schema({
   visited_local_area: [{
     visited_local_area_province: { type: String, default: null },
     visited_local_area_city: { type: String, default: null },
-  }]
+  }],
+  is_reported: { type: Boolean, default: true },
+  origin_closecontact: { type: Boolean, default: false },
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });

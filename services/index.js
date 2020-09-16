@@ -18,6 +18,7 @@ const register = (server, options, next) => {
     require('./case_related'),
     require('./case_revamp'),
     require('./close_contact'),
+    require('./close_contact.v2'),
     require('./close_contact_histories'),
     require('./case_dashboard'),
     require('./reports'),
