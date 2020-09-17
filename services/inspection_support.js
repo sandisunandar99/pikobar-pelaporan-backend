@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectID
 
 const createInspectionSupport = async (payload, id_case, callback) => {
   try {
-    const inserted = await InspectionSupport.update(
+    const inserted = await InspectionSupport.updateOne(
       { "_id": ObjectId(id_case) },
       { $addToSet: {
         "inspection_support": {
@@ -35,7 +35,7 @@ const listInspectionSupport = async (id_case, callback) => {
 
 const updateInspectionSupport = async (id_inspection_support, payload, callback) => {
   try {
-    const updated = await InspectionSupport.update(
+    const updated = await InspectionSupport.updateOne(
       {
         "inspection_support._id": ObjectId(id_inspection_support)
       },
@@ -56,7 +56,7 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
 
 const deleteInspectionSupport = async (id_inspection_support, callback) => {
   try {
-    const deleted = await InspectionSupport.update(
+    const deleted = await InspectionSupport.updateOne(
     {
       "inspection_support._id": ObjectId(id_inspection_support)
     },
