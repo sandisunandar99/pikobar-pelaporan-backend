@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectID
 
 const createLocalTransmission = async (payload, id_case, callback) => {
   try {
-    const inserted = await LocalTransmission.update(
+    const inserted = await LocalTransmission.updateOne(
       { "_id": ObjectId(id_case) },
       { $set: { 'visited_local_area_before_sick_14_days': true },
         $addToSet: {
@@ -32,7 +32,7 @@ const listLocalTransmission = async (id_case, callback) => {
 
 const updateLocalTransmission = async (id_local_transmission, payload, callback) => {
   try {
-    const updated = await LocalTransmission.update(
+    const updated = await LocalTransmission.updateOne(
       {
         "visited_local_area._id": ObjectId(id_local_transmission)
       },
@@ -49,7 +49,7 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
 
 const deleteLocalTransmission = async (id_local_transmission, callback) => {
   try {
-    const deleted = await LocalTransmission.update(
+    const deleted = await LocalTransmission.updateOne(
     {
       "visited_local_area._id": ObjectId(id_local_transmission)
     },
