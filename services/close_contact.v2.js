@@ -9,71 +9,94 @@ const {
   premierContactPayload,
 } = require('../helpers/closecontact/handler')
 
+async function aggCase (idCase, rules) {
+  const match = rules
+
+  const project = {
+    $project: {
+      _id: 1,
+      id_case: 1,
+      name: 1,
+      nik: 1,
+      phone_number: 1,
+      age: 1,
+      gender: 1,
+      status: 1,
+      address_district_name: 1,
+      createdAt: 1,
+      updatedAt: 1,
+    }
+  }
+
+  const aggCaseQuery = [
+    match,
+    project,
+  ]
+
+  const results = await Case.aggregate(aggCaseQuery)
+
+  return results
+}
+
 async function getByCase (pre, callback) {
   try {
+    const {
+      id_case,
+      close_contact_premier,
+    } = pre
 
-    const match = {
-      $match: {
-        status: CRITERIA.CLOSE,
-        delete_status: { $ne: 'deleted' },
-        close_contact_premier: {
-          $elemMatch: {
-            close_contact_id_case: pre.id_case
-          }
+    const rules = {
+      parent: {
+        $match: {
+          id_case: {
+            $in: close_contact_premier
+              .map(v => v.close_contact_id_case)
+          },
+          delete_status: { $ne: 'deleted' },
         },
-      }
-    }
-
-    const lookupAuthor = {
-      $lookup: {
-        from: 'users',
-        localField: 'author',
-        foreignField: '_id',
-        as: 'author'
-      }
-    }
-
-    const project = {
-      $project: {
-        _id: 1,
-        id_case: 1,
-        name: 1,
-        nik: 1,
-        phone_number: 1,
-        age: 1,
-        gender: 1,
-        status: 1,
-        address_district_name: 1,
-        createdAt: 1,
-        updatedAt: 1,
-        author: {
-          _id: 1,
-          username: 1,
-          fullname: 1,
-          code_district_city: 1,
-          name_district_city: 1,
+      },
+      child: {
+        $match: {
+          close_contact_premier: {
+            $elemMatch: {
+              close_contact_id_case: pre.id_case,
+            },
+          },
+          delete_status: { $ne: 'deleted' },
         },
-      }
+      },
     }
 
-    const aggCaseQuery = [
-      match,
-      lookupAuthor,
-      project,
+    const parentCases = await aggCase(id_case, rules.parent)
+    const childCases = await aggCase(id_case, rules.child)
+    const related_cases = [
+      ...parentCases,
+      ...childCases,
     ]
 
-    const results = await Case.aggregate(aggCaseQuery)
-
-    return callback(null, results)
+    callback(null, related_cases)
   } catch (e) {
-    return callback(e, null)
+    console.log(e)
+    callback(e, null)
   }
+
 }
 
 const create = async (services, pre, author, payload, callback) => {
   const res = []
   const insertedIds = []
   const cases = pre.cases
+
+  if (cases.status === CRITERIA.CLOSE) {
+    try {
+      const params = { id_case: cases.id_case }
+      const parentContacts = payload.map(obj => premierContactPayload(obj))
+      const result = await appendParent(Case, params, parentContacts)
+      callback(null, result)
+    } catch (e) {
+      callback(e, null)
+    }
+  }
 
   for (i in payload) {
     try {
@@ -109,7 +132,9 @@ const create = async (services, pre, author, payload, callback) => {
           verified_status: 'verified',
           status: CRITERIA.CLOSE,
           origin_closecontact: true,
-          ...premierContactPayload(cases),
+          close_contact_premier: {
+            ...premierContactPayload(cases),
+          },
           ...req,
         })
 
@@ -133,11 +158,11 @@ const create = async (services, pre, author, payload, callback) => {
       }
     } catch (e) {
       rollback(Case, insertedIds)
-      return callback(e, null)
+      callback(e, null)
     }
   }
 
-  return callback(null, res)
+  callback(null, res)
 }
 
 async function pullCaseContact (parent, contactCaseId, callback) {
@@ -149,9 +174,9 @@ async function pullCaseContact (parent, contactCaseId, callback) {
         }
       }
     })
-    return callback(null, result)
+    callback(null, result)
   } catch (e) {
-    return callback(e, null)
+    callback(e, null)
   }
 }
 
