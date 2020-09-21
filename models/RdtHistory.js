@@ -2,13 +2,13 @@ const mongoose = require('mongoose')
 
 const RdtHistorySchema = new mongoose.Schema({
     rdt : { type: mongoose.Schema.Types.ObjectId, ref: 'Rdt' },
-
+  
     final_result : {type : String},
     tool_tester: String,
     code_tool_tester: String, // code alat pas tes ex: (RDT / TCR)
     sampling_type: String, // Jenis pengambilan sampel: Vena / Kapiler
     test_method: String,
-
+    
     test_location_type: String,
     test_location: String,
     test_other_location: String,
@@ -23,8 +23,8 @@ const RdtHistorySchema = new mongoose.Schema({
     test_date: Date,
 
     rdt_count: {type: Number, default: 0},
-    pcr_count: {type: Number, default: 0},
-    swab_count: {type: Number, default: 0},
+    pcr_count: {type: Number, default: 0}, 
+    swab_count: {type: Number, default: 0}, 
     lab: String,
 
 
@@ -34,10 +34,10 @@ RdtHistorySchema.methods.toJSONFor = function () {
     return {
         final_result : this.final_result,
         tool_tester: this.tool_tester,
-        code_tool_tester: this.code_tool_tester,
+        code_tool_tester: this.code_tool_tester, 
         test_method: this.test_method,
-        sampling_type: this.sampling_type,
-
+        sampling_type: this.sampling_type, 
+        
         test_location_type: this.test_location_type,
         test_location: this.test_location,
         test_other_location: this.test_other_location,
