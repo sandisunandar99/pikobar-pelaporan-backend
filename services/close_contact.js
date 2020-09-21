@@ -212,18 +212,30 @@ const syncCase = async (callback) => {
           const premierContacts = []
           if (res.case) {
             premierContacts.push({
+              is_west_java: true,
               close_contact_id_case: res.case.id_case,
+              close_contact_criteria: CRITERIA.CLOSE,
               close_contact_name: res.case.name,
-              close_contact_phone: res.case.phone_number,
-              close_contact_criteria: res.case.status,
+              close_contact_nik: res.case.nik,
+              close_contact_phone_numbers: res.case.phone_number,
               close_contact_birth_date: res.case.birth_date,
-              close_contact_age: res.case.age,
+              close_contact_occupation: res.case.occupation,
               close_contact_gender: res.case.gender,
               close_contact_address_street: res.case.address_street,
+              close_contact_address_district_code: res.case.address_district_code,
+              close_contact_address_district_name: res.case.address_district_name,
+              close_contact_address_subdistrict_code: res.address_subdistrict_code,
+              close_contact_address_subdistrict_name: res.address_subdistrict_name,
+              close_contact_address_village_code: res.address_village_code,
+              close_contact_address_village_name: res.address_village_name,
+              close_contact_rt: res.address_rt,
+              close_contact_rw: res.address_rw,
               close_contact_relation: res.relationship,
-              close_contact_activity: res.activity_other,
-              close_contact_first_date: res.createdAt,
-              close_contact_last_date: res.createdAt,
+              close_contact_relation_others: res.relationship_other,
+              close_contact_activity: res.activity,
+              close_contact_activity_others: res.activity_other,
+              close_contact_first_date: res.start_contact_date,
+              close_contact_last_date: res.end_contact_date,
             })
           }
 
