@@ -405,7 +405,8 @@ async function createRdt(query, payload, author, pre, callback) {
       })
       .then( (rdt) => {
           // whatever happen always create new TestHistory
-            let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+            let arr = {...rdt, ...payload}
+            let rdt_history = new RdtHistory(Object.assign(arr, {rdt}))
             rdt_history.save((err, item) => {
               if (err) return callback(err, null);
 
