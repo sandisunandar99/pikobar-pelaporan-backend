@@ -3,6 +3,7 @@ const inputValidations = require('./validations/input')
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const getCaseById = require('./route_prerequesites').getCasebyId(server)
+    const getContactCaseById = require('./route_prerequesites').getContactCaseById(server)
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
     // const districtInputScope = require('./route_prerequesites').districtInputScope(server)
 
@@ -120,7 +121,7 @@ module.exports = (server) =>{
             auth: 'jwt',
             description: 'delete specific close contact',
             tags: ['api', 'close_contacts'],
-            pre: [ getCaseById ],
+            pre: [ getCaseById, getContactCaseById ],
         },
         handler: handlers.DeleteCloseContactV2
       },

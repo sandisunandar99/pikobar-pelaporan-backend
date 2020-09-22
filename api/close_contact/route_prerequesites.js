@@ -46,6 +46,29 @@ const getCloseContactbyId = server => {
     }
 }
 
+const getContactCaseById = server => {
+  return {
+      method: (request, reply) => {
+           let id = request.params.contactCaseId
+           server.methods.services.cases
+              .getById(id, (err, result) => {
+                  if (err) {
+                      return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+                  }
+                  if (!result) {
+                      return reply({
+                          status: 422,
+                          message: 'Invalid contact case id',
+                          data: null
+                      }).code(422).takeover()
+                  }
+                  return reply(result)
+              })
+      },
+      assign: 'contactCase'
+  }
+}
+
 const districtInputScope = server => {
     return {
         method: (request, reply) => {
@@ -57,7 +80,7 @@ const districtInputScope = server => {
                     message: 'Anda tidak dapat melakukan input Kontak Erat di luar wilayah anda.!',
                     data: null
                 }).code(422).takeover()
-            } 
+            }
         },
         assign: 'district_input_scope'
     }
@@ -65,6 +88,7 @@ const districtInputScope = server => {
 
 module.exports = {
     getCasebyId,
+    getContactCaseById,
     getCloseContactbyId,
-    districtInputScope
+    districtInputScope,
 }

@@ -1,9 +1,8 @@
 
 const Case = require('../models/Case')
-const History = require('../models/History')
+const ObjectId = require('mongodb').ObjectID
 const { rollback } = require('../helpers/custom')
-const { ROLE, CRITERIA } = require('../helpers/constant')
-const Validate = require('../helpers/cases/revamp/handlerpost')
+const { CRITERIA } = require('../helpers/constant')
 const {
   appendParent,
   premierContactPayload,
@@ -83,10 +82,11 @@ async function getByCase (pre, callback) {
 }
 
 const create = async (services, pre, author, payload, callback) => {
-  const res = []
+  const result = []
   const insertedIds = []
   const cases = pre.cases
 
+  // if curent case criteria is closecontact just appending parent to this casse
   if (cases.status === CRITERIA.CLOSE) {
     try {
       const params = { id_case: cases.id_case }
@@ -98,61 +98,54 @@ const create = async (services, pre, author, payload, callback) => {
     }
   }
 
+  /**
+   * if current case criteria isn't closecontact,
+   * do inserting child by appending premier per contact case
+   */
   for (i in payload) {
     try {
+      let foundedCase, insertedCase;
       const req = payload[i]
-      let foundedCase = null
+      const createCasePayload = {
+        final_result: '5',
+        is_reported: false,
+        verified_status: 'verified',
+        status: CRITERIA.CLOSE,
+        origin_closecontact: true,
+        current_location_type: 'RUMAH',
+        close_contact_premier: {
+          ...premierContactPayload(cases),
+        },
+        ...req,
+      }
 
+      // append parent if case is founded
       if (req.id_case || req.nik) {
         foundedCase = await appendParent(Case, req, cases)
       }
 
       if (!foundedCase) {
+        // prerequisites per-premierCase to creating new case
         const pre = {
           count_case: {},
           count_case_pending: {},
         }
-
         await services.cases.getCountByDistrict(
           req.address_district_code,
-          (err, count) => {
+          (err, res) => {
             if (err) throw new Error
-            pre.count_case = count
+            pre.count_case = res
           })
 
-        const idCase = Validate.generateIdCase({
-          role: ROLE.KOTAKAB
-        }, pre)
+        await services.cases_revamp.create(
+          createCasePayload, author, pre,
+          (err, res) => {
+            if (err) throw new Error
+            insertedCase = res
+            result.push(insertedCase)
+            insertedIds.push(insertedCase)
+          })
 
-        const insertedCase = await Case.create({
-          id_case: idCase,
-          author: author._id,
-          final_result: '5',
-          is_reported: false,
-          verified_status: 'verified',
-          status: CRITERIA.CLOSE,
-          origin_closecontact: true,
-          close_contact_premier: {
-            ...premierContactPayload(cases),
-          },
-          ...req,
-        })
-
-        const insertedHis = await History.create({
-          case: insertedCase._id,
-          status: CRITERIA.CLOSE,
-          final_result: '5',
-          current_location_type: 'RUMAH',
-        })
-
-        await Case.findOneAndUpdate(
-          { _id: insertedCase._id },
-          { $set: { last_history: insertedHis._id } },
-          { upsert: true, new: true }
-        )
-
-        res.push(insertedCase)
-        insertedIds.push(insertedCase)
       } else {
         res.push(foundedCase)
       }
@@ -162,18 +155,35 @@ const create = async (services, pre, author, payload, callback) => {
     }
   }
 
-  callback(null, res)
+  callback(null, result)
 }
 
-async function pullCaseContact (parent, contactCaseId, callback) {
+async function pullCaseContact (thisCase, contactCase, callback) {
   try {
-    const result = await Case.findByIdAndUpdate(contactCaseId, {
-      $pull: {
-        close_contact_premier: {
-          close_contact_id_case: parent.id_case
+    const deleteChild = await Case.updateOne(
+      { _id: ObjectId(contactCase._id) },
+      {
+        $pull: {
+          close_contact_premier: {
+            close_contact_id_case: thisCase.id_case
+          }
         }
       }
-    })
+    )
+
+    const deleteParent = await Case.updateOne(
+      { _id: ObjectId(thisCase._id) },
+      {
+        $pull: {
+          close_contact_premier: {
+            close_contact_id_case: contactCase.id_case
+          }
+        }
+      }
+    )
+
+    const result = !!(deleteChild && deleteParent)
+
     callback(null, result)
   } catch (e) {
     callback(e, null)
