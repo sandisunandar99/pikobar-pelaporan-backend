@@ -44,10 +44,21 @@ const filterEdges = (this_) => {
   }
 }
 const filterNodes = (this_) => {
-  return {
-    from: this_.id_case_related,
-    to: this_.id_case,
+  const nodes = []
+
+  for (let i in this_) {
+    const premiers = this_[i].cases_related
+    if (!premiers || !premiers.length) return
+
+    for (let j in premiers) {
+      nodes.push({
+        from: premiers[j].id_case,
+        to: this_[i].id_case,
+      })
+    }
   }
+
+  return nodes
 }
 module.exports = {
   filterEdges, filterNodes
