@@ -405,7 +405,8 @@ async function createRdt(query, payload, author, pre, callback) {
       })
       .then( (rdt) => {
           // whatever happen always create new TestHistory
-            let rdt_history = new RdtHistory(Object.assign(payload, {rdt}))
+            let arr = {...rdt, ...payload}
+            let rdt_history = new RdtHistory(Object.assign(arr, {rdt}))
             rdt_history.save((err, item) => {
               if (err) return callback(err, null);
 
@@ -517,16 +518,16 @@ function createRdtMultiple(payload, author, pre, callback) {
               return rdt.save();
 
             }
-        }).then((rdts) => {
+        }).then((rdt) => {
             // whatever happen always create new TestHistory
-            let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
+            let rdt_history = new RdtHistory(Object.assign(result, {rdt}))
             return rdt_history.save((err, item) => {
               if (err) console.log(err)
-              // sendMessagesSMS(rdts)
-              // sendMessagesWA(rdts)
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
               let last_history = { last_history: item._id }
-              rdts = Object.assign(rdts, last_history)
-              rdts.save()
+              rdt = Object.assign(rdt, last_history)
+              rdt.save()
             });
 
 
