@@ -3,6 +3,16 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const uniqueValidator = require('mongoose-unique-validator')
 
+const sectionFlagStatus = {
+  status_sect_identity: { type: Number, default: 0 },
+  status_sect_clinical: { type: Number, default: 0 },
+  status_sect_inspection: { type: Number, default: 0 },
+  status_sect_travel: { type: Number, default: 0 },
+  status_sect_economy: { type: Number, default: 0 },
+  status_sect_exposure: { type: Number, default: 0 },
+  status_sect_closecontact: { type: Number, default: 0 },
+}
+
 const CaseSchema = new mongoose.Schema({
   // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
   id_case: { type: String, lowercase: true, unique: true, index: true },
@@ -158,6 +168,7 @@ const CaseSchema = new mongoose.Schema({
   }],
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
+  ...sectionFlagStatus,
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });
