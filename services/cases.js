@@ -148,6 +148,25 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
+async function getCaseSectionStatus (id, callback) {
+  try {
+    const result = await Case.findById(id)
+    .select([
+      'status_sect_identity',
+      'status_sect_clinical',
+      'status_sect_inspection',
+      'status_sect_travel',
+      'status_sect_economy',
+      'status_sect_exposure',
+      'status_sect_closecontact',
+    ])
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 function getCaseByNik (nik, callback) {
   Case.findOne({nik: nik})
     .where('delete_status').ne('deleted')
@@ -733,6 +752,10 @@ module.exports = [
   {
     name: 'services.cases.getById',
     method: getCaseById
+  },
+  {
+    name: 'services.cases.getCaseSectionStatus',
+    method: getCaseSectionStatus
   },
   {
     name: 'services.cases.getByNik',
