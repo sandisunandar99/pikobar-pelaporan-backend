@@ -148,39 +148,37 @@ const create = async (services, pre, author, payload, callback) => {
 
 async function pullCaseContact (thisCase, contactCase, callback) {
   try {
-    callback(null, null)
+    const deleteOriginRegistrant = await Case.updateOne(
+      { _id: ObjectId(thisCase._id) },
+      {
+        $pull: {
+          close_contact_parents: {
+            id_case: contactCase.id_case
+          },
+          close_contact_childs: {
+            id_case: contactCase.id_case
+          },
+        },
+      },
+    )
 
-    // const deleteOriginRegistrant = await Case.updateOne(
-    //   { _id: ObjectId(thisCase._id) },
-    //   {
-    //     $pull: {
-    //       close_contact_parents: {
-    //         id_case: contactCase.id_case
-    //       },
-    //       close_contact_childs: {
-    //         id_case: contactCase.id_case
-    //       },
-    //     },
-    //   },
-    // )
+    const deleteOriginEmebeded = await Case.updateOne(
+      { _id: ObjectId(contactCase._id) },
+      {
+        $pull: {
+          close_contact_parents: {
+            id_case: thisCase.id_case
+          },
+          close_contact_childs: {
+            id_case: thisCase.id_case
+          },
+        },
+      },
+    )
 
-    // const deleteOriginEmebeded = await Case.updateOne(
-    //   { _id: ObjectId(contactCase._id) },
-    //   {
-    //     $pull: {
-    //       close_contact_parents: {
-    //         id_case: thisCase.id_case
-    //       },
-    //       close_contact_childs: {
-    //         id_case: thisCase.id_case
-    //       },
-    //     },
-    //   },
-    // )
+    const result = !!(deleteOriginRegistrant && deleteOriginEmebeded)
 
-    // const result = !!(deleteOriginRegistrant && deleteOriginEmebeded)
-
-    // callback(null, result)
+    callback(null, result)
   } catch (e) {
     callback(e, null)
   }
@@ -188,15 +186,15 @@ async function pullCaseContact (thisCase, contactCase, callback) {
 
 module.exports = [
   {
-    name: 'services.closeContacts.v2.getByCase',
+    name: 'services.cases.closecontact.getByCase',
     method: getByCase
   },
   {
-    name: 'services.closeContacts.v2.create',
+    name: 'services.cases.closecontact.create',
     method: create
   },
   {
-    name: 'services.closeContacts.v2.pullCaseContact',
+    name: 'services.cases.closecontact.pullCaseContact',
     method: pullCaseContact
   },
 ]

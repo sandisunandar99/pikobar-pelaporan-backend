@@ -5,6 +5,7 @@ const register = (server, options, next) => {
     require('./cases'),
     require('./cases_transfers'),
     require('./cases_verifications'),
+    require('./cases_closecontact'),
     require('./histories'),
     require('./occupations'),
     require('./rdt'),

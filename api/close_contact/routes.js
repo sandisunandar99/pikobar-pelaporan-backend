@@ -5,6 +5,7 @@ module.exports = (server) =>{
     const getCaseById = require('./route_prerequesites').getCasebyId(server)
     const getContactCaseById = require('./route_prerequesites').getContactCaseById(server)
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
+    const isAccessGranted = require('./route_prerequesites').isAccessGranted(server)
     // const districtInputScope = require('./route_prerequesites').districtInputScope(server)
 
     return [
@@ -121,7 +122,7 @@ module.exports = (server) =>{
             auth: 'jwt',
             description: 'delete specific close contact',
             tags: ['api', 'close_contacts'],
-            pre: [ getCaseById, getContactCaseById ],
+            pre: [ getCaseById, getContactCaseById, isAccessGranted ],
         },
         handler: handlers.DeleteCloseContactV2
       },
