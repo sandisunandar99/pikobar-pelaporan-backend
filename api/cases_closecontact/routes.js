@@ -1,5 +1,3 @@
-const inputValidations = require('./validations/input')
-
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const getCaseById = require('./route_prerequesites').getCasebyId(server)
