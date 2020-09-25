@@ -1,5 +1,6 @@
 const { countByRole, thisUnitCaseAuthors } = require("../rolecheck")
 const { filterCase } = require("../filter/casefilter")
+const { groupingCondition } = require("../aggregate/groupaggregate")
 const { CRITERIA, WHERE_GLOBAL, ROLE } = require("../constant")
 
 const summaryAggregate = async (query, user) => {
@@ -12,11 +13,11 @@ const summaryAggregate = async (query, user) => {
     ...countByRole(user, caseAuthors)
   }
 
-  let grouping
+  let groups
   if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
-    grouping = { $toUpper : "$address_district_name"}
+    groups = { $toUpper : "$address_district_name"}
   }else{
-    grouping = { $toUpper : "$address_subdistrict_name"}
+    groups = { $toUpper : "$address_subdistrict_name"}
   }
 
   const conditions = [
@@ -37,284 +38,16 @@ const summaryAggregate = async (query, user) => {
     {
       "$facet": {
         "confirmed": [
-          {
-            $group: {
-              _id: grouping,
-              active: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.CONF] },
-                        {
-                          $or: [
-                            { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                            { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                          ]
-                        }
-                      ],
-                    }, 1, 0]
-                }
-              },
-              sick_home: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.CONF] },
-                        { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              sick_hospital: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.CONF] },
-                        { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              recovered: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.CONF] },
-                        { $eq: ["$final_result", "1"] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              decease: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.CONF] },
-                        { $eq: ["$final_result", "2"] }
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
+          await groupingCondition(groups, CRITERIA.CONF)
         ],
         "probable": [
-          {
-            $group: {
-              _id: grouping,
-              active: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.PROB] },
-                        {
-                          $or: [
-                            { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                            { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                          ]
-                        }
-                      ],
-                    }, 1, 0]
-                }
-              },
-              sick_home: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.PROB] },
-                        { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              sick_hospital: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.PROB] },
-                        { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              recovered: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.PROB] },
-                        { $eq: ["$final_result", "1"] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              decease: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.PROB] },
-                        { $eq: ["$final_result", "2"] }
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
+          await groupingCondition(groups, CRITERIA.PROB)
         ],
         "suspect": [
-          {
-            $group: {
-              _id: grouping,
-              active: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.SUS] },
-                        {
-                          $or: [
-                            { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                            { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                          ]
-                        }
-                      ],
-                    }, 1, 0]
-                }
-              },
-              sick_home: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.SUS] },
-                        { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              sick_hospital: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.SUS] },
-                        { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              recovered: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.SUS] },
-                        { $eq: ["$final_result", "1"] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              decease: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.SUS] },
-                        { $eq: ["$final_result", "2"] }
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
+          await groupingCondition(groups, CRITERIA.SUS)
         ],
         "closeContact": [
-          {
-            $group: {
-              _id: grouping,
-              active: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.CLOSE] },
-                        {
-                          $or: [
-                            { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                            { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                          ]
-                        }
-                      ],
-                    }, 1, 0]
-                }
-              },
-              sick_home: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.CLOSE] },
-                        { $eq: ["$last_history.current_location_type", "RUMAH"] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              sick_hospital: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$final_result", "4"] },
-                        { $eq: ["$status", CRITERIA.CLOSE] },
-                        { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              recovered: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.CLOSE] },
-                        { $eq: ["$final_result", "1"] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              decease: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ["$status", CRITERIA.CLOSE] },
-                        { $eq: ["$final_result", "2"] }
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
+          await groupingCondition(groups, CRITERIA.CLOSE)
         ],
       }
     },
