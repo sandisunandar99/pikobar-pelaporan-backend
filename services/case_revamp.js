@@ -11,7 +11,7 @@ const { thisUnitCaseAuthors } = require('../helpers/cases/revamp/handlerget');
 const Validate = require('../helpers/cases/revamp/handlerpost');
 const { CRITERIA, VERIFIED_STATUS, ROLE, WHERE_GLOBAL } = require('../helpers/constant');
 
-const createCaseRevamp = async (raw_payload, author, pre, callback) => {
+const createCaseRevamp = async (services, raw_payload, author, pre, callback) => {
   let verified = {
     'verified_status': VERIFIED_STATUS.VERIFIED,
   };
@@ -61,12 +61,17 @@ const createCaseRevamp = async (raw_payload, author, pre, callback) => {
     const last_history = {'last_history': saveHistory._id};
     const x = Object.assign(saveCase, last_history);
     const finalSave = await x.save();
-    const mapingIdCase = raw_payload.close_contact_patient.map(r =>{
-      r.case = saveCase._id;
-      r.createdBy = author._id;
-      return r;
-    })
-    await CloseContact.create(mapingIdCase);
+
+    if (raw_payload.closecontact) {
+      const pre = { cases: finalSave }
+      await services.cases.closecontact.create(
+        services, pre, author, raw_payload.closecontact,
+        (err, result) => {
+          if (err) throw new Error
+          Object.assign(finalSave, { closecontact: result })
+        })
+    }
+
     await Notif.send(Notification, User, x, author, 'case-created');
     callback(null, finalSave);
   } catch (error) {
@@ -87,6 +92,7 @@ const checkIfExisting = async (query, callback) => {
   callback(null, check);
 }
 
+// deprecated, todo delete
 async function createCaseContact (id, author, payload, callback) {
   try {
     if (payload instanceof Array) {

@@ -7,7 +7,7 @@ module.exports = (server) =>{
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
     const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
     const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
-    
+
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
     const countCasePendingByDistrict = require('./route_prerequesites').countCasePendingByDistrict(server)
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
@@ -209,6 +209,19 @@ module.exports = (server) =>{
             },
             handler: handlers.DeleteCase
         },
+        {
+          method: 'GET',
+          path: '/cases/{id}/status',
+          config: {
+              auth: 'jwt',
+              description: 'get specific case status',
+              tags: ['api', 'cases'],
+              pre: [
+                  getCasebyId,
+              ]
+          },
+          handler: handlers.GetCaseSectionStatus
+      },
         // Import excel case
         {
             method: 'POST',

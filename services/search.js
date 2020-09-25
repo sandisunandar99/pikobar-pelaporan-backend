@@ -2,8 +2,10 @@ const Case = require('../models/Case')
 
 const getCases = async (query, callback) => {
   let search = {}
-  let params = {}
-  params.verified_status = "verified"
+  const params = {
+    delete_status: { $ne: 'deleted' }
+  }
+
   if(query.name){
     search.name = new RegExp(query.name, "i");
   }

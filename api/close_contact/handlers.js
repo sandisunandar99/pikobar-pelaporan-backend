@@ -204,7 +204,7 @@ module.exports = (server) => {
       async DeleteCloseContactV2(request, reply) {
         server.methods.services.closeContacts.v2.pullCaseContact(
             request.pre.cases,
-            request.params.contactCaseId,
+            request.pre.contactCase,
             (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
