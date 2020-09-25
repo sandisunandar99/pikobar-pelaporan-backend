@@ -10,7 +10,7 @@ const listCaseRelated = async (query, user, callback) => {
     const whereRole = Check.countByRole(user)
     const filter = await Filter.filterCase(user, query)
     const condition = Object.assign(whereRole, filter)
-    const staticParam = { ...WHERE_GLOBAL, "close_contact_premier": { $gt: [] } }
+    const staticParam = { ...WHERE_GLOBAL, "close_contact_parents": { $gt: [] } }
     const searching = { ...condition, ...staticParam }
     const select = {
       "_id": 1,
@@ -28,7 +28,7 @@ const listCaseRelated = async (query, user, callback) => {
         $addFields: {
           case_related_ids: {
             $map: {
-              input: "$close_contact_premier",
+              input: "$close_contact_parents",
               as: "thisParent",
               in: "$$thisParent.close_contact_id_case"
             }

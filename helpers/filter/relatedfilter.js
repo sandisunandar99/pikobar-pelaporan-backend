@@ -47,12 +47,12 @@ const filterNodes = (this_) => {
   const nodes = []
 
   for (let i in this_) {
-    const premiers = this_[i].cases_related
-    if (!premiers || !premiers.length) return
+    const parents = this_[i].cases_related
+    if (!parents || !parents.length) return
 
-    for (let j in premiers) {
+    for (let j in parents) {
       nodes.push({
-        from: premiers[j].id_case,
+        from: parents[j].id_case,
         to: this_[i].id_case,
       })
     }
