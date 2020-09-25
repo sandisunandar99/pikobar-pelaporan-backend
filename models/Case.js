@@ -11,6 +11,7 @@ const sectionFlagStatus = {
   status_sect_economy: { type: Number, default: 0 },
   status_sect_exposure: { type: Number, default: 0 },
   status_sect_closecontact: { type: Number, default: 0 },
+  is_data_completed: { type: Boolean, default: false },
 }
 
 const refRelatedCase = [{

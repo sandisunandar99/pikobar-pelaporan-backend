@@ -3,6 +3,7 @@ const register = (server, options, next) => {
     require('./users'),
     require('./areas'),
     require('./cases'),
+    require('./cases.v2'),
     require('./cases_transfers'),
     require('./cases_verifications'),
     require('./cases_closecontact'),
