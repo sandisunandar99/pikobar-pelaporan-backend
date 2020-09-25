@@ -21,5 +21,15 @@ module.exports = (server) => {
       },
       handler: handlers.caseRelatedById,
     },
+    {
+      method: 'PATCH',
+      path: '/case-related/sync',
+      config: {
+        auth: 'jwt',
+        description: 'sync case related',
+        tags: ['api', 'sync case related'],
+      },
+      handler: handlers.caseRelatedSync,
+    },
   ]
 }

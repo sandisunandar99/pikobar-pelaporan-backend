@@ -34,5 +34,14 @@ module.exports = (server) => {
         }
       )
     },
+    async caseRelatedSync(request, reply) {
+      server.methods.services.case_related.sync(
+        server.methods.services,
+        (err, result) => {
+          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
+          return reply(caseRelatedResponse(result, request)).code(200);
+        }
+      )
+    },
   } //end
 }

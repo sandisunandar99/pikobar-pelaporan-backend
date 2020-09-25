@@ -30,7 +30,7 @@ const listCaseRelated = async (query, user, callback) => {
             $map: {
               input: "$close_contact_parents",
               as: "thisParent",
-              in: "$$thisParent.close_contact_id_case"
+              in: "$$thisParent.id_case"
             }
           }
         }
@@ -118,6 +118,78 @@ const getByCaseRelated = async (id_case, callback) => {
   }
 }
 
+const sync = async (services, callback) => {
+  try {
+    // debugger config
+    const debug = true
+    const _debugger = {
+      errorIds: [],
+      skippedIds: [],
+    }
+
+    // declare error attributes
+    const errors = {
+      errorOccured: 0,
+      processed: 0,
+      notFoundCase: 0,
+      notFoundCaseRelated: 0,
+      invalidCaseAuthor: 0,
+      invalidCaseRelatedIdCase: 0,
+      invalidCaseRelatedStatus: 0,
+      idCaseSameAsRelated: 0,
+    }
+
+    // get case that have an id related case
+    const data = await Case.find({
+      id_case_related: {
+        $exists: true,
+        $nin: [ null, '' ],
+      },
+      delete_status: {
+        $ne: 'deleted'
+      },
+    })
+
+    // do mapping to closecontact field in case schema
+    for (let i = 0; i < data.length; i++) {
+      const c = data[i] // active case
+      const cc = await Case // related case
+        .findOne({ id_case: c.id_case_related })
+        .select([ 'id_case', 'status' ])
+
+      if (!c || !cc || !cc.id_case || !cc.status || !c.author) {
+        if (debug) _debugger.skippedIds.push(c.id_case_related);
+      }
+
+      if (!c) { errors.notFoundCase++; continue; }
+      if (!c.author) { errors.invalidCaseAuthor++; continue; }
+      if (!cc) { errors.notFoundCaseRelated++; continue; }
+      if (!cc.id_case) { errors.invalidCaseRelatedIdCase++; continue; }
+      if (!cc.status) { errors.invalidCaseRelatedStatus++; continue; }
+      if (c.id_case === cc.id_case) { errors.idCaseSameAsRelated++; continue; }
+
+      await services.cases.closecontact.create(
+        services, { cases: c }, c.author,
+        [{ id_case: cc.id_case, status: cc.status }],
+        (err, result) => {
+          if (err) {
+            errors.errorOccured++
+            if (debug) _debugger.errorIds.push(cc.id_case);
+            throw new Error
+          }
+          errors.processed++
+        })
+    }
+
+    if (debug) Object.assign(errors, _debugger)
+
+    callback(null, errors)
+  } catch (error) {
+    console.log(error)
+    callback(error, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.case_related.list',
@@ -126,6 +198,10 @@ module.exports = [
   {
     name: 'services.case_related.getById',
     method: getByCaseRelated,
+  },
+  {
+    name: 'services.case_related.sync',
+    method: sync,
   },
 ];
 
