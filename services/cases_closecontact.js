@@ -119,9 +119,15 @@ const create = async (services, pre, author, payload, callback) => {
             if (err) throw new Error
             pre.count_case = res
           })
+        await services.cases.getCountPendingByDistrict(
+          req.address_district_code,
+          (err, res) => {
+            if (err) throw new Error
+            pre.count_case_pending = res
+          })
 
         await services.cases_revamp.create(
-          createCasePayload, author, pre,
+          services, createCasePayload, author, pre,
           (err, res) => {
             if (err) throw new Error
 
@@ -138,6 +144,7 @@ const create = async (services, pre, author, payload, callback) => {
       await append(appendTarget, Case, thisCase, relatedPayload(req, idCaseRegistrant, true))
 
     } catch (e) {
+      console.log(e)
       rollback(Case, insertedIds)
       callback(e, null)
     }
