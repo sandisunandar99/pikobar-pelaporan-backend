@@ -35,10 +35,10 @@ module.exports = (server) => {
       async GetCaseSectionStatus(request, reply) {
         let id = request.params.id
         server.methods.services.v2.cases.getCaseSectionStatus(id, (err, item) => {
-            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-            return reply(
-                constructCasesResponse(item, request)
-            ).code(200)
+          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+          return reply(
+            constructCasesResponse(item, request)
+          ).code(200)
         })
       },
   }

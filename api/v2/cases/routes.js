@@ -27,12 +27,12 @@ module.exports = (server) =>{
       method: 'GET',
       path: '/v2/cases/{id}/status',
       config: {
-          auth: 'jwt',
-          description: 'get specific case status',
-          tags: ['api', 'cases'],
-          pre: [
-              getCasebyId,
-          ]
+        auth: 'jwt',
+        description: 'get specific case status',
+        tags: ['api', 'cases'],
+        pre: [
+          getCasebyId,
+        ]
       },
       handler: handlers.GetCaseSectionStatus
     },
