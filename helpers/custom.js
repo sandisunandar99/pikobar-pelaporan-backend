@@ -1,5 +1,9 @@
 'use strict'
-const { PATIENT_STATUS, CRITERIA, ANSWER, PYSICHAL, INCOME } = require('./constant')
+const {
+  PATIENT_STATUS, CRITERIA, ANSWER,
+  PYSICHAL, INCOME, DIAGNOSIS,
+  DISEASES
+} = require('./constant');
 const setPwd = (payload) => {
   const crypto = require('crypto');
   payload.salt = crypto.randomBytes(16).toString('hex');
@@ -115,6 +119,17 @@ const convertYesOrNO = (param) => {
   return result
 }
 
+const yesOrNoBool = (param) => {
+  let result
+  if (param) {
+    result = ANSWER.YA
+  } else {
+    result = ANSWER.TIDAK
+  }
+
+  return result
+}
+
 const convertIncome = (param) => {
   let result
   if (param === 0) {
@@ -160,8 +175,74 @@ const rollback = async (schema, insertedIds) => {
   })
 }
 
+const checkDiagnosis = (data) => {
+  if(data.length > 0 ){
+    return {
+      "Suhu tubuh >= 38 °C" : yesOrNoBool(data.includes(DIAGNOSIS.HIGH_TEMPERATURE)),
+      "Suhu tubuh < 38 °C": yesOrNoBool(data.includes(DIAGNOSIS.LOW_TEMPERATURE)),
+      "Batuk": yesOrNoBool(data.includes(DIAGNOSIS.COUGH)),
+      "Pilek": yesOrNoBool(data.includes(DIAGNOSIS.FLU)),
+      "Sakit Tenggorokan": yesOrNoBool(data.includes(DIAGNOSIS.SORE_THROAT)),
+      "Sakit Kepala": yesOrNoBool(data.includes(DIAGNOSIS.HEADACHE)),
+      "Sesak Nafas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
+      "Menggigil": yesOrNoBool(data.includes(DIAGNOSIS.SHIVER)),
+      "Lemah (malaise)": yesOrNoBool(data.includes(DIAGNOSIS.WEAK)),
+      "Nyeri Otot": yesOrNoBool(data.includes(DIAGNOSIS.MUSCLE_ACHE)),
+      "Mual atau Muntah": yesOrNoBool(data.includes(DIAGNOSIS.NAUSEA)),
+      "Nyeri Abdomen": yesOrNoBool(data.includes(DIAGNOSIS.ABDOMENT_PAIN)),
+      "Diare": yesOrNoBool(data.includes(DIAGNOSIS.DIARRHEA))
+    }
+  }else{
+    return {
+      "Suhu tubuh >= 38 °C" : "Tidak",
+      "Suhu tubuh < 38 °C": "Tidak",
+      "Batuk": "Tidak",
+      "Pilek": "Tidak",
+      "Sakit Tenggorokan": "Tidak",
+      "Sakit Kepala": "Tidak",
+      "Sesak Nafas": "Tidak",
+      "Menggigil": "Tidak",
+      "Lemah (malaise)": "Tidak",
+      "Nyeri Otot": "Tidak",
+      "Mual atau Muntah":"Tidak",
+      "Nyeri Abdomen": "Tidak",
+      "Diare": "Tidak"
+    }
+  }
+
+}
+
+const checkDiseases = (data) => {
+  if(data.length > 0){
+    return {
+      "Hamil" : yesOrNoBool(data.includes(DISEASES.PREGNANT)),
+      "Diabetes": yesOrNoBool(data.includes(DISEASES.DIABETES)),
+      "Penyakit Jantung": yesOrNoBool(data.includes(DISEASES.HEART_DISEASE)),
+      "Hipertensi": yesOrNoBool(data.includes(DISEASES.HYPERTENSION)),
+      "Keganasan": yesOrNoBool(data.includes(DISEASES.MALIGNANCY)),
+      "Gangguan Imunologi": yesOrNoBool(data.includes(DISEASES.IMMUNOLOGICAL_DISORDERS)),
+      "Gagal Ginjal Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_KIDNEY_FAILURE)),
+      "Gagal Hati Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_HEART_FAILURE)),
+      "PPOK": yesOrNoBool(data.includes(DISEASES.PPOK))
+    }
+  }else{
+    return {
+      "Hamil" : "Tidak",
+      "Diabetes": "Tidak",
+      "Penyakit Jantung": "Tidak",
+      "Hipertensi": "Tidak",
+      "Keganasan": "Tidak",
+      "Gangguan Imunologi": "Tidak",
+      "Gagal Ginjal Kronis": "Tidak",
+      "Gagal Hati Kronis": "Tidak",
+      "PPOK": "Tidak"
+    }
+  }
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
-  convertIncome, convertPysichal, checkExistColumn, rollback
+  convertIncome, convertPysichal, checkExistColumn, rollback, checkDiagnosis,
+  checkDiseases
 }

@@ -5,9 +5,9 @@ const HistorySchema = new mongoose.Schema({
     status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true , default: null}, // PROSES / SELESAI
     final_result : { type: String, uppercase: true, required: [true, "can't be blank"], default: null}, // NEGATIF / MENINGGAL / SEMBUH
-    diagnosis : Array,
+    diagnosis : { type: Array, default: [] },
     diagnosis_other : String,
-    diseases : Array, // Kondisi/Penyakit penyerta
+    diseases : { type: Array, default: [] }, // Kondisi/Penyakit penyerta
     diseases_other : String,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
