@@ -27,5 +27,19 @@ module.exports = (server) => {
           ).code(200)
         })
       },
+      /**
+       * GET /api/cases/{id}/status
+       * @param {*} request
+       * @param {*} reply
+       */
+      async GetCaseSectionStatus(request, reply) {
+        let id = request.params.id
+        server.methods.services.v2.cases.getCaseSectionStatus(id, (err, item) => {
+            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            return reply(
+                constructCasesResponse(item, request)
+            ).code(200)
+        })
+      },
   }
 }
