@@ -37,26 +37,14 @@ const summaryAggregate = async (query, user) => {
     { $unwind: "$last_history" },
     {
       "$facet": {
-        "confirmed": [
-          await groupingCondition(groups, CRITERIA.CONF)
-        ],
-        "probable": [
-          await groupingCondition(groups, CRITERIA.PROB)
-        ],
-        "suspect": [
-          await groupingCondition(groups, CRITERIA.SUS)
-        ],
-        "closeContact": [
-          await groupingCondition(groups, CRITERIA.CLOSE)
-        ],
+        "summary": [
+          await groupingCondition(groups, CRITERIA)
+        ]
       }
     },
     {
       "$project": {
-        "confirmed": "$confirmed",
-        "probable": "$probable",
-        "suspect": "$suspect",
-        "closeContact": "$closeContact"
+        "summary": "$summary"
       }
     },
   ]
