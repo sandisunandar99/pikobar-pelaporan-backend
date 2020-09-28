@@ -3,6 +3,33 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const uniqueValidator = require('mongoose-unique-validator')
 
+const sectionFlagStatus = {
+  status_sect_identity: { type: Number, default: 0 },
+  status_sect_clinical: { type: Number, default: 0 },
+  status_sect_inspection: { type: Number, default: 0 },
+  status_sect_travel: { type: Number, default: 0 },
+  status_sect_economy: { type: Number, default: 0 },
+  status_sect_exposure: { type: Number, default: 0 },
+  status_sect_closecontact: { type: Number, default: 0 },
+  is_data_completed: { type: Boolean, default: false },
+}
+
+const refRelatedCase = [{
+  _id: false,
+  id_case: { type: String, default: null },
+  id_case_registrant: { type: String, default: null },
+  is_west_java: { type: Boolean, default: true },
+  status: { type: String, default: null },
+  relation: { type: String, default: null },
+  relation_others: { type: String, default: null },
+  activity: { type: Array, default: [] },
+  activity_others: { type: String, default: null },
+  first_contact_date: { type: Date, default: null },
+  last_contact_date: { type: Date, default: null },
+  is_access_granted: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now() },
+}]
+
 const CaseSchema = new mongoose.Schema({
   // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
   id_case: { type: String, lowercase: true, unique: true, index: true },
@@ -86,32 +113,8 @@ const CaseSchema = new mongoose.Schema({
   assignment_place: { type: String, default: null }, //tempat tugas bisa diisi unit kerja
   //faktor kontak paparan
   close_contacted_before_sick_14_days: { type: Boolean, default: false },
-  close_contact_premier: [{
-    is_west_java: { type: Boolean, default: true },
-    close_contact_id_case: { type: String, default: null },
-    close_contact_criteria: { type: String, default: null },
-    close_contact_name: { type: String, default: null },
-    close_contact_nik: { type: String, default: null },
-    close_contact_phone_numbers: { type: String, default: null },
-    close_contact_birth_date: { type: Date, default: null },
-    close_contact_occupation: { type: String, default: null },
-    close_contact_gender: { type: String, default: null },
-    close_contact_address_street: { type: String, default: null },
-    close_contact_address_district_code: { type: String, default: null },
-    close_contact_address_district_name: { type: String, default: null },
-    close_contact_address_subdistrict_code: { type: String, default: null },
-    close_contact_address_subdistrict_name: { type: String, default: null },
-    close_contact_address_village_code: { type: String, default: null },
-    close_contact_address_village_name: { type: String, default: null },
-    close_contact_rt: { type: Number, default: null },
-    close_contact_rw: { type: Number, default: null },
-    close_contact_relation: { type: String, default: null },
-    close_contact_relation_others: { type: String, default: null },
-    close_contact_activity: { type: Array, default: [] },
-    close_contact_activity_others: { type: String, default: null },
-    close_contact_first_date: { type: Date, default: null },
-    close_contact_last_date: { type: Date, default: null },
-  }],
+  close_contact_parents: refRelatedCase, // denormalization purpose
+  close_contact_childs: refRelatedCase, // denormalization purpose
   close_contact_heavy_ispa_group: { type: Boolean, default: false },
   close_contact_have_pets: { type: Boolean, default: false },
   close_contact_pets: { type: String, default: null },
@@ -158,6 +161,7 @@ const CaseSchema = new mongoose.Schema({
   }],
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
+  ...sectionFlagStatus,
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });

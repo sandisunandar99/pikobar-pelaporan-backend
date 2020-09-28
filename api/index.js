@@ -42,6 +42,7 @@ const register = (server, options, next) => {
   server.register(require('./cases'))
   server.register(require('./cases_transfers'))
   server.register(require('./cases_verifications'))
+  server.register(require('./cases_closecontact'))
   server.register(require('./histories'))
   server.register(require('./occupations'))
   server.register(require('./rdt'))
@@ -62,6 +63,8 @@ const register = (server, options, next) => {
   server.register(require('./local_transmission'))
   server.register(require('./case_exposure'))
   server.register(require('./inspection_support'))
+  server.register(require('./search'))
+  server.register(require('./v2/cases'))
 
   server.ext('onPreResponse', preResponse)
   server.ext('onRequest', onRequest)

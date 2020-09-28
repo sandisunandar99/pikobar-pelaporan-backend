@@ -10,38 +10,55 @@ const listCaseRelated = async (query, user, callback) => {
     const whereRole = Check.countByRole(user)
     const filter = await Filter.filterCase(user, query)
     const condition = Object.assign(whereRole, filter)
-    const staticParam = { ...WHERE_GLOBAL, "id_case_related": { "$nin": [null, "", ''] } }
+    const staticParam = { ...WHERE_GLOBAL, "close_contact_parents": { $gt: [] } }
     const searching = { ...condition, ...staticParam }
+    const select = {
+      "_id": 1,
+      "id_case": 1,
+      "gender": 1,
+      "status": 1,
+      "age": 1,
+      "final_result": 1,
+    }
     const aggregateCondition = [
       {
         $match: searching
       },
       {
+        $addFields: {
+          case_related_ids: {
+            $map: {
+              input: "$close_contact_parents",
+              as: "thisParent",
+              in: "$$thisParent.id_case"
+            }
+          }
+        }
+      },
+      {
         $lookup: {
           from: "cases",
-          localField: "id_case_related",
+          localField: "case_related_ids",
           foreignField: "id_case",
           as: "cases_related"
         }
       },
       {
         "$project": {
-          "_id": 1,
-          "id_case": "$id_case",
-          "id_case_related": "$id_case_related",
-          "gender": "$gender",
-          "status": "$status",
-          "age": "$age",
-          "final_result": "$final_result",
-          "cases_related" : "$cases_related"
+          ...select,
+          "cases_related" : {
+            ...select
+          }
         }
       }
     ]
     const res = await Case.aggregate(aggregateCondition)
     const resultEdgesFrom = res.map(rowEdgesFrom => filterEdges(rowEdgesFrom))
-    const resultEdgesTo = res.map(rowEdgesTo => rowEdgesTo.cases_related).filter(e => e.length)
+    const rawResultEdgesTo = res.map(rowEdgesTo => rowEdgesTo.cases_related).filter(e => e.length)
+    const resultEdgesTo = [].concat.apply([], rawResultEdgesTo)
+
     // maping array dimensional
-    const output = resultEdgesTo.map(([s_id]) => (filterEdges(s_id)))
+    const output = resultEdgesTo.map(s_id => filterEdges(s_id))
     // filter remove duplicate
     const filterOutput = output.reduce((unique, o) => {
       if (!unique.some(obj => obj.label === o.label && obj.value === o.value)) {
@@ -51,7 +68,7 @@ const listCaseRelated = async (query, user, callback) => {
     }, [])
     // combine array object
     const resultEdges = resultEdgesFrom.concat(filterOutput)
-    const resultNodes = res.map(rowNodes => filterNodes(rowNodes))
+    const resultNodes = filterNodes(res)
     const resultJson = {
       "edges": resultEdges,
       "nodes": resultNodes
@@ -101,6 +118,78 @@ const getByCaseRelated = async (id_case, callback) => {
   }
 }
 
+const sync = async (services, callback) => {
+  try {
+    // debugger config
+    const debug = true
+    const _debugger = {
+      errorIds: [],
+      skippedIds: [],
+    }
+
+    // declare error attributes
+    const errors = {
+      errorOccured: 0,
+      processed: 0,
+      notFoundCase: 0,
+      notFoundCaseRelated: 0,
+      invalidCaseAuthor: 0,
+      invalidCaseRelatedIdCase: 0,
+      invalidCaseRelatedStatus: 0,
+      idCaseSameAsRelated: 0,
+    }
+
+    // get case that have an id related case
+    const data = await Case.find({
+      id_case_related: {
+        $exists: true,
+        $nin: [ null, '' ],
+      },
+      delete_status: {
+        $ne: 'deleted'
+      },
+    })
+
+    // do mapping to closecontact field in case schema
+    for (let i = 0; i < data.length; i++) {
+      const c = data[i] // active case
+      const cc = await Case // related case
+        .findOne({ id_case: c.id_case_related })
+        .select([ 'id_case', 'status' ])
+
+      if (!c || !cc || !cc.id_case || !cc.status || !c.author) {
+        if (debug) _debugger.skippedIds.push(c.id_case_related);
+      }
+
+      if (!c) { errors.notFoundCase++; continue; }
+      if (!c.author) { errors.invalidCaseAuthor++; continue; }
+      if (!cc) { errors.notFoundCaseRelated++; continue; }
+      if (!cc.id_case) { errors.invalidCaseRelatedIdCase++; continue; }
+      if (!cc.status) { errors.invalidCaseRelatedStatus++; continue; }
+      if (c.id_case === cc.id_case) { errors.idCaseSameAsRelated++; continue; }
+
+      await services.cases.closecontact.create(
+        services, { cases: c }, c.author,
+        [{ id_case: cc.id_case, status: cc.status }],
+        (err, result) => {
+          if (err) {
+            errors.errorOccured++
+            if (debug) _debugger.errorIds.push(cc.id_case);
+            throw new Error
+          }
+          errors.processed++
+        })
+    }
+
+    if (debug) Object.assign(errors, _debugger)
+
+    callback(null, errors)
+  } catch (error) {
+    console.log(error)
+    callback(error, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.case_related.list',
@@ -109,6 +198,10 @@ module.exports = [
   {
     name: 'services.case_related.getById',
     method: getByCaseRelated,
+  },
+  {
+    name: 'services.case_related.sync',
+    method: sync,
   },
 ];
 

@@ -54,7 +54,7 @@ const listExposure = async (id_case, callback) => {
 
 const updateExposure = async (id_exposure, payload, callback) => {
   try {
-    const updated = await Exposure.update(
+    const updated = await Exposure.updateOne(
       {
         "close_contact_premier._id": ObjectId(id_exposure)
       },
@@ -92,7 +92,7 @@ const updateExposure = async (id_exposure, payload, callback) => {
 
 const deleteExposure = async (id_exposure, callback) => {
   try {
-    const deleted  = await Exposure.update(
+    const deleted  = await Exposure.updateOne(
     {
       "close_contact_premier._id": ObjectId(id_exposure)
     },

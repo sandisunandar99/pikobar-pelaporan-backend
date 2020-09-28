@@ -3,8 +3,10 @@ const register = (server, options, next) => {
     require('./users'),
     require('./areas'),
     require('./cases'),
+    require('./cases.v2'),
     require('./cases_transfers'),
     require('./cases_verifications'),
+    require('./cases_closecontact'),
     require('./histories'),
     require('./occupations'),
     require('./rdt'),
@@ -18,7 +20,6 @@ const register = (server, options, next) => {
     require('./case_related'),
     require('./case_revamp'),
     require('./close_contact'),
-    require('./close_contact.v2'),
     require('./close_contact_histories'),
     require('./case_dashboard'),
     require('./reports'),
@@ -27,7 +28,8 @@ const register = (server, options, next) => {
     require('./public_place'),
     require('./local_transmission'),
     require('./case_exposure'),
-    require('./inspection_support')
+    require('./inspection_support'),
+    require('./search')
   );
   server.method(services)
   return next()

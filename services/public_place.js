@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectID
 
 const createPublicPlace = async (payload, id_case, callback) => {
   try {
-    const inserted = await PublicPlace.update(
+    const inserted = await PublicPlace.updateOne(
       { "_id": ObjectId(id_case) },
       { $set: { 'has_visited_public_place': true },
         $addToSet: {
@@ -35,7 +35,7 @@ const listPublicPlace = async (id_case, callback) => {
 
 const updatePublicPlace = async (id_public_place, payload, callback) => {
   try {
-    const updated = await PublicPlace.update({
+    const updated = await PublicPlace.updateOne({
       "visited_public_place._id": ObjectId(id_public_place)
     },
     { "$set": {
@@ -53,7 +53,7 @@ const updatePublicPlace = async (id_public_place, payload, callback) => {
 
 const deletePublicPlace = async (id_public_place, callback) => {
   try {
-    const deleted = await PublicPlace.update(
+    const deleted = await PublicPlace.updateOne(
     {
       "visited_public_place._id": ObjectId(id_public_place)
     },
