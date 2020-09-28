@@ -54,9 +54,33 @@ const createCase = async (pre, payload, author, callback) => {
   }
 }
 
+async function getCaseSectionStatus (id, callback) {
+  try {
+    const result = await Case.findById(id)
+    .select([
+      'status_sect_identity',
+      'status_sect_clinical',
+      'status_sect_inspection',
+      'status_sect_travel',
+      'status_sect_economy',
+      'status_sect_exposure',
+      'status_sect_closecontact',
+      'is_data_completed',
+    ])
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.v2.cases.create',
     method: createCase,
+  },
+  {
+    name: 'services.v2.cases.getCaseSectionStatus',
+    method: getCaseSectionStatus
   },
 ]

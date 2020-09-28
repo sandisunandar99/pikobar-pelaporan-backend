@@ -209,19 +209,6 @@ module.exports = (server) =>{
             },
             handler: handlers.DeleteCase
         },
-        {
-          method: 'GET',
-          path: '/cases/{id}/status',
-          config: {
-              auth: 'jwt',
-              description: 'get specific case status',
-              tags: ['api', 'cases'],
-              pre: [
-                  getCasebyId,
-              ]
-          },
-          handler: handlers.GetCaseSectionStatus
-      },
         // Import excel case
         {
             method: 'POST',

@@ -76,22 +76,29 @@ const create = async (services, pre, author, payload, callback) => {
   const idCaseRegistrant = thisCase.id_case
 
   for (i in payload) {
-    let appendTarget, embededtarget, foundedCase, insertedCase;
+    let appendField, embedField, foundedCase, insertedCase;
     const req = payload[i]
 
     if (req.status === CRITERIA.CLOSE) {
-      appendTarget = 'close_contact_childs'
-      embededtarget = 'close_contact_parents'
+      appendField = 'close_contact_childs'
+      embedField = 'close_contact_parents'
     } else {
-      appendTarget = 'close_contact_parents'
-      embededtarget = 'close_contact_childs'
+      appendField = 'close_contact_parents'
+      embedField = 'close_contact_childs'
     }
 
     try {
       if (req.id_case || req.nik) {
-        foundedCase = await append(embededtarget, Case, req, relatedPayload(thisCase, idCaseRegistrant, false))
+        // (is_access_granted = false)
+        // if this related case founded, update & append this case as an embeded object to this related case
+        foundedCase = await append(embedField, Case, req, relatedPayload(thisCase, idCaseRegistrant, false))
+        if (foundedCase) {
+          req.id_case = foundedCase.id_case
+        }
       }
 
+      // (is_access_granted = false)
+      // if this related case not founded, create & append this case as an embeded object to this related case
       if (!foundedCase) {
         const createCasePayload = {
           final_result: '5',
@@ -99,10 +106,12 @@ const create = async (services, pre, author, payload, callback) => {
           verified_status: 'verified',
           status: req.status,
           origin_closecontact: true,
-          current_location_type: 'RUMAH',
-          [embededtarget]: {
+          current_location_type: 'OTHERS',
+          [embedField]: {
             ...relatedPayload(
-              thisCase, idCaseRegistrant, false
+              thisCase,
+              idCaseRegistrant,
+              false,
             ),
           },
           ...req,
@@ -113,12 +122,14 @@ const create = async (services, pre, author, payload, callback) => {
           count_case: {},
           count_case_pending: {},
         }
+
         await services.cases.getCountByDistrict(
           req.address_district_code,
           (err, res) => {
             if (err) throw new Error
             pre.count_case = res
           })
+
         await services.cases.getCountPendingByDistrict(
           req.address_district_code,
           (err, res) => {
@@ -141,10 +152,10 @@ const create = async (services, pre, author, payload, callback) => {
         result.push(foundedCase)
       }
 
-      await append(appendTarget, Case, thisCase, relatedPayload(req, idCaseRegistrant, true))
+      // append this related case as an appended object to this case (is_access_granted = true)
+      await append(appendField, Case, thisCase, relatedPayload(req, idCaseRegistrant, true))
 
     } catch (e) {
-      console.log(e)
       rollback(Case, insertedIds)
       callback(e, null)
     }
