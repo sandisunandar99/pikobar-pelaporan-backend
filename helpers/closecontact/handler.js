@@ -9,13 +9,26 @@ const append = async (state, schema, req, cases) => {
     contacts = [ cases ]
   }
 
-  return await schema.findOneAndUpdate(rules, {
-    $addToSet: {
+  const founded = await schema.findOne(rules)
+
+  if (founded) {
+    const existsRules = {
       [state]: {
-        $each: contacts
+        $not: {
+          $elemMatch: { id_case: founded.id_case },
+        },
       }
     }
-  })
+    await schema.updateOne({ ...rules, ...existsRules }, {
+      $addToSet: {
+        [state]: {
+          $each: contacts
+        }
+      }
+    })
+  }
+
+  return founded
 }
 
 const relatedPayload = (v, idCaseRegistrant, granted) => {
