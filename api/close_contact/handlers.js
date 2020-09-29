@@ -144,6 +144,7 @@ module.exports = (server) => {
          */
         async SyncCase(request, reply) {
           server.methods.services.closeContacts.syncCase(
+              server.methods.services,
               (err, result) => {
                   if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                   return reply(

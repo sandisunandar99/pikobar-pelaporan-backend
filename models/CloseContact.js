@@ -84,7 +84,7 @@ const CloseContactSchema = new mongoose.Schema({
     deletedBy: REF_USER,
     is_migrated: { type: Boolean, default: false },
     is_case_exists: { type: Boolean, default: false },
-    migration_note: { type: String, default: null },
+    migration_note: { type: String, default: '' },
     caseCreated: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Case',

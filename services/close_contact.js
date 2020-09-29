@@ -102,7 +102,7 @@ const syncCase = async (services, callback) => {
   const result = await CloseContact.find({
     delete_status: { $ne: "deleted" },
     is_migrated: { $ne: true }
-  }).populate(['case', 'latest_history', 'author'])
+  }).populate(['case', 'latest_history', 'createdBy'])
 
   for (let i = 0; i < result.length; i++) {
     const res = result[i]
@@ -114,11 +114,11 @@ const syncCase = async (services, callback) => {
         })
       }
 
-      if (!res.address_district_code) {
+      if (!res.address_district_code || !res.case || !res.createdBy) {
         await CloseContact.findOneAndUpdate(
           { _id: res._id },
           { $set: {
-              migration_note: "INVALID_DISTRICT_CODE"
+              migration_note: "INVALID_DISTRICT_CODE||CASE_N_CREATOR_NOT_FOUND"
             }
           }, { upsert: true, new: true })
       }
@@ -132,7 +132,7 @@ const syncCase = async (services, callback) => {
           }, { upsert: true, new: true })
       }
 
-      if (foundedCase || !res.address_district_code) {
+      if (foundedCase || !res.address_district_code || !res.case || !res.createdBy) {
         continue
       }
 
@@ -143,14 +143,11 @@ const syncCase = async (services, callback) => {
       }
 
       await services.cases.getCountByDistrict(
-        req.address_district_code,
+        res.address_district_code,
         (err, res) => {
           if (err) throw new Error
           pre.count_case = res
         })
-
-      // generate idcase
-      const idCase = Validate.generateIdCase(res.createdBy, pre)
 
       // prepare mapping
       const lastHis = res.latest_history || {}
@@ -161,9 +158,6 @@ const syncCase = async (services, callback) => {
       // transoform to traveling history
       const travels = transformTravelingHis(res)
 
-      // transform close_contact_premier
-      const premierContacts = transformClosecontact(res)
-
       const mappedToCasePayload = {
         verified_status: 'verified',
         interviewers_name: res.interviewer_name,
@@ -173,7 +167,7 @@ const syncCase = async (services, callback) => {
         name: res.name,
         is_phone_number_exists: res.is_phone_number_exists,
         phone_number: res.phone_number,
-        gender: this.gender,
+        gender: res.gender,
         birth_date: res.birth_date,
         age: res.age,
         month: res.month,
@@ -193,7 +187,6 @@ const syncCase = async (services, callback) => {
         inspection_support: inspects,
         travelling_history_before_sick_14_days: !!travels.length,
         travelling_history: travels,
-        // close_contact_premier: premierContacts,
         final_result: '5',
         current_location_type: 'RUMAH',
         current_location_address: res.address_street,
@@ -202,16 +195,19 @@ const syncCase = async (services, callback) => {
         current_location_district_code: res.address_district_code,
         status: CRITERIA.CLOSE,
         input_source: 'sync-from-closecontact',
-        is_reported: true,
+        is_reported: res.is_reported,
         origin_closecontact: true,
         author: res.createdBy,
       }
 
       const preCreate = { cases: res.case }
+      let insertedCase = null
       await services.cases.closecontact.create(
-        services, preCreate, res.author, [ mappedToCasePayload ],
+        services, preCreate, res.createdBy, [ mappedToCasePayload ],
         (err, result) => {
+          console.log("ERR A:", err)
           if (err) throw new Error
+          insertedCase = result
         })
 
       // update flag is_migrated true
@@ -225,6 +221,7 @@ const syncCase = async (services, callback) => {
         }, { upsert: true, new: true })
       console.log("isMigrated", isMigrated)
     } catch (e) {
+      console.log("ERR", e)
       callback(e, null)
     }
   }
