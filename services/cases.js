@@ -123,7 +123,8 @@ async function ListCase (query, user, callback) {
 const listCaseExport = async (query, user, callback) => {
   const filter = await Filter.filterCase(user, query)
   const filterRole = Check.exportByRole({}, user, query)
-  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
+  const removeParams = delete WHERE_GLOBAL.is_west_java;
+  const params = { ...filter, ...filterRole, ...removeParams }
   let search
   if(query.search){
     let search_params = [

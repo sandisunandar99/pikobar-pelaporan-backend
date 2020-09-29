@@ -56,6 +56,32 @@ module.exports = {
     SMALLER_150MINUTE: 'Latihan fisik < 150 menit',
     GREATHER_150MINUTE: 'Latihan fisik > 150 menit'
   },
+  DIAGNOSIS:{
+    HIGH_TEMPERATURE: "Suhu tubuh >= 38 °C",
+    LOW_TEMPERATURE: "Suhu tubuh < 38 °C",
+    COUGH: "Batuk",
+    FLU: "Pilek",
+    SORE_THROAT: "Sakit Tenggorokan",
+    HEADACHE: "Sakit Kepala",
+    BLOWN: "Sesak Nafas",
+    SHIVER: "Menggigil",
+    WEAK: "Lemah (malaise)",
+    MUSCLE_ACHE: "Nyeri Otot",
+    NAUSEA: "Mual atau Muntah",
+    ABDOMENT_PAIN: "Nyeri Abdomen",
+    DIARRHEA: "Diare"
+  },
+  DISEASES:{
+    PREGNANT: "Hamil",
+    DIABETES: "Diabetes",
+    HEART_DISEASE: "Penyakit Jantung",
+    HYPERTENSION: "Hipertensi",
+    MALIGNANCY: "Keganasan",
+    IMMUNOLOGICAL_DISORDERS: "Gangguan Imunologi",
+    CHRONIC_KIDNEY_FAILURE: "Gagal Ginjal Kronis",
+    CHRONIC_HEART_FAILURE: "Gagal Hati Kronis",
+    PPOK: "PPOK",
+  },
   ANSWER: {
     YES: 'Yes',
     NO: 'No',

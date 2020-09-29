@@ -1,5 +1,9 @@
 'use strict'
-const { PATIENT_STATUS, CRITERIA, ANSWER, PYSICHAL, INCOME } = require('./constant')
+const {
+  PATIENT_STATUS, CRITERIA, ANSWER,
+  PYSICHAL, INCOME, DIAGNOSIS,
+  DISEASES
+} = require('./constant');
 const setPwd = (payload) => {
   const crypto = require('crypto');
   payload.salt = crypto.randomBytes(16).toString('hex');
@@ -64,17 +68,17 @@ const isDirty = (oldData, newData) => {
   return result
 }
 
-const patientStatus = (res) => {
+const patientStatus = (params) => {
   let finalResult
-  if (res.final_result === "1") {
+  if (params === "1") {
     finalResult = PATIENT_STATUS.DONE
-  } else if (res.final_result === "2") {
+  } else if (params === "2") {
     finalResult = PATIENT_STATUS.DEAD
-  } else if (res.final_result === "3") {
+  } else if (params === "3") {
     finalResult = PATIENT_STATUS.DISCARDED
-  } else if (res.final_result === "4") {
+  } else if (params === "4") {
     finalResult = PATIENT_STATUS.SICK
-  } else if (res.final_result === "5") {
+  } else if (params === "5") {
     finalResult = PATIENT_STATUS.QUARANTINED
   } else {
     finalResult = PATIENT_STATUS.NEGATIVE
@@ -110,6 +114,17 @@ const convertYesOrNO = (param) => {
     result = ANSWER.TIDAK_TAHU
   } else {
     result = ''
+  }
+
+  return result
+}
+
+const yesOrNoBool = (param) => {
+  let result
+  if (param) {
+    result = ANSWER.YA
+  } else {
+    result = ANSWER.TIDAK
   }
 
   return result
@@ -160,8 +175,41 @@ const rollback = async (schema, insertedIds) => {
   })
 }
 
+const checkDiagnosis = (data) => {
+  return {
+    "Suhu tubuh >= 38 °C" : yesOrNoBool(data.includes(DIAGNOSIS.HIGH_TEMPERATURE)),
+    "Suhu tubuh < 38 °C": yesOrNoBool(data.includes(DIAGNOSIS.LOW_TEMPERATURE)),
+    "Batuk": yesOrNoBool(data.includes(DIAGNOSIS.COUGH)),
+    "Pilek": yesOrNoBool(data.includes(DIAGNOSIS.FLU)),
+    "Sakit Tenggorokan": yesOrNoBool(data.includes(DIAGNOSIS.SORE_THROAT)),
+    "Sakit Kepala": yesOrNoBool(data.includes(DIAGNOSIS.HEADACHE)),
+    "Sesak Nafas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
+    "Menggigil": yesOrNoBool(data.includes(DIAGNOSIS.SHIVER)),
+    "Lemah (malaise)": yesOrNoBool(data.includes(DIAGNOSIS.WEAK)),
+    "Nyeri Otot": yesOrNoBool(data.includes(DIAGNOSIS.MUSCLE_ACHE)),
+    "Mual atau Muntah": yesOrNoBool(data.includes(DIAGNOSIS.NAUSEA)),
+    "Nyeri Abdomen": yesOrNoBool(data.includes(DIAGNOSIS.ABDOMENT_PAIN)),
+    "Diare": yesOrNoBool(data.includes(DIAGNOSIS.DIARRHEA))
+  }
+}
+
+const checkDiseases = (data) => {
+  return {
+    "Hamil" : yesOrNoBool(data.includes(DISEASES.PREGNANT)),
+    "Diabetes": yesOrNoBool(data.includes(DISEASES.DIABETES)),
+    "Penyakit Jantung": yesOrNoBool(data.includes(DISEASES.HEART_DISEASE)),
+    "Hipertensi": yesOrNoBool(data.includes(DISEASES.HYPERTENSION)),
+    "Keganasan": yesOrNoBool(data.includes(DISEASES.MALIGNANCY)),
+    "Gangguan Imunologi": yesOrNoBool(data.includes(DISEASES.IMMUNOLOGICAL_DISORDERS)),
+    "Gagal Ginjal Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_KIDNEY_FAILURE)),
+    "Gagal Hati Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_HEART_FAILURE)),
+    "PPOK": yesOrNoBool(data.includes(DISEASES.PPOK))
+  }
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
-  convertIncome, convertPysichal, checkExistColumn, rollback
+  convertIncome, convertPysichal, checkExistColumn, rollback, checkDiagnosis,
+  checkDiseases
 }
