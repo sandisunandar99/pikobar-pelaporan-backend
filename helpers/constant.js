@@ -38,7 +38,11 @@ module.exports = {
     SICK: 'Masih Sakit',
     QUARANTINED: 'Masih Dikarantina'
   },
-  WHERE_GLOBAL: { delete_status: { $ne: 'deleted' }, verified_status: 'verified' },
+  WHERE_GLOBAL: {
+    delete_status: { $ne: 'deleted' },
+    verified_status: 'verified',
+    is_west_java: true,
+  },
   GENDER: {
     MALE: 'L',
     FEMALE: 'P',

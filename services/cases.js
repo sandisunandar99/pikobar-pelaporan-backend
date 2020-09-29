@@ -78,6 +78,11 @@ async function ListCase (query, user, callback) {
     params.is_reported = query.is_reported
   }
 
+  params.is_west_java = { $ne: false }
+  if ([true, false].includes(query.is_west_java)) {
+    params.is_west_java = query.is_west_java
+  }
+
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {

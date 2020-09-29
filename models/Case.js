@@ -159,6 +159,7 @@ const CaseSchema = new mongoose.Schema({
     visited_local_area_province: { type: String, default: null },
     visited_local_area_city: { type: String, default: null },
   }],
+  is_west_java: { type: Boolean, default: true },
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
   ...sectionFlagStatus,
@@ -196,8 +197,10 @@ CaseSchema.methods.toJSONFor = function () {
     author: this.author.JSONCase(),
     last_history: this.last_history,
     is_test_masif: this.is_test_masif,
+    is_west_java: this.is_west_java,
+    is_reported: this.is_reported,
     createdAt: this.createdAt,
-    updatedAt: this.updatedAt
+    updatedAt: this.updatedAt,
   }
 }
 

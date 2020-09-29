@@ -2,41 +2,55 @@
 const { CASE, ROLE } = require('../../constant');
 const moment = require('moment');
 const validatePost = (raw_payload) => {
-    if (raw_payload.current_hospital_id === "") {
+    if (raw_payload.current_hospital_id === '') {
         raw_payload.current_hospital_id = null;
     }
 
-    if (raw_payload.first_symptom_date === "") {
+    if (raw_payload.first_symptom_date === '') {
         raw_payload.first_symptom_date = Date.now();
     }
 
     return raw_payload;
 };
 
-const generateIdCase = (author, pre) => {
-    let dates = moment(new Date()).format("YY");
-    let id_case;
-    // let pasienCount ='';
-    let pendingCount = '';
-    let pad="";
-    let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
-    let dinkesCode = pre.count_case.dinkes_code;
+const generateIdCase = (author, pre, req = null) => {
+  let dates = moment(new Date()).format('YY');
+  let id_case;
 
-    if (author.role === ROLE.FASKES) {
+  let count = '';
+  let pad = '';
+  let dinkesCodeFaskes = pre.count_case_pending.dinkes_code;
+  let dinkesCode = pre.count_case.dinkes_code;
+  let isWestJava = true
 
-        pendingCount = pre.count_case_pending.count_pasien;
-        pad = pendingCount.toString().padStart(5, "0")
-        id_case = `${CASE.PRE}${dinkesCodeFaskes}${dates}${pad}`;
-    } else {
+  if (req && [true, false].includes(req.is_west_java)) {
+    isWestJava = req.is_west_java
+  }
 
-        pendingCount = pre.count_case.count_pasien;
-        pad = pendingCount.toString().padStart(7, "0")
-        id_case = `${CASE.CODE}${dinkesCode}${dates}${pad}`;
-    }
+  if (!isWestJava) {
+    const {
+      idPusat,
+      districtCode,
+      count_pasien,
+    } = pre.case_count_outside_west_java
 
-    return id_case;
+    count = count_pasien
+    pad = count.toString().padStart(7, '0')
+    id_case = `${CASE.CODE}${idPusat}${districtCode}${dates}${pad}`
+  } else if (author.role === ROLE.FASKES) {
+    count = pre.count_case_pending.count_pasien;
+    pad = count.toString().padStart(5, '0')
+    id_case = `${CASE.PRE}${dinkesCodeFaskes}${dates}${pad}`;
+  } else {
+    count = pre.count_case.count_pasien;
+    pad = count.toString().padStart(7, '0')
+    id_case = `${CASE.CODE}${dinkesCode}${dates}${pad}`;
+  }
+
+  return id_case;
 }
 
 module.exports = {
-    validatePost, generateIdCase,
+  validatePost,
+  generateIdCase,
 }
