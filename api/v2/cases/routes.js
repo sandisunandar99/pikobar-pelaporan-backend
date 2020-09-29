@@ -4,6 +4,7 @@ module.exports = (server) =>{
   const getCasebyId = require('../../cases/route_prerequesites').getCasebyId(server)
   const CheckRoleCreate = require('../../users/route_prerequesites').CheckRoleCreate(server)
   const countCaseByDistrict = require('../../cases/route_prerequesites').countCaseByDistrict(server)
+  const countCasesOutsideWestJava = require('./route_prerequesites').countCasesOutsideWestJava(server)
   const countCasePendingByDistrict = require('../../cases/route_prerequesites').countCasePendingByDistrict(server)
 
   return [
@@ -18,6 +19,7 @@ module.exports = (server) =>{
         pre: [
           CheckRoleCreate,
           countCaseByDistrict,
+          countCasesOutsideWestJava,
           countCasePendingByDistrict,
         ]
       },
