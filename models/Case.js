@@ -85,10 +85,6 @@ const CaseSchema = new mongoose.Schema({
   delete_status: String,
   deletedAt: Date,
   deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  // social history
-  pysichal_activity: { type: Number, default: null },
-  smoking: { type: Number, default: null }, // 1 ya 2 tidak 3 tidak tahu
-  consume_alcohol: { type: Number, default: null }, // 1 ya 2 tidak 3 tidak tahu
   income: { type: Number, default: null },
   //verifikasi status
   verified_status: { type: String, lowercase: true },
@@ -123,12 +119,6 @@ const CaseSchema = new mongoose.Schema({
   close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
   close_contact_performing_aerosol: { type: String, default: null },
   //pemeriksaan penunjang
-  physical_check_temperature: { type: Number, default: 0 },
-  physical_check_blood_pressure: { type: Number, default: 0 },
-  physical_check_pulse: { type: Number, default: 0 },
-  physical_check_respiration: { type: Number, default: 0 },
-  physical_check_height: { type: Number, default: 0 },
-  physical_check_weight: { type: Number, default: 0 },
   inspection_support: [{
     inspection_type: { type: String, default: null },
     specimens_type: { type: String, default: null },
