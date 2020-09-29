@@ -41,7 +41,7 @@ module.exports = {
   WHERE_GLOBAL: {
     delete_status: { $ne: 'deleted' },
     verified_status: 'verified',
-    is_west_java: true,
+    is_west_java: { $ne: false },
   },
   GENDER: {
     MALE: 'L',
