@@ -8,12 +8,12 @@ const {
   relatedPayload,
 } = require('../helpers/closecontact/handler')
 
-async function getByCase (pre, callback) {
+async function getByCase(pre, callback) {
   try {
     const aggcase = [
       {
         $match: {
-          id_case: pre. id_case,
+          id_case: pre.id_case,
         },
       },
       {
@@ -60,7 +60,7 @@ async function getByCase (pre, callback) {
 
     const result = await Case
       .aggregate(aggcase)
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
 
     callback(null, result)
   } catch (e) {
@@ -121,6 +121,7 @@ const create = async (services, pre, author, payload, callback) => {
         const pre = {
           count_case: {},
           count_case_pending: {},
+          case_count_outside_west_java: {},
         }
 
         await services.cases.getCountByDistrict(
@@ -135,6 +136,13 @@ const create = async (services, pre, author, payload, callback) => {
           (err, res) => {
             if (err) throw new Error
             pre.count_case_pending = res
+          })
+
+        await services.v2.cases.getCaseCountsOutsideWestJava(
+          author.code_district_city,
+          (err, res) => {
+            if (err) throw new Error
+            pre.case_count_outside_west_java = res
           })
 
         await services.cases_revamp.create(
@@ -164,7 +172,7 @@ const create = async (services, pre, author, payload, callback) => {
   callback(null, result)
 }
 
-async function pullCaseContact (thisCase, contactCase, callback) {
+async function pullCaseContact(thisCase, contactCase, callback) {
   try {
     const deleteOriginRegistrant = await Case.updateOne(
       { _id: ObjectId(thisCase._id) },

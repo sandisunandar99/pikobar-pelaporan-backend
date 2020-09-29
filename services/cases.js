@@ -78,6 +78,11 @@ async function ListCase (query, user, callback) {
     params.is_reported = query.is_reported
   }
 
+  params.is_west_java = { $ne: false }
+  if ([true, false].includes(query.is_west_java)) {
+    params.is_west_java = query.is_west_java
+  }
+
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {
@@ -146,25 +151,6 @@ function getCaseById (id, callback) {
     .exec()
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null));
-}
-
-async function getCaseSectionStatus (id, callback) {
-  try {
-    const result = await Case.findById(id)
-    .select([
-      'status_sect_identity',
-      'status_sect_clinical',
-      'status_sect_inspection',
-      'status_sect_travel',
-      'status_sect_economy',
-      'status_sect_exposure',
-      'status_sect_closecontact',
-    ])
-
-    callback(null, result)
-  } catch (e) {
-    callback(e, null)
-  }
 }
 
 function getCaseByNik (nik, callback) {
@@ -754,10 +740,6 @@ module.exports = [
   {
     name: 'services.cases.getById',
     method: getCaseById
-  },
-  {
-    name: 'services.cases.getCaseSectionStatus',
-    method: getCaseSectionStatus
   },
   {
     name: 'services.cases.getByNik',

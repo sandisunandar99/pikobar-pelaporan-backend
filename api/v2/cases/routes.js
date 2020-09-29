@@ -1,8 +1,10 @@
 const inputValidations = require('./validations/input')
 module.exports = (server) =>{
   const handlers = require('./handlers')(server)
+  const getCasebyId = require('../../cases/route_prerequesites').getCasebyId(server)
   const CheckRoleCreate = require('../../users/route_prerequesites').CheckRoleCreate(server)
   const countCaseByDistrict = require('../../cases/route_prerequesites').countCaseByDistrict(server)
+  const countCasesOutsideWestJava = require('./route_prerequesites').countCasesOutsideWestJava(server)
   const countCasePendingByDistrict = require('../../cases/route_prerequesites').countCasePendingByDistrict(server)
 
   return [
@@ -17,10 +19,24 @@ module.exports = (server) =>{
         pre: [
           CheckRoleCreate,
           countCaseByDistrict,
+          countCasesOutsideWestJava,
           countCasePendingByDistrict,
         ]
       },
       handler: handlers.CreateCase
+    },
+    {
+      method: 'GET',
+      path: '/v2/cases/{id}/status',
+      config: {
+        auth: 'jwt',
+        description: 'get specific case status',
+        tags: ['api', 'cases'],
+        pre: [
+          getCasebyId,
+        ]
+      },
+      handler: handlers.GetCaseSectionStatus
     },
   ]
 }
