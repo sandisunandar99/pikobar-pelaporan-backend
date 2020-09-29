@@ -68,17 +68,17 @@ const isDirty = (oldData, newData) => {
   return result
 }
 
-const patientStatus = (res) => {
+const patientStatus = (params) => {
   let finalResult
-  if (res.final_result === "1") {
+  if (params === "1") {
     finalResult = PATIENT_STATUS.DONE
-  } else if (res.final_result === "2") {
+  } else if (params === "2") {
     finalResult = PATIENT_STATUS.DEAD
-  } else if (res.final_result === "3") {
+  } else if (params === "3") {
     finalResult = PATIENT_STATUS.DISCARDED
-  } else if (res.final_result === "4") {
+  } else if (params === "4") {
     finalResult = PATIENT_STATUS.SICK
-  } else if (res.final_result === "5") {
+  } else if (params === "5") {
     finalResult = PATIENT_STATUS.QUARANTINED
   } else {
     finalResult = PATIENT_STATUS.NEGATIVE
@@ -176,67 +176,34 @@ const rollback = async (schema, insertedIds) => {
 }
 
 const checkDiagnosis = (data) => {
-  if(data.length > 0 ){
-    return {
-      "Suhu tubuh >= 38 °C" : yesOrNoBool(data.includes(DIAGNOSIS.HIGH_TEMPERATURE)),
-      "Suhu tubuh < 38 °C": yesOrNoBool(data.includes(DIAGNOSIS.LOW_TEMPERATURE)),
-      "Batuk": yesOrNoBool(data.includes(DIAGNOSIS.COUGH)),
-      "Pilek": yesOrNoBool(data.includes(DIAGNOSIS.FLU)),
-      "Sakit Tenggorokan": yesOrNoBool(data.includes(DIAGNOSIS.SORE_THROAT)),
-      "Sakit Kepala": yesOrNoBool(data.includes(DIAGNOSIS.HEADACHE)),
-      "Sesak Nafas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
-      "Menggigil": yesOrNoBool(data.includes(DIAGNOSIS.SHIVER)),
-      "Lemah (malaise)": yesOrNoBool(data.includes(DIAGNOSIS.WEAK)),
-      "Nyeri Otot": yesOrNoBool(data.includes(DIAGNOSIS.MUSCLE_ACHE)),
-      "Mual atau Muntah": yesOrNoBool(data.includes(DIAGNOSIS.NAUSEA)),
-      "Nyeri Abdomen": yesOrNoBool(data.includes(DIAGNOSIS.ABDOMENT_PAIN)),
-      "Diare": yesOrNoBool(data.includes(DIAGNOSIS.DIARRHEA))
-    }
-  }else{
-    return {
-      "Suhu tubuh >= 38 °C" : "Tidak",
-      "Suhu tubuh < 38 °C": "Tidak",
-      "Batuk": "Tidak",
-      "Pilek": "Tidak",
-      "Sakit Tenggorokan": "Tidak",
-      "Sakit Kepala": "Tidak",
-      "Sesak Nafas": "Tidak",
-      "Menggigil": "Tidak",
-      "Lemah (malaise)": "Tidak",
-      "Nyeri Otot": "Tidak",
-      "Mual atau Muntah":"Tidak",
-      "Nyeri Abdomen": "Tidak",
-      "Diare": "Tidak"
-    }
+  return {
+    "Suhu tubuh >= 38 °C" : yesOrNoBool(data.includes(DIAGNOSIS.HIGH_TEMPERATURE)),
+    "Suhu tubuh < 38 °C": yesOrNoBool(data.includes(DIAGNOSIS.LOW_TEMPERATURE)),
+    "Batuk": yesOrNoBool(data.includes(DIAGNOSIS.COUGH)),
+    "Pilek": yesOrNoBool(data.includes(DIAGNOSIS.FLU)),
+    "Sakit Tenggorokan": yesOrNoBool(data.includes(DIAGNOSIS.SORE_THROAT)),
+    "Sakit Kepala": yesOrNoBool(data.includes(DIAGNOSIS.HEADACHE)),
+    "Sesak Nafas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
+    "Menggigil": yesOrNoBool(data.includes(DIAGNOSIS.SHIVER)),
+    "Lemah (malaise)": yesOrNoBool(data.includes(DIAGNOSIS.WEAK)),
+    "Nyeri Otot": yesOrNoBool(data.includes(DIAGNOSIS.MUSCLE_ACHE)),
+    "Mual atau Muntah": yesOrNoBool(data.includes(DIAGNOSIS.NAUSEA)),
+    "Nyeri Abdomen": yesOrNoBool(data.includes(DIAGNOSIS.ABDOMENT_PAIN)),
+    "Diare": yesOrNoBool(data.includes(DIAGNOSIS.DIARRHEA))
   }
-
 }
 
 const checkDiseases = (data) => {
-  if(data.length > 0){
-    return {
-      "Hamil" : yesOrNoBool(data.includes(DISEASES.PREGNANT)),
-      "Diabetes": yesOrNoBool(data.includes(DISEASES.DIABETES)),
-      "Penyakit Jantung": yesOrNoBool(data.includes(DISEASES.HEART_DISEASE)),
-      "Hipertensi": yesOrNoBool(data.includes(DISEASES.HYPERTENSION)),
-      "Keganasan": yesOrNoBool(data.includes(DISEASES.MALIGNANCY)),
-      "Gangguan Imunologi": yesOrNoBool(data.includes(DISEASES.IMMUNOLOGICAL_DISORDERS)),
-      "Gagal Ginjal Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_KIDNEY_FAILURE)),
-      "Gagal Hati Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_HEART_FAILURE)),
-      "PPOK": yesOrNoBool(data.includes(DISEASES.PPOK))
-    }
-  }else{
-    return {
-      "Hamil" : "Tidak",
-      "Diabetes": "Tidak",
-      "Penyakit Jantung": "Tidak",
-      "Hipertensi": "Tidak",
-      "Keganasan": "Tidak",
-      "Gangguan Imunologi": "Tidak",
-      "Gagal Ginjal Kronis": "Tidak",
-      "Gagal Hati Kronis": "Tidak",
-      "PPOK": "Tidak"
-    }
+  return {
+    "Hamil" : yesOrNoBool(data.includes(DISEASES.PREGNANT)),
+    "Diabetes": yesOrNoBool(data.includes(DISEASES.DIABETES)),
+    "Penyakit Jantung": yesOrNoBool(data.includes(DISEASES.HEART_DISEASE)),
+    "Hipertensi": yesOrNoBool(data.includes(DISEASES.HYPERTENSION)),
+    "Keganasan": yesOrNoBool(data.includes(DISEASES.MALIGNANCY)),
+    "Gangguan Imunologi": yesOrNoBool(data.includes(DISEASES.IMMUNOLOGICAL_DISORDERS)),
+    "Gagal Ginjal Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_KIDNEY_FAILURE)),
+    "Gagal Hati Kronis": yesOrNoBool(data.includes(DISEASES.CHRONIC_HEART_FAILURE)),
+    "PPOK": yesOrNoBool(data.includes(DISEASES.PPOK))
   }
 }
 

@@ -2,7 +2,8 @@ const helpers = require("../custom")
 const { GENDER, ANSWER } = require("../constant")
 
 const excellOutput = (this_) => {
-  let finals = helpers.patientStatus(this_)
+  let finals = helpers.patientStatus(this_.final_result)
+  let finals_status = helpers.patientStatus(this_.final_last)
   let criteria = helpers.criteriaConvert(this_)
   let birthDate = this_.birth_date ? helpers.convertDate(this_.birth_date) : null
   let updatedDate = this_.updatedAt ? helpers.convertDate(this_.updatedAt) : null
@@ -10,6 +11,7 @@ const excellOutput = (this_) => {
   let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
   let symptomsDate = this_.first_symptom_date ? helpers.convertDate(this_.first_symptom_date) : null
   let lastDate = this_.last_date_status_patient ? helpers.convertDate(this_.last_date_status_patient) : null
+  let finalDate = this_.final_date ? helpers.convertDate(this_.final_date) : null
   // let travelDate = this_.travelling_date ? helpers.convertDate(this_.travelling_date) : null
   // let travelArrive = this_.travelling_arrive ? helpers.convertDate(this_.travelling_arrive) : null
   let apdUse = this_.apd_use ? this_.apd_use.toString() : null
@@ -49,7 +51,7 @@ const excellOutput = (this_) => {
     "Tanggal Muncul Gejala": symptomsDate,
     ...helpers.checkDiagnosis(this_.diagnosis),
     "Gejala Lainnya": helpers.checkExistColumn(this_.diagnosis_other),
-    ...helpers.checkDiseases(this_._id, this_.diseases),
+    ...helpers.checkDiseases(this_.diseases),
     "Kondisi Penyerta Lainnya": this_.diseases_other,
     "Diagnosis ARDS": helpers.convertYesOrNO(this_.diagnosis_ards),
     "Diagnosis Pneumonia": helpers.convertYesOrNO(this_.diagnosis_pneumonia),
@@ -79,7 +81,9 @@ const excellOutput = (this_) => {
     "Penghasilan": helpers.convertIncome(this_.income),
     "Tanggal Input": createdDate,
     "Tanggal Update Riwayat": updatedDate,
-    "Author": this_.author
+    "Author": this_.author,
+    "Perubahan Status": finals_status,
+    "Tanggal Perubahan Status": finalDate
   }
 }
 
@@ -173,7 +177,9 @@ const sqlCondition = (params, search) => {
         "income": "$income",
         "createdAt": "$author_list.createdAt",
         "updatedAt": "$author_list.updatedAt",
-        "author": "$author_list.fullname"
+        "author": "$author_list.fullname",
+        "final_last": "$history_list.final_result",
+        "final_date": "$history_list.updatedAt"
       }
     }
   ]
