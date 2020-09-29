@@ -9,7 +9,7 @@ const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
 
 const createCase = async (pre, payload, author, callback) => {
   try {
-    const idCase = Validate.generateIdCase(author, pre)
+    const idCase = Validate.generateIdCase(author, pre, payload)
     const unitName = author.unit_id ? author.unit_id.name : null
     const verifiedStatus = author.role === ROLE.FASKES
       ? VERIFIED_STATUS.PENDING
@@ -74,6 +74,36 @@ async function getCaseSectionStatus (id, callback) {
   }
 }
 
+async function getCaseCountsOutsideWestJava(code, callback) {
+  try {
+    const districtCode = code.slice(-2)
+    const params = {
+      is_west_java: false,
+      author_district_code: code,
+    }
+
+    const latestCase = await Case
+      .find(params)
+      .sort({id_case: -1})
+      .limit(1)
+
+    let count = 1
+    if (latestCase.length) {
+      count = (Number(latestCase[0].id_case.substring(15)) + 1)
+    }
+
+    let result = {
+      idPusat: '01',
+      districtCode: districtCode,
+      count_pasien: count,
+    }
+
+    callback(null, result)
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.v2.cases.create',
@@ -82,5 +112,9 @@ module.exports = [
   {
     name: 'services.v2.cases.getCaseSectionStatus',
     method: getCaseSectionStatus
+  },
+  {
+    name: 'services.v2.cases.getCaseCountsOutsideWestJava',
+    method: getCaseCountsOutsideWestJava
   },
 ]
