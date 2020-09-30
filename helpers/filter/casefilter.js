@@ -22,6 +22,14 @@ const filterCase = async (user, query) => {
     }
   }
 
+  if (query.start_date) {
+    params.createdAt = {
+      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+      "$lt": new Date(new Date(query.start_date)).setHours(23, 59, 59)
+    }
+  }
+
+
   if (query.verified_status && query.verified_status.split) {
     params.verified_status = { $in: query.verified_status.split(',') }
   }

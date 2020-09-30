@@ -1,4 +1,3 @@
-'use strict'
 const {
   PATIENT_STATUS, CRITERIA, ANSWER,
   PYSICHAL, INCOME, DIAGNOSIS,
@@ -210,6 +209,6 @@ const checkDiseases = (data) => {
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
-  convertIncome, convertPysichal, checkExistColumn, rollback, checkDiagnosis,
-  checkDiseases
+  convertIncome, convertPysichal, checkDiagnosis,
+  checkDiseases, checkExistColumn, rollback
 }
