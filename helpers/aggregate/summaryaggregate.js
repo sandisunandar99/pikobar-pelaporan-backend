@@ -1,6 +1,7 @@
 const { countByRole, thisUnitCaseAuthors } = require("../rolecheck")
 const { filterCase } = require("../filter/casefilter")
 const { groupingCondition } = require("../aggregate/groupaggregate")
+const { demographicCondition } = require("./demographicaggregate")
 const { CRITERIA, WHERE_GLOBAL, ROLE } = require("../constant")
 
 const summaryAggregate = async (query, user) => {
@@ -8,9 +9,25 @@ const summaryAggregate = async (query, user) => {
   // all users in the same FASKES must have the same summary.
   // ** if only based on author, every an author in this unit(faskes) will be has a different summary)
   const caseAuthors = await thisUnitCaseAuthors(user)
+  let resultFilter = {}
+  let searchRegExp = new RegExp('/', 'g')
+  if (query.start_date){
+    let queryDate = query.start_date
+    let searchDate = queryDate.replace(searchRegExp, '-')
+    resultFilter = {
+      "createdAt":{
+        "$gte": new Date(new Date(searchDate).setHours(00, 00, 00)),
+        "$lt": new Date(new Date(searchDate).setHours(23, 59, 59))
+      }
+    }
+  }else{
+    resultFilter
+  }
+
   let searching = {
     ...await filterCase(user, query),
-    ...countByRole(user, caseAuthors)
+    ...countByRole(user, caseAuthors),
+    ...resultFilter
   }
 
   let groups
@@ -39,12 +56,16 @@ const summaryAggregate = async (query, user) => {
       "$facet": {
         "summary": [
           await groupingCondition(groups, CRITERIA)
+        ],
+        "demographic": [
+          await demographicCondition(groups, query)
         ]
       }
     },
     {
       "$project": {
-        "summary": "$summary"
+        "summary": "$summary",
+        "demographic": "$demographic"
       }
     },
   ]
