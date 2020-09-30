@@ -1,4 +1,4 @@
-const demographicCondition = async (grouping, query) => {
+const demographicCondition = (grouping, query) => {
   let query_state
   if (query.criteria){
     query_state = { $eq: ["$status", query.criteria] }

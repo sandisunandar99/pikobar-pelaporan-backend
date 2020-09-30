@@ -1,4 +1,4 @@
-const groupingCondition = async (grouping, criteria) => {
+const groupingCondition = (grouping, criteria) => {
 
   const params = {
     $group: {
