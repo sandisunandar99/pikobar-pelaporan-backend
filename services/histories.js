@@ -89,7 +89,7 @@ function createHistoryIfChanged (payload, callback) {
             changed_fields.push(property);
           }
       }
-      
+
       if (changed) {
         new_history.save((err, item) => {
           if (err) return callback(err, null);
@@ -102,9 +102,9 @@ function createHistoryIfChanged (payload, callback) {
               is_test_masif: payload.is_test_masif,
               last_history: item._id
           }
-          
+
           let objcase = Object.assign(case_obj, update_case)
-  
+
           objcase.save((err, updated_case) => {
             if (err) return callback(err, null);
             return callback(null, new_history);
@@ -172,7 +172,7 @@ function createHistoryFromInputTest(payload, callback){
             changed_fields.push(property);
           }
       }
-      
+
 
       if (changed) {
         new_history.save((err, item) => {
@@ -186,9 +186,9 @@ function createHistoryFromInputTest(payload, callback){
               is_test_masif: true,
               last_history: item._id
           }
-          
+
           let objcase = Object.assign(case_obj, update_case)
-  
+
           objcase.save((err, updated_case) => {
             if (err) return callback(err, null);
             return callback(null, new_history);
@@ -201,9 +201,28 @@ function createHistoryFromInputTest(payload, callback){
     .catch(err => callback(err, null))
   })
   .catch(err => callback(err, null))
-  
+
 }
 
+async function updateHistoryById (id, payload, callback) {
+  try {
+    // guarded fields
+    Helper.deleteProps(['case'], payload)
+
+    const res = await History.findByIdAndUpdate(id,
+      { $set: payload },
+      { new: true },
+    )
+
+    if (!res) {
+      throw new Error('History not found!')
+    }
+
+    callback(null, res)
+  } catch (e) {
+    callback(e, null)
+  }
+}
 
 module.exports = [
   {
@@ -242,5 +261,8 @@ module.exports = [
     name: 'services.histories.createHistoryFromInputTest',
     method: createHistoryFromInputTest
   },
+  {
+    name: 'services.histories.updateById',
+    method: updateHistoryById
+  },
 ];
-
