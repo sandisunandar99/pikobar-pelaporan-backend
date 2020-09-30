@@ -63,7 +63,7 @@ async function getCaseSectionStatus (id, callback) {
       'status_sect_inspection',
       'status_sect_travel',
       'status_sect_economy',
-      'status_sect_exposure',
+      'status_sect_transmission',
       'status_sect_closecontact',
       'is_data_completed',
     ])
