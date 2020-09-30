@@ -1,4 +1,3 @@
-'use strict'
 const {
   PATIENT_STATUS, CRITERIA, ANSWER,
   PYSICHAL, INCOME, DIAGNOSIS,
@@ -207,9 +206,39 @@ const checkDiseases = (data) => {
   }
 }
 
+const dateRange = (type, query, filters) => {
+  let resultFilter = {}
+  let searchRegExp = new RegExp('/', 'g')
+  let min = query.min_date
+  let max = query.max_date
+  let minDate = min.replace(searchRegExp, '-')
+  let maxDate = max.replace(searchRegExp, '-')
+  if (type === "single"){
+    if (query.date){
+      resultFilter = {
+        "createdAt":{
+          "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+          "$lt": new Date(new Date(minDate).setHours(23, 59, 59))
+        }
+      }
+    }
+  }else{
+    if (query.min_date && query.max_date){
+      resultFilter = {
+        "createdAt":{
+          "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+          "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+        }
+      }
+    }
+  }
+
+  return resultFilter
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
-  convertIncome, convertPysichal, checkExistColumn, rollback, checkDiagnosis,
-  checkDiseases
+  convertIncome, convertPysichal, checkDiagnosis,
+  checkDiseases, checkExistColumn, rollback, dateRange
 }
