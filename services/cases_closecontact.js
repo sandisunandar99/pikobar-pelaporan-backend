@@ -49,6 +49,8 @@ async function getByCase (pre, callback) {
           status: "$case.status",
           address_street: "$case.address_street",
           address_district_name: "$case.address_district_name",
+          address_subdistrict_name: "$case.address_subdistrict_name",
+          address_village_name: "$case.address_village_name",
           first_contact_date: 1,
           last_contact_date: 1,
           id_case_registrant: 1,
