@@ -9,7 +9,7 @@ const sectionFlagStatus = {
   status_sect_inspection: { type: Number, default: 0 },
   status_sect_travel: { type: Number, default: 0 },
   status_sect_economy: { type: Number, default: 0 },
-  status_sect_exposure: { type: Number, default: 0 },
+  status_sect_transmission: { type: Number, default: 0 },
   status_sect_closecontact: { type: Number, default: 0 },
   is_data_completed: { type: Boolean, default: false },
 }
@@ -149,6 +149,9 @@ const CaseSchema = new mongoose.Schema({
     visited_local_area_province: { type: String, default: null },
     visited_local_area_city: { type: String, default: null },
   }],
+  transmission_types: { type: Array, default: [] },
+  cluster_type: { type: Number, default: 0 },
+  cluster_other: { type: String, default: null },
   is_west_java: { type: Boolean, default: true },
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
