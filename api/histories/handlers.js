@@ -61,7 +61,7 @@ module.exports = (server) => {
             return reply({ result: 'update history!' });
         },
         /**
-         * GET /api/histories/{id}
+         * PUT /api/history_cases/{id}
          * @param {*} request
          * @param {*} reply
          */
