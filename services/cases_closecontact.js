@@ -1,5 +1,6 @@
 
 const Case = require('../models/Case')
+const Helper = require('../helpers/custom')
 const ObjectId = require('mongodb').ObjectID
 const { rollback } = require('../helpers/custom')
 const { CRITERIA } = require('../helpers/constant')
@@ -175,6 +176,106 @@ const create = async (services, pre, author, payload, callback) => {
   callback(null, result)
 }
 
+async function detailCaseContact(thisCase, contactCase, callback) {
+  try {
+    const raw = await Case.aggregate([
+      {
+        $match: {
+          id_case: thisCase.id_case,
+        },
+      },
+      {
+        $addFields: {
+          relatedCases: {
+            $concatArrays: [
+              "$close_contact_parents",
+              "$close_contact_childs",
+            ],
+          },
+        },
+      },
+      { $unwind: "$relatedCases" },
+      { $replaceRoot: { newRoot: "$relatedCases" } },
+      { $match: { id_case: contactCase.id_case } },
+      {
+        $lookup: {
+          from: "cases",
+          localField: "id_case",
+          foreignField: "id_case",
+          as: "relatedCase",
+        },
+      },
+      {
+        $project: {
+          relatedCase: {
+            close_contact_childs: 0,
+            close_contact_parents: 0,
+            createdAt: 0,
+            updatedAt: 0,
+            last_history: 0,
+            __v: 0,
+          },
+        }
+      },
+      { $unwind: "$relatedCase" },
+    ])
+
+    // transform
+    const detail = raw.shift()
+    const { relatedCase, ...thisContactCase } = detail
+    const result = {
+      ...detail.relatedCase,
+      ...thisContactCase,
+    }
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+
+async function updateCaseContact(thisCase, contactCase, req, callback) {
+  const self = [ thisCase.id_case, contactCase.id_case ]
+  const embeded = [ contactCase.id_case, thisCase.id_case ]
+
+  const updateContactCache = (prop, idCase, idCaseRelated) => {
+    return Case.updateOne({
+      id_case: idCase,
+      [`${prop}.id_case`]: idCaseRelated
+    }, {
+      $set: {
+        [`${prop}.$.relation`]: req.relation,
+        [`${prop}.$.relation_others`]: req.relation_others,
+        [`${prop}.$.activity`]: req.activity,
+        [`${prop}.$.activity_others`]: req.activity_others,
+        [`${prop}.$.first_contact_date`]: req.first_contact_date,
+        [`${prop}.$.last_contact_date`]: req.last_contact_date,
+      }
+    })
+  }
+
+  try {
+    // guarded fields
+    Helper.deleteProps(['id_case', 'verified_status'], req)
+
+    const result = await Case.updateOne(
+      { id_case: contactCase.id_case, },
+      { $set: req },
+      { runValidators: true, context: 'query', new: true },
+    )
+
+    await updateContactCache('close_contact_parents', ...self)
+    await updateContactCache('close_contact_childs', ...self)
+    await updateContactCache('close_contact_parents', ...embeded)
+    await updateContactCache('close_contact_childs', ...embeded)
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 async function pullCaseContact(thisCase, contactCase, callback) {
   try {
     const deleteOriginRegistrant = await Case.updateOne(
@@ -221,6 +322,14 @@ module.exports = [
   {
     name: 'services.cases.closecontact.create',
     method: create
+  },
+  {
+    name: 'services.cases.closecontact.detailCaseContact',
+    method: detailCaseContact
+  },
+  {
+    name: 'services.cases.closecontact.updateCaseContact',
+    method: updateCaseContact
   },
   {
     name: 'services.cases.closecontact.pullCaseContact',
