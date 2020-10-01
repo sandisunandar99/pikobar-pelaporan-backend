@@ -1,5 +1,6 @@
 
 const Case = require('../models/Case')
+const Helper = require('../helpers/custom')
 const ObjectId = require('mongodb').ObjectID
 const { rollback } = require('../helpers/custom')
 const { CRITERIA } = require('../helpers/constant')
@@ -233,6 +234,48 @@ async function detailCaseContact(thisCase, contactCase, callback) {
   }
 }
 
+
+async function updateCaseContact(thisCase, contactCase, req, callback) {
+  const self = [ thisCase.id_case, contactCase.id_case ]
+  const embeded = [ contactCase.id_case, thisCase.id_case ]
+
+  const updateContactCache = (prop, idCase, idCaseRelated) => {
+    return Case.updateOne({
+      id_case: idCase,
+      [`${prop}.id_case`]: idCaseRelated
+    }, {
+      $set: {
+        [`${prop}.$.relation`]: req.relation,
+        [`${prop}.$.relation_others`]: req.relation_others,
+        [`${prop}.$.activity`]: req.activity,
+        [`${prop}.$.activity_others`]: req.activity_others,
+        [`${prop}.$.first_contact_date`]: req.first_contact_date,
+        [`${prop}.$.last_contact_date`]: req.last_contact_date,
+      }
+    })
+  }
+
+  try {
+    // guarded fields
+    Helper.deleteProps(['id_case', 'verified_status'], req)
+
+    const result = await Case.updateOne(
+      { id_case: contactCase.id_case, },
+      { $set: req },
+      { runValidators: true, context: 'query', new: true },
+    )
+
+    await updateContactCache('close_contact_parents', ...self)
+    await updateContactCache('close_contact_childs', ...self)
+    await updateContactCache('close_contact_parents', ...embeded)
+    await updateContactCache('close_contact_childs', ...embeded)
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 async function pullCaseContact(thisCase, contactCase, callback) {
   try {
     const deleteOriginRegistrant = await Case.updateOne(
@@ -283,6 +326,10 @@ module.exports = [
   {
     name: 'services.cases.closecontact.detailCaseContact',
     method: detailCaseContact
+  },
+  {
+    name: 'services.cases.closecontact.updateCaseContact',
+    method: updateCaseContact
   },
   {
     name: 'services.cases.closecontact.pullCaseContact',

@@ -88,6 +88,23 @@ module.exports = (server) => {
         })
     },
     /**
+     * GET api/cases/{caseId}/closecontact/{contactCaseId}
+     * @param {*} request
+     * @param {*} reply
+     */
+    async UpdateClosecontact(request, reply) {
+      server.methods.services.cases.closecontact.updateCaseContact(
+        request.pre.cases,
+        request.pre.contactCase,
+        request.payload,
+        (err, result) => {
+          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+          return reply(
+            constructCloseContactResponse(result,request)
+          ).code(200)
+        })
+    },
+    /**
      * DELETE api/cases/{caseId}/closecontact/{contactCaseId}
      * @param {*} request
      * @param {*} reply
