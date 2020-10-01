@@ -36,7 +36,7 @@ const doFlagging = async (self, Case) => {
 
   await Case.updateOne(
     { _id: ObjectId(id) },
-    { $set: { _meta: { [col]: status } } }
+    { $set: { [col]: status } }
   )
 }
 

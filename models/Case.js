@@ -157,9 +157,7 @@ const CaseSchema = new mongoose.Schema({
   is_west_java: { type: Boolean, default: true },
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
-  _meta: {
-    ...sectionStatus,
-  }
+  ...sectionStatus,
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });
