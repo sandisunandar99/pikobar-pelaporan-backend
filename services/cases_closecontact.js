@@ -175,6 +175,64 @@ const create = async (services, pre, author, payload, callback) => {
   callback(null, result)
 }
 
+async function detailCaseContact(thisCase, contactCase, callback) {
+  try {
+    const raw = await Case.aggregate([
+      {
+        $match: {
+          id_case: thisCase.id_case,
+        },
+      },
+      {
+        $addFields: {
+          relatedCases: {
+            $concatArrays: [
+              "$close_contact_parents",
+              "$close_contact_childs",
+            ],
+          },
+        },
+      },
+      { $unwind: "$relatedCases" },
+      { $replaceRoot: { newRoot: "$relatedCases" } },
+      { $match: { id_case: contactCase.id_case } },
+      {
+        $lookup: {
+          from: "cases",
+          localField: "id_case",
+          foreignField: "id_case",
+          as: "relatedCase",
+        },
+      },
+      {
+        $project: {
+          relatedCase: {
+            close_contact_childs: 0,
+            close_contact_parents: 0,
+            createdAt: 0,
+            updatedAt: 0,
+            last_history: 0,
+            __v: 0,
+          },
+        }
+      },
+      { $unwind: "$relatedCase" },
+    ])
+
+    // transform
+    const detail = raw.shift()
+    const { relatedCase, ...thisContactCase } = detail
+    const result = {
+      ...detail.relatedCase,
+      ...thisContactCase,
+    }
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 async function pullCaseContact(thisCase, contactCase, callback) {
   try {
     const deleteOriginRegistrant = await Case.updateOne(
@@ -221,6 +279,10 @@ module.exports = [
   {
     name: 'services.cases.closecontact.create',
     method: create
+  },
+  {
+    name: 'services.cases.closecontact.detailCaseContact',
+    method: detailCaseContact
   },
   {
     name: 'services.cases.closecontact.pullCaseContact',
