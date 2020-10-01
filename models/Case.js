@@ -1,17 +1,19 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
+const { doFlagging } = require('../helpers/cases/flagger')
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const uniqueValidator = require('mongoose-unique-validator')
 
-const sectionFlagStatus = {
-  status_sect_identity: { type: Number, default: 0 },
-  status_sect_clinical: { type: Number, default: 0 },
-  status_sect_inspection: { type: Number, default: 0 },
-  status_sect_travel: { type: Number, default: 0 },
-  status_sect_economy: { type: Number, default: 0 },
-  status_sect_transmission: { type: Number, default: 0 },
-  status_sect_closecontact: { type: Number, default: 0 },
-  is_data_completed: { type: Boolean, default: false },
+const sectionStatus = {
+  status_identity: { type: Number, default: 0 },
+  status_clinical: { type: Number, default: 0 },
+  status_inspection_support: { type: Number, default: 0 },
+  status_travel_import: { type: Number, default: 0 },
+  status_travel_local: { type: Number, default: 0 },
+  status_travel_public: { type: Number, default: 0 },
+  status_transmission: { type: Number, default: 0 },
+  status_exposurecontact: { type: Number, default: 0 },
+  status_closecontact: { type: Number, default: 0 },
 }
 
 const refRelatedCase = [{
@@ -155,7 +157,9 @@ const CaseSchema = new mongoose.Schema({
   is_west_java: { type: Boolean, default: true },
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
-  ...sectionFlagStatus,
+  _meta: {
+    ...sectionStatus,
+  }
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });
@@ -258,6 +262,13 @@ CaseSchema.pre('save', async function (next) {
     await CloseContact.onDeleteCase(this._id)
   }
   next()
+})
+
+/*
+ * [middleware] executed after the hooked method
+*/
+CaseSchema.post('updateOne', function () {
+  doFlagging(this, mongoose.models['Case'])
 })
 
 module.exports = mongoose.model('Case', CaseSchema)

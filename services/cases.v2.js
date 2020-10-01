@@ -58,17 +58,10 @@ async function getCaseSectionStatus (id, callback) {
   try {
     const result = await Case.findById(id)
     .select([
-      'status_sect_identity',
-      'status_sect_clinical',
-      'status_sect_inspection',
-      'status_sect_travel',
-      'status_sect_economy',
-      'status_sect_transmission',
-      'status_sect_closecontact',
-      'is_data_completed',
+      '_meta',
     ])
 
-    callback(null, result)
+    callback(null, result['_meta'])
   } catch (e) {
     callback(e, null)
   }
