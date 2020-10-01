@@ -206,9 +206,21 @@ const checkDiseases = (data) => {
   }
 }
 
+const locationPatient = (location, location_name) => {
+  let result = {}
+  if(location === "RS"){
+    result.bool = ANSWER.YA
+    result.location_name = location_name
+  }else{
+    result.bool = ANSWER.TIDAK
+    result.location_name = ""
+  }
+  return result
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
   convertIncome, convertPysichal, checkDiagnosis,
-  checkDiseases, checkExistColumn, rollback
+  checkDiseases, checkExistColumn, rollback, locationPatient, yesOrNoBool
 }
