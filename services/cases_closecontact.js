@@ -265,6 +265,7 @@ async function updateCaseContact(thisCase, contactCase, req, callback) {
       { runValidators: true, context: 'query', new: true },
     )
 
+    // embeded/caching attribute, minimized lookup operation
     await updateContactCache('close_contact_parents', ...self)
     await updateContactCache('close_contact_childs', ...self)
     await updateContactCache('close_contact_parents', ...embeded)
