@@ -55,6 +55,7 @@ HistorySchema.index({case: 1});
 
 HistorySchema.methods.toJSONFor = function () {
     return {
+        _id: this._id,
         case: this.case,
         status : this.status,
         stage : this.stage,

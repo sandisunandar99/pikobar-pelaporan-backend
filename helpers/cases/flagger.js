@@ -1,17 +1,23 @@
 const ObjectId = require('mongodb').ObjectID
+const closeconProps = [
+  'close_contact_parents',
+  'close_contact_childs'
+]
 
 const doFlagging = async (self, Case) => {
   const cond = self._conditions
   const opt = self._update
 
-  if (!cond || !cond._id || !opt['$addToSet']) {
-    return
-  }
+  if (!cond || !opt['$addToSet']) return
 
-  const id = self._conditions._id
+  const id = cond._id
   const prop = Object.keys(opt['$addToSet'])[0]
 
-  if (!prop) return
+  if (closeconProps.includes(prop)) {
+    return handleClosecontactFlag(Case, cond, opt)
+  }
+
+  if (!id || !prop) return
 
   const record = await Case
     .findById(id)
@@ -34,10 +40,47 @@ const doFlagging = async (self, Case) => {
 
   if (!col) return
 
-  await Case.updateOne(
+  return await Case.updateOne(
     { _id: ObjectId(id) },
-    { $set: { _meta: { [col]: status } } }
+    { $set: { [col]: status } }
   )
+}
+
+const handleClosecontactFlag = async (Case, cond, opt) => {
+  const idCase = cond.id_case
+  const prop = Object.keys(opt['$addToSet'])[0]
+  const rules = { id_case: idCase }
+
+  if (!idCase || !prop) return
+
+  const record = await Case
+    .findOne(rules)
+    .select(closeconProps)
+
+  if (!record) return
+
+  const {
+    close_contact_childs,
+    close_contact_parents,
+  } = record
+
+  let status = 0, childs = null, parents = null;
+
+  if (close_contact_childs) {
+    childs = close_contact_childs.filter(v => !!v.is_access_granted)
+  }
+
+  if (close_contact_parents) {
+    parents = close_contact_parents.filter(v => !!v.is_access_granted)
+  }
+
+  if (childs.length || parents.length) {
+    status = 1
+  }
+
+  return await Case.updateOne(rules,{
+    $set: { status_closecontact: status }
+  })
 }
 
 module.exports = {

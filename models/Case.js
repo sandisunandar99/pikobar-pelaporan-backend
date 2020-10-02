@@ -151,15 +151,13 @@ const CaseSchema = new mongoose.Schema({
     visited_local_area_province: { type: String, default: null },
     visited_local_area_city: { type: String, default: null },
   }],
-  transmission_types: { type: Array, default: [] },
+  transmission_type: { type: Number, default: 0 },
   cluster_type: { type: Number, default: 0 },
   cluster_other: { type: String, default: null },
   is_west_java: { type: Boolean, default: true },
   is_reported: { type: Boolean, default: true },
   origin_closecontact: { type: Boolean, default: false },
-  _meta: {
-    ...sectionStatus,
-  }
+  ...sectionStatus,
 }, { timestamps: true, usePushEach: true })
 
 CaseSchema.index({ author: 1 });
