@@ -4,8 +4,16 @@ require('../models/History');
 require('../models/Case');
 
 const Helper = require('../helpers/custom');
+const ObjectId = require('mongodb').ObjectID
 const History = mongoose.model('History');
 const Case = mongoose.model('Case');
+
+const setFlag = (id, status) => {
+  return Case.updateOne(
+    { _id: ObjectId(id) },
+    { $set: { status_clinical: status } },
+  )
+}
 
 function ListHistory (callback) {
     History.find()
@@ -64,7 +72,7 @@ function createHistoryIfChanged (payload, callback) {
    * case's last_history to the newly created history. */
 
   // guarded field (cannot be filled)
-  Helper.deleteProps(['last_changed', 'createdAt', 'updatedAt'], payload)
+  Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
@@ -114,6 +122,7 @@ function createHistoryIfChanged (payload, callback) {
         // return old history if not changed
         return callback(null, old_history);
     })
+    .then(async () => await setFlag(payload.case, 1))
     .catch(err => callback(err, null))
   })
   .catch(err => callback(err, null))
@@ -207,7 +216,7 @@ function createHistoryFromInputTest(payload, callback){
 async function updateHistoryById (id, payload, callback) {
   try {
     // guarded fields
-    Helper.deleteProps(['case'], payload)
+    Helper.deleteProps(['_id', 'case'], payload)
 
     const res = await History.findByIdAndUpdate(id,
       { $set: payload },
@@ -218,6 +227,7 @@ async function updateHistoryById (id, payload, callback) {
       throw new Error('History not found!')
     }
 
+    await setFlag(res.case, 1)
     callback(null, res)
   } catch (e) {
     callback(e, null)

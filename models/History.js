@@ -98,6 +98,7 @@ HistorySchema.methods.toJSONFor = function () {
         physical_check_respiration: this.physical_check_respiration,
         physical_check_height: this.physical_check_height,
         physical_check_weight: this.physical_check_weight,
+        there_are_symptoms: this.there_are_symptoms,
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }
