@@ -4,6 +4,7 @@ const { GENDER } = require("../constant")
 const excellOutput = (this_) => {
   let finals = helpers.patientStatus(this_.final_result)
   let criteria = helpers.criteriaConvert(this_)
+  let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
   let birthDate = this_.birth_date ? helpers.convertDate(this_.birth_date) : null
   let createdDate = this_.createdAt ? helpers.convertDate(this_.createdAt) : null
   let symptomsDate = this_.first_symptom_date ? helpers.convertDate(this_.first_symptom_date) : null
@@ -12,6 +13,9 @@ const excellOutput = (this_) => {
   let patientLocation = helpers.locationPatient(this_.current_location_type, this_.current_location_address)
 
   return {
+    "Nama Pewawancara": helpers.checkExistColumn(this_.interviewers_name),
+    "No HP Pewawancara": helpers.checkExistColumn(this_.interviewers_phone_number),
+    "Tanggal Wawancara": interviewDate,
     "Nama Pasien": this_.name,
     "NIK": this_.nik,
     "Alasan tidak ada NIK": helpers.checkExistColumn(this_.note_nik),
@@ -33,6 +37,8 @@ const excellOutput = (this_) => {
     "Kriteria": criteria,
     "Status Pasien Terakhir": finals,
     "Tgl Update Status Pasien Terakhir": lastDate,
+    "Lokasi Saat Ini": this_.current_location_address,
+    "Terdapat Gejala": this_.there_are_symptoms ? ANSWER.YA : ANSWER.TIDAK,
     "Dirawat di Rumah Sakit ?": patientLocation.bool,
     "Nama Rumah Sakit": patientLocation.location_name,
     "Tanggal Gejala": symptomsDate,
@@ -57,16 +63,16 @@ const sqlCondition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
   let createdAt = {}
   if (query.start_date && query.end_date){
-       let searchRegExp = new RegExp('/', 'g')
-       let min = query.start_date
-       let max = query.end_date
-       let minDate = min.replace(searchRegExp, '-')
-       let maxDate = max.replace(searchRegExp, '-')
-       createdAt = {
-           "createdAt" :{
-              "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
-              "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
-          }}
+    let searchRegExp = new RegExp('/', 'g')
+    let min = query.start_date
+    let max = query.end_date
+    let minDate = min.replace(searchRegExp, '-')
+    let maxDate = max.replace(searchRegExp, '-')
+    createdAt = {
+      "createdAt" :{
+        "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+        "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+    }}
   }
   let andParam = { ...createdAt, ...params }
   return [
@@ -124,6 +130,7 @@ const sqlCondition = (params, search, query) => {
         "nationality_name": "$nationality_name",
         "status": "$status",
         "final_result": "$final_result",
+        "there_are_symptoms": "$there_are_symptoms",
         "last_date_status_patient": "$last_date_status_patient",
         "current_location_type": "$current_location_type",
         "current_location_address": "$history_list.current_location_address",
@@ -143,7 +150,7 @@ const sqlCondition = (params, search, query) => {
         "smoking": "$smoking",
         "consume_alcohol": "$consume_alcohol",
         "income": "$income",
-        "createdAt": "$author_list.createdAt",
+        "createdAt": "$createdAt",
         "author": "$author_list.fullname",
       }
     }
