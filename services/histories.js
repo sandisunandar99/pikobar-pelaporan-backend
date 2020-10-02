@@ -72,7 +72,7 @@ function createHistoryIfChanged (payload, callback) {
    * case's last_history to the newly created history. */
 
   // guarded field (cannot be filled)
-  Helper.deleteProps(['last_changed', 'createdAt', 'updatedAt'], payload)
+  Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
@@ -216,7 +216,7 @@ function createHistoryFromInputTest(payload, callback){
 async function updateHistoryById (id, payload, callback) {
   try {
     // guarded fields
-    Helper.deleteProps(['case'], payload)
+    Helper.deleteProps(['_id', 'case'], payload)
 
     const res = await History.findByIdAndUpdate(id,
       { $set: payload },
