@@ -1,11 +1,12 @@
 const helpers = require("../custom")
-const { GENDER } = require("../constant")
+const { GENDER, ANSWER } = require("../constant")
 
 const excellOutput = (this_) => {
   let finals = helpers.patientStatus(this_.final_result)
   let criteria = helpers.criteriaConvert(this_)
   let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
   let birthDate = this_.birth_date ? helpers.convertDate(this_.birth_date) : null
+  let updatedDate = this_.updatedAt ? helpers.convertDate(this_.updatedAt) : null
   let createdDate = this_.createdAt ? helpers.convertDate(this_.createdAt) : null
   let symptomsDate = this_.first_symptom_date ? helpers.convertDate(this_.first_symptom_date) : null
   let lastDate = this_.last_date_status_patient ? helpers.convertDate(this_.last_date_status_patient) : null
@@ -54,6 +55,9 @@ const excellOutput = (this_) => {
     "Alat Pelindung yang Digunakan": apdUse,
     "Merokok": helpers.convertYesOrNO(this_.smoking),
     "Konsumsi Alkohol": helpers.convertYesOrNO(this_.consume_alcohol),
+    "Aktifitas Fisik": helpers.convertPysichal(this_.pysichal_activity),
+    "Penghasilan": helpers.convertIncome(this_.income),
+    "Tanggal Update Riwayat": updatedDate,
     "Author": this_.author,
     "Tanggal Input": createdDate,
   }
@@ -149,8 +153,10 @@ const sqlCondition = (params, search, query) => {
         "apd_use": "$apd_use",
         "smoking": "$smoking",
         "consume_alcohol": "$consume_alcohol",
+        "pysichal_activity": "$pysichal_activity",
         "income": "$income",
         "createdAt": "$createdAt",
+        "createdAt": "$updatedAt",
         "author": "$author_list.fullname",
       }
     }
