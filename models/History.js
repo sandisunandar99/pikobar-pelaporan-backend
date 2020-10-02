@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
-    status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
+    status : { type: String, uppercase: true, default: null }, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true , default: null}, // PROSES / SELESAI
     final_result : { type: String, uppercase: true, required: [true, "can't be blank"], default: null}, // NEGATIF / MENINGGAL / SEMBUH
     diagnosis : { type: Array, default: [] },
