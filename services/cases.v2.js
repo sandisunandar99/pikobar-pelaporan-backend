@@ -32,6 +32,7 @@ const createCase = async (pre, payload, author, callback) => {
       fasyankes_village_code: author.address_village_code,
       fasyankes_village_name: author.address_village_name,
       assignment_place: unitName,
+      status_identity: 1,
       ...payload,
     })
 
