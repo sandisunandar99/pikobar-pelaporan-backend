@@ -1,11 +1,7 @@
-const demographicCondition = (grouping, query) => {
-  let query_state
-  if (query.criteria){
-    query_state = { $eq: ["$status", query.criteria] }
-  }else{
-    query_state = {}
-  }
-  const params = {
+const { filterStatus } = require("./globalcondtion")
+const demographicCondition = (grouping, query, criteria) => {
+  let query_state = filterStatus(query, criteria)
+  const paramsDemographic = {
     $group: {
       _id: grouping,
       wni: {
@@ -62,7 +58,7 @@ const demographicCondition = (grouping, query) => {
     }
   }
 
-  return params
+  return paramsDemographic
 }
 
 module.exports = {

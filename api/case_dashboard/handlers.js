@@ -35,6 +35,15 @@ module.exports = (server) => {
           return reply(dashboardResponse(result)).code(200);
         }
       )
-    },
+    },async countVisualization(request, reply) {
+      server.methods.services.case_dashboard.countVisualization(
+        request.query,
+        request.auth.credentials.user,
+        (err, result) => {
+          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+          return reply(dashboardResponse(result)).code(200);
+        }
+      )
+    }
   }
 }
