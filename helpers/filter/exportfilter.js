@@ -156,7 +156,7 @@ const sqlCondition = (params, search, query) => {
         "pysichal_activity": "$pysichal_activity",
         "income": "$income",
         "createdAt": "$createdAt",
-        "createdAt": "$updatedAt",
+        "updatedAt": "$updatedAt",
         "author": "$author_list.fullname",
       }
     }
