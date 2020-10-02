@@ -4,8 +4,16 @@ require('../models/History');
 require('../models/Case');
 
 const Helper = require('../helpers/custom');
+const ObjectId = require('mongodb').ObjectID
 const History = mongoose.model('History');
 const Case = mongoose.model('Case');
+
+const setFlag = (id, status) => {
+  return Case.updateOne(
+    { _id: ObjectId(id) },
+    { $set: { status_clinical: status } },
+  )
+}
 
 function ListHistory (callback) {
     History.find()
@@ -114,6 +122,7 @@ function createHistoryIfChanged (payload, callback) {
         // return old history if not changed
         return callback(null, old_history);
     })
+    .then(async () => await setFlag(payload.case, 1))
     .catch(err => callback(err, null))
   })
   .catch(err => callback(err, null))
@@ -218,6 +227,7 @@ async function updateHistoryById (id, payload, callback) {
       throw new Error('History not found!')
     }
 
+    await setFlag(res.case, 1)
     callback(null, res)
   } catch (e) {
     callback(e, null)
