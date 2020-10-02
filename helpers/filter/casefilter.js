@@ -15,19 +15,22 @@ const filterCase = async (user, query) => {
     params.address_subdistrict_code = query.address_subdistrict_code;
   }
 
-  if (query.start_date && query.end_date) {
-    params.createdAt = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
-      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
-    }
-  }
 
-  if (query.start_date) {
-    params.createdAt = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
-      "$lt": new Date(new Date(query.start_date)).setHours(23, 59, 59)
-    }
-  }
+  /* this condition not suport if using aggregate */
+
+  // if (query.start_date && query.end_date) {
+  //   params.createdAt = {
+  //     "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+  //     "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+  //   }
+  // }
+
+  // if (query.start_date) {
+  //   params.createdAt = {
+  //     "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
+  //     "$lt": new Date(new Date(query.start_date)).setHours(23, 59, 59)
+  //   }
+  // }
 
 
   if (query.verified_status && query.verified_status.split) {

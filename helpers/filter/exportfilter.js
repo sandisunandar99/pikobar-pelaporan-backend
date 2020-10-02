@@ -53,12 +53,26 @@ const excellOutput = (this_) => {
   }
 }
 
-const sqlCondition = (params, search) => {
+const sqlCondition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
+  let createdAt = {}
+  if (query.start_date && query.end_date){
+       let searchRegExp = new RegExp('/', 'g')
+       let min = query.start_date
+       let max = query.end_date
+       let minDate = min.replace(searchRegExp, '-')
+       let maxDate = max.replace(searchRegExp, '-')
+       createdAt = {
+           "createdAt" :{
+              "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+              "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+          }}
+  }
+  let andParam = { ...createdAt, ...params }
   return [
     {
       $match: {
-        $and : [ params ],
+        $and : [ andParam ],
         $or : searching
       }
     },

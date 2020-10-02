@@ -123,8 +123,7 @@ async function ListCase (query, user, callback) {
 const listCaseExport = async (query, user, callback) => {
   const filter = await Filter.filterCase(user, query)
   const filterRole = Check.exportByRole({}, user, query)
-  const removeParams = delete WHERE_GLOBAL.is_west_java;
-  const params = { ...filter, ...filterRole, ...removeParams }
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
   let search
   if(query.search){
     let search_params = [
@@ -136,7 +135,7 @@ const listCaseExport = async (query, user, callback) => {
     search = {}
   }
   params.last_history = { $exists: true, $ne: null }
-  const condition = sqlCondition(params, search)
+  const condition = sqlCondition(params, search, query)
   try {
     const resultExport = await Case.aggregate(condition)
     callback (null, resultExport.map(cases => excellOutput(cases)))
