@@ -57,5 +57,18 @@ module.exports = (server) =>{
           },
           handler: handlers.UpdateHistory
         },
+        {
+          method: 'GET',
+          path: '/history-export',
+          config: {
+              auth: 'jwt',
+              description: 'export histories',
+              tags: ['api', 'histories'],
+              pre: [
+                  CheckRoleView
+              ]
+          },
+          handler: handlers.exportHistory
+        },
     ]
 }
