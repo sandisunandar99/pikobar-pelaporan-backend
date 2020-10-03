@@ -1,12 +1,11 @@
-const mongoose = require('mongoose');
-
-require('../models/History');
-require('../models/Case');
-
-const Helper = require('../helpers/custom');
+const Case = require('../models/Case')
+const History = require('../models/History')
+const Helper = require('../helpers/custom')
 const ObjectId = require('mongodb').ObjectID
-const History = mongoose.model('History');
-const Case = mongoose.model('Case');
+const { exportByRole } = require('../helpers/rolecheck')
+const { WHERE_GLOBAL } = require('../helpers/constant')
+const { filterCase } = require('../helpers/filter/casefilter')
+const { condition, excellHistories } = require('../helpers/filter/historyfilter')
 
 const setFlag = (id, status) => {
   return Case.updateOne(
@@ -234,6 +233,30 @@ async function updateHistoryById (id, payload, callback) {
   }
 }
 
+const listHistoryExport = async (query, user, callback) => {
+  const filter = await filterCase(user, query)
+  const filterRole = exportByRole({}, user, query)
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
+  let search
+  if(query.search){
+    let search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+    search = search_params
+  } else {
+    search = {}
+  }
+  params.last_history = { $exists: true, $ne: null }
+  const where = condition(params, search, query)
+  try {
+    const resultHistory = await Case.aggregate(where)
+    callback (null, resultHistory.map(cases => excellHistories(cases)))
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.histories.list',
@@ -274,5 +297,9 @@ module.exports = [
   {
     name: 'services.histories.updateById',
     method: updateHistoryById
+  },
+  {
+    name: 'services.histories.listHistoryExport',
+    method: listHistoryExport
   },
 ];
