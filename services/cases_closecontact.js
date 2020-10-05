@@ -276,34 +276,25 @@ async function updateCaseContact(thisCase, contactCase, req, callback) {
 }
 
 async function pullCaseContact(thisCase, contactCase, callback) {
+  const pullingContact = (source, target) => {
+    return Case.updateOne(
+      { id_case: [source].id_case },
+      {
+        $pull: {
+          close_contact_parents: {
+            id_case: [target].id_case
+          },
+          close_contact_childs: {
+            id_case: [target].id_case
+          },
+        },
+      },
+    )
+  }
   try {
-    const deleteOriginRegistrant = await Case.updateOne(
-      { id_case: thisCase.id_case },
-      {
-        $pull: {
-          close_contact_parents: {
-            id_case: contactCase.id_case
-          },
-          close_contact_childs: {
-            id_case: contactCase.id_case
-          },
-        },
-      },
-    )
+    const deleteOriginRegistrant = await pullingContact(thisCase, contactCase)
 
-    const deleteOriginEmebeded = await Case.updateOne(
-      { id_case: contactCase.id_case },
-      {
-        $pull: {
-          close_contact_parents: {
-            id_case: thisCase.id_case
-          },
-          close_contact_childs: {
-            id_case: thisCase.id_case
-          },
-        },
-      },
-    )
+    const deleteOriginEmebeded = await pullingContact(contactCase, thisCase)
 
     const result = !!(deleteOriginRegistrant && deleteOriginEmebeded)
 
