@@ -66,10 +66,8 @@ const doFlagging = async (source, self, Case) => {
 const handleClosecontactFlag = async (Case, idCase, prop) => {
   if (!idCase || !prop) return
 
-  const rules = { id_case: idCase }
-
   const record = await Case
-    .findOne(rules)
+    .findOne({ id_case: idCase })
     .select(closeconProps)
 
   if (!record) return
@@ -93,8 +91,9 @@ const handleClosecontactFlag = async (Case, idCase, prop) => {
     status = 1
   }
 
-  return await Case.updateOne(rules,{
-    $set: { status_closecontact: status }
+  return await Case.updateOne(
+    { id_case: idCase },
+    { $set: { status_closecontact: status }
   })
 }
 
