@@ -64,37 +64,38 @@ const doFlagging = async (source, self, Case) => {
 }
 
 const handleClosecontactFlag = async (Case, idCase, prop) => {
-  if (idCase && prop) {
-    const record = await Case
-    .findOne({ id_case: idCase })
+  const idCase = cond.id_case
+  const prop = Object.keys(opt['$addToSet'])[0]
+  const rules = { id_case: idCase }
+
+  const record = await Case
+    .findOne(rules)
     .select(closeconProps)
 
-    if (!record) return
+  if (!record) return
 
-    const {
-      close_contact_childs,
-      close_contact_parents,
-    } = record
+  const {
+    close_contact_childs,
+    close_contact_parents,
+  } = record
 
-    let status = 0, childs = null, parents = null;
+  let status = 0, childs = null, parents = null;
 
-    if (close_contact_childs) {
-      childs = close_contact_childs.filter(v => !!v.is_access_granted)
-    }
-
-    if (close_contact_parents) {
-      parents = close_contact_parents.filter(v => !!v.is_access_granted)
-    }
-
-    if (childs.length || parents.length) {
-      status = 1
-    }
-
-    return await Case.updateOne(
-      { id_case: idCase },
-      { $set: { status_closecontact: status }
-    })
+  if (close_contact_childs) {
+    childs = close_contact_childs.filter(v => !!v.is_access_granted)
   }
+
+  if (close_contact_parents) {
+    parents = close_contact_parents.filter(v => !!v.is_access_granted)
+  }
+
+  if (childs.length || parents.length) {
+    status = 1
+  }
+
+  return await Case.updateOne(rules,{
+    $set: { status_closecontact: status }
+  })
 }
 
 module.exports = {
