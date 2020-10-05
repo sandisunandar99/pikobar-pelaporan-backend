@@ -64,6 +64,8 @@ const doFlagging = async (source, self, Case) => {
 }
 
 const handleClosecontactFlag = async (Case, idCase) => {
+  if (!cond.id_case) return
+
   const idCase = cond.id_case
   const rules = { id_case: idCase }
 
