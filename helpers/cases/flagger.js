@@ -75,12 +75,12 @@ const doFlagging = async (source, self, Case) => {
 
     const field = getFieldName(prop)
 
-    if (!field) return
-
-    await Case.updateOne(
-      { _id: ObjectId(id) },
-      { $set: { [field]: status } }
-    )
+    if (field) {
+      await Case.updateOne(
+        { _id: ObjectId(id) },
+        { $set: { [field]: status } }
+      )
+    }
   }
 
 }
