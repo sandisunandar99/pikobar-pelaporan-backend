@@ -4,26 +4,42 @@ const closeconProps = [
   'close_contact_childs'
 ]
 
-const doFlagging = async (self, Case) => {
+const doFlagging = async (source, self, Case) => {
+  const pre = source === 'pre'
   const cond = self._conditions
   const opt = self._update
 
-  if (!cond || !opt['$addToSet']) return
+  if (!cond || !opt) return
 
-  const id = cond._id
-  const prop = Object.keys(opt['$addToSet'])[0]
+  let prop, filter;
+
+  if (opt['$pull']) {
+    prop = Object.keys(opt['$pull'])[0]
+    filter = `${prop}._id`
+  } else if (opt['$addToSet']) {
+    prop = Object.keys(opt['$addToSet'])[0]
+    filter = '_id'
+  }
+
+  let id = cond._id || cond[`${prop}._id`]
 
   if (closeconProps.includes(prop)) {
-    return handleClosecontactFlag(Case, cond, opt)
+    if (pre) return
+    return handleClosecontactFlag(Case, cond, prop)
   }
 
   if (!id || !prop) return
 
   const record = await Case
-    .findById(id)
+    .findOne({ [filter]: id })
     .select([prop])
 
   if (!record || !record[prop]) return
+
+  if (pre && record[prop].length) {
+    id = record._id
+    record[prop].shift()
+  }
 
   const status = record[prop].length ? 1 : 0
 
@@ -46,9 +62,8 @@ const doFlagging = async (self, Case) => {
   )
 }
 
-const handleClosecontactFlag = async (Case, cond, opt) => {
+const handleClosecontactFlag = async (Case, cond, prop) => {
   const idCase = cond.id_case
-  const prop = Object.keys(opt['$addToSet'])[0]
   const rules = { id_case: idCase }
 
   if (!idCase || !prop) return

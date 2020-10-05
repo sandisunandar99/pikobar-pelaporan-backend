@@ -1,7 +1,6 @@
 
 const Case = require('../models/Case')
 const Helper = require('../helpers/custom')
-const ObjectId = require('mongodb').ObjectID
 const { rollback } = require('../helpers/custom')
 const { CRITERIA } = require('../helpers/constant')
 const {
@@ -279,7 +278,7 @@ async function updateCaseContact(thisCase, contactCase, req, callback) {
 async function pullCaseContact(thisCase, contactCase, callback) {
   try {
     const deleteOriginRegistrant = await Case.updateOne(
-      { _id: ObjectId(thisCase._id) },
+      { id_case: thisCase.id_case },
       {
         $pull: {
           close_contact_parents: {
@@ -293,7 +292,7 @@ async function pullCaseContact(thisCase, contactCase, callback) {
     )
 
     const deleteOriginEmebeded = await Case.updateOne(
-      { _id: ObjectId(contactCase._id) },
+      { id_case: contactCase.id_case },
       {
         $pull: {
           close_contact_parents: {
