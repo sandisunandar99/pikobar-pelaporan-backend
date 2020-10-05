@@ -63,9 +63,8 @@ const doFlagging = async (source, self, Case) => {
 
 }
 
-const handleClosecontactFlag = async (Case, idCase, prop) => {
+const handleClosecontactFlag = async (Case, idCase) => {
   const idCase = cond.id_case
-  const prop = Object.keys(opt['$addToSet'])[0]
   const rules = { id_case: idCase }
 
   const record = await Case
