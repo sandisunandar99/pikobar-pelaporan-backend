@@ -25,7 +25,7 @@ const doFlagging = async (source, self, Case) => {
 
   if (closeconProps.includes(prop)) {
     if (pre) return
-    return handleClosecontactFlag(Case, cond.id_case, prop)
+    return handleClosecontactFlag(Case, cond.id_case)
   }
 
   if (!id || !prop) return
@@ -64,9 +64,8 @@ const doFlagging = async (source, self, Case) => {
 }
 
 const handleClosecontactFlag = async (Case, idCase) => {
-  if (!cond.id_case) return
+  if (!idCase) return
 
-  const idCase = cond.id_case
   const rules = { id_case: idCase }
 
   const record = await Case
