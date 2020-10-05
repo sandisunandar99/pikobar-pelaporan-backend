@@ -34,32 +34,33 @@ const doFlagging = async (source, self, Case) => {
     .findOne({ [filter]: id })
     .select([prop])
 
-  if (!record || !record[prop]) return
+  if (record && record[prop]) {
+    if (pre && record[prop].length) {
+      id = record._id
+      record[prop].shift()
+    }
 
-  if (pre && record[prop].length) {
-    id = record._id
-    record[prop].shift()
+    const status = record[prop].length ? 1 : 0
+
+    let col = null
+    if (prop === 'visited_local_area') {
+      col = 'status_travel_local'
+    } else if (prop === 'visited_public_place') {
+      col = 'status_travel_public'
+    } else if (prop === 'travelling_history') {
+      col = 'status_travel_import'
+    } else if (prop === 'inspection_support') {
+      col = 'status_inspection_support'
+    }
+
+    if (!col) return
+
+    return await Case.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { [col]: status } }
+    )
   }
 
-  const status = record[prop].length ? 1 : 0
-
-  let col = null
-  if (prop === 'visited_local_area') {
-    col = 'status_travel_local'
-  } else if (prop === 'visited_public_place') {
-    col = 'status_travel_public'
-  } else if (prop === 'travelling_history') {
-    col = 'status_travel_import'
-  } else if (prop === 'inspection_support') {
-    col = 'status_inspection_support'
-  }
-
-  if (!col) return
-
-  return await Case.updateOne(
-    { _id: ObjectId(id) },
-    { $set: { [col]: status } }
-  )
 }
 
 const handleClosecontactFlag = async (Case, cond, prop) => {
