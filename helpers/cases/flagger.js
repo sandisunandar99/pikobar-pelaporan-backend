@@ -63,9 +63,7 @@ const doFlagging = async (source, self, Case) => {
 
   if (!id || !prop) return
 
-  const record = await Case
-    .findOne({ [filter]: id })
-    .select([prop])
+  const record = await Case.findOne({ [filter]: id }).select([prop])
 
   if (record && record[prop]) {
     if (pre && record[prop].length) {
@@ -77,12 +75,12 @@ const doFlagging = async (source, self, Case) => {
 
     const field = getFieldName(prop)
 
-    if (field) {
-      return await Case.updateOne(
-        { _id: ObjectId(id) },
-        { $set: { [field]: status } }
-      )
-    }
+    if (!field) return
+
+    await Case.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { [field]: status } }
+    )
   }
 
 }
@@ -115,7 +113,7 @@ const handleClosecontactFlag = async (Case, idCase) => {
     status = 1
   }
 
-  return await Case.updateOne(rules, {
+  await Case.updateOne(rules, {
     $set: { status_closecontact: status }
   })
 }
