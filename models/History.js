@@ -49,6 +49,9 @@ const HistorySchema = new mongoose.Schema({
     physical_check_respiration: { type: Number, default: 0 },
     physical_check_height: { type: Number, default: 0 },
     physical_check_weight: { type: Number, default: 0 },
+    delete_status: String,
+    deletedAt: Date,
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps : true });
 
 HistorySchema.index({case: 1});

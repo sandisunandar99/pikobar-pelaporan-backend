@@ -58,6 +58,19 @@ module.exports = (server) =>{
           handler: handlers.UpdateHistory
         },
         {
+          method: 'DELETE',
+          path: '/history_cases/{id}',
+          config: {
+            auth: 'jwt',
+            description: 'delete specific histories',
+            tags: ['api', 'histories'],
+            pre: [
+              CheckRoleUpdate,
+            ]
+          },
+          handler: handlers.DeleteHistory
+        },
+        {
           method: 'GET',
           path: '/history-export',
           config: {
