@@ -4,6 +4,46 @@ const closeconProps = [
   'close_contact_childs'
 ]
 
+const getFieldName = (prop) => {
+  let fieldName = null
+
+  if (prop === 'visited_local_area') {
+    fieldName = 'status_travel_local'
+  } else if (prop === 'visited_public_place') {
+    fieldName = 'status_travel_public'
+  } else if (prop === 'travelling_history') {
+    fieldName = 'status_travel_import'
+  } else if (prop === 'inspection_support') {
+    fieldName = 'status_inspection_support'
+  }
+
+  return fieldName
+}
+
+const getProp = (opt) => {
+  let prop
+
+  if (opt['$pull']) {
+    prop = Object.keys(opt['$pull'])[0]
+  } else if (opt['$addToSet']) {
+    prop = Object.keys(opt['$addToSet'])[0]
+  }
+
+  return prop
+}
+
+const getFilter = (opt, prop) => {
+  let filter
+
+  if (opt['$pull']) {
+    filter = `${prop}._id`
+  } else if (opt['$addToSet']) {
+    filter = '_id'
+  }
+
+  return filter
+}
+
 const doFlagging = async (source, self, Case) => {
   const pre = source === 'pre'
   const cond = self._conditions
@@ -11,15 +51,8 @@ const doFlagging = async (source, self, Case) => {
 
   if (!cond || !opt) return
 
-  let prop, filter;
-
-  if (opt['$pull']) {
-    prop = Object.keys(opt['$pull'])[0]
-    filter = `${prop}._id`
-  } else if (opt['$addToSet']) {
-    prop = Object.keys(opt['$addToSet'])[0]
-    filter = '_id'
-  }
+  const prop = getProp(opt)
+  const filter = getFilter(opt, prop)
 
   let id = cond._id || cond[`${prop}._id`]
 
@@ -42,23 +75,14 @@ const doFlagging = async (source, self, Case) => {
 
     const status = record[prop].length ? 1 : 0
 
-    let col = null
-    if (prop === 'visited_local_area') {
-      col = 'status_travel_local'
-    } else if (prop === 'visited_public_place') {
-      col = 'status_travel_public'
-    } else if (prop === 'travelling_history') {
-      col = 'status_travel_import'
-    } else if (prop === 'inspection_support') {
-      col = 'status_inspection_support'
+    const field = getFieldName(prop)
+
+    if (field) {
+      return await Case.updateOne(
+        { _id: ObjectId(id) },
+        { $set: { [field]: status } }
+      )
     }
-
-    if (!col) return
-
-    return await Case.updateOne(
-      { _id: ObjectId(id) },
-      { $set: { [col]: status } }
-    )
   }
 
 }
