@@ -64,10 +64,12 @@ const doFlagging = async (source, self, Case) => {
 }
 
 const handleClosecontactFlag = async (Case, cond, prop) => {
-  const idCase = cond.id_case
-  const rules = { id_case: idCase }
+  if (!cond.id_case || !prop) return
 
-  if (!idCase || !prop) return
+  const idCase = cond.id_case
+  const rules = {
+    id_case: idCase
+  }
 
   const record = await Case
     .findOne(rules)
