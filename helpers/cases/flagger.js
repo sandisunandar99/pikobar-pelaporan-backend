@@ -64,8 +64,6 @@ const doFlagging = async (source, self, Case) => {
 }
 
 const handleClosecontactFlag = async (Case, idCase) => {
-  if (!idCase) return
-
   const rules = { id_case: idCase }
 
   const record = await Case
@@ -93,7 +91,7 @@ const handleClosecontactFlag = async (Case, idCase) => {
     status = 1
   }
 
-  return await Case.updateOne(rules,{
+  return await Case.updateOne(rules, {
     $set: { status_closecontact: status }
   })
 }
