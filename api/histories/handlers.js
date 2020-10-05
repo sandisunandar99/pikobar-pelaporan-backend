@@ -60,7 +60,15 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async DeleteHistory(request, reply){
-            return reply({ result: 'update history!' });
+          server.methods.services.histories.deleteById(
+            request.params.id,
+            request.auth.credentials.user,
+            (err, item) => {
+            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            return reply(
+              constructHistorysResponse(item)
+            ).code(200)
+          })
         },
         /**
          * PUT /api/history_cases/{id}

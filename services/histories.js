@@ -34,6 +34,7 @@ function getHistoryById (id, callback) {
 
 function getHistoryByCase (id_case, callback) {
   History.find({ case: id_case})
+        .where('delete_status').ne('deleted')
         .sort({ createdAt: 'desc'})
         .exec()
         .then(item => {
@@ -257,6 +258,20 @@ const listHistoryExport = async (query, user, callback) => {
   }
 }
 
+// soft delete
+async function deleteHistoryById (id, author, callback) {
+  try {
+    const payload = Helper.deletedSave({}, author)
+    const result = await History.updateOne(
+      { _id: ObjectId(id) },
+      { $set: payload },
+    )
+    return callback(null, result)
+  } catch (e) {
+    return callback(e, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.histories.list',
@@ -297,6 +312,10 @@ module.exports = [
   {
     name: 'services.histories.updateById',
     method: updateHistoryById
+  },
+  {
+    name: 'services.histories.deleteById',
+    method: deleteHistoryById
   },
   {
     name: 'services.histories.listHistoryExport',
