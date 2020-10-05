@@ -2,21 +2,20 @@ const replyHelper = require('../helpers')
 
 const getById = (server, paramKey, errMsg) => {
   return (request, reply) => {
-    server.methods.services.cases.getById(
-      request.params[paramKey],
-      (err, result) => {
-        if (err) {
-          return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-        }
-        if (!result) {
-          return reply({
-            status: 422,
-            message: errMsg,
-            data: null,
-          }).code(422).takeover()
-        }
-        return reply(result)
-      })
+    const id = request.params[paramKey]
+    server.methods.services.cases.getById(id, (err, result) => {
+      if (err) {
+        return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
+      }
+      if (!result) {
+        return reply({
+          status: 422,
+          message: errMsg,
+          data: null,
+        }).code(422).takeover()
+      }
+      return reply(result)
+    })
   }
 }
 
