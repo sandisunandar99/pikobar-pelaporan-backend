@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
-    status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
+    status : { type: String, uppercase: true, default: null }, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true , default: null}, // PROSES / SELESAI
     final_result : { type: String, uppercase: true, required: [true, "can't be blank"], default: null}, // NEGATIF / MENINGGAL / SEMBUH
     diagnosis : { type: Array, default: [] },
@@ -49,12 +49,16 @@ const HistorySchema = new mongoose.Schema({
     physical_check_respiration: { type: Number, default: 0 },
     physical_check_height: { type: Number, default: 0 },
     physical_check_weight: { type: Number, default: 0 },
+    delete_status: String,
+    deletedAt: Date,
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps : true });
 
 HistorySchema.index({case: 1});
 
 HistorySchema.methods.toJSONFor = function () {
     return {
+        _id: this._id,
         case: this.case,
         status : this.status,
         stage : this.stage,
@@ -97,6 +101,7 @@ HistorySchema.methods.toJSONFor = function () {
         physical_check_respiration: this.physical_check_respiration,
         physical_check_height: this.physical_check_height,
         physical_check_weight: this.physical_check_weight,
+        there_are_symptoms: this.there_are_symptoms,
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }
