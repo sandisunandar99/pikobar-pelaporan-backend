@@ -64,6 +64,11 @@ const doFlagging = async (source, self, Case) => {
 }
 
 const handleClosecontactFlag = async (Case, idCase, prop) => {
+  const record = await Case
+    .findOne({ id_case: idCase })
+    .select(closeconProps)
+
+  if (!record) return
 
   const {
     close_contact_childs,
