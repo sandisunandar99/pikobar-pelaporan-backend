@@ -1,33 +1,24 @@
+const { configWithValidation } = require("../../helpers/routes")
 const routingDashboard = (handlers, server, validations, role) => {
-  const { configWithValidation} = require("../../helpers/routes")
   return  [{
-    method: 'GET',
-    path: '/dashboard/v2/summary-case-criteria',
+    method: 'GET', path: '/dashboard/v2/summary-case-criteria',
     config: configWithValidation(
       "show dashboard case new revision",
-      "dashboard case new revision",
-      validations.caseDashboard,
-      role
+      "dashboard case new revision", validations.caseDashboard, role
     ),
     handler: handlers.countSectionTop(server),
   },{
-    method: 'GET',
-    path: '/dashboard/v2/summary-case',
+    method: 'GET', path: '/dashboard/v2/summary-case',
     config: configWithValidation(
       "show dashboard case new revision",
-      "dashboard case new revision",
-      validations.caseDashboard,
-      role
+      "dashboard case new revision", validations.caseDashboard, role
     ),
     handler: handlers.countSummary(server),
   },{
-    method: 'GET',
-    path: '/dashboard/v2/visualization-case',
+    method: 'GET', path: '/dashboard/v2/visualization-case',
     config: configWithValidation(
-      "show dashboard case new revision",
-      "dashboard case new revision",
-      validations.caseDashboard,
-      role
+      "show dashboard case new revision", "dashboard case new revision",
+      validations.caseDashboard, role
     ),
     handler: handlers.countVisualization(server),
   }]
