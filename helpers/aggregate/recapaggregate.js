@@ -1,12 +1,12 @@
-const { sumFunc } = require("./func/recapfunc")
+const { sumFunc } = require("./func")
 const recapCondition = (grouping, criteria) => {
   const params = {
     $group: {
       _id: grouping,
-      confirmed: sumFunc(criteria),
-      probable: sumFunc(criteria),
-      suspect: sumFunc(criteria),
-      closecontact: sumFunc(criteria)
+      confirmed: sumFunc("$status", criteria.CONF),
+      probable: sumFunc("$status", criteria.PROB),
+      suspect: sumFunc("$status", criteria.SUS),
+      closecontact: sumFunc("$status", criteria.CLOSE)
     }
   }
   return params

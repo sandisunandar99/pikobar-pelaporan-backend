@@ -1,7 +1,7 @@
 const { countByRole, thisUnitCaseAuthors } = require("../rolecheck")
 const { filterCase } = require("../filter/casefilter")
 const { recapCondition } = require("./recapaggregate")
-const { genderCondition, nationalityCondition } = require("./genderaggregate")
+const { groupCondition } = require("./genderaggregate")
 const { ageCondition } = require("./ageaggregate")
 const { weeklyCondition } = require("./weeklyaggregate")
 const { CRITERIA, WHERE_GLOBAL, ROLE } = require("../constant")
@@ -58,8 +58,8 @@ const visualizationAggregate = async (query, user) => {
         "visualization": [recapCondition(groups, CRITERIA)],
         "date_weekly": weeklyCondition(query, searching, WHERE_GLOBAL, CRITERIA),
         "age": ageCondition(query, searching, WHERE_GLOBAL, CRITERIA),
-        "gender": genderCondition(query, searching, WHERE_GLOBAL, CRITERIA),
-        "nationality": nationalityCondition(query, searching, WHERE_GLOBAL, CRITERIA)
+        "gender": groupCondition(query, searching, WHERE_GLOBAL, CRITERIA).gender,
+        "nationality": groupCondition(query, searching, WHERE_GLOBAL, CRITERIA).nationality
       }
     },
     {

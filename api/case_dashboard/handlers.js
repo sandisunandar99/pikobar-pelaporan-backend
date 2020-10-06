@@ -25,7 +25,7 @@ const countSummary = (server) => {
   }
 }
 
-const countVisualization = async (server) => {
+const countVisualization = (server) => {
   return (request, reply) => {
     server.methods.services.case_dashboard.countVisualization(
       request.query,

@@ -1,24 +1,23 @@
 const { matchWhere } = require("./globalcondtion")
-const genderCondition = (query, searching, where, criteria) => {
+const { grupFunc  } = require("./func")
+const groupCondition = (query, searching, where, criteria) => {
   let matchs = matchWhere(query, searching, where, criteria)
   const paramsGender = [
     matchs,
-    { $group: { _id: "$gender", "total": { $sum: 1 }}}
+    grupFunc("$gender")
   ]
 
-  return paramsGender
-}
-
-const nationalityCondition = (query, searching, where, criteria) => {
-  let matchs = matchWhere(query, searching, where, criteria)
   const paramsNationality = [
     matchs,
-    { $group: { _id: "$nationality", "total": { $sum: 1 }}}
+    grupFunc("$nationality")
   ]
 
-  return paramsNationality
+  return {
+    "gender": paramsGender,
+    "nationality": paramsNationality
+  }
 }
 
 module.exports = {
-  genderCondition, nationalityCondition
+  groupCondition
 }
