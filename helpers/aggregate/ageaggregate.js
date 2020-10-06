@@ -21,18 +21,10 @@ const ageCondition = (query, searching, where, criteria) => {
       }
     },
     {
-      $group: {
-        "_id": "$range",
-        count: {
-          $sum: 1
-        }
-      }
+      $group: { "_id": "$range", count: { $sum: 1 }}
     }
   ]
-
   return paramsAge
 }
 
-module.exports = {
-  ageCondition
-}
+module.exports = { ageCondition }
