@@ -218,9 +218,17 @@ const locationPatient = (location, location_name) => {
   return result
 }
 
+const dateReplace = (date) => {
+  const searchRegExp = new RegExp('/', 'g')
+  const queryDate = date
+  const searchDate = queryDate.replace(searchRegExp, '-')
+  return searchDate
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
   convertIncome, convertPysichal, checkDiagnosis,
-  checkDiseases, checkExistColumn, rollback, locationPatient, yesOrNoBool
+  checkDiseases, checkExistColumn, rollback, locationPatient, yesOrNoBool,
+  dateReplace
 }

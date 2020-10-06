@@ -12,7 +12,7 @@ module.exports = (server) => {
         validate: inputValidations.caseDashboard
       },
       handler: handlers.countSectionTop(server),
-    },{
+    }, {
       method: 'GET',
       path: '/dashboard/v2/summary-case',
       config: {
@@ -23,5 +23,16 @@ module.exports = (server) => {
       },
       handler: handlers.countSummary(server),
     },
+    {
+      method: 'GET',
+      path: '/dashboard/v2/visualization-case',
+      config: {
+        auth: 'jwt',
+        description: 'show dashboard case new revision',
+        tags: ['api', 'dashboard case new revision'],
+        validate: inputValidations.caseDashboard
+      },
+      handler: handlers.countVisualization(server),
+    }
   ]
 }

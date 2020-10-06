@@ -1,6 +1,6 @@
 const { countByRole, thisUnitCaseAuthors } = require("../rolecheck")
 const { filterCase } = require("../filter/casefilter")
-const { groupingCondition } = require("../aggregate/groupaggregate")
+const { groupingCondition } = require("./groupaggregate")
 const { demographicCondition } = require("./demographicaggregate")
 const { CRITERIA, WHERE_GLOBAL, ROLE } = require("../constant")
 
@@ -58,7 +58,7 @@ const summaryAggregate = async (query, user) => {
           groupingCondition(groups, CRITERIA)
         ],
         "demographic": [
-          demographicCondition(groups, query)
+          demographicCondition(groups, query, CRITERIA)
         ]
       }
     },
