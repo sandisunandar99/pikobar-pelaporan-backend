@@ -263,10 +263,18 @@ CaseSchema.pre('save', async function (next) {
 })
 
 /*
+ * [middleware] executed before the hooked method
+*/
+CaseSchema.pre('updateOne', async function (next) {
+  await doFlagging('pre', this, mongoose.models['Case'])
+  next()
+})
+
+/*
  * [middleware] executed after the hooked method
 */
 CaseSchema.post('updateOne', function () {
-  doFlagging(this, mongoose.models['Case'])
+  doFlagging('post', this, mongoose.models['Case'])
 })
 
 module.exports = mongoose.model('Case', CaseSchema)

@@ -4,54 +4,89 @@ const closeconProps = [
   'close_contact_childs'
 ]
 
-const doFlagging = async (self, Case) => {
+const getFieldName = (prop) => {
+  let fieldName = null
+
+  if (prop === 'visited_local_area') {
+    fieldName = 'status_travel_local'
+  } else if (prop === 'visited_public_place') {
+    fieldName = 'status_travel_public'
+  } else if (prop === 'travelling_history') {
+    fieldName = 'status_travel_import'
+  } else if (prop === 'inspection_support') {
+    fieldName = 'status_inspection_support'
+  }
+
+  return fieldName
+}
+
+const getProp = (opt) => {
+  let prop
+
+  if (opt['$pull']) {
+    prop = Object.keys(opt['$pull'])[0]
+  } else if (opt['$addToSet']) {
+    prop = Object.keys(opt['$addToSet'])[0]
+  }
+
+  return prop
+}
+
+const getFilter = (opt, prop) => {
+  let filter
+
+  if (opt['$pull']) {
+    filter = `${prop}._id`
+  } else if (opt['$addToSet']) {
+    filter = '_id'
+  }
+
+  return filter
+}
+
+const doFlagging = async (source, self, Case) => {
+  const pre = source === 'pre'
   const cond = self._conditions
   const opt = self._update
 
-  if (!cond || !opt['$addToSet']) return
+  if (!cond || !opt) return
 
-  const id = cond._id
-  const prop = Object.keys(opt['$addToSet'])[0]
+  const prop = getProp(opt)
+  const filter = getFilter(opt, prop)
+
+  let id = cond._id || cond[`${prop}._id`]
 
   if (closeconProps.includes(prop)) {
-    return handleClosecontactFlag(Case, cond, opt)
+    if (pre) return
+    return handleClosecontactFlag(Case, cond.id_case)
   }
 
   if (!id || !prop) return
 
-  const record = await Case
-    .findById(id)
-    .select([prop])
+  const record = await Case.findOne({ [filter]: id }).select([prop])
 
-  if (!record || !record[prop]) return
+  if (record && record[prop]) {
+    if (pre && record[prop].length) {
+      id = record._id
+      record[prop].shift()
+    }
 
-  const status = record[prop].length ? 1 : 0
+    const status = record[prop].length ? 1 : 0
 
-  let col = null
-  if (prop === 'visited_local_area') {
-    col = 'status_travel_local'
-  } else if (prop === 'visited_public_place') {
-    col = 'status_travel_public'
-  } else if (prop === 'travelling_history') {
-    col = 'status_travel_import'
-  } else if (prop === 'inspection_support') {
-    col = 'status_inspection_support'
+    const field = getFieldName(prop)
+
+    if (field) {
+      await Case.updateOne(
+        { _id: ObjectId(id) },
+        { $set: { [field]: status } }
+      )
+    }
   }
 
-  if (!col) return
-
-  return await Case.updateOne(
-    { _id: ObjectId(id) },
-    { $set: { [col]: status } }
-  )
 }
 
-const handleClosecontactFlag = async (Case, cond, opt) => {
-  const idCase = cond.id_case
-  const prop = Object.keys(opt['$addToSet'])[0]
+const handleClosecontactFlag = async (Case, idCase) => {
   const rules = { id_case: idCase }
-
-  if (!idCase || !prop) return
 
   const record = await Case
     .findOne(rules)
@@ -78,7 +113,7 @@ const handleClosecontactFlag = async (Case, cond, opt) => {
     status = 1
   }
 
-  return await Case.updateOne(rules,{
+  await Case.updateOne(rules, {
     $set: { status_closecontact: status }
   })
 }
