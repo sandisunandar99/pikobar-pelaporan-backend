@@ -166,10 +166,10 @@ module.exports = (server) =>{
             method: 'GET',
             path: '/cases/{id}/export-to-pe-form',
             config: {
+                auth: 'jwt',
                 description: 'Export Case to epidemiological investigation Form',
                 tags: ['api', 'epidemiological.investigation.form'],
                 pre: [ getCasebyId ],
-                auth: 'jwt',
             },
             handler: handlers.EpidemiologicalInvestigationForm
         },
