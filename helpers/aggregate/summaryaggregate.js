@@ -1,46 +1,15 @@
-const { countByRole, thisUnitCaseAuthors } = require("../rolecheck")
-const { filterCase } = require("../filter/casefilter")
-const { groupingCondition } = require("../aggregate/groupaggregate")
+const { groupingCondition } = require("./groupaggregate")
 const { demographicCondition } = require("./demographicaggregate")
 const { CRITERIA, WHERE_GLOBAL, ROLE } = require("../constant")
+const { searching, byRole } = require("./func/filter")
 
 const summaryAggregate = async (query, user) => {
-  // If Faskes, retrieve all users in this faskes unit,
-  // all users in the same FASKES must have the same summary.
-  // ** if only based on author, every an author in this unit(faskes) will be has a different summary)
-  const caseAuthors = await thisUnitCaseAuthors(user)
-  let resultFilter = {}
-  let searchRegExp = new RegExp('/', 'g')
-  if (query.start_date){
-    let queryDate = query.start_date
-    let searchDate = queryDate.replace(searchRegExp, '-')
-    resultFilter = {
-      "createdAt":{
-        "$gte": new Date(new Date(searchDate).setHours(00, 00, 00)),
-        "$lt": new Date(new Date(searchDate).setHours(23, 59, 59))
-      }
-    }
-  }else{
-    resultFilter
-  }
-
-  let searching = {
-    ...await filterCase(user, query),
-    ...countByRole(user, caseAuthors),
-    ...resultFilter
-  }
-
-  let groups
-  if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
-    groups = { $toUpper : "$address_district_name"}
-  }else{
-    groups = { $toUpper : "$address_subdistrict_name"}
-  }
-
+  const search = await searching(query, user)
+  const groups = byRole(ROLE, user)
   const conditions = [
     {
       $match: {
-        $and: [ searching, { ...WHERE_GLOBAL }]
+        $and: [ search, { ...WHERE_GLOBAL }]
       }
     },
     {
@@ -58,7 +27,7 @@ const summaryAggregate = async (query, user) => {
           groupingCondition(groups, CRITERIA)
         ],
         "demographic": [
-          demographicCondition(groups, query)
+          demographicCondition(groups, query, CRITERIA)
         ]
       }
     },
