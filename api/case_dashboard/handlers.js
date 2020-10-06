@@ -1,11 +1,12 @@
 'use strict'
 const { replyJson } = require('../helpers')
+const { requestHeaders } = require('../../helpers/request')
 
 const countSectionTop = (server) => {
   return (request, reply) => {
     server.methods.services.case_dashboard.countSectionTop(
-      request.query,
-      request.auth.credentials.user,
+      requestHeaders(request).query,
+      requestHeaders(request).user,
       (err, result) => {
         replyJson(err, result, reply)
       }
@@ -28,10 +29,9 @@ const countSummary = (server) => {
 
 const countVisualization = (server) => {
   return (request, reply) => {
-    const { query } = request
-    const { user } = request.auth.credentials
     server.methods.services.case_dashboard.countVisualization(
-      query, user,
+      requestHeaders(request).query,
+      requestHeaders(request).user,
       (err, result) => {
         replyJson(err, result, reply)
       }

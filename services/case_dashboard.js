@@ -36,8 +36,8 @@ async function countVisualization(query, user, callback) {
 
 module.exports = [
   {
-    name: 'services.case_dashboard.countSectionTop',
     method: countSectionTop,
+    name: 'services.case_dashboard.countSectionTop',
   },{
     name: 'services.case_dashboard.countSummary',
     method: countSummary,
