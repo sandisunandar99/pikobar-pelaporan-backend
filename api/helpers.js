@@ -84,7 +84,17 @@ function CommentReferenceError (message) {
     return response
   }
 
+  const successResponse = (result) => {
+    let jsonOutput = {
+      status: 200,
+      message: "Success",
+      data: result
+    }
+    return jsonOutput
+  };
+
   module.exports = {
     constructErrorResponse,
-    CommentReferenceError
+    CommentReferenceError,
+    successResponse
   }
