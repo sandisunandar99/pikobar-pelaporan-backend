@@ -15,9 +15,10 @@ const countSectionTop = (server) => {
 
 const countSummary = (server) => {
   return (request, reply) => {
+    const { query } = request
+    const { user } = request.auth.credentials
     server.methods.services.case_dashboard.countSummary(
-      request.query,
-      request.auth.credentials.user,
+      query, user,
       (err, result) => {
         replyJson(err, result, reply)
       }
@@ -27,9 +28,10 @@ const countSummary = (server) => {
 
 const countVisualization = (server) => {
   return (request, reply) => {
+    const { query } = request
+    const { user } = request.auth.credentials
     server.methods.services.case_dashboard.countVisualization(
-      request.query,
-      request.auth.credentials.user,
+      query, user,
       (err, result) => {
         replyJson(err, result, reply)
       }
