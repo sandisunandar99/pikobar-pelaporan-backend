@@ -30,8 +30,9 @@ const getCaseExposure = (server) => {
 
 const updateCaseExposure = (server) => {
   return (request, reply) => {
+    const { id_case_exposure } = request.params
     server.methods.services.case_exposure.update(
-      request.params.id_case_exposure,
+      id_case_exposure,
       request.payload,
       (err, result) => {
         if (err) return reply(constructErrorResponse(err)).code(422)
