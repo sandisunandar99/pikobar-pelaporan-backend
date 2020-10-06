@@ -1,42 +1,27 @@
 'use strict'
 const { replyJson } = require('../helpers')
-const { requestHeaders } = require('../../helpers/request')
+
+const requestIfSame = (server, request, reply, func) => {
+  const { query } = request
+  const { user } = request.auth.credentials
+  server.methods.services.case_dashboard[func](
+    query, user,
+    (err, result) => {
+      replyJson(err, result, reply)
+    }
+  )
+}
 
 const countSectionTop = (server) => {
-  return (request, reply) => {
-    server.methods.services.case_dashboard.countSectionTop(
-      requestHeaders(request).query,
-      requestHeaders(request).user,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
-  }
+  return (request, reply) => requestIfSame(server, request, reply, 'countSectionTop')
 }
 
 const countSummary = (server) => {
-  return (request, reply) => {
-    const { query } = request
-    const { user } = request.auth.credentials
-    server.methods.services.case_dashboard.countSummary(
-      query, user,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
-  }
+  return (request, reply) => requestIfSame(server, request, reply, 'countSummary')
 }
 
 const countVisualization = (server) => {
-  return (request, reply) => {
-    server.methods.services.case_dashboard.countVisualization(
-      requestHeaders(request).query,
-      requestHeaders(request).user,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
-  }
+  return (request, reply) => requestIfSame(server, request, reply, 'countVisualization')
 }
 module.exports = {
   countSectionTop,
