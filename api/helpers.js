@@ -91,10 +91,18 @@ function CommentReferenceError (message) {
       data: result
     }
     return jsonOutput
-  };
+  }
+
+  const replyJson = (err, result, request) => {
+    if (err) return reply(constructErrorResponse(err)).code(422)
+    return reply(
+      successResponse(result, request)
+    ).code(200)
+  }
 
   module.exports = {
     constructErrorResponse,
     CommentReferenceError,
-    successResponse
+    successResponse,
+    replyJson
   }

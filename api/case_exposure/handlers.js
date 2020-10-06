@@ -1,14 +1,11 @@
-const { constructErrorResponse, successResponse } = require('../helpers')
+const { replyJson } = require('../helpers')
 const createCaseExposure = (server) => {
   return (request, reply) => {
     server.methods.services.case_exposure.create(
       request.payload,
       request.params.id_case,
       (err, result) => {
-        if (err) return reply(constructErrorResponse(err)).code(422)
-        return reply(
-          successResponse(result, request)
-        ).code(200)
+        replyJson(err, result, request)
       }
     )
   }
@@ -20,10 +17,7 @@ const getCaseExposure = (server) => {
     server.methods.services.case_exposure.read(
       id_case,
       (err, result) => {
-        if (err) return reply(constructErrorResponse(err)).code(422)
-        return reply(
-          successResponse(result, request)
-        ).code(200)
+        replyJson(err, result, request)
       }
     )
   }
@@ -36,10 +30,7 @@ const updateCaseExposure = (server) => {
       id_case_exposure,
       request.payload,
       (err, result) => {
-        if (err) return reply(constructErrorResponse(err)).code(422)
-        return reply(
-          successResponse(result, request)
-        ).code(200)
+        replyJson(err, result, request)
       }
     )
   }
@@ -50,10 +41,7 @@ const deleteCaseExposure = (server) => {
     server.methods.services.case_exposure.delete(
       request.params.id_case_exposure,
       (err, result) => {
-        if (err) return reply(constructErrorResponse(err)).code(422)
-        return reply(
-          successResponse(result, request)
-        ).code(200)
+        replyJson(err, result, request)
       }
     )
   }
