@@ -16,8 +16,9 @@ const createCaseExposure = (server) => {
 
 const getCaseExposure = (server) => {
   return (request, reply) => {
+    const { id_case } = request.params
     server.methods.services.case_exposure.read(
-      request.params.id_case,
+      id_case,
       (err, result) => {
         if (err) return reply(constructErrorResponse(err)).code(422)
         return reply(
