@@ -93,10 +93,10 @@ function CommentReferenceError (message) {
     return jsonOutput
   }
 
-  const replyJson = (err, result, request, reply) => {
+  const replyJson = (err, result, reply) => {
     if (err) return reply(constructErrorResponse(err)).code(422)
     return reply(
-      successResponse(result, request)
+      successResponse(result)
     ).code(200)
   }
 

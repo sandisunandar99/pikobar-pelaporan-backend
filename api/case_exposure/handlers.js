@@ -5,7 +5,7 @@ const createCaseExposure = (server) => {
       request.payload,
       request.params.id_case,
       (err, result) => {
-        replyJson(err, result, request, reply)
+        replyJson(err, result, reply)
       }
     )
   }
@@ -17,7 +17,7 @@ const getCaseExposure = (server) => {
     server.methods.services.case_exposure.read(
       id_case,
       (err, result) => {
-        replyJson(err, result, request, reply)
+        replyJson(err, result, reply)
       }
     )
   }
@@ -30,7 +30,7 @@ const updateCaseExposure = (server) => {
       id_case_exposure,
       request.payload,
       (err, result) => {
-        replyJson(err, result, request, reply)
+        replyJson(err, result, reply)
       }
     )
   }
@@ -41,7 +41,7 @@ const deleteCaseExposure = (server) => {
     server.methods.services.case_exposure.delete(
       request.params.id_case_exposure,
       (err, result) => {
-        replyJson(err, result, request, reply)
+        replyJson(err, result, reply)
       }
     )
   }
