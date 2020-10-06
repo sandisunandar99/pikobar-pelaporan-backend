@@ -25,10 +25,22 @@ const sumBetweenFunc = (query_state, column, start, end) => {
   }
 }
 
+const sumWeeklyFunc = (dateStart, group) => {
+  return {
+    $cond: [{
+      $and: [{
+        $gte: ["$createdAt", new Date(new Date(dateStart).setHours(00, 00, 00))]
+      },
+      { $lt: ["$createdAt", new Date(new Date(dateStart).setHours(23, 59, 59))] }]
+    },
+    group, ""]
+  }
+}
+
 const grupFunc = (grouping) => {
   return { $group: { _id: grouping, "total": { $sum: 1 }}}
 }
 
 module.exports = {
-  sumFunc, grupFunc, sumBetweenFunc
+  sumFunc, grupFunc, sumBetweenFunc, sumWeeklyFunc
 }
