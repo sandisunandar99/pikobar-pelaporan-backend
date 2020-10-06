@@ -1,6 +1,6 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server);
-  const inputValidations = require('./validations/input');
+  const handlers = require('./handlers')
+  const inputValidations = require('./validations/input')
   return [
     {
       method: 'GET',
@@ -11,7 +11,7 @@ module.exports = (server) => {
         tags: ['api', 'dashboard case new revision'],
         validate: inputValidations.caseDashboard
       },
-      handler: handlers.countSectionTop,
+      handler: handlers.countSectionTop(server),
     },{
       method: 'GET',
       path: '/dashboard/v2/summary-case',
@@ -21,7 +21,7 @@ module.exports = (server) => {
         tags: ['api', 'dashboard case new revision'],
         validate: inputValidations.caseDashboard
       },
-      handler: handlers.countSummary,
+      handler: handlers.countSummary(server),
     },
   ]
 }

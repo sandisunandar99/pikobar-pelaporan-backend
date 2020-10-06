@@ -1,5 +1,5 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
+  const handlers = require('./handlers')
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
   const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
   const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
@@ -15,7 +15,7 @@ module.exports = (server) => {
         tags: ['api', 'case-exposure'],
         pre: [ CheckRoleCreate ]
       },
-      handler: handlers.createCaseExposure
+      handler: handlers.createCaseExposure(server)
     },
     {
       method: 'GET',
@@ -26,7 +26,7 @@ module.exports = (server) => {
         tags: ['api', 'case-exposure'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getCaseExposure
+      handler:  handlers.getCaseExposure(server)
     },
     {
       method: 'PUT',
@@ -37,7 +37,7 @@ module.exports = (server) => {
         tags: ['api', 'case-exposure'],
         pre: [ CheckRoleUpdate ],
       },
-      handler:  handlers.updateCaseExposure
+      handler:  handlers.updateCaseExposure(server)
     },
     {
       method: 'DELETE',
@@ -48,7 +48,7 @@ module.exports = (server) => {
         tags: ['api', 'case-exposure'],
         pre: [ CheckRoleDelete ],
       },
-      handler: handlers.deleteCaseExposure
+      handler: handlers.deleteCaseExposure(server)
     }
   ]
 }
