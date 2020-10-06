@@ -7,4 +7,14 @@ const configRoute = (description, tags, role) => {
   }
 }
 
-module. exports = { configRoute }
+const configWithValidation = (description, tags, validations, role) => {
+  return  {
+    auth: 'jwt',
+    description: description,
+    tags: ['api', tags],
+    validate: validations.caseDashboard,
+    pre: [ role ]
+  }
+}
+
+module. exports = { configRoute, configWithValidation }
