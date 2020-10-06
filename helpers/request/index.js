@@ -4,7 +4,7 @@ const requestHeaders = (request) => {
 
   return {
     "query" : query,
-    "query" : user
+    "user" : user
   }
 }
 
