@@ -104,8 +104,14 @@ const syncCase = async (services, callback) => {
     is_migrated: { $ne: true }
   }).populate(['case', 'latest_history', 'createdBy'])
 
-  for (let i = 0; i < result.length; i++) {
+  let processed = 0, succeed = 0;
+  const total = result.length
+
+  for (let i = 0; i < total; i++) {
     const res = result[i]
+
+    processed++;
+
     try {
       let foundedCase = null
       if (res.nik) {
@@ -115,24 +121,27 @@ const syncCase = async (services, callback) => {
       }
 
       if (!res.address_district_code || !res.case || !res.createdBy) {
-        await CloseContact.findOneAndUpdate(
+        await CloseContact.updateOne(
           { _id: res._id },
           { $set: {
               migration_note: "INVALID_DISTRICT_CODE||CASE_N_CREATOR_NOT_FOUND"
             }
-          }, { upsert: true, new: true })
+          }
+        )
       }
 
       if (foundedCase) {
-        await CloseContact.findOneAndUpdate(
+        await CloseContact.updateOne(
           { _id: res._id },
           { $set: {
               is_case_exists: true,
             }
-          }, { upsert: true, new: true })
+          }
+        )
       }
 
       if (foundedCase || !res.address_district_code || !res.case || !res.createdBy) {
+        printProgress( ((processed / total) * 100), ((succeed / total) * 100) )
         continue
       }
 
@@ -205,21 +214,24 @@ const syncCase = async (services, callback) => {
       await services.cases.closecontact.create(
         services, preCreate, res.createdBy, [ mappedToCasePayload ],
         (err, result) => {
-          console.log("ERR A:", err)
+          // console.log("ERR A:", err)
           if (err) throw new Error
           insertedCase = result
         })
 
       // update flag is_migrated true
-      console.log("inserted", insertedCase)
-      const isMigrated = await CloseContact.findOneAndUpdate(
+      // console.log("inserted", insertedCase)
+      await CloseContact.updateOne(
         { _id: res._id },
         { $set: {
             is_migrated: true,
             caseCreated: insertedCase._id
           }
-        }, { upsert: true, new: true })
-      console.log("isMigrated", isMigrated)
+        }
+      )
+      succeed++;
+      printProgress( ((processed / total) * 100), ((succeed / total) * 100) )
+      // console.log("migrated")
     } catch (e) {
       console.log("ERR", e)
       callback(e, null)
@@ -227,6 +239,12 @@ const syncCase = async (services, callback) => {
   }
 
   callback(null, true)
+}
+
+const printProgress = (progress, succeed) => {
+  process.stdout.clearLine()
+  process.stdout.cursorTo(0)
+  process.stdout.write(`Progress: ${progress} % || succeed: ${succeed} %`)
 }
 
 module.exports = [
