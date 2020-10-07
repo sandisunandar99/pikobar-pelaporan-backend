@@ -1,17 +1,32 @@
+const { configWithValidation } = require("../../helpers/routes")
+const routingDashboard = (handlers, server, validations, role) => {
+  return  [{
+    method: 'GET', path: '/dashboard/v2/summary-case-criteria',
+    config: configWithValidation(
+      "show dashboard case new revision",
+      "dashboard case new revision", validations.caseDashboard, role
+    ),
+    handler: handlers.countSectionTop(server),
+  },{
+    method: 'GET', path: '/dashboard/v2/summary-case',
+    config: configWithValidation(
+      "show dashboard case new revision",
+      "dashboard case new revision", validations.caseDashboard, role
+    ),
+    handler: handlers.countSummary(server),
+  },{
+    method: 'GET', path: '/dashboard/v2/visualization-case',
+    config: configWithValidation(
+      "show dashboard case new revision", "dashboard case new revision",
+      validations.caseDashboard, role
+    ),
+    handler: handlers.countVisualization(server),
+  }]
+}
+
 module.exports = (server) => {
-  const handlers = require('./handlers')(server);
-  const inputValidations = require('./validations/input');
-  return [
-    {
-      method: 'GET',
-      path: '/dashboard/v2/summary-case-criteria',
-      config: {
-        auth: 'jwt',
-        description: 'show dashboard case new revision',
-        tags: ['api', 'dashboard case new revision'],
-        validate: inputValidations.caseDashboard
-      },
-      handler: handlers.countSectionTop,
-    },
-  ]
+  const handlers = require('./handlers')
+  const inputValidations = require('./validations/input')
+  const roleView = require('../users/route_prerequesites').CheckRoleView(server)
+  return routingDashboard(handlers, server, inputValidations, roleView)
 }

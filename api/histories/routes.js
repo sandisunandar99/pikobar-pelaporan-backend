@@ -2,7 +2,8 @@ module.exports = (server) =>{
     const handlers = require('./handlers')(server);
     const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server);
-    
+    const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server);
+
     return [
         {
             method: 'GET',
@@ -42,6 +43,45 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.GetHistoryDetail
+        },
+        {
+          method: 'PUT',
+          path: '/history_cases/{id}',
+          config: {
+            auth: 'jwt',
+            description: 'update specific histories',
+            tags: ['api', 'histories'],
+            pre: [
+              CheckRoleUpdate,
+            ]
+          },
+          handler: handlers.UpdateHistory
+        },
+        {
+          method: 'DELETE',
+          path: '/history_cases/{id}',
+          config: {
+            auth: 'jwt',
+            description: 'delete specific histories',
+            tags: ['api', 'histories'],
+            pre: [
+              CheckRoleUpdate,
+            ]
+          },
+          handler: handlers.DeleteHistory
+        },
+        {
+          method: 'GET',
+          path: '/history-export',
+          config: {
+              auth: 'jwt',
+              description: 'export histories',
+              tags: ['api', 'histories'],
+              pre: [
+                  CheckRoleView
+              ]
+          },
+          handler: handlers.exportHistory
         },
     ]
 }

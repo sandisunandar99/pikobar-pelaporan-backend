@@ -1,11 +1,13 @@
 const ObjectId = require("mongoose").Types.ObjectId
+const User = require('../models/User')
+const { ROLE } = require('../helpers/constant')
 const countByRole = (user, caseAuthors=[]) => {
   let searching
-  if (user.role == "dinkeskota") {
+  if (user.role == ROLE.KOTAKAB) {
     searching = {
       author_district_code:user.code_district_city
     }
-  } else if (user.role == "dinkesprov" || user.role == "superadmin") {
+  } else if (user.role == ROLE.PROVINCE || user.role == ROLE.ADMIN) {
     searching = {}
   } else {
     if (user.unit_id && Array.isArray(caseAuthors) && caseAuthors.length) {
@@ -27,10 +29,10 @@ const countByRole = (user, caseAuthors=[]) => {
 }
 
 const exportByRole = (params, user) => {
-  if (user.role == "dinkeskota") {
+  if (user.role == ROLE.KOTAKAB) {
     params.author_district_code = user.code_district_city;
-  } else if (user.role == "dinkesprov" || user.role == "superadmin") {
-    
+  } else if (user.role == ROLE.PROVINCE || user.role == ROLE.ADMIN) {
+
   } else {
     params.author = new ObjectId(user._id);
     params.author_district_code = user.code_district_city;
@@ -39,10 +41,10 @@ const exportByRole = (params, user) => {
 }
 
 const userByRole = (params, user) => {
-  if (user.role == "dinkeskota") {
+  if (user.role == ROLE.KOTAKAB) {
     params.code_district_city = user.code_district_city;
   } else {
-    
+
   }
   return params
 }
@@ -51,10 +53,10 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
 
   let result_search
   if (search_params == null) {
-    if(user.role == "dinkeskota"){
+    if(user.role == ROLE.KOTAKAB){
       params.author_district_code = user.code_district_city;
       result_search = schema.find(params).where(conditions).ne("deleted")
-    }else if (user.role == "dinkesprov" || user.role == "superadmin") {
+    }else if (user.role == ROLE.PROVINCE || user.role == ROLE.ADMIN) {
       result_search = schema.find(params).where(conditions).ne("deleted")
     }else {
       if (user.unit_id && Array.isArray(caseAuthors) && caseAuthors.length) {
@@ -70,10 +72,10 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
       result_search = schema.find(params).where(conditions).ne("deleted")
     }
   } else {
-    if(user.role == "dinkeskota"){
+    if(user.role == ROLE.KOTAKAB){
       params.author_district_code = user.code_district_city;
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
-    }else if (user.role == "dinkesprov" || user.role == "superadmin") {
+    }else if (user.role == ROLE.PROVINCE || user.role == ROLE.ADMIN) {
       result_search = schema.find(params).or(search_params).where(conditions).ne("deleted")
     }else {
       if (user.unit_id && Array.isArray(caseAuthors) && caseAuthors.length) {
@@ -93,7 +95,17 @@ const listByRole = (user, params, search_params, schema, conditions, caseAuthors
   return result_search
 }
 
+const thisUnitCaseAuthors = async (user) => {
+  let caseAuthors = []
+  if (user.role === ROLE.FASKES && user.unit_id) {
+    caseAuthors = await User.find({unit_id: user.unit_id._id, role: ROLE.FASKES}).select('_id')
+    caseAuthors = caseAuthors.map(obj => obj._id)
+  }
+  return caseAuthors
+}
+
 module.exports = {
+  thisUnitCaseAuthors,
   countByRole,
   exportByRole,
   listByRole,

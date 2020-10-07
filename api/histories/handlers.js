@@ -1,5 +1,7 @@
-const replyHelper = require('../helpers');
-
+const replyHelper = require('../helpers')
+const json2xls = require('json2xls')
+const moment = require('moment')
+const fs = require('fs')
 module.exports = (server) => {
     function constructHistorysResponse(histories) {
         let jsonHistories = {
@@ -58,9 +60,47 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async DeleteHistory(request, reply){
-            return reply({ result: 'update history!' });
-        }
-
+          server.methods.services.histories.deleteById(
+            request.params.id,
+            request.auth.credentials.user,
+            (err, item) => {
+            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            return reply(
+              constructHistorysResponse(item)
+            ).code(200)
+          })
+        },
+        /**
+         * PUT /api/history_cases/{id}
+         * @param {*} request
+         * @param {*} reply
+         */
+        async UpdateHistory(request, reply) {
+          server.methods.services.histories.updateById(
+            request.params.id,
+            request.payload,
+            (err, item) => {
+            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+            return reply(
+              constructHistorysResponse(item)
+            ).code(200)
+          })
+        },
+        async exportHistory(request, reply){
+          let query = request.query
+          const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
+          server.methods.services.histories.listHistoryExport(
+            query, request.auth.credentials.user, (err, result) => {
+              if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+              const jsonXls = json2xls(result);
+              const fileName = `Data-Riwayat-Info-Klinis-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
+              fs.writeFileSync(fileName, jsonXls, 'binary');
+              const xlsx = fs.readFileSync(fileName)
+              reply(xlsx)
+              .header('Content-Disposition', 'attachment; filename='+fileName);
+              return fs.unlinkSync(fileName);
+          })
+      },
     }//end
 
 }

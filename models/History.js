@@ -2,12 +2,12 @@ const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const HistorySchema = new mongoose.Schema({
     case : { type: mongoose.Schema.Types.ObjectId, ref: 'Case'},
-    status : { type: String, uppercase: true, required: [true, "can't be blank"]}, //  ODP / PDP / POSITIF
+    status : { type: String, uppercase: true, default: null }, //  ODP / PDP / POSITIF
     stage : { type: String, uppercase: true , default: null}, // PROSES / SELESAI
     final_result : { type: String, uppercase: true, required: [true, "can't be blank"], default: null}, // NEGATIF / MENINGGAL / SEMBUH
-    diagnosis : Array,
+    diagnosis : { type: Array, default: [] },
     diagnosis_other : String,
-    diseases : Array, // Kondisi/Penyakit penyerta
+    diseases : { type: Array, default: [] }, // Kondisi/Penyakit penyerta
     diseases_other : String,
     last_changed : { type: Date, default: Date.now }, // waktu terjadinya perubahan, isi manual
     // riwayat perjalanan/kontak dengan pasien positif
@@ -40,12 +40,25 @@ const HistorySchema = new mongoose.Schema({
     there_are_symptoms :  { type: Boolean, default: false},
     is_other_diagnosisr_respiratory_disease: {type: Boolean, default: false},
     other_diagnosisr_respiratory_disease: String,
+    pysichal_activity: { type: Number, default: null },
+    smoking: { type: Number, default: null }, // 1 ya 2 tidak 3 tidak tahu
+    consume_alcohol: { type: Number, default: null }, // 1 ya 2 tidak 3 tidak tahu
+    physical_check_temperature: { type: Number, default: 0 },
+    physical_check_blood_pressure: { type: Number, default: 0 },
+    physical_check_pulse: { type: Number, default: 0 },
+    physical_check_respiration: { type: Number, default: 0 },
+    physical_check_height: { type: Number, default: 0 },
+    physical_check_weight: { type: Number, default: 0 },
+    delete_status: String,
+    deletedAt: Date,
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps : true });
 
 HistorySchema.index({case: 1});
 
 HistorySchema.methods.toJSONFor = function () {
     return {
+        _id: this._id,
         case: this.case,
         status : this.status,
         stage : this.stage,
@@ -79,6 +92,16 @@ HistorySchema.methods.toJSONFor = function () {
         diagnosis_covid : this.diagnosis_covid,
         diagnosis_pneumonia : this.diagnosis_pneumonia,
         other_diagnosis: this.other_diagnosis,
+        pysichal_activity: this.pysichal_activity,
+        smoking: this.smoking,
+        consume_alcohol: this.consume_alcohol,
+        physical_check_temperature: this.physical_check_temperature,
+        physical_check_blood_pressure: this.physical_check_blood_pressure,
+        physical_check_pulse: this.physical_check_pulse,
+        physical_check_respiration: this.physical_check_respiration,
+        physical_check_height: this.physical_check_height,
+        physical_check_weight: this.physical_check_weight,
+        there_are_symptoms: this.there_are_symptoms,
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }

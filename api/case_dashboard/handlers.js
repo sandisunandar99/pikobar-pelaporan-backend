@@ -1,31 +1,29 @@
 'use strict'
-const replyHelper = require('../helpers')
+const { replyJson } = require('../helpers')
 
-module.exports = (server) => {
-  const dashboardResponse = (caseData) => {
-    let caseDashboard = {
-      status: 200,
-      message: "Success",
-      data: caseData,
+const requestIfSame = (server, request, reply, func) => {
+  const { query } = request
+  const { user } = request.auth.credentials
+  server.methods.services.case_dashboard[func](
+    query, user,
+    (err, result) => {
+      replyJson(err, result, reply)
     }
-    return caseDashboard;
-  };
+  )
+}
 
-  return {
-    /**
-     * GET /api/dashboard/new-case
-     * @param {*} request
-     * @param {*} reply
-     */
-    async countSectionTop(request, reply) {
-      server.methods.services.case_dashboard.countSectionTop(
-        request.query,
-        request.auth.credentials.user,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(dashboardResponse(result)).code(200);
-        }
-      )
-    },
-  }
+const countSectionTop = (server) => {
+  return (request, reply) => requestIfSame(server, request, reply, 'countSectionTop')
+}
+
+const countSummary = (server) => {
+  return (request, reply) => requestIfSame(server, request, reply, 'countSummary')
+}
+
+const countVisualization = (server) => {
+  return (request, reply) => requestIfSame(server, request, reply, 'countVisualization')
+}
+module.exports = {
+  countSectionTop,
+  countSummary,countVisualization
 }

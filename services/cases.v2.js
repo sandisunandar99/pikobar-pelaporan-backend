@@ -32,6 +32,7 @@ const createCase = async (pre, payload, author, callback) => {
       fasyankes_village_code: author.address_village_code,
       fasyankes_village_name: author.address_village_name,
       assignment_place: unitName,
+      status_identity: 1,
       ...payload,
     })
 
@@ -58,14 +59,15 @@ async function getCaseSectionStatus (id, callback) {
   try {
     const result = await Case.findById(id)
     .select([
-      'status_sect_identity',
-      'status_sect_clinical',
-      'status_sect_inspection',
-      'status_sect_travel',
-      'status_sect_economy',
-      'status_sect_exposure',
-      'status_sect_closecontact',
-      'is_data_completed',
+      'status_identity',
+      'status_clinical',
+      'status_inspection_support',
+      'status_travel_import',
+      'status_travel_local',
+      'status_travel_public',
+      'status_transmission',
+      'status_exposurecontact',
+      'status_closecontact',
     ])
 
     callback(null, result)

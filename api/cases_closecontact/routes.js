@@ -39,6 +39,28 @@ module.exports = (server) =>{
         handler: handlers.updateClosecontact,
       },
       {
+        method: 'GET',
+        path: '/cases/{caseId}/closecontact/{contactCaseId}',
+        config: {
+          auth: 'jwt',
+          description: 'detail specific close contact',
+          tags: [ 'api', 'close_contacts', ],
+          pre: [ getCaseById, getContactCaseById ],
+        },
+        handler: handlers.DetailClosecontact,
+      },
+      {
+        method: 'PUT',
+        path: '/cases/{caseId}/closecontact/{contactCaseId}',
+        config: {
+          auth: 'jwt',
+          description: 'update specific close contact',
+          tags: [ 'api', 'close_contacts', ],
+          pre: [ getCaseById, getContactCaseById ],
+        },
+        handler: handlers.UpdateClosecontact,
+      },
+      {
         method: 'DELETE',
         path: '/cases/{caseId}/closecontact/{contactCaseId}',
         config: {

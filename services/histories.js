@@ -1,11 +1,18 @@
-const mongoose = require('mongoose');
+const Case = require('../models/Case')
+const History = require('../models/History')
+const Helper = require('../helpers/custom')
+const ObjectId = require('mongodb').ObjectID
+const { exportByRole } = require('../helpers/rolecheck')
+const { WHERE_GLOBAL } = require('../helpers/constant')
+const { filterCase } = require('../helpers/filter/casefilter')
+const { condition, excellHistories } = require('../helpers/filter/historyfilter')
 
-require('../models/History');
-require('../models/Case');
-
-const Helper = require('../helpers/custom');
-const History = mongoose.model('History');
-const Case = mongoose.model('Case');
+const setFlag = (id, status) => {
+  return Case.updateOne(
+    { _id: ObjectId(id) },
+    { $set: { status_clinical: status } },
+  )
+}
 
 function ListHistory (callback) {
     History.find()
@@ -27,6 +34,7 @@ function getHistoryById (id, callback) {
 
 function getHistoryByCase (id_case, callback) {
   History.find({ case: id_case})
+        .where('delete_status').ne('deleted')
         .sort({ createdAt: 'desc'})
         .exec()
         .then(item => {
@@ -64,7 +72,7 @@ function createHistoryIfChanged (payload, callback) {
    * case's last_history to the newly created history. */
 
   // guarded field (cannot be filled)
-  Helper.deleteProps(['last_changed', 'createdAt', 'updatedAt'], payload)
+  Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
@@ -89,7 +97,7 @@ function createHistoryIfChanged (payload, callback) {
             changed_fields.push(property);
           }
       }
-      
+
       if (changed) {
         new_history.save((err, item) => {
           if (err) return callback(err, null);
@@ -102,9 +110,9 @@ function createHistoryIfChanged (payload, callback) {
               is_test_masif: payload.is_test_masif,
               last_history: item._id
           }
-          
+
           let objcase = Object.assign(case_obj, update_case)
-  
+
           objcase.save((err, updated_case) => {
             if (err) return callback(err, null);
             return callback(null, new_history);
@@ -114,6 +122,7 @@ function createHistoryIfChanged (payload, callback) {
         // return old history if not changed
         return callback(null, old_history);
     })
+    .then(async () => await setFlag(payload.case, 1))
     .catch(err => callback(err, null))
   })
   .catch(err => callback(err, null))
@@ -172,7 +181,7 @@ function createHistoryFromInputTest(payload, callback){
             changed_fields.push(property);
           }
       }
-      
+
 
       if (changed) {
         new_history.save((err, item) => {
@@ -186,9 +195,9 @@ function createHistoryFromInputTest(payload, callback){
               is_test_masif: true,
               last_history: item._id
           }
-          
+
           let objcase = Object.assign(case_obj, update_case)
-  
+
           objcase.save((err, updated_case) => {
             if (err) return callback(err, null);
             return callback(null, new_history);
@@ -201,9 +210,67 @@ function createHistoryFromInputTest(payload, callback){
     .catch(err => callback(err, null))
   })
   .catch(err => callback(err, null))
-  
+
 }
 
+async function updateHistoryById (id, payload, callback) {
+  try {
+    // guarded fields
+    Helper.deleteProps(['_id', 'case'], payload)
+
+    const res = await History.findByIdAndUpdate(id,
+      { $set: payload },
+      { new: true },
+    )
+
+    if (!res) {
+      throw new Error('History not found!')
+    }
+
+    await setFlag(res.case, 1)
+    callback(null, res)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+const listHistoryExport = async (query, user, callback) => {
+  const filter = await filterCase(user, query)
+  const filterRole = exportByRole({}, user, query)
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
+  let search
+  if(query.search){
+    let search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+    search = search_params
+  } else {
+    search = {}
+  }
+  params.last_history = { $exists: true, $ne: null }
+  const where = condition(params, search, query)
+  try {
+    const resultHistory = await Case.aggregate(where)
+    callback (null, resultHistory.map(cases => excellHistories(cases)))
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
+// soft delete
+async function deleteHistoryById (id, author, callback) {
+  try {
+    const payload = Helper.deletedSave({}, author)
+    const result = await History.updateOne(
+      { _id: ObjectId(id) },
+      { $set: payload },
+    )
+    return callback(null, result)
+  } catch (e) {
+    return callback(e, null)
+  }
+}
 
 module.exports = [
   {
@@ -242,5 +309,16 @@ module.exports = [
     name: 'services.histories.createHistoryFromInputTest',
     method: createHistoryFromInputTest
   },
+  {
+    name: 'services.histories.updateById',
+    method: updateHistoryById
+  },
+  {
+    name: 'services.histories.deleteById',
+    method: deleteHistoryById
+  },
+  {
+    name: 'services.histories.listHistoryExport',
+    method: listHistoryExport
+  },
 ];
-

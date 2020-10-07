@@ -2,23 +2,16 @@ const helpers = require("../custom")
 const { GENDER, ANSWER } = require("../constant")
 
 const excellOutput = (this_) => {
-  let finals = helpers.patientStatus(this_)
+  let finals = helpers.patientStatus(this_.final_result)
   let criteria = helpers.criteriaConvert(this_)
+  let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
   let birthDate = this_.birth_date ? helpers.convertDate(this_.birth_date) : null
   let updatedDate = this_.updatedAt ? helpers.convertDate(this_.updatedAt) : null
   let createdDate = this_.createdAt ? helpers.convertDate(this_.createdAt) : null
-  let interviewDate = this_.interview_date ? helpers.convertDate(this_.interview_date) : null
   let symptomsDate = this_.first_symptom_date ? helpers.convertDate(this_.first_symptom_date) : null
-  let travelDate = this_.travelling_date ? helpers.convertDate(this_.travelling_date) : null
-  let travelArrive = this_.travelling_arrive ? helpers.convertDate(this_.travelling_arrive) : null
-  let diagnosis = this_.diagnosis ? this_.diagnosis.toString() : null
-  let diagnosisOther = this_.diseases ? this_.diseases.toString() : null
+  let lastDate = this_.last_date_status_patient ? helpers.convertDate(this_.last_date_status_patient) : null
   let apdUse = this_.apd_use ? this_.apd_use.toString() : null
-  let close_contact_name = []
-  this_.close_contact_list.map(r => {
-    close_contact_name.push(r.name)
-    return close_contact_name
-  })
+  let patientLocation = helpers.locationPatient(this_.current_location_type, this_.current_location_address)
 
   return {
     "Nama Pewawancara": helpers.checkExistColumn(this_.interviewers_name),
@@ -32,8 +25,8 @@ const excellOutput = (this_) => {
     "Nama Orangtua": helpers.checkExistColumn(this_.name_parents),
     "Tempat Lahir": this_.place_of_birth,
     "Tanggal Lahir": birthDate,
-    "Usia Tahun": this_.age,
-    "Usia Bulan": this_.month,
+    "Usia Tahun": Math.floor(this_.age),
+    "Usia Bulan":  Math.ceil((this_.age - Math.floor(this_.age)) * 12),
     "Jenis Kelamin": this_.gender === "L" ? GENDER.ID_L : GENDER.ID_P,
     "Kota/Kab": this_.address_district_name,
     "Kecamatan": this_.address_subdistrict_name,
@@ -41,51 +34,57 @@ const excellOutput = (this_) => {
     "Alamat Lengkap (RT/RW)": `${this_.address_street} (${this_.rt}/${this_.rw})`,
     "Pekerjaan": this_.occupation,
     "Alamat Kantor": this_.office_address,
-    "Kewarganegaraan": this_.nationality == "WNI" ? "Indonesia" : this_.nationality_name,
+    "Kewarganegaraan": this_.nationality,
+    "Negara": this_.nationality === "WNI" ? "Indonesia" : this_.nationality_name,
     "Kriteria": criteria,
     "Status Pasien Terakhir": finals,
+    "Tgl Update Status Pasien Terakhir": lastDate,
     "Lokasi Saat Ini": this_.current_location_address,
     "Terdapat Gejala": this_.there_are_symptoms ? ANSWER.YA : ANSWER.TIDAK,
-    "Tanggal Muncul Gejala": symptomsDate,
-    "Gejala": diagnosis,
-    "Kondisi Penyerta": diagnosisOther,
+    "Dirawat di Rumah Sakit ?": patientLocation.bool,
+    "Nama Rumah Sakit": patientLocation.location_name,
+    "Tanggal Gejala": symptomsDate,
+    ...helpers.checkDiagnosis(this_.diagnosis),
+    "Gejala Lainnya": helpers.checkExistColumn(this_.diagnosis_other),
+    ...helpers.checkDiseases(this_.diseases),
+    "Kondisi Penyerta Lainnya": this_.diseases_other,
     "Diagnosis ARDS": helpers.convertYesOrNO(this_.diagnosis_ards),
     "Diagnosis Pneumonia": helpers.convertYesOrNO(this_.diagnosis_pneumonia),
     "Diagnosis Lainnya": this_.other_diagnosis,
-    "Data Kontak Erat": close_contact_name.toString(),
-    "Dari Luar Negeri": this_.is_went_abroad ? ANSWER.YA : ANSWER.TIDAK,
-    "Negara Yang Dikunjungi": this_.travelling_visited,
-    "Tanggal Mulai Perjalanan": travelDate,
-    "Tanggal Pulang Perjalanan": travelArrive,
-    "Dari Luar Kota": this_.is_went_other_city ? ANSWER.YA : ANSWER.TIDAK,
-    "Kota Yang Dikunjungi": this_.travelling_visited,
-    "Tanggal Mulai Perjalanan": travelDate,
-    "Tanggal Pulang Perjalanan": travelArrive,
-    "Kontak Dengan Kasus Suspek ": this_.close_contact_criteria,
-    "Kontak Dengan Nama Kasus Suspek": this_.close_contact_name,
-    "Kontak Dengan Kasus Konfirmasi": this_.close_contacted_before_sick_14_days ? ANSWER.YA : ANSWER.TIDAK,
-    "Mengunjungi Tempat Publik": this_.has_visited_public_place ? ANSWER.YA : ANSWER.TIDAK,
-    "Nama Lokasi Tempat Publik": this_.public_place_name,
-    "Tgl Kunjungan Ke Tempat Publik": this_.public_place_date_visited,
-    "Kelompok ISPA Berat": this_.close_contact_heavy_ispa_group ? ANSWER.YA : ANSWER.TIDAK,
-    "Petugas Kesehatan": this_.close_contact_health_worker ? ANSWER.YA : ANSWER.TIDAK,
+    "Etiologi": helpers.yesOrNoBool(this_.is_other_diagnosisr_respiratory_disease),
+    "Sebutkan Etiologi Lainnya": this_.other_diagnosisr_respiratory_disease,
     "Alat Pelindung yang Digunakan": apdUse,
     "Merokok": helpers.convertYesOrNO(this_.smoking),
     "Konsumsi Alkohol": helpers.convertYesOrNO(this_.consume_alcohol),
     "Aktifitas Fisik": helpers.convertPysichal(this_.pysichal_activity),
     "Penghasilan": helpers.convertIncome(this_.income),
-    "Tanggal Input": createdDate,
     "Tanggal Update Riwayat": updatedDate,
-    "Author": this_.author
+    "Author": this_.author,
+    "Tanggal Input": createdDate,
   }
 }
 
-const sqlCondition = (params, search) => {
+const sqlCondition = (params, search, query) => {
+  let searching = Object.keys(search).length == 0 ? [search] : search
+  let createdAt = {}
+  if (query.start_date && query.end_date){
+    let searchRegExp = new RegExp('/', 'g')
+    let min = query.start_date
+    let max = query.end_date
+    let minDate = min.replace(searchRegExp, '-')
+    let maxDate = max.replace(searchRegExp, '-')
+    createdAt = {
+      "createdAt" :{
+        "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
+        "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
+    }}
+  }
+  let andParam = { ...createdAt, ...params }
   return [
     {
       $match: {
-        $and : [ params ],
-        $or : [ search ]
+        $and : [ andParam ],
+        $or : searching
       }
     },
     {
@@ -102,14 +101,8 @@ const sqlCondition = (params, search) => {
         foreignField: "_id",
         as: "history_list"
       },
-    },{
-      $lookup: {
-        from: "closecontacts",
-        localField: "_id",
-        foreignField: "case",
-        as: "close_contact_list"
-      },
-    },{ $sort: { "history_list._id": -1, "cases._id": -1 } },
+    },
+    { $sort: { "history_list._id": -1, "cases._id": -1 } },
     { $unwind: '$author_list' },
     { $unwind: '$history_list' },
     {
@@ -142,37 +135,30 @@ const sqlCondition = (params, search) => {
         "nationality_name": "$nationality_name",
         "status": "$status",
         "final_result": "$final_result",
+        "there_are_symptoms": "$there_are_symptoms",
+        "last_date_status_patient": "$last_date_status_patient",
+        "current_location_type": "$current_location_type",
         "current_location_address": "$history_list.current_location_address",
-        "there_are_symptoms": "$history_list.there_are_symptoms",
         "first_symptom_date": "$history_list.first_symptom_date",
         "diagnosis": "$history_list.diagnosis",
+        "diagnosis_other": "$history_list.diagnosis_other",
         "diseases": "$history_list.diseases",
+        "diseases_other": "$history_list.diseases_other",
         "diagnosis_ards": "$history_list.diagnosis_ards",
         "diagnosis_pneumonia": "$history_list.diagnosis_pneumonia",
         "other_diagnosis": "$history_list.other_diagnosis",
+        "is_other_diagnosisr_respiratory_disease": "$history_list.is_other_diagnosisr_respiratory_disease",
+        "other_diagnosisr_respiratory_disease": "$history_list.other_diagnosisr_respiratory_disease",
         "is_went_abroad": "$is_went_abroad",
         "diagnosis_pneumonia": "$history_list.diagnosis_pneumonia",
-        "travelling_visited": "$history_list.travelling_history.travelling_visited",
-        "travelling_date": "$history_list.travelling_history.travelling_date",
-        "travelling_arrive": "$history_list.travelling_arrive",
-        "is_went_other_city": "$history_list.is_went_other_city",
-        "close_contact_list": "$close_contact_list",
-        "close_contact_criteria": "$history_list.close_contact_premier.close_contact_criteria",
-        "close_contact_name": "$history_list.close_contact_premier.close_contact_name",
-        "close_contacted_before_sick_14_days": "$close_contacted_before_sick_14_days",
-        "has_visited_public_place": "$history_list.has_visited_public_place",
-        "public_place_name": "$history_list.visited_public_place.public_place_name",
-        "public_place_date_visited": "$history_list.visited_public_place.public_place_date_visited",
-        "close_contact_heavy_ispa_group": "$close_contact_heavy_ispa_group",
-        "close_contact_health_worker": "$close_contact_health_worker",
         "apd_use": "$apd_use",
         "smoking": "$smoking",
         "consume_alcohol": "$consume_alcohol",
         "pysichal_activity": "$pysichal_activity",
         "income": "$income",
-        "createdAt": "$author_list.createdAt",
-        "updatedAt": "$author_list.updatedAt",
-        "author": "$author_list.fullname"
+        "createdAt": "$createdAt",
+        "updatedAt": "$updatedAt",
+        "author": "$author_list.fullname",
       }
     }
   ]
