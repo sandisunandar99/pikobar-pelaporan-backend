@@ -11,7 +11,7 @@ const validationBeforeInput = server => {
                     message: 'Anda tidak dapat melakukan input kasus di luar wilayah anda.!',
                     data: null
                 }).code(422).takeover()
-            } 
+            }
         },
         assign: 'validation_before_input'
     }
@@ -20,10 +20,18 @@ const validationBeforeInput = server => {
 const checkCaseIsExists = server => {
     return {
         method: (request, reply) => {
+            let skip = false
             const nik = request.payload.nik
             if(!nik) return reply()
             server.methods.services.cases.getByNik(nik, (err, result) => {
-                if (!result) return reply(result)
+                if (request.route.method === 'put') {
+                  result = request.preResponses.cases.source
+                  if (nik === result.nik) { skip = true }
+                } else if (!result) {
+                  skip = true
+                }
+
+                if (skip) return reply(result)
 
                 let author = result.author ? result.author.fullname : null
                 let message
@@ -167,7 +175,7 @@ const checkIfDataNotNull = server =>{
 const DataSheetRequest = server => {
     return {
         method: async (request, reply) => {
-            
+
             const mongoose = require('mongoose');
             require('../../models/Case');
             const Case = mongoose.model('Case');
@@ -217,7 +225,7 @@ const getDetailCase = server => {
     return {
         method: (request, reply) => {
             const id = request.params.id
-            server.methods.services.cases.getById(id, async (err, result) => { 
+            server.methods.services.cases.getById(id, async (err, result) => {
                 if (err) {
                     return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                 }
@@ -229,7 +237,7 @@ const getDetailCase = server => {
                         data: null
                     }).code(422).takeover()
                 }
-                
+
                 server.methods.services.cases.getCountByDistrict(
                     result.address_district_code,
                     async (err, count) => {
