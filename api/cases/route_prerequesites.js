@@ -45,8 +45,7 @@ const checkCaseIsExists = server => {
                     message: message,
                 }).code(422).takeover()
             })
-       },
-       assign: 'case_exist'
+       }, assign: 'case_exist',
     }
 }
 
