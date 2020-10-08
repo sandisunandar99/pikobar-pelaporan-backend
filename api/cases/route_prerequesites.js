@@ -40,10 +40,8 @@ const checkCaseIsExists = server => {
                     message += `Sudah terdata di laporan kasus ${result.transfer_to_unit_name}`
                 } else { message += `Sudah terdata di laporan kasus ${author}` }
 
-                return reply({
-                    status: 422,
-                    message: message,
-                }).code(422).takeover()
+                return reply({status: 422, message: message, data: 'nik_exists'})
+                  .code(422).takeover()
             })
        }, assign: 'case_exist',
     }
