@@ -27,28 +27,22 @@ const checkCaseIsExists = server => {
                 if (request.route.method === 'put') {
                   result = request.preResponses.cases.source
                   if (nik === result.nik) { skip = true }
-                } else if (!result) {
-                  skip = true
-                }
+                } else if (!result) { skip = true }
 
                 if (skip) return reply(result)
 
                 let author = result.author ? result.author.fullname : null
-                let message
-                message = `NIK ${nik} atas nama ${result.name} `
+                let message = `NIK ${nik} atas nama ${result.name} `
 
                 if (result.transfer_to_unit_name && result.transfer_status !== 'approved' ) {
                     message += `Sedang dalam proses rujukan ke ${result.transfer_to_unit_name}`
                 } else if (result.transfer_to_unit_name && result.transfer_status === 'approved') {
                     message += `Sudah terdata di laporan kasus ${result.transfer_to_unit_name}`
-                } else {
-                    message += `Sudah terdata di laporan kasus ${author}`
-                }
+                } else { message += `Sudah terdata di laporan kasus ${author}` }
 
                 return reply({
                     status: 422,
                     message: message,
-                    data: null
                 }).code(422).takeover()
             })
        },
