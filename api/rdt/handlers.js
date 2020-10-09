@@ -7,17 +7,10 @@ module.exports = (server) => {
             message: "Success",
             data: rdt
         }
-        // return survey
         return jsonRdt
     }
 
-
     return {
-        /**
-         * GET /api/rdt
-         * @param {*} request
-         * @param {*} reply
-         */
         async ListRdt(request, reply){
             let query = request.query
 
@@ -32,11 +25,6 @@ module.exports = (server) => {
             })
         },
 
-        /**
-         * POST /api/rdt
-         * @param {*} request
-         * @param {*} reply
-         */
         async CreateRdt(request, reply){
             let payload = request.payload
             let query  = request.query
@@ -53,11 +41,7 @@ module.exports = (server) => {
                 }
             )
         },
-        /**
-         * POST /api/rdt
-         * @param {*} request
-         * @param {*} reply
-         */
+
         async CreateRdtMultiple(request, reply){
             let payload = request.payload
             server.methods.services.rdt.createMultiple(
@@ -73,11 +57,6 @@ module.exports = (server) => {
             )
         },
 
-        /**
-         * GET /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetRdtDetail(request, reply) {
             let id = request.params.id
             server.methods.services.rdt.getById(id, (err, item) => {
@@ -88,11 +67,6 @@ module.exports = (server) => {
             })
         },
 
-        /**
-         * GET /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetRdtHistories(request, reply) {
             let id = request.params.id
             server.methods.services.rdt.getHistoriesByRdtId(id, (err, item) => {
@@ -103,11 +77,6 @@ module.exports = (server) => {
             })
         },
 
-        /**
-         * PUT /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
         async UpdateRdt(request, reply){
             let payload = request.payload
             let id = request.params.id
@@ -125,11 +94,6 @@ module.exports = (server) => {
             )
         },
 
-        /**
-         * DELETE /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
         async DeleteRdt(request, reply) {
             server.methods.services.rdt.softDeleteRdt(
                 request.pre.rdt,
@@ -143,12 +107,6 @@ module.exports = (server) => {
                 })
         },
 
-
-        /**
-         * DELETE /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetListIdCase(request, reply) {
             let query = request.query
             server.methods.services.rdt.FormSelectIdCase(
@@ -163,11 +121,6 @@ module.exports = (server) => {
             })
         },
 
-
-        /**
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetListIdCaseDetail(request, reply) {
             server.methods.services.rdt.FormSelectIdCaseDetail(
                 request.pre.search_internal,
@@ -181,11 +134,6 @@ module.exports = (server) => {
             })
         },
 
-
-        /**
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetListRegisteredUser(request, reply) {
             server.methods.services.rdt.getRegisteredUser(
                 request.pre.reg_user_external,
@@ -198,11 +146,6 @@ module.exports = (server) => {
             })
         },
 
-
-        /**
-         * @param {*} request
-         * @param {*} reply
-         */
         async formLocationTest(request, reply) {
             server.methods.services.rdt.getLocationTest(
                 (err, result) => {
@@ -213,11 +156,6 @@ module.exports = (server) => {
             })
         },
 
-        /**
-         * GET /api/rdt/summary-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetRdtSummaryByCities(request, reply) {
               let query = request.query
 
@@ -231,11 +169,6 @@ module.exports = (server) => {
                   })
         },
 
-        /**
-         * GET /api/rdt/summary-result-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetRdtSummaryResultByCities(request, reply) {
               let query = request.query
 
@@ -249,11 +182,6 @@ module.exports = (server) => {
                   })
         },
 
-        /**
-         * GET /api/rdt/summary-result-list-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetRdtSummaryResultListByCities(request, reply) {
               let query = request.query
 
@@ -267,11 +195,6 @@ module.exports = (server) => {
                   })
         },
 
-        /**
-         * GET /api/rdt/faskes-summary-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
         async GetRdtFaskesSummaryByCities(request, reply) {
               let query = request.query
 
@@ -285,32 +208,25 @@ module.exports = (server) => {
                   })
         },
 
-
-        /**
-         * GET /api/rdt/faskes-summary-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
         async sendMessage(result) {
-            // let query = request.query
-            // server.methods.services.rdt.sendMessagesSMS(
-            //     query,
-            //     (err, result) => {
-            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-            //         return reply(
-            //             constructRdtResponse(result, request)
-            //         ).code(200)
-            //     })
-            // server.methods.services.rdt.sendMessagesWA(
-            //     query,
-            //     (err, result) => {
-            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-            //         return reply(
-            //             constructRdtResponse(result, request)
-            //         ).code(200)
-            //     })
+            let query = request.query
+            server.methods.services.rdt.sendMessagesSMS(
+                query,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+                })
+            server.methods.services.rdt.sendMessagesWA(
+                query,
+                (err, result) => {
+                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                    return reply(
+                        constructRdtResponse(result, request)
+                    ).code(200)
+                })
         }
-
 
     }//end
 
