@@ -26,11 +26,10 @@ module.exports = (server) => {
         },
 
         async CreateRdt(request, reply){
-            let payload = request.payload
             let query  = request.query
             server.methods.services.rdt.create(
                 query,
-                payload,
+                request.payload,
                 request.auth.credentials.user,
                 request.pre,
                   (err, result) => {
@@ -43,9 +42,9 @@ module.exports = (server) => {
         },
 
         async CreateRdtMultiple(request, reply){
-            let payload = request.payload
+            let payload =
             server.methods.services.rdt.createMultiple(
-                payload,
+                request.payload,
                 request.auth.credentials.user,
                 request.pre,
                   (err, result) => {
