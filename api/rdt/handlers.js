@@ -12,10 +12,8 @@ module.exports = (server) => {
 
     return {
         async ListRdt(request, reply){
-            let query = request.query
-
             server.methods.services.rdt.list(
-                query,
+                request.query,
                 request.auth.credentials.user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
@@ -26,9 +24,8 @@ module.exports = (server) => {
         },
 
         async CreateRdt(request, reply){
-            let query  = request.query
             server.methods.services.rdt.create(
-                query,
+                request.query,
                 request.payload,
                 request.auth.credentials.user,
                 request.pre,
@@ -42,7 +39,6 @@ module.exports = (server) => {
         },
 
         async CreateRdtMultiple(request, reply){
-            let payload =
             server.methods.services.rdt.createMultiple(
                 request.payload,
                 request.auth.credentials.user,
@@ -57,8 +53,7 @@ module.exports = (server) => {
         },
 
         async GetRdtDetail(request, reply) {
-            let id = request.params.id
-            server.methods.services.rdt.getById(id, (err, item) => {
+            server.methods.services.rdt.getById(request.params.id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructRdtResponse(item)
@@ -67,8 +62,7 @@ module.exports = (server) => {
         },
 
         async GetRdtHistories(request, reply) {
-            let id = request.params.id
-            server.methods.services.rdt.getHistoriesByRdtId(id, (err, item) => {
+            server.methods.services.rdt.getHistoriesByRdtId(request.params.id, (err, item) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 return reply(
                     constructRdtResponse(item)
@@ -77,13 +71,8 @@ module.exports = (server) => {
         },
 
         async UpdateRdt(request, reply){
-            let payload = request.payload
-            let id = request.params.id
-
             server.methods.services.rdt.update(
-                id,
-                payload,
-                request.auth.credentials.user,
+                request.params.id, request.payload, request.auth.credentials.user,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -107,9 +96,8 @@ module.exports = (server) => {
         },
 
         async GetListIdCase(request, reply) {
-            let query = request.query
             server.methods.services.rdt.FormSelectIdCase(
-                query,
+                request.query,
                 request.auth.credentials.user,
                 request.pre.data_pendaftaran,
                 (err, result) => {
@@ -156,10 +144,8 @@ module.exports = (server) => {
         },
 
         async GetRdtSummaryByCities(request, reply) {
-              let query = request.query
-
               server.methods.services.rdt.GetRdtSummaryByCities(
-                  query,
+                  request.query,
                   (err, result) => {
                       if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                       return reply(
