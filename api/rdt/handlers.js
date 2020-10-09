@@ -169,10 +169,8 @@ module.exports = (server) => {
         },
 
         async GetRdtSummaryResultByCities(request, reply) {
-              let query = request.query
-
               server.methods.services.rdt.GetRdtSummaryResultByCities(
-                  query,
+                  request.query,
                   (err, result) => {
                       if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                       return reply(
@@ -182,10 +180,8 @@ module.exports = (server) => {
         },
 
         async GetRdtSummaryResultListByCities(request, reply) {
-              let query = request.query
-
               server.methods.services.rdt.GetRdtSummaryResultListByCities(
-                  query,
+                  request.query,
                   (err, result) => {
                       if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                       return reply(
@@ -195,10 +191,8 @@ module.exports = (server) => {
         },
 
         async GetRdtFaskesSummaryByCities(request, reply) {
-              let query = request.query
-
               server.methods.services.rdt.GetRdtFaskesSummaryByCities(
-                  query,
+                  request.query,
                   (err, result) => {
                       if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                       return reply(
@@ -208,9 +202,8 @@ module.exports = (server) => {
         },
 
         async sendMessage(result) {
-            let query = request.query
             server.methods.services.rdt.sendMessagesSMS(
-                query,
+                request.query,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
@@ -218,7 +211,7 @@ module.exports = (server) => {
                     ).code(200)
                 })
             server.methods.services.rdt.sendMessagesWA(
-                query,
+                request.query,
                 (err, result) => {
                     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                     return reply(
