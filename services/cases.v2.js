@@ -106,6 +106,27 @@ async function getCaseCountsOutsideWestJava(code, callback) {
   }
 }
 
+async function exportEpidemiologicalForm (services, detailCase, callback) {
+  try {
+    const pdfmaker = require('../helpers/pdfmaker')
+    const histories = await History.find({ case: detailCase._id })
+
+    let closeContacts= []
+    await services.cases.closecontact.getByCase(
+      detailCase,
+      (err, result) => {
+        if (err) throw new Error
+        closeContacts = result
+      }
+    )
+
+    Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
+    callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.v2.cases.create',
@@ -118,5 +139,9 @@ module.exports = [
   {
     name: 'services.v2.cases.getCaseCountsOutsideWestJava',
     method: getCaseCountsOutsideWestJava
+  },
+  {
+    name: 'services.v2.cases.exportEpidemiologicalForm',
+    method: exportEpidemiologicalForm
   },
 ]

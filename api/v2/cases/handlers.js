@@ -1,45 +1,60 @@
+const moment = require('moment')
 const replyHelper = require('../../helpers')
-module.exports = (server) => {
-  function constructCasesResponse(cases) {
-    let jsonCases = {
-      status: 200,
-      message: "Success",
-      data: cases,
-    }
-    return jsonCases
-  }
+const { replyJson } = require('../../helpers')
+const pdfmaker = require('../../../helpers/pdfmaker')
 
-  return {
-    /**
-     * POST /api/v2/cases
-     * @param {*} request
-     * @param {*} reply
-     */
-    async CreateCase(request, reply) {
-      server.methods.services.v2.cases.create(
-        request.pre,
-        request.payload,
-        request.auth.credentials.user,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            constructCasesResponse(result, request)
-          ).code(200)
-        })
-      },
-      /**
-       * GET /api/cases/{id}/status
-       * @param {*} request
-       * @param {*} reply
-       */
-      async GetCaseSectionStatus(request, reply) {
-        let id = request.params.id
-        server.methods.services.v2.cases.getCaseSectionStatus(id, (err, item) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            constructCasesResponse(item, request)
-          ).code(200)
-        })
-      },
+/**
+ * POST /api/v2/cases
+ */
+const CreateCase = (server) => {
+  return (request, reply) => {
+    server.methods.services.v2.cases.create(
+      request.pre,
+      request.payload,
+      request.auth.credentials.user,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
   }
+}
+
+/**
+ * GET /api/v2/cases/{id}/status
+ */
+const GetCaseSectionStatus = (server) => {
+  return (request, reply) => {
+    server.methods.services.v2.cases.getCaseSectionStatus(
+      request.params.id,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
+  }
+}
+
+/**
+ * GEt /api/v2/cases/{id}/export-to-pe-form
+ */
+const ExportEpidemiologicalForm = (server) => {
+  return (request, reply) => {
+    const thisCase = request.pre.cases
+    const caseName = thisCase.name.replace(/[\W_]+/g, '-')
+    server.methods.services.v2.cases.exportEpidemiologicalForm(
+      server.methods.services,
+      thisCase,
+      async (err, result) => {
+        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        const fileName = `FORMULIR-PE-${caseName}-${moment().format("YYYY-MM-DD-HH-mm")}.pdf`
+        const pdfFile = await pdfmaker.generate(result, fileName)
+        return reply(pdfFile).header('Content-Disposition', 'attachment; filename='+fileName)
+      }
+    )
+  }
+}
+
+module.exports = {
+  CreateCase,
+  GetCaseSectionStatus,
+  ExportEpidemiologicalForm,
 }
