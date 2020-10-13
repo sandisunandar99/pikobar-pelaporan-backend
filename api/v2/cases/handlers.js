@@ -23,8 +23,7 @@ const CreateCase = (server) => {
 const GetCaseSectionStatus = (server) => {
   return (request, reply) => {
     server.methods.services.v2.cases.getCaseSectionStatus(
-      request.params.id,
-      (err, result) => {
+      request.params.id, (err, result) => {
         replyJson(err, result, reply)
       }
     )

@@ -1,4 +1,14 @@
+
+/*
+  * Age in db is in decimal
+  * birth_date isn't mandatory.
+  * if birth_date is exists, count from this date to make it more accurate
+  * if birth_date not exists, simply use the decimal data which is quite risky due to its accuracy
+  */
 const transformAge = (data) => {
+  let age = 0
+  let ageInMonths = 0
+
   if (data.birth_date) {
     age = moment().diff(data.birth_date, 'years')
     ageInMonths = moment().diff(data.birth_date, 'months')
