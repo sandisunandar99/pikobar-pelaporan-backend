@@ -1,5 +1,10 @@
 const replyHelper = require('../../helpers')
 const { replyJson } = require('../../helpers')
+const callback = (reply) => {
+  return (err, result) => {
+    replyJson(err, result, reply)
+  }
+}
 
 /**
  * POST /api/v2/cases
@@ -10,9 +15,7 @@ const CreateCase = (server) => {
       request.pre,
       request.payload,
       request.auth.credentials.user,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
+      callback(reply)
     )
   }
 }
@@ -23,9 +26,7 @@ const CreateCase = (server) => {
 const GetCaseSectionStatus = (server) => {
   return (request, reply) => {
     server.methods.services.v2.cases.getCaseSectionStatus(
-      request.params.id, (err, result) => {
-        replyJson(err, result, reply)
-      }
+      request.params.id, callback(reply)
     )
   }
 }
