@@ -11,9 +11,7 @@ const render = (data) => {
     for (let i = 0; i < data.closeContacts.length; i++) {
       const closeContact = data.closeContacts[i]
 
-      if (closeContact.status !== CRITERIA.CLOSE ) {
-        continue;
-      }
+      if (closeContact.status !== CRITERIA.CLOSE ) continue;
 
       const activities = Array.isArray(closeContact.activity)
         ? closeContact.activity.toString()

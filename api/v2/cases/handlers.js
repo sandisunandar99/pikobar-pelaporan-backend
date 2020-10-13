@@ -1,7 +1,5 @@
-const moment = require('moment')
 const replyHelper = require('../../helpers')
 const { replyJson } = require('../../helpers')
-const pdfmaker = require('../../../helpers/pdfmaker')
 
 /**
  * POST /api/v2/cases
@@ -34,20 +32,16 @@ const GetCaseSectionStatus = (server) => {
 }
 
 /**
- * GEt /api/v2/cases/{id}/export-to-pe-form
+ * GET /api/v2/cases/{id}/export-to-pe-form
  */
 const ExportEpidemiologicalForm = (server) => {
   return (request, reply) => {
-    const thisCase = request.pre.cases
-    const caseName = thisCase.name.replace(/[\W_]+/g, '-')
     server.methods.services.v2.cases.exportEpidemiologicalForm(
       server.methods.services,
-      thisCase,
+      request.pre.cases,
       async (err, result) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        const fileName = `FORMULIR-PE-${caseName}-${moment().format("YYYY-MM-DD-HH-mm")}.pdf`
-        const pdfFile = await pdfmaker.generate(result, fileName)
-        return reply(pdfFile).header('Content-Disposition', 'attachment; filename='+fileName)
+        return reply(result).header('Content-Disposition', 'attachment; filename='+fileName)
       }
     )
   }

@@ -34,9 +34,7 @@ module.exports = (server) =>{
         auth: 'jwt',
         description: 'get specific case status',
         tags: ['api', 'cases'],
-        pre: [
-          getCasebyId,
-        ]
+        pre: [ getCasebyId ]
       },
       handler: handlers.GetCaseSectionStatus(server)
     },
@@ -45,9 +43,9 @@ module.exports = (server) =>{
       path: '/v2/cases/{id}/export-to-pe-form',
       config: {
           auth: 'jwt',
+          pre: [ getCasebyId ],
           description: 'Export Case to epidemiological investigation Form',
           tags: ['api', 'epidemiological.investigation.form'],
-          pre: [ getCasebyId ],
       },
       handler: handlers.ExportEpidemiologicalForm(server)
     },

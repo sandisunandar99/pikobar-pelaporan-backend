@@ -1,7 +1,10 @@
+const moment = require('moment')
+const service = 'services.v2.cases'
 const User = require('../models/User')
 const Case = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 const History = require('../models/History')
+const pdfmaker = require('../helpers/pdfmaker')
 const Notification = require('../models/Notification')
 const Notif = require('../helpers/notification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
@@ -106,42 +109,39 @@ async function getCaseCountsOutsideWestJava(code, callback) {
   }
 }
 
-async function exportEpidemiologicalForm (services, detailCase, callback) {
+async function exportEpidemiologicalForm (services, thisCase, callback) {
   try {
-    const pdfmaker = require('../helpers/pdfmaker')
-    const histories = await History.find({ case: detailCase._id })
+    const histories = await History.find({ case: thisCase._id })
 
     let closeContacts= []
     await services.cases.closecontact.getByCase(
-      detailCase,
+      thisCase,
       (err, result) => {
         if (err) throw new Error
         closeContacts = result
       }
     )
 
-    Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
-    callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
+    // build config
+    const data = Object.assign(thisCase, { histories: histories, closeContacts: closeContacts })
+    const pdfConfig = pdfmaker.epidemiologicalInvestigationsForm(data)
+
+    // filename
+    const caseName = thisCase.name.replace(/[\W_]+/g, '-')
+    const fileName = `FORMULIR-PE-${caseName}-${moment().format("YYYY-MM-DD-HH-mm")}.pdf`
+
+    // render pdf
+    const pdfFile = await pdfmaker.generate(pdfConfig, fileName)
+
+    callback(null, pdfFile)
   } catch (e) {
     callback(e, null)
   }
 }
 
 module.exports = [
-  {
-    name: 'services.v2.cases.create',
-    method: createCase,
-  },
-  {
-    name: 'services.v2.cases.getCaseSectionStatus',
-    method: getCaseSectionStatus
-  },
-  {
-    name: 'services.v2.cases.getCaseCountsOutsideWestJava',
-    method: getCaseCountsOutsideWestJava
-  },
-  {
-    name: 'services.v2.cases.exportEpidemiologicalForm',
-    method: exportEpidemiologicalForm
-  },
+  { name: `${service}.create`, method: createCase },
+  { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
+  { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
+  { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
 ]
