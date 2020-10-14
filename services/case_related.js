@@ -7,13 +7,16 @@ const { patientStatus } = require('../helpers/custom')
 
 const listCaseRelated = async (query, user, callback) => {
   try {
-    const whereRole = Check.countByRole(user)
+    const whereRole = { $or: [
+      Check.countByRole(user), {
+        close_contact_parents: { $elemMatch: {
+          author_district_code: user.code_district_city
+        } }
+      },
+    ]}
     const filter = await Filter.filterCase(user, query)
     const condition = Object.assign(whereRole, filter)
-    const staticParam = { ...WHERE_GLOBAL, $or: [
-      { "close_contact_parents": { $gt: [] } },
-      { "close_contact_childs": { $gt: [] } },
-    ] }
+    const staticParam = { ...WHERE_GLOBAL, "close_contact_parents": { $gt: [] } }
     const searching = { ...condition, ...staticParam }
     const select = {
       "_id": 1,
@@ -29,30 +32,9 @@ const listCaseRelated = async (query, user, callback) => {
       },
       {
         $addFields: {
-          relatedCases: {
-            $concatArrays: [
-              "$close_contact_parents",
-              "$close_contact_childs",
-            ],
-          },
-        },
-      },
-      {
-        $addFields: {
-          relatedCases: {
-            $filter: {
-              input: "$relatedCases",
-              as: "item",
-              cond: { $eq: [ "$$item.is_access_granted", true ] }
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
           case_related_ids: {
             $map: {
-              input: "$relatedCases",
+              input: "$close_contact_parents",
               as: "thisParent",
               in: "$$thisParent.id_case"
             }

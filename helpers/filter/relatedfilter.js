@@ -46,25 +46,18 @@ const filterEdges = (this_) => {
 const filterNodes = (this_) => {
   const nodes = []
 
-  for (let i = 0; i < this_.length; i++) {
-    const relateds = this_[i].cases_related
-    if (!relateds || !relateds.length) continue;
+  for (let i in this_) {
+    const parents = this_[i].cases_related
+    if (!parents || !parents.length) return
 
-    for (let j = 0; j < relateds.length; j++) {
-      let from = relateds[j].id_case
-      let to = this_[i].id_case
-
-      if (relateds[j].status === CRITERIA.CLOSE) {
-        from = this_[i].id_case
-        to = relateds[j].id_case
-      }
-
+    for (let j in parents) {
       nodes.push({
-        from: from,
-        to: to,
+        from: parents[j].id_case,
+        to: this_[i].id_case,
       })
     }
   }
+
   return nodes
 }
 

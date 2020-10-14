@@ -17,11 +17,18 @@ const sectionStatus = {
 }
 
 const refRelatedCase = [{
+  // case attributes
   _id: false,
   id_case: { type: String, default: null },
   id_case_registrant: { type: String, default: null },
   is_west_java: { type: Boolean, default: true },
+  name: { type: String,  default: null },
+  address_district_code: { type: String, default: null },
   status: { type: String, default: null },
+  author: { type: mongoose.Schema.Types.ObjectId, default: null },
+  author_district_code: { type: String, default: null },
+  createdAt: { type: Date, default: Date.now() },
+  // additional relationship attributes
   relation: { type: String, default: null },
   relation_others: { type: String, default: null },
   activity: { type: Array, default: [] },
@@ -29,7 +36,8 @@ const refRelatedCase = [{
   first_contact_date: { type: Date, default: null },
   last_contact_date: { type: Date, default: null },
   is_access_granted: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now() },
+  related_by: mongoose.Schema.Types.ObjectId,
+  related_at: { type: Date, default: Date.now() },
 }]
 
 const CaseSchema = new mongoose.Schema({
