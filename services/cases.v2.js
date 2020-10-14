@@ -9,6 +9,9 @@ const Notification = require('../models/Notification')
 const Notif = require('../helpers/notification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
+const {
+  casesheetextraction,
+} = require('../helpers/casesheet/index')
 
 const createCase = async (pre, payload, author, callback) => {
   try {
@@ -139,9 +142,20 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
   }
 }
 
+async function importCases (services, request, callback) {
+  try {
+    const payload = await casesheetextraction(request)
+    callback(null, payload)
+  } catch (e) {
+    console.log("ERR", e)
+    callback(e, null)
+  }
+}
+
 module.exports = [
   { name: `${service}.create`, method: createCase },
   { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
   { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
   { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
+  { name: `${service}.importCases`, method: importCases },
 ]

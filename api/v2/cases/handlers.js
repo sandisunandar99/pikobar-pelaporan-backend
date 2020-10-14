@@ -47,8 +47,22 @@ const ExportEpidemiologicalForm = (server) => {
   }
 }
 
+/**
+ * POST /api/v2/cases-import
+ */
+const ImportCases = (server) => {
+  return (request, reply) => {
+    server.methods.services.v2.cases.importCases(
+      server.methods.services,
+      request,
+      callback(reply),
+    )
+  }
+}
+
 module.exports = {
   CreateCase,
   GetCaseSectionStatus,
   ExportEpidemiologicalForm,
+  ImportCases,
 }

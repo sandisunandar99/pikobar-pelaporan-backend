@@ -42,12 +42,28 @@ module.exports = (server) =>{
       method: 'GET',
       path: '/v2/cases/{id}/export-to-pe-form',
       config: {
-          auth: 'jwt',
-          pre: [ getCasebyId ],
-          description: 'Export Case to epidemiological investigation Form',
-          tags: ['api', 'epidemiological.investigation.form'],
+        auth: 'jwt',
+        pre: [ getCasebyId ],
+        description: 'Export Case to epidemiological investigation Form',
+        tags: ['api', 'epidemiological.investigation.form'],
       },
       handler: handlers.ExportEpidemiologicalForm(server)
+    },
+    {
+      method: 'POST',
+      path: '/v2/cases-import',
+      config: {
+        auth: 'jwt',
+        description: 'Cases import',
+        tags: ['api', 'cases'],
+        payload: {
+          maxBytes: 1000 * 1000 * 25,
+          output: 'stream',
+          parse: true,
+          allow: 'multipart/form-data'
+        },
+      },
+      handler: handlers.ImportCases(server)
     },
   ]
 }
