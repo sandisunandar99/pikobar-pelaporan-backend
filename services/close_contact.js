@@ -207,6 +207,21 @@ const syncCase = async (services, callback) => {
         is_reported: res.is_reported,
         origin_closecontact: true,
         author: res.createdBy,
+        relation: res.relationship,
+        relation_other: res.relationship_other,
+        activity: res.activity,
+        activity_others: res.activity_other,
+        first_contact_date: res.start_contact_date,
+        last_contact_date: res.end_contact_date,
+        status_identity: 1,
+        status_clinical: 1,
+        status_inspection_support: inspects.length ? 1: 0,
+        status_travel_import: travels.length ? 1 : 0,
+        status_travel_local: 0,
+        status_travel_public: 0,
+        status_transmission: 0,
+        status_exposurecontact: 0,
+        status_closecontact: 0,
       }
 
       const preCreate = { cases: res.case }
