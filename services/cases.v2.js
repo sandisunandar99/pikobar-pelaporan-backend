@@ -10,7 +10,7 @@ const Notif = require('../helpers/notification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
 const {
-  casesheetextraction,
+  caseSheetExtraction,
 } = require('../helpers/casesheet/index')
 
 const createCase = async (pre, payload, author, callback) => {
@@ -144,7 +144,8 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 
 async function importCases (services, request, callback) {
   try {
-    const payload = await casesheetextraction(request)
+    const payload = await caseSheetExtraction(request)
+
     callback(null, payload)
   } catch (e) {
     console.log("ERR", e)
