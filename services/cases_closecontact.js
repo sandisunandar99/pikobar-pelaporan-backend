@@ -132,8 +132,8 @@ const create = async (services, pre, author, payload, callback) => {
         // prerequisites per-premierCase to creating new case
         const pre = await preCountCase(services, req.address_district_code)
 
-        await services.cases_revamp.create(
-          services, createCasePayload, author, pre,
+        await services.v2.cases.create(
+          pre, createCasePayload, author,
           (err, res) => {
             if (err) throw new Error
 
