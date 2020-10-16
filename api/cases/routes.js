@@ -12,7 +12,6 @@ module.exports = (server) =>{
     const countCasePendingByDistrict = require('./route_prerequesites').countCasePendingByDistrict(server)
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
-    const DataSheetRequest = require('./route_prerequesites').DataSheetRequest(server)
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
@@ -193,28 +192,6 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.DeleteCase
-        },
-        // Import excel case
-        {
-            method: 'POST',
-            path: '/cases-import',
-            config: {
-                auth: 'jwt',
-                description: 'Cases import',
-                tags: ['api', 'cases'],
-                validate: inputValidations.CaseImportPayloadValidations,
-                payload: {
-                    maxBytes: 1000 * 1000 * 25,
-                    output: 'stream',
-                    parse: true,
-                    allow: 'multipart/form-data'
-                },
-                pre: [
-                    CheckRoleCreate,
-                    DataSheetRequest,
-                ]
-            },
-            handler: handlers.ImportCases
         },
         // Get case name and id
         {
