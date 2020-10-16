@@ -91,11 +91,6 @@ const sumCondition = (criteria, status) => {
 }
 
 module.exports = {
-  sumWeeklyFunc,
-  sumFunc,
-  grupFunc,
-  sumBetweenFunc,
-  sumActive,
-  sumSick,
-  sumCondition
+  sumFunc, sumBetweenFunc, sumWeeklyFunc,
+  grupFunc, sumActive, sumSick, sumCondition
 }
