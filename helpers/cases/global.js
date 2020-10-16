@@ -1,5 +1,5 @@
-const preCountCase = async (services, districtCode) => {
-  // prerequisites per-premierCase to creating new case
+// requirement func to generate id case to support multiple insertion cases
+const getCountBasedOnDistrict = async (services, districtCode) => {
   const pre = {
     count_case: {},
     count_case_pending: {},
@@ -31,5 +31,5 @@ const preCountCase = async (services, districtCode) => {
 }
 
 module.exports = {
-  preCountCase,
+  getCountBasedOnDistrict,
 }
