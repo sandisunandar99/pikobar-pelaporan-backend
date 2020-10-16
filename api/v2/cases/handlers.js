@@ -52,9 +52,10 @@ const ExportEpidemiologicalForm = (server) => {
  */
 const ImportCases = (server) => {
   return (request, reply) => {
-    server.methods.services.v2.cases.importCases(
+    server.methods.services.v2.cases.createMultiple(
       server.methods.services,
-      request,
+      request.pre.sheet_to_json,
+      request.auth.credentials.user,
       callback(reply),
     )
   }

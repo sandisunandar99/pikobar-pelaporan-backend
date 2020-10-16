@@ -1,4 +1,18 @@
 const replyHelper = require('../../helpers')
+const {
+  validate,
+  requestFileError,
+  caseSheetExtraction,
+} = require('../../../helpers/casesheet/index')
+
+
+const BadRequest = (errors) => {
+  return {
+    status: 400,
+    message: 'Bad request.',
+    errors: errors,
+  }
+}
 
 const countCasesOutsideWestJava = server => {
   return {
@@ -18,6 +32,28 @@ const countCasesOutsideWestJava = server => {
   }
 }
 
+const sheetToJson = server => {
+  return {
+    method: async (request, reply) => {
+      const payload = await caseSheetExtraction(request)
+
+      if (requestFileError(payload)) {
+        return reply(BadRequest(requestFileError(payload))).code(400).takeover()
+      }
+
+      const errors = await validate(payload)
+
+      if (errors) {
+        return reply(BadRequest(errors)).code(400).takeover()
+      }
+
+      return reply(paylod)
+    },
+    assign: 'sheet_to_json'
+  }
+}
+
 module.exports = {
+  sheetToJson,
   countCasesOutsideWestJava,
 }

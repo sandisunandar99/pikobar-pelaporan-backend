@@ -1,6 +1,7 @@
 const inputValidations = require('./validations/input')
 module.exports = (server) =>{
   const handlers = require('./handlers')
+  const sheetToJson = require('./route_prerequesites').sheetToJson(server)
   const getCasebyId = require('../../cases/route_prerequesites').getCasebyId(server)
   const CheckRoleCreate = require('../../users/route_prerequesites').CheckRoleCreate(server)
   const checkCaseIsExists = require('../../cases/route_prerequesites').checkCaseIsExists(server)
@@ -62,6 +63,7 @@ module.exports = (server) =>{
           parse: true,
           allow: 'multipart/form-data'
         },
+        pre: [ sheetToJson ],
       },
       handler: handlers.ImportCases(server)
     },

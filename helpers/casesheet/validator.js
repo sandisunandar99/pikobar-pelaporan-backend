@@ -1,148 +1,53 @@
 const Joi = require('joi')
-const Case = require('../models/Case')
+const Case = require('../../models/Case')
 const helper = require("./casesheetextraction")
 const config = require('./casesheetconfig.json')
 const rules = require('../../api/cases/validations/input')
+const { label } = config
 
-const districtPatternValidate = (districtCode, subDistrictCode, villageCode) => {
-  const err = {}
-  const isAllFilled = districtCode && subDistrictCode && villageCode
-  const includeStr = districtCode.substr && subDistrictCode.substr && villageCode.substr
-  let domicileMsg = ''
-  const districtPatternValid = (subCcode, code, offset, key, messg) => {
-    if (subCcode.substr(0, offset) != code) {
-      let prop = label[key]
-      domicileMsg = `\"${prop}"\ ${messg}.`
+const transformedJoiErrors = (joiResult) => {
+  const transformedErrors = {}
 
-      if (!Array.isArray(err[prop])) {
-        err[prop] = []
-      }
-      err[prop].push(domicileMsg)
+  if (!joiResult.error) { return transformedErrors }
+
+  for (e in joiResult.error.details) {
+    let errMessage = joiResult.error.details[e].message
+    let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
+
+    // transform field to idn locale label
+    if (errMessage.replace && label[errField]) {
+      errMessage = errMessage.replace(errField, label[errField])
+      errField = label[errField]
     }
+
+    if (!Array.isArray(transformedErrors[errField])) {
+      transformedErrors[errField] = []
+    }
+
+    if (transformedErrors[errField].includes(errMessage)) {
+      continue;
+    }
+
+    transformedErrors[errField].push(errMessage)
   }
 
-  if (isAllFilled && includeStr) {
-    districtPatternValid(
-      subDistrictCode,
-      districtCode,
-      5,
-      'current_location_subdistrict_code',
-      'tidak terdaftar sesuai pada kabupaten yang dipilih'
-    )
-
-    districtPatternValid(
-      villageCode,
-      subDistrictCode,
-      5,
-      'current_location_village_code',
-      'tidak terdaftar sesuai pada kecamatan yang dipilih'
-    )
-  }
-
-  return err
+  return transformedErrors
 }
 
-const validate = async (payload) => {
-  const results = []
-  const objError = {}
-  const label = config.label
-
-  for (let i = 0; i < payload.length; i++) {
-    let propErr = {}
-    let errors = []
-
-    const result = Joi.validate(payload[i], rules.caseSchemaValidation)
-
-    if (result.error!==null) {
-      for (e in result.error.details) {
-          let messg = result.error.details[e].message
-          let prop = messg.substr(1, messg.lastIndexOf('"')-1)
-
-          // transform label
-          if (messg.replace && label[prop]) {
-              messg = messg.replace(prop, label[prop])
-              prop = label[prop]
-          }
-
-          if (!Array.isArray(propErr[prop])) {
-              propErr[prop] = []
-          }
-
-          if (propErr[prop].includes) {
-              if (propErr[prop].includes(messg)) {
-                  continue
-              }
-          }
-
-          propErr[prop].push(messg)
-      }
-    }
-
-    // valid domicile code
-    districtPatternValidate(
-      payload[i].address_district_code,
-      payload[i].address_subdistrict_code,
-      payload[i].address_village_code,
-    )
-
-    districtPatternValidate(
-      payload[i].current_location_district_code,
-      payload[i].current_location_subdistrict_code,
-      payload[i].current_location_village_code,
-    )
-
-    // is address_district_code exist?
-    const code = payload[i].address_district_code
-    const isDistrictCodeValid = await helper.isDistrictCodeValid(code)
-
-    if (!isDistrictCodeValid) {
-      let prop = label['address_district_code']
-      let messg = `\"${prop}"\ Kode Kabupaten Salah.`
-
-      if (!Array.isArray(propErr[prop])) { propErr[prop] = [] }
-      propErr[prop].push(messg)
-    }
-
-
-    const nik = payload[i].nik
-    if (nik) {
-      const isCaseExist = await Case.find({nik: nik})
-        .where('delete_status').ne('deleted')
-        .countDocuments()
-
-      if (isCaseExist) {
-        let prop = label['nik']
-        let messg = `\"${prop}"\ '${nik}' Sudah terdata di laporan kasus!`
-
-        if (!Array.isArray(propErr[prop])) { propErr[prop] = [] }
-        propErr[prop].push(messg)
-      }
-    }
-
-
-    if (Object.keys(propErr).length !== 0) {
-      errors.push(propErr)
-    }
-
-    if (errors.length) {
-      objError[(parseInt(i)+9).toString()] = errors
-    }
-  }
-
+const transformedErrorResponse = (errors) => {
   // transform error response
-  for (i in objError) {
-    let rowDetail = {}
-    let rowErrors = []
-    let err = objError[i] || []
+  const transformed = []
+  for (i in errors) {
+    const rowErrors = []
 
-    for (j in err) {
-      let errs = err[j] || {}
+    for (j in errors[i]) {
+      const fieldErrors = errors[i][j] || {}
 
-      for (k in errs) {
+      for (fieldName in fieldErrors) {
         let desc = ''
-        let  transform = {}
-        if (errs[k].join) {
-          desc = errs[k].join(',')
+        const transformedFieldErrors = {}
+        if (fieldErrors[fieldName].join) {
+          desc = fieldErrors[fieldName].join(',')
           if (desc && desc.replace) {
             desc = desc.replace('is required', 'Harus diisi')
             desc = desc.replace('must be a string', 'Harus berisi string')
@@ -151,19 +56,73 @@ const validate = async (payload) => {
             desc = desc.replace('length must be less than or equal to 16 characters long', 'Harus 16 digit')
           }
         }
-        transform.columnName = k
-        transform.description = desc
-        rowErrors.push(transform)
+        transformedFieldErrors.columnName = fieldName
+        transformedFieldErrors.description = desc
+        rowErrors.push(transformedFieldErrors)
       }
 
     }
 
-    rowDetail.rowNumber = i
-    rowDetail.data = rowErrors
-    results.push(rowDetail)
+    transformed.push({
+      rowNumber: i,
+      data: rowErrors,
+    })
   }
 
-  return results
+  return transformed
+}
+
+const validate = async (payload) => {
+  const errors = {}
+
+  for (let i = 0; i < payload.length; i++) {
+    const joiResult = Joi.validate(payload[i], rules.caseSchemaValidation)
+
+    const recordErrors = []
+    const recordError = transformedJoiErrors(joiResult)
+
+    // is address_district_code exist?
+    const isDistrictCodeValid = await helper.isDistrictCodeValid(
+      payload[i].address_district_code
+    )
+
+    if (!isDistrictCodeValid) {
+      const errField = label['address_district_code']
+      if (!Array.isArray(recordError[errField])) {
+        recordError[errField] = []
+      }
+      recordError[errField].push(`\"${errField}" Kode Kabupaten Salah.`)
+    }
+
+    // Validate duplication NIK
+    const nik = payload[i].nik;
+    if (nik) {
+      const isNikExists = await Case
+        .findOne({nik: nik, delete_status: { $ne: 'deleted' }})
+
+      if (isNikExists) {
+        const errField = label['nik']
+        if (!Array.isArray(recordError[errField])) {
+          recordError[errField] = []
+        }
+        recordError[errField].push(
+          `\"${errField}"\ '${nik}' Sudah terdata di laporan kasus!`
+        )
+      }
+    }
+
+
+    if (Object.keys(recordError).length) {
+      recordErrors.push(recordError)
+    }
+
+    if (recordErrors.length) {
+      const row = (parseInt(i)+9).toString()
+      errors[row] = recordErrors
+    }
+  }
+
+  return transformedErrorResponse(errors)
 }
 
 module.exports = {

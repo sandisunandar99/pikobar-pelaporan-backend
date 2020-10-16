@@ -10,11 +10,7 @@ const Notification = require('../models/Notification')
 const Notif = require('../helpers/notification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
-const {
-  validate,
-  requestFileError,
-  caseSheetExtraction,
-} = require('../helpers/casesheet/index')
+const { getCountBasedOnDistrict } = require('../helpers/cases/global')
 
 const createCase = async (pre, payload, author, callback) => {
   // guarded fields
@@ -149,30 +145,37 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
   }
 }
 
-async function importCases (services, request, callback) {
+async function createMultiple (services, payload, author, callback) {
+  const insertedCaseIds = []
   try {
-    const payload = await caseSheetExtraction(request)
+    // get requirement doc to generate id case
+    for (let i = 0; i < payload.length; i++) {
+      const pre = await getCountBasedOnDistrict(
+        services,
+        payload[i].address_district_code
+      )
 
-    if (requestFileError(payload)) throw new Error(requestFileError(payload))
+      await createCase(
+        pre, payload[i], author,
+        (err, res) => {
+          if (err) throw new Error
+          insertedCaseIds.push(res._id)
+        }
+      )
 
-    const errors = await validate(payload)
-    if (errors) throw new Error(errors)
-
-
-
-
-
-    callback(null, payload)
+    }
   } catch (e) {
-    console.log("ERR", e)
+    // todo rollback func
     callback(e, null)
   }
+
+  callback(null, 'success')
 }
 
 module.exports = [
   { name: `${service}.create`, method: createCase },
+  { name: `${service}.createMultiple`, method: createMultiple },
   { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
   { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
   { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
-  { name: `${service}.importCases`, method: importCases },
 ]
