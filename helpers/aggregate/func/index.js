@@ -38,8 +38,12 @@ const sumWeeklyFunc = (dateStart, group) => {
   }
 }
 
-const grupFunc = (grouping) => {
-  return { $group: { _id: grouping, "total": { $sum: 1 } } }
+const grupFunc = (matchs, grouping) => {
+  return {
+    $match: matchs
+  }, {
+    $group: { _id: grouping, "total": { $sum: 1 } }
+  }
 }
 
 const sumActive = (criteria) => {
