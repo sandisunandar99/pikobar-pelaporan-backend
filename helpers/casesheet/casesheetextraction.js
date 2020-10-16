@@ -3,16 +3,16 @@ const caseSheetExtraction = async (request) => {
     const conf = require('./casesheetconfig.json')
     const caseSheet = require('./casesheet')
     const xlsx = require('node-xlsx')
-    
+
     const uploaded = await handleFileUpload(request.payload.file)
-  
+
     let dataSheet = (await xlsx.parse(dir + uploaded.filename))[0]['data']
 
     const version = `VERSION ${conf.version}`
     const verfiedTemplate = conf.verified_template
-    if (dataSheet[1][34] !== verfiedTemplate 
-      || dataSheet[2][34] !== verfiedTemplate 
-      || dataSheet[3][34] !== verfiedTemplate 
+    if (dataSheet[1][34] !== verfiedTemplate
+      || dataSheet[2][34] !== verfiedTemplate
+      || dataSheet[3][34] !== verfiedTemplate
       || dataSheet[4][34] !== verfiedTemplate ) {
       return conf.unverified_template
     }
@@ -23,12 +23,12 @@ const caseSheetExtraction = async (request) => {
 
     dataSheet.splice(0, conf.start_row)
     let payload = []
-    
+
     for (i in dataSheet)
     {
       caseSheet.init(dataSheet[i], conf)
 
-      if (!caseSheet.isRowFilled()) continue 
+      if (!caseSheet.isRowFilled()) continue
 
       let obj = {
         id_case_national: caseSheet.getIdCaseNational(),
@@ -52,7 +52,7 @@ const caseSheetExtraction = async (request) => {
         nationality: caseSheet.getNationality(),
         nationality_name: caseSheet.getNationalityName(),
         occupation: caseSheet.getOccupation(),
-        office_address: caseSheet.getOfficeAddress(),            
+        office_address: caseSheet.getOfficeAddress(),
         status: caseSheet.getStatus(),
         stage: caseSheet.getStage(),
         final_result: caseSheet.getFinalResult(),
@@ -67,7 +67,7 @@ const caseSheetExtraction = async (request) => {
         is_went_other_city: caseSheet.isWentOtherCity(), //todo
         visited_city: caseSheet.getVisitedCity(), //todo
         is_contact_with_positive: caseSheet.isContactWithPositive(), //todo
-        history_notes: caseSheet.getHistoryNotes(), //todo 
+        history_notes: caseSheet.getHistoryNotes(), //todo
         current_location_type: caseSheet.getCurrentLocationType(),
         current_hospital_id: caseSheet.getCurrentHospitalId(),
         current_location_address: caseSheet.getCurrentLocationAddress(),
@@ -76,14 +76,14 @@ const caseSheetExtraction = async (request) => {
         current_location_village_code: caseSheet.getCurrentLocationVillageCode(),
         other_notes: caseSheet.getOtherNotes(), //todo
         last_changed: caseSheet.getLastChanged(),
-        is_sample_taken:caseSheet.isSampleTaken() 
+        is_sample_taken:caseSheet.isSampleTaken()
       }
-      
+
       for (var key in obj) {
         if(obj[key] && obj[key].trim)
            obj[key] = obj[key].trim()
       }
-      
+
       payload.push(obj)
     }
 

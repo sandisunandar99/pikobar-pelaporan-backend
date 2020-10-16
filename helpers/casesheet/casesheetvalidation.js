@@ -8,7 +8,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
       let errors = []
 
       const result = Joi.validate(payload[i], rules.caseSchemaValidation)
-    
+
       if (result.error!==null) {
         for (e in result.error.details) {
             let messg = result.error.details[e].message
@@ -31,7 +31,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
             }
 
             propErr[prop].push(messg)
-        }   
+        }
       }
 
       // valid domicile code
@@ -91,7 +91,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
       // is address_district_code exist?
       const code = payload[i].address_district_code
       const isDistrictCodeValid = await helper.isDistrictCodeValid(code)
-      
+
       if (!isDistrictCodeValid) {
         let prop = 'address_district_code'
             prop = label[prop]
@@ -103,7 +103,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
         propErr[prop].push(messg)
       }
 
-      
+
       const nik = payload[i].nik
       if (nik) {
         const isCaseExist = await Case.find({nik: nik})
@@ -121,7 +121,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
           propErr[prop].push(messg)
         }
       }
-        
+
 
       if (Object.keys(propErr).length !== 0) {
         errors.push(propErr)
@@ -140,7 +140,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
 
       for (j in err) {
         let errs = err[j] || {}
-        
+
         for (k in errs) {
           let desc = ''
           let  transform = {}
@@ -160,7 +160,7 @@ const validate = async (payload, Joi, rules, config, helper, Case) => {
         }
 
       }
-      
+
       rowDetail.rowNumber = i
       rowDetail.data = rowErrors
       results.push(rowDetail)
