@@ -66,6 +66,12 @@ const sumActive = (criteria) => {
 }
 
 const sumSick = (criteria, type) => {
+  let where
+  if (Array.isArray(type)) {
+    where = { $in: ["$last_history.current_location_type", type] }
+  } else {
+    where = { $eq: ["$last_history.current_location_type", type] }
+  }
   return {
     $sum: {
       $cond: [
@@ -73,7 +79,7 @@ const sumSick = (criteria, type) => {
           $and: [
             { $eq: ["$final_result", "4"] },
             { $eq: ["$status", criteria] },
-            { $eq: ["$last_history.current_location_type", type] },
+            where,
           ]
         }, 1, 0]
     }
