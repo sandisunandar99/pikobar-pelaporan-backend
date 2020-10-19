@@ -312,6 +312,7 @@ async function createRdt(query, payload, author, pre, callback) {
   } else {
     // find existing Rdt by nik & phone_number
     Rdt.findOne({ nik: payload.nik })
+      .where('status').ne('deleted')
       .or({ phone_number: payload.phone_number })
       .exec()
       .then( (rdt) => {
@@ -516,6 +517,7 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 
               return rdt.save();
+
 
             }
         }).then((rdt) => {
