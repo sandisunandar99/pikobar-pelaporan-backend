@@ -1,24 +1,18 @@
 module.exports = (server) => {
-  const handlers = require('./handlers');
+  const handlers = require('./handlers')
+  const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
+  const { configRoute} = require("../../helpers/routes")
   return [
     {
       method: 'GET',
       path: '/areas/district-city',
-      config: {
-        auth: 'jwt',
-        description: 'show city in west java areas',
-        tags: ['api', 'areas'],
-      },
+      config: configRoute("show city in west java areas", "district-city", CheckRoleView),
       handler: handlers.DistrictCity(server)
     },
     {
       method: 'GET',
       path: '/areas/sub-district/{city_code}',
-      config: {
-        auth: 'jwt',
-        description: 'show districs in west java areas',
-        tags: ['api', 'areas'],
-      },
+      config: configRoute("show districs in west java areas", "sub-district", CheckRoleView),
       handler: handlers.SubDistrict(server)
     },
     {
