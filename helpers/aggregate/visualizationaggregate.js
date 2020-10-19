@@ -17,10 +17,10 @@ const visualizationAggregate = async (query, user) => {
   {
     "$facet": {
       "visualization": [recapCondition(groups, CRITERIA)],
-      "date_weekly": weeklyCondition(query, searching, WHERE_GLOBAL, CRITERIA),
-      "age": ageCondition(query, searching, WHERE_GLOBAL, CRITERIA),
-      "gender": groupCondition(query, searching, WHERE_GLOBAL, CRITERIA).gender,
-      "nationality": groupCondition(query, searching, WHERE_GLOBAL, CRITERIA).nationality
+      "date_weekly": weeklyCondition(query, search, WHERE_GLOBAL, CRITERIA),
+      "age": ageCondition(query, search, WHERE_GLOBAL, CRITERIA),
+      "gender": groupCondition(query, search, WHERE_GLOBAL, CRITERIA).gender,
+      "nationality": groupCondition(query, search, WHERE_GLOBAL, CRITERIA).nationality
     }
   },
   {

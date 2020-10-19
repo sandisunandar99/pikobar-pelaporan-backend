@@ -3,13 +3,11 @@ const { grupFunc  } = require("./func")
 const groupCondition = (query, searching, where, criteria) => {
   let matchs = matchWhere(query, searching, where, criteria)
   const paramsGender = [
-    matchs,
-    grupFunc("$gender")
+    grupFunc(matchs, "$gender")
   ]
 
   const paramsNationality = [
-    matchs,
-    grupFunc("$nationality")
+    grupFunc(matchs, "$nationality")
   ]
 
   return {
