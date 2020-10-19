@@ -3,7 +3,7 @@ const sheet = {
   ...require('./History'),
 }
 
-const constructCase = (d, uniqueBatchId) => {
+const constructCase = (d) => {
   return {
     id_case_national: sheet.getIdCaseNational(d),
     id_case_related: sheet.getIdCaseRelated(d),
@@ -28,7 +28,6 @@ const constructCase = (d, uniqueBatchId) => {
     occupation: sheet.getOccupation(d),
     office_address: sheet.getOfficeAddress(d),
     status: sheet.getStatus(d),
-    input_source: `import-feature-${uniqueBatchId}`,
   }
 }
 
@@ -63,6 +62,7 @@ const getBuiltCreateCasePayload = (d, uniqueBatchId) => {
   return {
     ...constructCase(d, uniqueBatchId),
     ...constructHistory(d),
+    input_source: `import-feature-${uniqueBatchId}`,
   }
 }
 

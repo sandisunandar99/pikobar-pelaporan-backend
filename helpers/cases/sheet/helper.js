@@ -64,8 +64,7 @@ const isTemplateVerified = (dataSheet) => {
   return true
 }
 
-
-module.exports = {
+const modules = {
   _toString,
   _toDateString,
   _toUnsignedInt,
@@ -74,3 +73,5 @@ module.exports = {
   getStringValueByIndex,
   isAnotherImportProcessIsRunning,
 }
+
+module.exports = modules

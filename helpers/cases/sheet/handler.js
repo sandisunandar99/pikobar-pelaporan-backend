@@ -1,11 +1,10 @@
+const dir = './upload/'
+const xlsx = require('node-xlsx')
+const conf = require('./config.json')
+const caseSheet = require('./getters/index')
 const { isTemplateVerified } = require('./helper')
 
 const extractSheetToJson = async (request) => {
-    const dir = './upload/'
-    const conf = require('./config.json')
-    const caseSheet = require('./getters/index')
-    const xlsx = require('node-xlsx')
-
     //  genretae unique import batch id (debug purpose)
     const uniqueBatchId = require('uuid').v4()
 
