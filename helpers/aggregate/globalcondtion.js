@@ -24,13 +24,7 @@ const matchWhere = (query, searching, where, criteria) => {
     ...where,
     ...filterNotGrouping(query, criteria)
   }
-  return {
-    $match: {
-      $and: [
-        concats
-      ]
-    }
-  }
+  return { $match: concats }
 }
 
 const dateGrouping = () => {
