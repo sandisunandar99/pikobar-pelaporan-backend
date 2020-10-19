@@ -1,5 +1,5 @@
 const conf = require('../config.json')
-const { _toString, _toDateString, _toUnsignedInt, getStringCode } = require('../helper')
+const { _toString, _toDateString, _toUnsignedInt, getStringValueByIndex } = require('../helper')
 
 const getIdCaseNational = (d) => {
   return _toString(d[conf.cell.id_case_national])
@@ -58,32 +58,30 @@ const getAddressProvinceName = (d) => {
 }
 
 const getAddressDistrictCode = (d) => {
-  return getStringCode(d[conf.cell.address_district_code])
+  return getStringValueByIndex(d[conf.cell.address_district_code], 1)
 
 }
 
 const getAddressDistrictName = (d) => {
-  if (!d[conf.cell.address_district_code]) return undefined
-  return _toString(d[conf.cell.address_district_code].split('-')[0] || null)
+  return getStringValueByIndex(d[conf.cell.address_district_code], 0)
 }
 
 const getAddressSubdistrictCode = (d) => {
-  return getStringCode(d[conf.cell.address_subdistrict_code])
+  return getStringValueByIndex(d[conf.cell.address_subdistrict_code], 1)
 }
 
 
 const getAddressSubdistrictName = (d) => {
-  if (!d[conf.cell.address_subdistrict_code]) return undefined
-  return _toString(d[conf.cell.address_subdistrict_code].split('-')[0] || null)
+  return getStringValueByIndex(d[conf.cell.address_subdistrict_code], 0)
+
 }
 
 const getAddressVillageCode = (d) => {
-  return getStringCode(d[conf.cell.address_village_code])
+  return getStringValueByIndex(d[conf.cell.address_village_code], 1)
 }
 
 const getAddressVillageName = (d) => {
-  if (!d[conf.cell.address_village_code]) return undefined
-  return _toString(d[conf.cell.address_village_code].split('-')[0] || null)
+  return getStringValueByIndex(d[conf.cell.address_village_code], 0)
 }
 
 const getNationality = (d) => {

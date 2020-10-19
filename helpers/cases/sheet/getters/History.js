@@ -3,7 +3,7 @@ const registeredDiagnosis = []
 const conf = require('../config.json')
 
 const { refDiagnosis } = require('../reference')
-const { _toString, _toDateString, getStringCode } = require('../helper')
+const { _toString, _toDateString, getStringValueByIndex } = require('../helper')
 
 const getStatus = (d) => {
   if (!d[conf.cell.status]) return undefined
@@ -131,7 +131,7 @@ const getCurrentLocationType = (d) => {
 }
 
 const getCurrentHospitalId = (d) => {
-  return getStringCode(d[conf.cell.current_hospital_id])
+  return getStringValueByIndex(d[conf.cell.current_hospital_id], 1)
 }
 
 const getCurrentLocationAddress = (d) => {
@@ -146,15 +146,15 @@ const getCurrentLocationAddress = (d) => {
 }
 
 const getCurrentLocationDistrictCode = (d) => {
-  return getStringCode(d[conf.cell.current_location_district_code])
+  return getStringValueByIndex(d[conf.cell.current_location_district_code], 1)
 }
 
 const getCurrentLocationSubdistrictCode = (d) => {
-  return getStringCode(d[conf.cell.current_location_subdistrict_code])
+  return getStringValueByIndex(d[conf.cell.current_location_subdistrict_code], 1)
 }
 
 const getCurrentLocationVillageCode = (d) => {
-  return getStringCode(d[conf.cell.current_location_village_code])
+  return getStringValueByIndex(d[conf.cell.current_location_village_code], 1)
 }
 
 const getOtherNotes = (d) => {
