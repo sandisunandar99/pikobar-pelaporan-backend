@@ -1,7 +1,6 @@
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const inputValidations = require('./validations/input')
-    const outputValidations = require('./validations/output')
 
     const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
@@ -30,7 +29,6 @@ module.exports = (server) =>{
                 validate: inputValidations.CaseQueryValidations,
                  // keterangan response ini gak perlu di pakai karena sudah di validation
                 // ketika input
-                // response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
                     CheckRoleView,
                     checkIfDataNotNull
