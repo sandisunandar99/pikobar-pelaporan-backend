@@ -1,14 +1,12 @@
 const conf = require('../config.json')
-const { _toString, _toDateString, _toUnsignedInt } = require('../helper')
+const { _toString, _toDateString, _toUnsignedInt, getStringCode } = require('../helper')
 
 const getIdCaseNational = (d) => {
   return _toString(d[conf.cell.id_case_national])
 }
 
 const getIdCaseRelated = (d) => {
-  if (!d[conf.cell.id_case_related]) return null
-  if (! _toString(d[conf.cell.id_case_related].split)) return null
-  return _toString(d[conf.cell.id_case_related].split('|')[0] || null)
+  return null
 }
 
 const getNameCaseRelated = (d) => {
@@ -36,8 +34,11 @@ const getAge = (d) => {
 }
 
 const getGender = (d) => {
-  if (!d[conf.cell.gender]) return undefined
-  return d[conf.cell.gender] == 'Perempuan' ? 'P' : 'L'
+  const gender = d[conf.cell.gender]
+  if (gender) {
+    return gender == 'Perempuan' ? 'P' : 'L'
+  }
+  return gender
 }
 
 const getPhoneNumber = (d) => {
@@ -57,8 +58,8 @@ const getAddressProvinceName = (d) => {
 }
 
 const getAddressDistrictCode = (d) => {
-  if (!d[conf.cell.address_district_code]) return undefined
-  return _toString(d[conf.cell.address_district_code].split('-')[1] || null)
+  return getStringCode(d[conf.cell.address_district_code])
+
 }
 
 const getAddressDistrictName = (d) => {
@@ -67,8 +68,7 @@ const getAddressDistrictName = (d) => {
 }
 
 const getAddressSubdistrictCode = (d) => {
-  if (!d[conf.cell.address_subdistrict_code]) return undefined
-  return _toString(d[conf.cell.address_subdistrict_code].split('-')[1] || null)
+  return getStringCode(d[conf.cell.address_subdistrict_code])
 }
 
 
@@ -78,8 +78,7 @@ const getAddressSubdistrictName = (d) => {
 }
 
 const getAddressVillageCode = (d) => {
-  if (!d[conf.cell.address_village_code]) return undefined
-  return _toString(d[conf.cell.address_village_code].split('-')[1] || null)
+  return getStringCode(d[conf.cell.address_village_code])
 }
 
 const getAddressVillageName = (d) => {

@@ -24,11 +24,9 @@ const transformedJoiErrors = (joiResult) => {
       transformedErrors[errField] = []
     }
 
-    if (transformedErrors[errField].includes(errMessage)) {
-      continue;
+    if (!transformedErrors[errField].includes(errMessage)) {
+      transformedErrors[errField].push(errMessage)
     }
-
-    transformedErrors[errField].push(errMessage)
   }
 
   return transformedErrors
@@ -49,11 +47,12 @@ const transformedErrorResponse = (errors) => {
         if (fieldErrors[fieldName].join) {
           desc = fieldErrors[fieldName].join(',')
           if (desc && desc.replace) {
-            desc = desc.replace('is required', 'Harus diisi')
-            desc = desc.replace('must be a string', 'Harus berisi string')
-            desc = desc.replace('must be a number', 'Harus berisi angka')
-            desc = desc.replace('length must be at least 16 characters long', 'Harus 16 digit')
-            desc = desc.replace('length must be less than or equal to 16 characters long', 'Harus 16 digit')
+            desc = desc
+              .replace('is required', 'Harus diisi')
+              .replace('must be a string', 'Harus berisi string')
+              .replace('must be a number', 'Harus berisi angka')
+              .replace('length must be at least 16 characters long', 'Harus 16 digit')
+              .replace('length must be less than or equal to 16 characters long', 'Harus 16 digit')
           }
         }
         transformedFieldErrors.columnName = fieldName

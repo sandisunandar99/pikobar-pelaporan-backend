@@ -33,55 +33,7 @@ const extractSheetToJson = async (request) => {
 
       if (!caseSheet.isRowFilled(d)) continue
 
-      let obj = {
-        id_case_national: caseSheet.getIdCaseNational(d),
-        id_case_related: caseSheet.getIdCaseRelated(d),
-        name_case_related: caseSheet.getNameCaseRelated(d),
-        name: caseSheet.getName(d),
-        nik: caseSheet.getNik(d), //todo
-        birth_date: caseSheet.getBirthDate(d),
-        age: caseSheet.getAge(d),
-        gender: caseSheet.getGender(d),
-        phone_number: caseSheet.getPhoneNumber(d),
-        address_street: caseSheet.getAddressStreet(d),
-        address_province_code: caseSheet.getAddressProvinceCode(d),
-        address_province_name: caseSheet.getAddressProvinceName(d),
-        address_district_code: caseSheet.getAddressDistrictCode(d),
-        address_district_name: caseSheet.getAddressDistrictName(d),
-        address_subdistrict_code: caseSheet.getAddressSubdistrictCode(d),
-        address_subdistrict_name: caseSheet.getAddressSubdistrictName(d),
-        address_village_code: caseSheet.getAddressVillageCode(d),
-        address_village_name: caseSheet.getAddressVillageName(d),
-        nationality: caseSheet.getNationality(d),
-        nationality_name: caseSheet.getNationalityName(d),
-        occupation: caseSheet.getOccupation(d),
-        office_address: caseSheet.getOfficeAddress(d),
-        status: caseSheet.getStatus(d),
-        stage: caseSheet.getStage(d),
-        final_result: caseSheet.getFinalResult(d),
-        report_source: caseSheet.getReportSource(d), //todo
-        diagnosis: caseSheet.getDiagnosis(d),
-        diagnosis_other: caseSheet.getDiagnosisOther(d), //todo
-        first_symptom_date: caseSheet.getFirstSymptomDate(d), //todo
-        history_tracing: caseSheet.getHistoryTracing(d),
-        is_went_abroad: caseSheet.isWentAbroad(d), //todo
-        visited_country: caseSheet.getVisitedCountry(d), //todo
-        return_date: caseSheet.getReturnDate(d), //todo
-        is_went_other_city: caseSheet.isWentOtherCity(d), //todo
-        visited_city: caseSheet.getVisitedCity(d), //todo
-        is_contact_with_positive: caseSheet.isContactWithPositive(d), //todo
-        history_notes: caseSheet.getHistoryNotes(d), //todo
-        current_location_type: caseSheet.getCurrentLocationType(d),
-        current_hospital_id: caseSheet.getCurrentHospitalId(d),
-        current_location_address: caseSheet.getCurrentLocationAddress(d),
-        current_location_district_code: caseSheet.getCurrentLocationDistrictCode(d),
-        current_location_subdistrict_code: caseSheet.getCurrentLocationSubdistrictCode(d),
-        current_location_village_code: caseSheet.getCurrentLocationVillageCode(d),
-        other_notes: caseSheet.getOtherNotes(d), //todo
-        last_changed: caseSheet.getLastChanged(d),
-        is_sample_taken:caseSheet.isSampleTaken(d),
-        input_source: `import-feature-${uniqueBatchId}`,
-      }
+      let obj = caseSheet.getBuiltCreateCasePayload(d, uniqueBatchId)
 
       for (var key in obj) {
         if(obj[key] && obj[key].trim)

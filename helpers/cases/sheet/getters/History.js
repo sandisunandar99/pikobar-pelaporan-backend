@@ -3,7 +3,7 @@ const registeredDiagnosis = []
 const conf = require('../config.json')
 
 const { refDiagnosis } = require('../reference')
-const { _toString, _toDateString } = require('../helper')
+const { _toString, _toDateString, getStringCode } = require('../helper')
 
 const getStatus = (d) => {
   if (!d[conf.cell.status]) return undefined
@@ -25,17 +25,30 @@ const getStage = (d) => {
 const getFinalResult = (d) => {
   if(!d[conf.cell.final_result]) return null
 
-  let resultCode = null
-  const status = this.getStatus
-  const result = _toString(d[conf.cell.final_result])
+  let criteriaCode = null
+  const criteria = _toString(d[conf.cell.final_result])
 
-  if (status === 'OTG' || status === 'ODP') return null
+  switch(criteria) {
+    case 'Selesai Isolasi/Sembuh':
+      criteriaCode = '1'
+      break;
+    case 'Meninggal':
+      criteriaCode = '2'
+      break;
+    case 'Discarded':
+      criteriaCode = '3'
+      break;
+    case 'Masih Sakit':
+      criteriaCode = '4'
+      break;
+    case 'Masih Dikarantina':
+      criteriaCode = '5'
+      break;
+    default:
+      criteriaCode = '0'
+  }
 
-  if (result == 'Sembuh') resultCode = '1'
-  else if (result == 'Meninggal') resultCode = '2'
-  if (result == 'Negatif' && status !== 'POSITIF') resultCode = '0'
-
-  return resultCode
+  return criteriaCode
 }
 
 const getReportSource = (d) => {
@@ -43,10 +56,11 @@ const getReportSource = (d) => {
 }
 
 const getDiagnosis = (d) => {
-  if (!d[conf.cell.diagnosis]) return []
-  let diagnosis = d[conf.cell.diagnosis].split(',')
+  const diagnosis = d[conf.cell.diagnosis]
+    ? d[conf.cell.diagnosis].split(',')
+    : []
 
-  for (i in diagnosis) {
+  for (let i in diagnosis) {
       let diagnose = _toString(diagnosis[i])
       if (diagnose.trim) {
           diagnose = diagnose.trim()
@@ -58,19 +72,20 @@ const getDiagnosis = (d) => {
       }
   }
 
-  return registeredDiagnosis || []
+  return registeredDiagnosis
 }
 
 const getDiagnosisOther = (d) => {
   let otherDiagnosis = _toString(d[conf.cell.diagnosis_other])
-  if (unknownDiagnosis && unknownDiagnosis.join) {
-      if (otherDiagnosis) {
-          otherDiagnosis += ' ' + unknownDiagnosis.join(',')
-      } else {
-          otherDiagnosis = unknownDiagnosis.join(',')
-      }
+  if (!unknownDiagnosis.join) return null
+
+  if (otherDiagnosis) {
+    otherDiagnosis += ' ' + unknownDiagnosis.join(',')
+  } else {
+      otherDiagnosis = unknownDiagnosis.join(',')
   }
-  return otherDiagnosis || null
+
+  return otherDiagnosis
 }
 
 const getFirstSymptomDate = (d) => {
@@ -116,32 +131,30 @@ const getCurrentLocationType = (d) => {
 }
 
 const getCurrentHospitalId = (d) => {
-  if (!d[conf.cell.current_hospital_id]) return null
-  return d[conf.cell.current_hospital_id].split('-')[1] || null
+  return getStringCode(d[conf.cell.current_hospital_id])
 }
 
 const getCurrentLocationAddress = (d) => {
-  if (d[conf.cell.current_location_type] == 'Ya') {
-      if (!d[conf.cell.current_hospital_id]) return null
-      return d[conf.cell.current_hospital_id].split('-')[0] || null
-  } else {
-      return d[conf.cell.current_location_address]
+  const locationType = d[conf.cell.current_location_type]
+  const hospitalId = d[conf.cell.current_hospital_id]
+  const address = d[conf.cell.current_location_address]
+  if (locationType == 'Ya') {
+      if (!hospitalId) return null
+      return hospitalId.split('-')[0] || null
   }
+  return address
 }
 
 const getCurrentLocationDistrictCode = (d) => {
-  if (!d[conf.cell.current_location_district_code]) return null
-  return _toString(d[conf.cell.current_location_district_code].split('-')[1] || null)
+  return getStringCode(d[conf.cell.current_location_district_code])
 }
 
 const getCurrentLocationSubdistrictCode = (d) => {
-  if (!d[conf.cell.current_location_subdistrict_code]) return null
-  return _toString(d[conf.cell.current_location_subdistrict_code].split('-')[1] || null)
+  return getStringCode(d[conf.cell.current_location_subdistrict_code])
 }
 
 const getCurrentLocationVillageCode = (d) => {
-  if (!d[conf.cell.current_location_village_code]) return null
-  return _toString(d[conf.cell.current_location_village_code].split('-')[1] || null)
+  return getStringCode(d[conf.cell.current_location_village_code])
 }
 
 const getOtherNotes = (d) => {

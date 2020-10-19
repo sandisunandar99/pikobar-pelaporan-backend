@@ -14,6 +14,11 @@ const _toUnsignedInt = (value) => {
   return value
 }
 
+const getStringCode = (value) => {
+  if (!value) return null
+  return _toString(value.split('-')[1] || null)
+}
+
 const requestFileError = (payload) => {
   let error = false
 
@@ -51,6 +56,7 @@ module.exports = {
   _toString,
   _toDateString,
   _toUnsignedInt,
+  getStringCode,
   requestFileError,
   isAnotherImportProcessIsRunning,
 }
