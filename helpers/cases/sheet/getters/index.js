@@ -3,13 +3,13 @@ const sheet = {
   ...require('./History'),
 }
 
-const getBuiltCreateCasePayload = (d, uniqueBatchId) => {
+const constructCase = (d, uniqueBatchId) => {
   return {
     id_case_national: sheet.getIdCaseNational(d),
     id_case_related: sheet.getIdCaseRelated(d),
     name_case_related: sheet.getNameCaseRelated(d),
     name: sheet.getName(d),
-    nik: sheet.getNik(d), //todo
+    nik: sheet.getNik(d),
     birth_date: sheet.getBirthDate(d),
     age: sheet.getAge(d),
     gender: sheet.getGender(d),
@@ -28,30 +28,41 @@ const getBuiltCreateCasePayload = (d, uniqueBatchId) => {
     occupation: sheet.getOccupation(d),
     office_address: sheet.getOfficeAddress(d),
     status: sheet.getStatus(d),
+    input_source: `import-feature-${uniqueBatchId}`,
+  }
+}
+
+const constructHistory = (d) => {
+  return {
     stage: sheet.getStage(d),
     final_result: sheet.getFinalResult(d),
-    report_source: sheet.getReportSource(d), //todo
+    report_source: sheet.getReportSource(d),
     diagnosis: sheet.getDiagnosis(d),
-    diagnosis_other: sheet.getDiagnosisOther(d), //todo
-    first_symptom_date: sheet.getFirstSymptomDate(d), //todo
+    diagnosis_other: sheet.getDiagnosisOther(d),
+    first_symptom_date: sheet.getFirstSymptomDate(d),
     history_tracing: sheet.getHistoryTracing(d),
-    is_went_abroad: sheet.isWentAbroad(d), //todo
-    visited_country: sheet.getVisitedCountry(d), //todo
-    return_date: sheet.getReturnDate(d), //todo
-    is_went_other_city: sheet.isWentOtherCity(d), //todo
-    visited_city: sheet.getVisitedCity(d), //todo
-    is_contact_with_positive: sheet.isContactWithPositive(d), //todo
-    history_notes: sheet.getHistoryNotes(d), //todo
+    is_went_abroad: sheet.isWentAbroad(d),
+    visited_country: sheet.getVisitedCountry(d),
+    return_date: sheet.getReturnDate(d),
+    is_went_other_city: sheet.isWentOtherCity(d),
+    visited_city: sheet.getVisitedCity(d),
+    is_contact_with_positive: sheet.isContactWithPositive(d),
+    history_notes: sheet.getHistoryNotes(d),
     current_location_type: sheet.getCurrentLocationType(d),
     current_hospital_id: sheet.getCurrentHospitalId(d),
     current_location_address: sheet.getCurrentLocationAddress(d),
     current_location_district_code: sheet.getCurrentLocationDistrictCode(d),
     current_location_subdistrict_code: sheet.getCurrentLocationSubdistrictCode(d),
     current_location_village_code: sheet.getCurrentLocationVillageCode(d),
-    other_notes: sheet.getOtherNotes(d), //todo
+    other_notes: sheet.getOtherNotes(d),
     last_changed: sheet.getLastChanged(d),
     is_sample_taken:sheet.isSampleTaken(d),
-    input_source: `import-feature-${uniqueBatchId}`,
+  }
+}
+const getBuiltCreateCasePayload = (d, uniqueBatchId) => {
+  return {
+    ...constructCase(d, uniqueBatchId),
+    ...constructHistory(d),
   }
 }
 

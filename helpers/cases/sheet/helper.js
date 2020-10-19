@@ -51,12 +51,26 @@ const isAnotherImportProcessIsRunning = async (schema) => {
   return false
 }
 
+const isTemplateVerified = (dataSheet) => {
+
+  const verfiedTemplate = config.verified_template
+  if (dataSheet[1][34] !== verfiedTemplate
+    || dataSheet[2][34] !== verfiedTemplate
+    || dataSheet[3][34] !== verfiedTemplate
+    || dataSheet[4][34] !== verfiedTemplate ) {
+    return false
+  }
+
+  return true
+}
+
 
 module.exports = {
   _toString,
   _toDateString,
   _toUnsignedInt,
   requestFileError,
+  isTemplateVerified,
   getStringValueByIndex,
   isAnotherImportProcessIsRunning,
 }

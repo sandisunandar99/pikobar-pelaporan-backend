@@ -1,3 +1,5 @@
+const { isTemplateVerified } = require('./helper')
+
 const extractSheetToJson = async (request) => {
     const dir = './upload/'
     const conf = require('./config.json')
@@ -12,11 +14,7 @@ const extractSheetToJson = async (request) => {
     let dataSheet = (await xlsx.parse(dir + uploaded.filename))[0]['data']
 
     const version = `VERSION ${conf.version}`
-    const verfiedTemplate = conf.verified_template
-    if (dataSheet[1][34] !== verfiedTemplate
-      || dataSheet[2][34] !== verfiedTemplate
-      || dataSheet[3][34] !== verfiedTemplate
-      || dataSheet[4][34] !== verfiedTemplate ) {
+    if (!isTemplateVerified(dataSheet)) {
       return conf.unverified_template
     }
 
@@ -31,13 +29,14 @@ const extractSheetToJson = async (request) => {
     {
       const d = dataSheet[i]
 
-      if (!caseSheet.isRowFilled(d)) continue
+      if (!caseSheet.isRowFilled(d)) continue;
 
       let obj = caseSheet.getBuiltCreateCasePayload(d, uniqueBatchId)
 
       for (var key in obj) {
-        if(obj[key] && obj[key].trim)
-           obj[key] = obj[key].trim()
+        if(obj[key] && obj[key].trim) {
+          obj[key] = obj[key].trim()
+        }
       }
 
       payload.push(obj)
