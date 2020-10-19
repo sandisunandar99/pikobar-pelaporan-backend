@@ -1,5 +1,5 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server);
+  const handlers = require('./handlers');
   return [
     {
       method: 'GET',
@@ -9,7 +9,7 @@ module.exports = (server) => {
         description: 'show city in west java areas',
         tags: ['api', 'areas'],
       },
-      handler: handlers.DistrictCity
+      handler: handlers.DistrictCity(server)
     },
     {
       method: 'GET',
@@ -19,7 +19,7 @@ module.exports = (server) => {
         description: 'show districs in west java areas',
         tags: ['api', 'areas'],
       },
-      handler: handlers.SubDistrict
+      handler: handlers.SubDistrict(server)
     },
     {
       method: 'GET',
@@ -29,7 +29,7 @@ module.exports = (server) => {
         description: 'show sub districs detail',
         tags: ['api', 'areas'],
       },
-      handler: handlers.SubDistrictDetail
+      handler: handlers.SubDistrictDetail(server)
     },
     {
       method: 'GET',
@@ -39,7 +39,7 @@ module.exports = (server) => {
         description: 'show villege in west java areas',
         tags: ['api', 'areas'],
       },
-      handler: handlers.Village
+      handler: handlers.Village(server)
     },
     {
       method: 'GET',
@@ -49,7 +49,7 @@ module.exports = (server) => {
         description: 'show villege detail',
         tags: ['api', 'areas'],
       },
-      handler: handlers.VillageDetail
+      handler: handlers.VillageDetail(server)
     },
     {
       method: 'GET',
@@ -59,7 +59,7 @@ module.exports = (server) => {
         description: 'get hospitals in west java',
         tags: ['api', 'areas'],
       },
-      handler: handlers.Hospital
+      handler: handlers.Hospital(server)
     },
     {
       method: 'GET',
@@ -69,7 +69,7 @@ module.exports = (server) => {
         description: 'get lab in west java',
         tags: ['api', 'areas'],
       },
-      handler: handlers.Lab
+      handler: handlers.Lab(server)
     },
     {
       method: 'GET',
@@ -79,7 +79,7 @@ module.exports = (server) => {
         description: 'get lab in west java',
         tags: ['api', 'areas'],
       },
-      handler: handlers.getProvince
+      handler: handlers.getProvince(server)
     }
   ]
 }
