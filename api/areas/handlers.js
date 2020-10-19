@@ -1,15 +1,14 @@
 const { replyJson } = require('../helpers')
+const { funcIfSame, queryIfSame, queryParamSame } = require('../../helpers/request')
 
 /**
  * GET /api/areas/district-city
  */
 const DistrictCity = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getDistrictCity(
-      request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
+  return async (request, reply) => {
+    await queryIfSame(
+      server, "areas", "getDistrictCity",
+      request, reply, replyJson
     )
   }
 }
@@ -18,12 +17,10 @@ const DistrictCity = (server) => {
  * GET /areas/sub-district/{city_code}
  */
 const SubDistrict = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getSubDistrictDetail(
-      request.params.city_code,
-      (err, districs) => {
-        replyJson(err, districs, reply)
-      }
+  return async (request, reply) => {
+    await queryParamSame(
+      server, "areas", "getSubDistrict",
+      request, "city_code", reply, replyJson
     )
   }
 }
@@ -32,12 +29,10 @@ const SubDistrict = (server) => {
  * GET /api/sub-district-detail/{id}
  */
 const SubDistrictDetail = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getDistrictCity(
-      request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
+  return async (request, reply) => {
+    await funcIfSame(
+      server, "areas", "getSubDistrictDetail",
+      request, "sub_district_code", reply, replyJson
     )
   }
 }
@@ -46,13 +41,10 @@ const SubDistrictDetail = (server) => {
  * GET /api/areas/village/{district_code}
  */
 const Village = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getVillage(
-      request.params.district_code,
-      request.query,
-      (err, districs) => {
-        replyJson(err, districs, reply)
-      }
+  return async (request, reply) => {
+    await queryParamSame(
+      server, "areas", "getVillage",
+      request, "district_code", reply, replyJson
     )
   }
 }
@@ -61,12 +53,10 @@ const Village = (server) => {
  * GET /api/village-detail/{id}
  */
 const VillageDetail = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getVillageDetail(
-      request.params.village_code,
-      (err, districs) => {
-        replyJson(err, districs, reply)
-      }
+  return async (request, reply) => {
+    await funcIfSame(
+      server, "areas", "getVillageDetail",
+      request, "village_code", reply, replyJson
     )
   }
 }
@@ -75,12 +65,10 @@ const VillageDetail = (server) => {
  * GET /api/areas/hospital
  */
 const Hospital = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getHospital(
-      request.query,
-      (err, hospital) => {
-        replyJson(err, hospital, reply)
-      }
+  return async (request, reply) => {
+    await queryIfSame(
+      server, "areas", "getHospital",
+      request, reply, replyJson
     )
   }
 }
@@ -89,12 +77,10 @@ const Hospital = (server) => {
  * GET /api/areas/lab
  */
 const Lab = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.getLab(
-      request.query,
-      (err, hospital) => {
-        replyJson(err, hospital, reply)
-      }
+  return async (request, reply) => {
+    await queryIfSame(
+      server, "areas", "getLab",
+      request, reply, replyJson
     )
   }
 }
@@ -103,12 +89,10 @@ const Lab = (server) => {
  * GET /api/area/province
  */
 const getProvince = (server) => {
-  return (request, reply) => {
-    server.methods.services.areas.province(
-      request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
+  return async (request, reply) => {
+    await queryIfSame(
+      server, "areas", "province",
+      request, reply, replyJson
     )
   }
 }
