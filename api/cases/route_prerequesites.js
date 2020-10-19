@@ -170,11 +170,11 @@ const DataSheetRequest = server => {
             const mongoose = require('mongoose');
             require('../../models/Case');
             const Case = mongoose.model('Case');
-            const helper = require("../../helpers/casesheet/casesheetextraction")
+            const helper = require("../../helpers/sheet/casesheetextraction")
             const rules = require('./validations/input')
             const Joi = require('joi')
-            const config = require('../../helpers/casesheet/casesheetconfig.json')
-            const caseSheetValidator = require('../../helpers/casesheet/casesheetvalidation')
+            const config = require('../../helpers/sheet/casesheetconfig.json')
+            const caseSheetValidator = require('../../helpers/sheet/casesheetvalidation')
             const payload = await helper.caseSheetExtraction(request)
             let invalidPaylodMessage = null
 

@@ -2,8 +2,12 @@ const replyHelper = require('../../helpers')
 const {
   validate,
   requestFileError,
-  caseSheetExtraction,
-} = require('../../../helpers/casesheet/index')
+  extractSheetToJson,
+} = require('../../../helpers/cases/sheet/index')
+
+const {
+  isAnotherImportProcessIsRunning,
+} = require('../../../helpers/cases/sheet/helper')
 
 
 const BadRequest = (errors) => {
@@ -35,7 +39,7 @@ const countCasesOutsideWestJava = server => {
 const sheetToJson = server => {
   return {
     method: async (request, reply) => {
-      const payload = await caseSheetExtraction(request)
+      const payload = await extractSheetToJson(request)
 
       if (requestFileError(payload)) {
         return reply(BadRequest(requestFileError(payload))).code(400).takeover()
@@ -53,7 +57,27 @@ const sheetToJson = server => {
   }
 }
 
+const isImportBusy = server => {
+  return {
+    method: async (request, reply) => {
+      const res = await isAnotherImportProcessIsRunning(
+        require('../../../models/Case')
+      )
+
+      if (!res) return reply(res)
+
+      return reply({
+        status: 422,
+        message: 'Proses import lainnya sedang berjalan, coba beberapa saat lagi!',
+        data: null
+      }).code(422).takeover()
+    },
+    assign: 'is_import_busy',
+  }
+}
+
 module.exports = {
   sheetToJson,
+  isImportBusy,
   countCasesOutsideWestJava,
 }

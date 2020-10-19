@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
-const { label, messages } = require('../../../helpers/casesheet/casesheetconfig.json')
+const { label, messages } = require('../../../helpers/cases/sheet/config.json')
 
 // --------------------------------------------------
 //    Schema - Input Validations

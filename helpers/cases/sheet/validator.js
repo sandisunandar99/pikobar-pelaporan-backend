@@ -1,8 +1,8 @@
 const Joi = require('joi')
-const Case = require('../../models/Case')
-const helper = require("./casesheetextraction")
-const config = require('./casesheetconfig.json')
-const rules = require('../../api/cases/validations/input')
+const config = require('./config.json')
+const Case = require('../../../models/Case')
+const helper = require("./handler")
+const rules = require('../../../api/cases/validations/input')
 const { label } = config
 
 const transformedJoiErrors = (joiResult) => {

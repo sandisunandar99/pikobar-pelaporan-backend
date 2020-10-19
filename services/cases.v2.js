@@ -176,6 +176,6 @@ module.exports = [
   { name: `${service}.create`, method: createCase },
   { name: `${service}.createMultiple`, method: createMultiple },
   { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
-  { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
   { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
+  { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
 ]
