@@ -1,85 +1,55 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server);
+  const handlers = require('./handlers')
+  const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
+  const { configRoute} = require("../../helpers/routes")
   return [
     {
       method: 'GET',
       path: '/areas/district-city',
-      config: {
-        auth: 'jwt',
-        description: 'show city in west java areas',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.DistrictCity
+      config: configRoute("show city in west java areas", "district-city", CheckRoleView),
+      handler: handlers.DistrictCity(server)
     },
     {
       method: 'GET',
       path: '/areas/sub-district/{city_code}',
-      config: {
-        auth: 'jwt',
-        description: 'show districs in west java areas',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.SubDistrict
+      config: configRoute("show districs in west java areas", "areas", CheckRoleView),
+      handler: handlers.SubDistrict(server)
     },
     {
       method: 'GET',
       path: '/areas/sub-district-detail/{sub_district_code}',
-      config: {
-        auth: 'jwt',
-        description: 'show sub districs detail',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.SubDistrictDetail
+      config: configRoute("show sub districs detail", "areas", CheckRoleView),
+      handler: handlers.SubDistrictDetail(server)
     },
     {
       method: 'GET',
       path: '/areas/village/{district_code}',
-      config: {
-        auth: 'jwt',
-        description: 'show villege in west java areas',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.Village
+      config: configRoute("show villege in west java areas", "areas", CheckRoleView),
+      handler: handlers.Village(server)
     },
     {
       method: 'GET',
       path: '/areas/village-detail/{village_code}',
-      config: {
-        auth: 'jwt',
-        description: 'show villege detail',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.VillageDetail
+      config: configRoute("show villege detail", "areas", CheckRoleView),
+      handler: handlers.VillageDetail(server)
     },
     {
       method: 'GET',
       path: '/areas/hospital',
-      config: {
-        auth: 'jwt',
-        description: 'get hospitals in west java',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.Hospital
+      config: configRoute("show hospitals in west java", "areas", CheckRoleView),
+      handler: handlers.Hospital(server)
     },
     {
       method: 'GET',
       path: '/areas/lab',
-      config: {
-        auth: 'jwt',
-        description: 'get lab in west java',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.Lab
+      config: configRoute("show lab in west java", "areas", CheckRoleView),
+      handler: handlers.Lab(server)
     },
     {
       method: 'GET',
       path: '/areas/province',
-      config: {
-        auth: 'jwt',
-        description: 'get lab in west java',
-        tags: ['api', 'areas'],
-      },
-      handler: handlers.getProvince
+      config: configRoute("show west java", "areas", CheckRoleView),
+      handler: handlers.getProvince(server)
     }
   ]
 }
