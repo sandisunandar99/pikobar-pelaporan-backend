@@ -5,9 +5,6 @@ const sheet = {
 
 const constructCase = (d) => {
   return {
-    id_case_national: sheet.getIdCaseNational(d),
-    id_case_related: sheet.getIdCaseRelated(d),
-    name_case_related: sheet.getNameCaseRelated(d),
     name: sheet.getName(d),
     nik: sheet.getNik(d),
     birth_date: sheet.getBirthDate(d),

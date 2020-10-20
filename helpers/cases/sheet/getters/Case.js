@@ -1,26 +1,40 @@
 const conf = require('../config.json')
-const { _toString, _toDateString, _toUnsignedInt, getStringValueByIndex } = require('../helper')
+const { _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge } = require('../helper')
 
-const getIdCaseNational = (d) => {
-  return _toString(d[conf.cell.id_case_national])
+const getInterviewerName = (d) => {
+  return _toString(d[conf.cell.interviewers_name]) || undefined
 }
 
-const getIdCaseRelated = (d) => {
-  return null
+const getInterviewerPhoneNumber = (d) => {
+  return _toString(d[conf.cell.interviewers_phone_number]) || undefined
 }
 
-const getNameCaseRelated = (d) => {
-  if (!d[conf.cell.id_case_related]) return null
-  if (!_toString(d[conf.cell.id_case_related].split)) return null
-  return _toString(d[conf.cell.id_case_related].split('|')[1] || null)
+const getInterviewDate = (d) => {
+  return _toString(d[conf.cell.interview_date]) || undefined
+}
+
+const getNik = (d) => {
+  return _toString(d[conf.cell.nik]) || null
+}
+
+const getPhoneNumber = (d) => {
+  return _toString(d[conf.cell.phone_number])
+}
+
+const getPhoneNumberNote = (d) => {
+  return _toString(d[conf.cell.note_phone_number])
 }
 
 const getName = (d) => {
   return _toString(d[conf.cell.name]) || undefined
 }
 
-const getNik = (d) => {
-  return _toString(d[conf.cell.nik]) || null
+const getNameParent = (d) => {
+  return _toString(d[conf.cell.name_parents]) || undefined
+}
+
+const getPlaceOfBirth = (d) => {
+  return _toString(d[conf.cell.place_of_birth]) || undefined
 }
 
 const getBirthDate = (d) => {
@@ -28,9 +42,11 @@ const getBirthDate = (d) => {
 }
 
 const getAge = (d) => {
-  if (d[conf.cell.age] === '' || d[conf.cell.age] === null) return null
-  let age = _toUnsignedInt(d[conf.cell.age]) || '0'
-  return _toString(age)
+  return getTransformedAge(d[conf.cell.age])
+}
+
+const getAgeMonth = (d) => {
+  return getTransformedAge(d[conf.cell.month])
 }
 
 const getGender = (d) => {
@@ -39,14 +55,6 @@ const getGender = (d) => {
     return gender == 'Perempuan' ? 'P' : 'L'
   }
   return gender
-}
-
-const getPhoneNumber = (d) => {
-  return _toString(d[conf.cell.phone_number])
-}
-
-const getAddressStreet = (d) => {
-  return _toString(d[conf.cell.address_street])
 }
 
 const getAddressProvinceCode = (d) => {
@@ -59,7 +67,6 @@ const getAddressProvinceName = (d) => {
 
 const getAddressDistrictCode = (d) => {
   return getStringValueByIndex(d[conf.cell.address_district_code], 1)
-
 }
 
 const getAddressDistrictName = (d) => {
@@ -84,12 +91,16 @@ const getAddressVillageName = (d) => {
   return getStringValueByIndex(d[conf.cell.address_village_code], 0)
 }
 
-const getNationality = (d) => {
-  return _toString(d[conf.cell.nationality]) || undefined
+const getAddressRT = (d) => {
+  return _toUnsignedInt(d[conf.cell.rt])
 }
 
-const getNationalityName = (d) => {
-  return _toString(d[conf.cell.nationality_name])
+const getAddressRW = (d) => {
+  return _toUnsignedInt(d[conf.cell.rw])
+}
+
+const getAddressStreet = (d) => {
+  return _toString(d[conf.cell.address_street])
 }
 
 const getOccupation = (d) => {
@@ -100,18 +111,45 @@ const getOfficeAddress = (d) => {
   return _toString(d[conf.cell.office_address])
 }
 
+const getNationality = (d) => {
+  return _toString(d[conf.cell.nationality]) || undefined
+}
+
+const getNationalityName = (d) => {
+  return _toString(d[conf.cell.nationality_name])
+}
+
+const getIncome = (d) => {
+  return _toString(d[conf.cell.income])
+}
+
+const getInspectionSupport = (d) => {
+  const getters = require('./attributes/inspection_support')
+  return [{
+    inspection_type: getters.getInspectionType(d),
+    specimens_type: getters.getSpecienType(d),
+    inspection_date: getters.getInspectionDate(d),
+    inspection_location: getters.getInspectionLocation(d),
+    get_specimens_to: getters.getSpecimenTo(d),
+    inspection_result: getters.getInspectionResult(d),
+  }]
+}
+
 module.exports = {
   // init,
-  getIdCaseNational,
-  getIdCaseRelated,
-  getNameCaseRelated,
-  getName,
+  getInterviewerName,
+  getInterviewerPhoneNumber,
+  getInterviewDate,
   getNik,
+  getPhoneNumber,
+  getPhoneNumberNote,
+  getName,
+  getNameParent,
+  getPlaceOfBirth,
   getBirthDate,
   getAge,
+  getAgeMonth,
   getGender,
-  getPhoneNumber,
-  getAddressStreet,
   getAddressProvinceCode,
   getAddressProvinceName,
   getAddressDistrictCode,
@@ -120,8 +158,13 @@ module.exports = {
   getAddressSubdistrictName,
   getAddressVillageCode,
   getAddressVillageName,
-  getNationality,
-  getNationalityName,
+  getAddressRT,
+  getAddressRW,
+  getAddressStreet,
   getOccupation,
   getOfficeAddress,
+  getNationality,
+  getNationalityName,
+  getIncome,
+  getInspectionSupport,
 }

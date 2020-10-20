@@ -1,129 +1,12 @@
-const unknownDiagnosis = []
-const registeredDiagnosis = []
+let unknownSymptoms = [], registeredSymptoms = [];
+let unknownDiseases = [], registeredDiseases = [];
 const conf = require('../config.json')
 
-const { refDiagnosis } = require('../reference')
-const { _toString, _toDateString, getStringValueByIndex } = require('../helper')
-
-const getStatus = (d) => {
-  if (!d[conf.cell.status]) return undefined
-  let status = _toString(d[conf.cell.status])
-  if (status && status.toUpperCase) {
-      status = status.toUpperCase()
-  }
-  return status || undefined
-}
-
-const getStage = (d) => {
-  if (!d[conf.cell.stage]) return undefined
-  let stage = _toString(d[conf.cell.stage])
-  if (stage === 'Proses') return '0'
-  else if (stage === 'Selesai') return '1'
-  else return ''
-}
-
-const getFinalResult = (d) => {
-  if(!d[conf.cell.final_result]) return null
-
-  let criteriaCode = null
-  const criteria = _toString(d[conf.cell.final_result])
-
-  switch(criteria) {
-    case 'Selesai Isolasi/Sembuh':
-      criteriaCode = '1'
-      break;
-    case 'Meninggal':
-      criteriaCode = '2'
-      break;
-    case 'Discarded':
-      criteriaCode = '3'
-      break;
-    case 'Masih Sakit':
-      criteriaCode = '4'
-      break;
-    case 'Masih Dikarantina':
-      criteriaCode = '5'
-      break;
-    default:
-      criteriaCode = '0'
-  }
-
-  return criteriaCode
-}
-
-const getReportSource = (d) => {
-  return _toString(d[conf.cell.report_source])
-}
-
-const getDiagnosis = (d) => {
-  const diagnosis = d[conf.cell.diagnosis]
-    ? d[conf.cell.diagnosis].split(',')
-    : []
-
-  for (let i in diagnosis) {
-      let diagnose = _toString(diagnosis[i])
-      if (diagnose.trim) {
-          diagnose = diagnose.trim()
-      }
-      if (refDiagnosis.includes(diagnose)) {
-          registeredDiagnosis.push(diagnose)
-      } else {
-          unknownDiagnosis.push(diagnose)
-      }
-  }
-
-  return registeredDiagnosis
-}
-
-const getDiagnosisOther = (d) => {
-  let otherDiagnosis = _toString(d[conf.cell.diagnosis_other])
-  if (!unknownDiagnosis.join) return null
-
-  if (otherDiagnosis) {
-    otherDiagnosis += ' ' + unknownDiagnosis.join(',')
-  } else {
-      otherDiagnosis = unknownDiagnosis.join(',')
-  }
-
-  return otherDiagnosis
-}
-
-const getFirstSymptomDate = (d) => {
-  return _toDateString(d[conf.cell.first_symptom_date])
-}
-
-const getHistoryTracing = (d) => {
-  return []
-}
-
-const isWentAbroad = (d) => {
-  return d[conf.cell.is_went_abroad] == 'Dari luar negeri'
-}
-
-const getVisitedCountry = (d) => {
-  return this.isWentAbroad ? _toString(d[conf.cell.visited_country]) : null
-}
-
-const getReturnDate = (d) => {
-  if (!d[conf.cell.return_date]) return null
-  return _toDateString(d[conf.cell.return_date])
-}
-
-const isWentOtherCity = (d) => {
-  return d[conf.cell.is_went_other_city] == 'Dari luar kota'
-}
-
-const getVisitedCity = (d) => {
-  return this.isWentOtherCity ? _toString(d[conf.cell.visited_city]) : null
-}
-
-const isContactWithPositive = (d) => {
-  return d[conf.cell.is_contact_with_positive] == 'Kontak erat'
-}
-
-const getHistoryNotes = (d) => {
-  return null
-}
+const { refSymptoms } = require('../reference')
+const {
+  _toString, _toDateString, getStringValueByIndex,
+  getArrayValues, getUnknownValuesOfArray, yesNoUnknown, trueOrFalse
+} = require('../helper')
 
 const getCurrentLocationType = (d) => {
   if (!d[conf.cell.current_location_type]) return undefined
@@ -134,15 +17,9 @@ const getCurrentHospitalId = (d) => {
   return getStringValueByIndex(d[conf.cell.current_hospital_id], 1)
 }
 
-const getCurrentLocationAddress = (d) => {
-  const locationType = d[conf.cell.current_location_type]
-  const hospitalId = d[conf.cell.current_hospital_id]
-  const address = d[conf.cell.current_location_address]
-  if (locationType == 'Ya') {
-      if (!hospitalId) return null
-      return hospitalId.split('-')[0] || null
-  }
-  return address
+const getIsPatientAddressSame = (d) => {
+  const state = _toString(d[conf.cell.is_patient_address_same])
+  return state === 'Sesuai Alamat Tinggal'
 }
 
 const getCurrentLocationDistrictCode = (d) => {
@@ -157,16 +34,168 @@ const getCurrentLocationVillageCode = (d) => {
   return getStringValueByIndex(d[conf.cell.current_location_village_code], 1)
 }
 
-const getOtherNotes = (d) => {
-  return _toString(d[conf.cell.other_notes])
+const getCurrentLocationAddress = (d) => {
+  const locationType = d[conf.cell.current_location_type]
+  const hospitalId = d[conf.cell.current_hospital_id]
+  const address = d[conf.cell.current_location_address]
+  if (locationType == 'Ya dirawat') {
+      if (!hospitalId) return null
+      return hospitalId.split('-')[0] || null
+  }
+  return address
 }
 
-const getLastChanged = (d) => {
-  return new Date()
+const getIsHavingSymptoms = (d) => {
+  const symptoms = getSymptoms(d)
+  const symptomsOther = getgetSymptomsOther(d)
+
+  if (symptoms.length || symptomsOther) return true;
+
+  return false
 }
 
-const isSampleTaken = (d) => {
-  return d[conf.cell.is_sample_taken] === 'Ya'
+const getFirstSymptomDate = (d) => {
+  return _toDateString(d[conf.cell.first_symptom_date])
+}
+
+const getSymptoms = (d) => {
+  const symptoms = getArrayValues(refSymptoms, d[conf.cell.diagnosis])
+  registeredSymptoms = symptoms.registered
+  unknownSymptoms = symptoms.unknown
+  return registeredSymptoms
+}
+
+const getSymptomsOther = (d) => {
+  return getUnknownValuesOfArray(d[conf.cell.diagnosis_other], unknownSymptoms)
+}
+
+const getDiseases = (d) => {
+  const diseases = getArrayValues(refDiseases, d[conf.cell.diseases])
+  registeredDiseases = symptoms.registered
+  unknownDiseases = symptoms.unknown
+  return registeredDiseases
+}
+
+const getDiseasesOther = (d) => {
+  return getUnknownValuesOfArray(d[conf.cell.diseases_other], unknownDiseases)
+}
+
+const getDiagnosisArds = (d) => {
+  return yesNoUnknown(d[conf.cell.diagnosis_ards])
+}
+
+const getDiagnosisPneumonia = (d) => {
+  return yesNoUnknown(d[conf.cell.diagnosis_pneumonia])
+}
+
+const getOtherDiagnosis = (d) => {
+  return _toString(d[conf.cell.other_diagnosis])
+}
+
+const isOtherDiagnosisRespiratoryDisease = (d) => {
+  return trueOrFalse(d[is_other_diagnosisr_respiratory_disease])
+}
+
+const getOtherDiagnosisRespiratoryDisease = (d) => {
+  return _toString(d[conf.cell.other_diagnosisr_respiratory_disease])
+}
+
+const getPhysicalCheckTemperature = (d) => {
+  return _toUnsignedInt(d[conf.cell.physical_check_temperature])
+}
+
+const getPhysicalCheckBloodPressure = (d) => {
+  return _toUnsignedInt(d[conf.cell.physical_check_blood_pressure])
+}
+
+const getPhysicalCheckPulse = (d) => {
+  return _toUnsignedInt(d[conf.cell.physical_check_pulse])
+}
+
+const getPhysicalCheckRespiration = (d) => {
+  return _toUnsignedInt(d[conf.cell.physical_check_respiration])
+}
+
+const getPhysicalCheckHeight = (d) => {
+  return _toUnsignedInt(d[conf.cell.physical_check_height])
+}
+
+const getPhysicalCheckWeight = (d) => {
+  return _toUnsignedInt(d[conf.cell.physical_check_weight])
+}
+
+const getPhysicalActivity = (d) => {
+  let res = null
+  let activity = _toString(d[conf.cell.pysichal_activity])
+
+  if (activity) {
+    activity.trim().toLowerCase()
+  }
+
+  switch (activity) {
+    case 'sedenter': res = 0;
+      break;
+    case '<150 menit per-minggu': res = 1;
+      break;
+    case '>150 menit per-minggu': res = 2;
+      break;
+    default: res = null;
+  }
+
+  return res
+}
+
+const getSmoking = (d) => {
+  return yesNoUnknown(d[conf.cell.smoking])
+}
+
+const getSmoking = (d) => {
+  return yesNoUnknown(d[conf.cell.consume_alcohol])
+}
+
+const getStatus = (d) => {
+  if (!d[conf.cell.status]) return undefined
+  let status = _toString(d[conf.cell.status])
+  if (status && status.toUpperCase) {
+      status = status.toUpperCase()
+  }
+  return status || undefined
+}
+
+const getFinalResult = (d) => {
+  if(!d[conf.cell.final_result]) return null
+
+  let resultCode = null
+  const result = _toString(d[conf.cell.final_result])
+
+  if (result) { result.trim().toLowerCase() }
+
+  switch(result) {
+    case 'selesai isolasi/sembuh':
+      resultCode = '1'
+      break;
+    case 'meninggal':
+      resultCode = '2'
+      break;
+    case 'discarded':
+      resultCode = '3'
+      break;
+    case 'Masih Sakit':
+      resultCode = '4'
+      break;
+    case 'masih dikarantina':
+      resultCode = '5'
+      break;
+    default:
+      resultCode = '0'
+  }
+
+  return resultCode
+}
+
+const getLastDateStatusPatient = (d) => {
+  if (!d[conf.cell.last_date_status_patient]) return null
+  return _toDateString(d[conf.cell.last_date_status_patient])
 }
 
 const isRowFilled = (d) => {
@@ -176,30 +205,34 @@ const isRowFilled = (d) => {
 }
 
 module.exports = {
-  // init,
-  getStatus,
-  getStage,
-  getFinalResult,
-  getReportSource,
-  getDiagnosis,
-  getDiagnosisOther,
-  getFirstSymptomDate,
-  getHistoryTracing,
-  isWentAbroad,
-  getVisitedCountry,
-  getReturnDate,
-  isWentOtherCity,
-  getVisitedCity,
-  isContactWithPositive,
-  getHistoryNotes,
   getCurrentLocationType,
   getCurrentHospitalId,
-  getCurrentLocationAddress,
+  getIsPatientAddressSame,
   getCurrentLocationDistrictCode,
   getCurrentLocationSubdistrictCode,
   getCurrentLocationVillageCode,
-  getOtherNotes,
-  getLastChanged,
-  isSampleTaken,
+  getCurrentLocationAddress,
+  getIsHavingSymptoms,
+  getFirstSymptomDate,
+  getSymptomsOther,
+  getDiseases,
+  getDiseasesOther,
+  getDiagnosisArds,
+  getDiagnosisPneumonia,
+  getOtherDiagnosis,
+  isOtherDiagnosisRespiratoryDisease,
+  getOtherDiagnosisRespiratoryDisease,
+  getPhysicalCheckTemperature,
+  getPhysicalCheckBloodPressure,
+  getPhysicalCheckPulse,
+  getPhysicalCheckRespiration,
+  getPhysicalCheckHeight,
+  getPhysicalCheckWeight,
+  getPhysicalActivity,
+  getSmoking,
+  getSmoking,
+  getStatus,
+  getFinalResult,
+  getLastDateStatusPatient,
   isRowFilled,
 }

@@ -64,13 +64,83 @@ const isTemplateVerified = (dataSheet) => {
   return true
 }
 
+const getTransformedAge = (age) => {
+  if (!age) return null
+  const a = _toUnsignedInt(age) || '0'
+  return _toString(a)
+}
+
+const getArrayValues = (reference, cellString) => {
+  const cellArray = cellString ? cellString.split(',') : []
+
+  const registered = []
+  const unknown = []
+  for (let i in cellArray) {
+      let val = _toString(cellArray[i])
+      if (val.trim) {
+        val = val.trim().toLowerCase()
+      }
+      if (reference.includes(val)) {
+        registered.push(val)
+      } else {
+        unknown.push(val)
+      }
+  }
+
+  return { registered, unknown }
+}
+
+const getUnknownValuesOfArray = (cellValue, unknownArrs) => {
+  let value = _toString(cellValue)
+  if (!unknownArrs.join) return null
+
+  if (value) {
+    value += ' ' + unknownArrs.join(',')
+  } else {
+    value = unknownArrs.join(',')
+  }
+
+  return value
+}
+
+const yesNoUnknown = (value) => {
+  let res = 3
+
+  if (value) {
+    value = value.toLowerCase()
+  }
+
+  switch (value) {
+    case 'ya':
+      res = 1
+      break;
+    case 'tidak':
+      res = 2
+      break;
+    default:
+      res = 3
+  }
+
+  return res
+}
+
+const trueOrFalse = (v) => {
+  if (v.toLowerCase) { value = value.toLowerCase() }
+  return v === 'ya memiliki'
+}
+
 const modules = {
   _toString,
   _toDateString,
   _toUnsignedInt,
+  trueOrFalse,
+  yesNoUnknown,
+  getArrayValues,
   requestFileError,
+  getTransformedAge,
   isTemplateVerified,
   getStringValueByIndex,
+  getUnknownValuesOfArray,
   isAnotherImportProcessIsRunning,
 }
 
