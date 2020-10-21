@@ -4,7 +4,7 @@ const sheet = {
 }
 
 const constructCase = (d) => {
-  return {
+  const get = {
     interviewers_name: sheet.getInterviewerName(d),
     interviewers_phone_number: sheet.getInterviewerPhoneNumber(d),
     interview_date: sheet.getInterviewDate(d),
@@ -36,6 +36,8 @@ const constructCase = (d) => {
     income: sheet.getIncome(d),
     inspection_support: sheet.getInspectionSupport(d),
   }
+
+  return get
 }
 
 const constructHistory = (d) => {

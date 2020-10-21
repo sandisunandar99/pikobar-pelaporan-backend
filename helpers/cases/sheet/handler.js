@@ -5,40 +5,28 @@ const caseSheet = require('./getters/index')
 const { isTemplateVerified } = require('./helper')
 
 const extractSheetToJson = async (request) => {
-    //  genretae unique import batch id (debug purpose)
+    //  generate unique import batch id (debug purpose)
     const uniqueBatchId = require('uuid').v4()
 
     const uploaded = await handleFileUpload(request.payload.file)
 
-    let dataSheet = (await xlsx.parse(dir + uploaded.filename))[0]['data']
-
-    /*
-    const version = `VERSION ${conf.version}`
-    if (!isTemplateVerified(dataSheet)) {
-      return conf.unverified_template
-    }
-
-    if (dataSheet[0][34] !== version) {
-      return conf.version_out_of_date
-    }
-    */
+    const dataSheet = (await xlsx.parse(dir + uploaded.filename))[0]['data']
 
     dataSheet.splice(0, conf.start_row)
     let payload = []
 
-    for (i in dataSheet)
-    {
+    for (let i in dataSheet) {
       const d = dataSheet[i]
 
       if (!caseSheet.isRowFilled(d)) continue;
 
       let obj = caseSheet.getBuiltCreateCasePayload(d, uniqueBatchId)
 
-      for (var key in obj) {
-        if(obj[key] && obj[key].trim) {
-          obj[key] = obj[key].trim()
+      Object.keys(obj).map(k => {
+        if (obj[k] && obj[k].trim) {
+          obj[k] = obj[k].trim()
         }
-      }
+      })
 
       payload.push(obj)
     }

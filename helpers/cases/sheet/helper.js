@@ -77,11 +77,11 @@ const getArrayValues = (reference, cellString) => {
 
   const registered = []
   const unknown = []
-  for (let i in cellArray) {
+
+  for (let i = 0; i < cellArray.length; i++) {
       let val = _toString(cellArray[i])
-      if (val.trim) {
-        val = val.trim().toLowerCase()
-      }
+      if (!val) continue;
+      val = val.trim().toLowerCase()
       if (reference.includes(val)) {
         registered.push(val)
       } else {
@@ -89,7 +89,12 @@ const getArrayValues = (reference, cellString) => {
       }
   }
 
-  return { registered, unknown }
+  const res = {
+    registered,
+    unknown,
+  }
+
+  return res
 }
 
 const getUnknownValuesOfArray = (cellValue, unknownArrs) => {
