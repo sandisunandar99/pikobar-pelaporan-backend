@@ -1,5 +1,13 @@
 const conf = require('../config.json')
 const { _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge } = require('../helper')
+const {
+  getInspectionType,
+  getSpecienType,
+  getInspectionDate,
+  getInspectionLocation,
+  getSpecimenTo,
+  getInspectionResult
+} = require('./attributes/inspection_support')
 
 const getInterviewerName = (d) => {
   return _toString(d[conf.cell.interviewers_name]) || undefined
@@ -124,15 +132,15 @@ const getIncome = (d) => {
 }
 
 const getInspectionSupport = (d) => {
-  const getters = require('./attributes/inspection_support')
-  return [{
-    inspection_type: getters.getInspectionType(d),
-    specimens_type: getters.getSpecienType(d),
-    inspection_date: getters.getInspectionDate(d),
-    inspection_location: getters.getInspectionLocation(d),
-    get_specimens_to: getters.getSpecimenTo(d),
-    inspection_result: getters.getInspectionResult(d),
-  }]
+  const inspection_support = {
+    inspection_type: getInspectionType(d),
+    specimens_type: getSpecienType(d),
+    inspection_date: getInspectionDate(d),
+    inspection_location: getInspectionLocation(d),
+    get_specimens_to: getSpecimenTo(d),
+    inspection_result: getInspectionResult(d),
+  }
+  return [ inspection_support ]
 }
 
 module.exports = {

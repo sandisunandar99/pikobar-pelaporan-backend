@@ -7,24 +7,22 @@ const rules = require('../../../api/v2/cases/validations/input')
 const transformedJoiErrors = (joiResult) => {
   const transformedErrors = {}
 
-  if (joiResult.error) {
-    for (let e in joiResult.error.details) {
-      let errMessage = joiResult.error.details[e].message
-      let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
+  for (let e in joiResult.error.details) {
+    let errMessage = joiResult.error.details[e].message
+    let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
 
-      // transform field to idn locale lang
-      if (errMessage.replace && lang[errField]) {
-        errMessage = errMessage.replace(errField, lang[errField])
-        errField = lang[errField]
-      }
+    // transform field to idn locale lang
+    if (errMessage.replace && lang[errField]) {
+      errMessage = errMessage.replace(errField, lang[errField])
+      errField = lang[errField]
+    }
 
-      if (!Array.isArray(transformedErrors[errField])) {
-        transformedErrors[errField] = []
-      }
+    if (!Array.isArray(transformedErrors[errField])) {
+      transformedErrors[errField] = []
+    }
 
-      if (!transformedErrors[errField].includes(errMessage)) {
-        transformedErrors[errField].push(errMessage)
-      }
+    if (!transformedErrors[errField].includes(errMessage)) {
+      transformedErrors[errField].push(errMessage)
     }
   }
 
@@ -70,7 +68,7 @@ const validate = async (payload) => {
     const joiResult = Joi.validate(payload[i], rules.CaseSheetRequest)
 
     const recordErrors = []
-    const recordError = transformedJoiErrors(joiResult)
+    const recordError = joiResult.error ? transformedJoiErrors(joiResult) : {}
 
     // is address_district_code exist?
     const isDistrictCodeValid = await helper.isDistrictCodeValid(
