@@ -44,6 +44,16 @@ const transformedJoiErrors = (joiResult) => {
   return transformedErrors
 }
 
+const concatErrorsOnSpecificFIeld = (fieldErrors, fieldName) => {
+  let desc = ''
+  if (fieldErrors[fieldName].join) {
+    const rawDesc = fieldErrors[fieldName].join(',')
+    desc = transformErrorDescription(rawDesc)
+  }
+
+  return desc
+}
+
 const transformFieldErrors = (errors, index) => {
   const rowErrors = []
 
@@ -51,12 +61,9 @@ const transformFieldErrors = (errors, index) => {
     const fieldErrors = errors[index][error] || {}
 
     for (let fieldName in fieldErrors) {
-      let desc = ''
+      const desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
       const transformedFieldErrors = {}
-      if (fieldErrors[fieldName].join) {
-        const rawDesc = fieldErrors[fieldName].join(',')
-        desc = transformErrorDescription(rawDesc)
-      }
+
       transformedFieldErrors.columnName = fieldName
       transformedFieldErrors.description = desc
       rowErrors.push(transformedFieldErrors)
