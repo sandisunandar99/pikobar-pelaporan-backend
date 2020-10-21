@@ -1,33 +1,44 @@
 const Joi = require('joi')
 const helper = require("./handler")
-const Case = require('../../../models/Case')
 const lang = require('../../dictionary/id.json')
 const rules = require('../../../api/v2/cases/validations/input')
+
+const translateLangId = (transformedErrors, errField, errMessage) => {
+  if (errMessage.replace && lang[errField]) {
+    errMessage = errMessage.replace(errField, lang[errField])
+    errField = lang[errField]
+  }
+
+  if (!Array.isArray(transformedErrors[errField])) {
+    transformedErrors[errField] = []
+  }
+
+  if (!transformedErrors[errField].includes(errMessage)) {
+    transformedErrors[errField].push(errMessage)
+  }
+
+  return transformedErrors
+}
 
 const transformedJoiErrors = (joiResult) => {
   if (!joiResult.error) return {}
 
-  const transformedErrors = {}
+  let transformedErrors = {}
   const details = joiResult.error.details
-
 
   for (let e in details) {
     let errMessage = details[e].message
-    let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
+
+    let errField = errMessage.substr(
+      1, errMessage.lastIndexOf('"')-1
+    )
 
     // transform field to idn locale lang
-    if (errMessage.replace && lang[errField]) {
-      errMessage = errMessage.replace(errField, lang[errField])
-      errField = lang[errField]
-    }
-
-    if (!Array.isArray(transformedErrors[errField])) {
-      transformedErrors[errField] = []
-    }
-
-    if (!transformedErrors[errField].includes(errMessage)) {
-      transformedErrors[errField].push(errMessage)
-    }
+    transformedErrors = translateLangId(
+      transformedErrors,
+      errField,
+      errMessage
+    )
   }
 
   return transformedErrors
