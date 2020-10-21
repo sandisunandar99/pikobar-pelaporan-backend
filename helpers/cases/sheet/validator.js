@@ -65,6 +65,40 @@ const transformedErrorResponse = (errors) => {
   return transformed
 }
 
+const validateNik = async (recordError, nik) => {
+  if (nik) {
+    const isNikExists = await Case
+      .findOne({nik: nik, delete_status: { $ne: 'deleted' }})
+      .select(['nik'])
+
+    if (isNikExists) {
+      const errField = lang['nik']
+      if (!Array.isArray(recordError[errField])) {
+        recordError[errField] = []
+      }
+      recordError[errField].push(
+        `\"${errField}"\ '${nik}' Sudah terdata di laporan kasus!`
+      )
+    }
+  }
+
+  return recordError
+}
+
+const validateDistrictCode = async (recordError, code) => {
+  const isDistrictCodeValid = await helper.isDistrictCodeValid(code)
+
+  if (!isDistrictCodeValid) {
+    const errField = lang['address_district_code']
+    if (!Array.isArray(recordError[errField])) {
+      recordError[errField] = []
+    }
+    recordError[errField].push(`\"${errField}" Kode Kabupaten Salah.`)
+  }
+
+  return recordError
+}
+
 const validate = async (payload) => {
   const errors = {}
 
@@ -72,38 +106,13 @@ const validate = async (payload) => {
     const joiResult = Joi.validate(payload[i], rules.CaseSheetRequest)
 
     const recordErrors = []
-    const recordError = transformedJoiErrors(joiResult)
+    let recordError = transformedJoiErrors(joiResult)
 
     // is address_district_code exist?
-    const isDistrictCodeValid = await helper.isDistrictCodeValid(
-      payload[i].address_district_code
-    )
-
-    if (!isDistrictCodeValid) {
-      const errField = lang['address_district_code']
-      if (!Array.isArray(recordError[errField])) {
-        recordError[errField] = []
-      }
-      recordError[errField].push(`\"${errField}" Kode Kabupaten Salah.`)
-    }
+    recordError = await validateDistrictCode(recordError, payload[i].address_district_code)
 
     // Validate duplication NIK
-    const nik = payload[i].nik;
-    if (nik) {
-      const isNikExists = await Case
-        .findOne({nik: nik, delete_status: { $ne: 'deleted' }})
-
-      if (isNikExists) {
-        const errField = lang['nik']
-        if (!Array.isArray(recordError[errField])) {
-          recordError[errField] = []
-        }
-        recordError[errField].push(
-          `\"${errField}"\ '${nik}' Sudah terdata di laporan kasus!`
-        )
-      }
-    }
-
+    recordError = await validateNik(recordError, payload[i].nik)
 
     if (Object.keys(recordError).length) {
       recordErrors.push(recordError)
