@@ -72,9 +72,12 @@ const getSymptomsOther = (d) => {
 
 const getDiseases = (d) => {
   const diseases = getArrayValues(refDiseases, d[conf.cell.diseases])
-  registeredDiseases = diseases.registered
-  unknownDiseases = diseases.unknown
-  return registeredDiseases
+  const { registered, unknown } = diseases
+
+  // put value
+  registeredDiseases = registered
+  unknownDiseases = unknown
+  return registered
 }
 
 const getDiseasesOther = (d) => {

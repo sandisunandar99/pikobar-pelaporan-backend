@@ -3,8 +3,8 @@ const sheet = {
   ...require('./History'),
 }
 
-const constructCase = (d) => {
-  const get = {
+const caseIdentity = (d) => {
+  return {
     interviewers_name: sheet.getInterviewerName(d),
     interviewers_phone_number: sheet.getInterviewerPhoneNumber(d),
     interview_date: sheet.getInterviewDate(d),
@@ -18,6 +18,11 @@ const constructCase = (d) => {
     age: sheet.getAge(d),
     month: sheet.getAgeMonth(d),
     gender: sheet.getGender(d),
+  }
+}
+
+const caseAddress = (d) => {
+  return {
     address_province_code: sheet.getAddressProvinceCode(d),
     address_province_name: sheet.getAddressProvinceName(d),
     address_district_code: sheet.getAddressDistrictCode(d),
@@ -29,6 +34,11 @@ const constructCase = (d) => {
     rt: sheet.getAddressRT(d),
     rw: sheet.getAddressRW(d),
     address_street: sheet.getAddressStreet(d),
+  }
+}
+
+const caseAdditionalInfo = (d) => {
+  return {
     occupation: sheet.getOccupation(d),
     office_address: sheet.getOfficeAddress(d),
     nationality: sheet.getNationality(d),
@@ -36,11 +46,10 @@ const constructCase = (d) => {
     income: sheet.getIncome(d),
     inspection_support: sheet.getInspectionSupport(d),
   }
-
-  return get
 }
 
-const constructHistory = (d) => {
+// history attributes
+const historyLocation = (d) => {
   return {
     current_location_type: sheet.getCurrentLocationType(d),
     current_hospital_id: sheet.getCurrentHospitalId(d),
@@ -49,6 +58,11 @@ const constructHistory = (d) => {
     current_location_subdistrict_code: sheet.getCurrentLocationSubdistrictCode(d),
     current_location_village_code: sheet.getCurrentLocationVillageCode(d),
     current_location_address: sheet.getCurrentLocationAddress(d),
+  }
+}
+
+const historyCondition = (d) => {
+  return {
     there_are_symptoms: sheet.getIsHavingSymptoms(d),
     first_symptom_date: sheet.getFirstSymptomDate(d),
     diagnosis: sheet.getSymptoms(d),
@@ -74,10 +88,15 @@ const constructHistory = (d) => {
     last_date_status_patient: sheet.getLastDateStatusPatient(d),
   }
 }
+
+
 const getBuiltCreateCasePayload = (d, uniqueBatchId) => {
   return {
-    ...constructCase(d, uniqueBatchId),
-    ...constructHistory(d),
+    ...caseIdentity(d),
+    ...caseAddress(d),
+    ...caseAdditionalInfo(d),
+    ...historyLocation(d),
+    ...historyCondition(d),
     input_source: `import-feature-${uniqueBatchId}`,
   }
 }

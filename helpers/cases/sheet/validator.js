@@ -7,24 +7,24 @@ const rules = require('../../../api/v2/cases/validations/input')
 const transformedJoiErrors = (joiResult) => {
   const transformedErrors = {}
 
-  if (!joiResult.error) { return transformedErrors }
+  if (joiResult.error) {
+    for (let e in joiResult.error.details) {
+      let errMessage = joiResult.error.details[e].message
+      let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
 
-  for (e in joiResult.error.details) {
-    let errMessage = joiResult.error.details[e].message
-    let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
+      // transform field to idn locale lang
+      if (errMessage.replace && lang[errField]) {
+        errMessage = errMessage.replace(errField, lang[errField])
+        errField = lang[errField]
+      }
 
-    // transform field to idn locale lang
-    if (errMessage.replace && lang[errField]) {
-      errMessage = errMessage.replace(errField, lang[errField])
-      errField = lang[errField]
-    }
+      if (!Array.isArray(transformedErrors[errField])) {
+        transformedErrors[errField] = []
+      }
 
-    if (!Array.isArray(transformedErrors[errField])) {
-      transformedErrors[errField] = []
-    }
-
-    if (!transformedErrors[errField].includes(errMessage)) {
-      transformedErrors[errField].push(errMessage)
+      if (!transformedErrors[errField].includes(errMessage)) {
+        transformedErrors[errField].push(errMessage)
+      }
     }
   }
 
@@ -34,13 +34,13 @@ const transformedJoiErrors = (joiResult) => {
 const transformedErrorResponse = (errors) => {
   // transform error response
   const transformed = []
-  for (i in errors) {
+  for (let i in errors) {
     const rowErrors = []
 
-    for (j in errors[i]) {
+    for (let j in errors[i]) {
       const fieldErrors = errors[i][j] || {}
 
-      for (fieldName in fieldErrors) {
+      for (let fieldName in fieldErrors) {
         let desc = ''
         const transformedFieldErrors = {}
         if (fieldErrors[fieldName].join) {

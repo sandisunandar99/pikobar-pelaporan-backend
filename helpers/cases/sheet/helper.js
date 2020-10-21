@@ -73,10 +73,13 @@ const getTransformedAge = (age) => {
 }
 
 const getArrayValues = (reference, cellString) => {
-  const cellArray = cellString ? cellString.split(',') : []
-
+  let cellArray = []
   const registered = []
   const unknown = []
+
+  if (cellString) {
+    cellArray = cellString.split(',')
+  }
 
   for (let i = 0; i < cellArray.length; i++) {
       let val = _toString(cellArray[i])
