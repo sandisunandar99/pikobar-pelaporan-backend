@@ -44,15 +44,8 @@ const transformedErrorResponse = (errors) => {
         let desc = ''
         const transformedFieldErrors = {}
         if (fieldErrors[fieldName].join) {
-          desc = fieldErrors[fieldName].join(',')
-          if (desc && desc.replace) {
-            desc = desc
-              .replace('is required', 'Harus diisi')
-              .replace('must be a string', 'Harus berisi string')
-              .replace('must be a number', 'Harus berisi angka')
-              .replace('length must be at least 16 characters long', 'Harus 16 digit')
-              .replace('length must be less than or equal to 16 characters long', 'Harus 16 digit')
-          }
+          const rawDesc = fieldErrors[fieldName].join(',')
+          desc = transformErrorDescription(rawDesc)
         }
         transformedFieldErrors.columnName = fieldName
         transformedFieldErrors.description = desc
@@ -121,6 +114,34 @@ const validate = async (payload) => {
   }
 
   return transformedErrorResponse(errors)
+}
+
+const transformErrorDescription = (desc) => {
+  if (!desc || !desc.replace) {
+    return desc
+  }
+
+  const mapObj = {
+    'is required': 'Harus diisi',
+    'must be a string': 'Harus berisi string',
+    'must be a number': 'Harus berisi angka',
+    'length must be at least 16 characters long': 'Harus 16 digit',
+    'length must be less than or equal to 16 characters long': 'Harus 16 digit',
+  }
+
+  const expression = [
+    'is required',
+    '|must be a string',
+    '|must be a number',
+    '|length must be at least 16 characters long',
+    '|length must be less than or equal to 16 characters long',
+  ].join('')
+
+  const result = desc.replace(new RegExp(expression, 'gi'), (matched) => {
+    return mapObj[matched]
+  })
+
+  return result
 }
 
 module.exports = {
