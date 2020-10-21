@@ -44,28 +44,34 @@ const transformedJoiErrors = (joiResult) => {
   return transformedErrors
 }
 
+const transformFieldErrors = (errors, index) => {
+  const rowErrors = []
+
+  for (let error in errors[index]) {
+    const fieldErrors = errors[index][error] || {}
+
+    for (let fieldName in fieldErrors) {
+      let desc = ''
+      const transformedFieldErrors = {}
+      if (fieldErrors[fieldName].join) {
+        const rawDesc = fieldErrors[fieldName].join(',')
+        desc = transformErrorDescription(rawDesc)
+      }
+      transformedFieldErrors.columnName = fieldName
+      transformedFieldErrors.description = desc
+      rowErrors.push(transformedFieldErrors)
+    }
+
+  }
+
+  return rowErrors
+}
+
 const transformedErrorResponse = (errors) => {
   // transform error response
   const transformed = []
   for (let i in errors) {
-    const rowErrors = []
-
-    for (let j in errors[i]) {
-      const fieldErrors = errors[i][j] || {}
-
-      for (let fieldName in fieldErrors) {
-        let desc = ''
-        const transformedFieldErrors = {}
-        if (fieldErrors[fieldName].join) {
-          const rawDesc = fieldErrors[fieldName].join(',')
-          desc = transformErrorDescription(rawDesc)
-        }
-        transformedFieldErrors.columnName = fieldName
-        transformedFieldErrors.description = desc
-        rowErrors.push(transformedFieldErrors)
-      }
-
-    }
+    const rowErrors = transformFieldErrors(errors, i)
 
     transformed.push({
       rowNumber: i,
