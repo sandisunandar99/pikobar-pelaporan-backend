@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
-const { label, messages } = require('../../../helpers/cases/sheet/config.json')
+const { LABEL, MESSAGES } = require('../../../helpers/dictionary')
 
 // --------------------------------------------------
 //    Schema - Input Validations
@@ -74,7 +74,7 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     id_case_related: Joi.string().allow('', null),
     name_case_related: Joi.string().allow('', null),
     name: Joi.string().required(),
-    birth_date: Joi.date().allow('', null).error(() => `"${label.birth_date}" ${messages.invalid_date_format}`),
+    birth_date: Joi.date().allow('', null).error(() => `"${LABEL.BIRTH_DATE}" ${MESSAGES.INVALID_DATE_FORMAT}`),
     age: Joi.number().required(),
     gender: Joi.string().required(),
     address_street: Joi.string().allow('', null),
@@ -89,21 +89,21 @@ const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
     nationality: Joi.string().required(),
     nationality_name: Joi.string().allow('', null),
     occupation: Joi.string().allow('', null),
-    stage: Joi.string().valid(['0', '1']).required().error(e => messages.invalid_status ),
-    status: Joi.string().valid(['OTG', 'ODP', 'PDP', 'POSITIF']).required().error(e => messages.invalid_stage ),
+    stage: Joi.string().valid(['0', '1']).required().error(e => MESSAGES.INVALID_STATUS ),
+    status: Joi.string().valid(['OTG', 'ODP', 'PDP', 'POSITIF']).required().error(e => MESSAGES.INVALID_STAGE ),
     final_result: Joi.string().allow('', null),
     diagnosis: Joi.array(),
     diagnosis_other: Joi.string().allow('', null),
     is_went_abroad: Joi.boolean(),
     visited_country: Joi.string().allow('', null),
-    return_date: Joi.date().allow('', null).error(() => `"${label.return_date}" ${messages.invalid_date_format}`),
+    return_date: Joi.date().allow('', null).error(() => `"${LABEL.RETURN_DATE}" ${MESSAGES.INVALID_DATE_FORMAT}`),
     is_went_other_city: Joi.boolean(),
     visited_city: Joi.string().allow('', null),
     is_contact_with_positive: Joi.boolean(),
     history_notes: Joi.string().allow('', null),
     is_sample_taken: Joi.boolean(),
     report_source: Joi.string().allow('', null),
-    first_symptom_date: Joi.date().allow('', null).error(() => `"${label.first_symptom_date}" ${messages.invalid_date_format}`),
+    first_symptom_date: Joi.date().allow('', null).error(() => `"${LABEL.FIRST_SYMTOM_DATE}" ${MESSAGES.INVALID_DATE_FORMAT}`),
     other_notes: Joi.string().allow('', null),
     current_location_type: Joi.string().required(),
     current_location_address: Joi.string().allow('', null),

@@ -61,7 +61,6 @@ const register = (server, options, next) => {
   server.register(require('./history_travel'))
   server.register(require('./public_place'))
   server.register(require('./local_transmission'))
-  server.register(require('./case_exposure'))
   server.register(require('./inspection_support'))
   server.register(require('./search'))
   server.register(require('./v2/cases'))
