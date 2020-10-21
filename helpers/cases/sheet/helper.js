@@ -73,31 +73,22 @@ const getTransformedAge = (age) => {
 }
 
 const getArrayValues = (reference, cellString) => {
-  let cellArray = []
-  const registered = []
   const unknown = []
-
-  if (cellString) {
-    cellArray = cellString.split(',')
-  }
+  const registered = []
+  const cellArray = cellString ? cellString.split(',') : []
 
   for (let i = 0; i < cellArray.length; i++) {
-      let val = _toString(cellArray[i])
-      if (!val) continue;
-      val = val.trim().toLowerCase()
-      if (reference.includes(val)) {
-        registered.push(val)
-      } else {
-        unknown.push(val)
-      }
+      if (!_toString(cellArray[i])) continue;
+      const val = _toString(cellArray[i]).trim().toLowerCase()
+
+      if (reference.includes(val)) registered.push(val);
+      else unknown.push(val);
   }
 
-  const res = {
+  return {
     registered,
     unknown,
   }
-
-  return res
 }
 
 const getUnknownValuesOfArray = (cellValue, unknownArrs) => {

@@ -103,12 +103,14 @@ const CaseVerifyPayloadValidations = Object.assign({
     failAction: validateOptions.failAction
 }, CaseParamsValidations)
 
-module.exports = {
-    CaseParamsValidations,
-    CaseQueryValidations,
-    CaseCreatePayloadValidations,
-    CaseUpdatePayloadValidations,
-    CaseDeletePayloadValidations,
-    CaseImportPayloadValidations,
-    CaseVerifyPayloadValidations
+const modules = {
+  CaseParamsValidations,
+  CaseQueryValidations,
+  CaseCreatePayloadValidations,
+  CaseUpdatePayloadValidations,
+  CaseDeletePayloadValidations,
+  CaseImportPayloadValidations,
+  CaseVerifyPayloadValidations
 }
+
+module.exports = modules
