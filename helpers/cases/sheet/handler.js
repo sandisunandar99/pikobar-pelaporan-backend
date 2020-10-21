@@ -1,5 +1,6 @@
 const dir = './upload/'
 const xlsx = require('node-xlsx')
+const mongoose = require('mongoose')
 const conf = require('./config.json')
 const caseSheet = require('./getters/index')
 const { isTemplateVerified } = require('./helper')
@@ -36,12 +37,14 @@ const extractSheetToJson = async (request) => {
 }
 
 const isDistrictCodeValid = async (code) => {
+  const DistrictCity = mongoose.model('Districtcity')
+  const district = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
+  return !!district
+}
 
-    const mongoose = require('mongoose')
-    const DistrictCity = mongoose.model('Districtcity')
-    const district = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-
-    return !!district
+const isNikExists = async (nik) => {
+  const Case = mongoose.model('Case')
+  return !!(await Case.findOne({ nik: nik, delete_status: {$ne: 'deleted'} }))
 }
 
 const handleFileUpload = file => {
@@ -76,6 +79,7 @@ const handleFileUnlink = file => {
 }
 
 module.exports = {
+  isNikExists,
   extractSheetToJson,
   isDistrictCodeValid,
 }
