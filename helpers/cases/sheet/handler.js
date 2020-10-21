@@ -12,6 +12,7 @@ const extractSheetToJson = async (request) => {
 
     let dataSheet = (await xlsx.parse(dir + uploaded.filename))[0]['data']
 
+    /*
     const version = `VERSION ${conf.version}`
     if (!isTemplateVerified(dataSheet)) {
       return conf.unverified_template
@@ -20,6 +21,7 @@ const extractSheetToJson = async (request) => {
     if (dataSheet[0][34] !== version) {
       return conf.version_out_of_date
     }
+    */
 
     dataSheet.splice(0, conf.start_row)
     let payload = []

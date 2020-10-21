@@ -1,4 +1,5 @@
 const config = require('./config.json')
+const lang = require('../../dictionary/id.json')
 
 const _toString = (value) => {
   if (value && value.toString) return value.toString()
@@ -21,11 +22,12 @@ const getStringValueByIndex = (value, index) => {
 
 const requestFileError = (payload) => {
   let error = false
+  const useTemplateVersioning = false
 
-  if (payload === config.unverified_template) {
-    error = config.messages.unverified_template
-  } else if (payload === config.version_out_of_date) {
-    error = config.messages.version_out_of_date
+  if (payload === config.unverified_template && useTemplateVersioning) {
+    error = lang.messages.unverified_template
+  } else if (payload === config.version_out_of_date && useTemplateVersioning) {
+    error = lang.messages.version_out_of_date
   }else if (payload.length > config.max_rows_allowed) {
     error = `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
   }
@@ -125,7 +127,7 @@ const yesNoUnknown = (value) => {
 }
 
 const trueOrFalse = (v) => {
-  if (v.toLowerCase) { value = value.toLowerCase() }
+  if (v.toLowerCase) { v = v.toLowerCase() }
   return v === 'ya memiliki'
 }
 

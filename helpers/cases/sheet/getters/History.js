@@ -1,10 +1,11 @@
 let unknownSymptoms = [], registeredSymptoms = [];
 let unknownDiseases = [], registeredDiseases = [];
 const conf = require('../config.json')
+const { CRITERIA } = require('../../../constant')
 
-const { refSymptoms } = require('../reference')
+const { refSymptoms, refDiseases } = require('../reference')
 const {
-  _toString, _toDateString, getStringValueByIndex,
+  _toString, _toDateString, _toUnsignedInt, getStringValueByIndex,
   getArrayValues, getUnknownValuesOfArray, yesNoUnknown, trueOrFalse
 } = require('../helper')
 
@@ -47,7 +48,7 @@ const getCurrentLocationAddress = (d) => {
 
 const getIsHavingSymptoms = (d) => {
   const symptoms = getSymptoms(d)
-  const symptomsOther = getgetSymptomsOther(d)
+  const symptomsOther = getSymptomsOther(d)
 
   if (symptoms.length || symptomsOther) return true;
 
@@ -71,8 +72,8 @@ const getSymptomsOther = (d) => {
 
 const getDiseases = (d) => {
   const diseases = getArrayValues(refDiseases, d[conf.cell.diseases])
-  registeredDiseases = symptoms.registered
-  unknownDiseases = symptoms.unknown
+  registeredDiseases = diseases.registered
+  unknownDiseases = diseases.unknown
   return registeredDiseases
 }
 
@@ -93,7 +94,7 @@ const getOtherDiagnosis = (d) => {
 }
 
 const isOtherDiagnosisRespiratoryDisease = (d) => {
-  return trueOrFalse(d[is_other_diagnosisr_respiratory_disease])
+  return trueOrFalse(d[conf.cell.is_other_diagnosisr_respiratory_disease])
 }
 
 const getOtherDiagnosisRespiratoryDisease = (d) => {
@@ -145,11 +146,11 @@ const getPhysicalActivity = (d) => {
   return res
 }
 
-const getSmoking = (d) => {
+const isSmoking = (d) => {
   return yesNoUnknown(d[conf.cell.smoking])
 }
 
-const getSmoking = (d) => {
+const isConsumeAlcohol = (d) => {
   return yesNoUnknown(d[conf.cell.consume_alcohol])
 }
 
@@ -157,9 +158,27 @@ const getStatus = (d) => {
   if (!d[conf.cell.status]) return undefined
   let status = _toString(d[conf.cell.status])
   if (status && status.toUpperCase) {
-      status = status.toUpperCase()
+      status = status.trim().toUpperCase()
   }
-  return status || undefined
+
+  let res
+  switch (status) {
+    case 'KONTAK ERAT':
+      res = CRITERIA.CLOSE;
+      break;
+    case 'SUSPEK':
+      res = CRITERIA.SUS;
+      break;
+    case 'KONFIRMASI':
+      res = CRITERIA.CONF;
+      break;
+    case 'PROBABEL':
+      res = CRITERIA.PROB;
+      break;
+    default: res = null;
+  }
+
+  return res
 }
 
 const getFinalResult = (d) => {
@@ -214,6 +233,7 @@ module.exports = {
   getCurrentLocationAddress,
   getIsHavingSymptoms,
   getFirstSymptomDate,
+  getSymptoms,
   getSymptomsOther,
   getDiseases,
   getDiseasesOther,
@@ -229,8 +249,8 @@ module.exports = {
   getPhysicalCheckHeight,
   getPhysicalCheckWeight,
   getPhysicalActivity,
-  getSmoking,
-  getSmoking,
+  isSmoking,
+  isConsumeAlcohol,
   getStatus,
   getFinalResult,
   getLastDateStatusPatient,

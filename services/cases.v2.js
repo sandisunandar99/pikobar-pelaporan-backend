@@ -2,19 +2,19 @@ const moment = require('moment')
 const service = 'services.v2.cases'
 const User = require('../models/User')
 const Case = require('../models/Case')
-const Helper = require('../helpers/custom')
 const ObjectId = require('mongodb').ObjectID
 const History = require('../models/History')
 const pdfmaker = require('../helpers/pdfmaker')
 const Notification = require('../models/Notification')
 const Notif = require('../helpers/notification')
+const { deleteProps, rollback } = require('../helpers/custom')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
 const { getCountBasedOnDistrict } = require('../helpers/cases/global')
 
 const createCase = async (pre, payload, author, callback) => {
   // guarded fields
-  Helper.deleteProps(['_id', 'id_case', 'verified_status'], payload)
+  deleteProps(['_id', 'id_case', 'verified_status'], payload)
 
   try {
     const idCase = Validate.generateIdCase(author, pre, payload)
@@ -146,7 +146,7 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 }
 
 async function createMultiple (services, payload, author, callback) {
-  const insertedCaseIds = []
+  const insertedCase = []
   try {
     // get requirement doc to generate id case
     for (let i = 0; i < payload.length; i++) {
@@ -159,17 +159,16 @@ async function createMultiple (services, payload, author, callback) {
         pre, payload[i], author,
         (err, res) => {
           if (err) throw new Error
-          insertedCaseIds.push(res._id)
+          insertedCase.push({_id: res._id})
         }
       )
 
     }
+    callback(null, { inserted: insertedCase.length })
   } catch (e) {
-    // todo rollback func
+    rollback(Case, insertedCase)
     callback(e, null)
   }
-
-  callback(null, 'success')
 }
 
 module.exports = [

@@ -1,7 +1,6 @@
 const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
-const { LABEL, MESSAGES } = require('../../../helpers/dictionary')
 
 // --------------------------------------------------
 //    Schema - Input Validations
@@ -68,51 +67,6 @@ const CaseImportPayload = Joi.object().keys({
         .description('xlsx file')
 })
 
-const caseSchemaValidation = Joi.object().options({ abortEarly: false }).keys({
-    id_case_national: Joi.string().allow('', null),
-    nik: Joi.string().allow('',null),
-    id_case_related: Joi.string().allow('', null),
-    name_case_related: Joi.string().allow('', null),
-    name: Joi.string().required(),
-    birth_date: Joi.date().allow('', null).error(() => `"${LABEL.BIRTH_DATE}" ${MESSAGES.INVALID_DATE_FORMAT}`),
-    age: Joi.number().required(),
-    gender: Joi.string().required(),
-    address_street: Joi.string().allow('', null),
-    address_village_code: Joi.string().required(),
-    address_village_name: Joi.string().required(),
-    address_subdistrict_code: Joi.string().required(),
-    address_subdistrict_name: Joi.string().required(),
-    address_district_code: Joi.string().required(),
-    address_district_name: Joi.string().required(),
-    office_address: Joi.string().allow('', null),
-    phone_number: Joi.string().allow('', null),
-    nationality: Joi.string().required(),
-    nationality_name: Joi.string().allow('', null),
-    occupation: Joi.string().allow('', null),
-    stage: Joi.string().valid(['0', '1']).required().error(e => MESSAGES.INVALID_STATUS ),
-    status: Joi.string().valid(['OTG', 'ODP', 'PDP', 'POSITIF']).required().error(e => MESSAGES.INVALID_STAGE ),
-    final_result: Joi.string().allow('', null),
-    diagnosis: Joi.array(),
-    diagnosis_other: Joi.string().allow('', null),
-    is_went_abroad: Joi.boolean(),
-    visited_country: Joi.string().allow('', null),
-    return_date: Joi.date().allow('', null).error(() => `"${LABEL.RETURN_DATE}" ${MESSAGES.INVALID_DATE_FORMAT}`),
-    is_went_other_city: Joi.boolean(),
-    visited_city: Joi.string().allow('', null),
-    is_contact_with_positive: Joi.boolean(),
-    history_notes: Joi.string().allow('', null),
-    is_sample_taken: Joi.boolean(),
-    report_source: Joi.string().allow('', null),
-    first_symptom_date: Joi.date().allow('', null).error(() => `"${LABEL.FIRST_SYMTOM_DATE}" ${MESSAGES.INVALID_DATE_FORMAT}`),
-    other_notes: Joi.string().allow('', null),
-    current_location_type: Joi.string().required(),
-    current_location_address: Joi.string().allow('', null),
-    current_location_village_code: Joi.string().allow('', null),
-    current_location_subdistrict_code: Joi.string().allow('', null),
-    current_location_district_code: Joi.string().allow('', null)
-}).unknown()
-
-
 const CaseCreatePayloadValidations = {
     payload: CaseCreatePayload,
     headers: HeadersPayLoad,
@@ -156,6 +110,5 @@ module.exports = {
     CaseUpdatePayloadValidations,
     CaseDeletePayloadValidations,
     CaseImportPayloadValidations,
-    caseSchemaValidation,
     CaseVerifyPayloadValidations
 }

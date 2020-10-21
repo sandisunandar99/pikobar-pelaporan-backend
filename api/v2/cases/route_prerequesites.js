@@ -47,11 +47,11 @@ const sheetToJson = server => {
 
       const errors = await validate(payload)
 
-      if (errors) {
+      if (errors.length) {
         return reply(BadRequest(errors)).code(400).takeover()
       }
 
-      return reply(paylod)
+      return reply(payload)
     },
     assign: 'sheet_to_json'
   }

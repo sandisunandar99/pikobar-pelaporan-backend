@@ -1,9 +1,8 @@
 const Joi = require('joi')
-const config = require('./config.json')
-const Case = require('../../../models/Case')
 const helper = require("./handler")
-const rules = require('../../../api/cases/validations/input')
-const { label } = config
+const Case = require('../../../models/Case')
+const lang = require('../../dictionary/id.json')
+const rules = require('../../../api/v2/cases/validations/input')
 
 const transformedJoiErrors = (joiResult) => {
   const transformedErrors = {}
@@ -14,10 +13,10 @@ const transformedJoiErrors = (joiResult) => {
     let errMessage = joiResult.error.details[e].message
     let errField = errMessage.substr(1, errMessage.lastIndexOf('"')-1)
 
-    // transform field to idn locale label
-    if (errMessage.replace && label[errField]) {
-      errMessage = errMessage.replace(errField, label[errField])
-      errField = label[errField]
+    // transform field to idn locale lang
+    if (errMessage.replace && lang[errField]) {
+      errMessage = errMessage.replace(errField, lang[errField])
+      errField = lang[errField]
     }
 
     if (!Array.isArray(transformedErrors[errField])) {
@@ -75,7 +74,7 @@ const validate = async (payload) => {
   const errors = {}
 
   for (let i = 0; i < payload.length; i++) {
-    const joiResult = Joi.validate(payload[i], rules.caseSchemaValidation)
+    const joiResult = Joi.validate(payload[i], rules.CaseSheetRequest)
 
     const recordErrors = []
     const recordError = transformedJoiErrors(joiResult)
@@ -86,7 +85,7 @@ const validate = async (payload) => {
     )
 
     if (!isDistrictCodeValid) {
-      const errField = label['address_district_code']
+      const errField = lang['address_district_code']
       if (!Array.isArray(recordError[errField])) {
         recordError[errField] = []
       }
@@ -100,7 +99,7 @@ const validate = async (payload) => {
         .findOne({nik: nik, delete_status: { $ne: 'deleted' }})
 
       if (isNikExists) {
-        const errField = label['nik']
+        const errField = lang['nik']
         if (!Array.isArray(recordError[errField])) {
           recordError[errField] = []
         }
@@ -116,7 +115,7 @@ const validate = async (payload) => {
     }
 
     if (recordErrors.length) {
-      const row = (parseInt(i)+9).toString()
+      const row = (parseInt(i)+1).toString()
       errors[row] = recordErrors
     }
   }
