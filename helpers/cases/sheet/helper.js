@@ -73,11 +73,10 @@ const getTransformedAge = (age) => {
 }
 
 const getArrayValues = (reference, cellString) => {
-  const unknown = registered = []
-  const cellArray = cellString ? cellString.split(',') : []
+  const unknown = [], registered = []
+  const cellArray = cellString ? cellString.trim().split(',') : []
 
   for (let i = 0; i < cellArray.length; i++) {
-      if (!_toString(cellArray[i])) continue
       const val = _toString(cellArray[i]).trim().toLowerCase()
 
       if (reference.includes(val)) registered.push(val)

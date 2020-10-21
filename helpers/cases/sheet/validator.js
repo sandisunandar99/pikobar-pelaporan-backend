@@ -66,17 +66,15 @@ const transformedErrorResponse = (errors) => {
 }
 
 const validateNik = async (recordError, nik) => {
-  if (nik) {
-    const nikExists = await helper.isNikExists(nik)
+  const nikExists = await helper.isNikExists(nik)
 
-    if (nikExists) {
-      const errField = lang['nik']
-      const message = 'Sudah terdata di laporan kasus!'
-      if (!Array.isArray(recordError[errField])) {
-        recordError[errField] = []
-      }
-      recordError[errField].push(`\"${errField}"\ '${nik}' ${message}`)
+  if (nik && nikExists) {
+    const errField = lang['nik']
+    const message = 'Sudah terdata di laporan kasus!'
+    if (!Array.isArray(recordError[errField])) {
+      recordError[errField] = []
     }
+    recordError[errField].push(`\"${errField}"\ '${nik}' ${message}`)
   }
 
   return recordError
