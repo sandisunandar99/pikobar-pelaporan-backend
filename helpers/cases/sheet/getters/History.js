@@ -3,7 +3,7 @@ let unknownDiseases = [], registeredDiseases = [];
 const conf = require('../config.json')
 const { CRITERIA } = require('../../../constant')
 
-const { refSymptoms, refDiseases } = require('../reference')
+const { refSymptoms, refDiseases, findHospital } = require('../reference')
 const {
   _toString, _toDateString, _toUnsignedInt, getStringValueByIndex,
   getArrayValues, getUnknownValuesOfArray, yesNoUnknown, trueOrFalse
@@ -11,11 +11,18 @@ const {
 
 const getCurrentLocationType = (d) => {
   if (!d[conf.cell.current_location_type]) return undefined
-  return d[conf.cell.current_location_type] == 'Ya' ? 'RS' : 'RUMAH'
+  return d[conf.cell.current_location_type] == 'Ya dirawat' ? 'RS' : 'RUMAH'
 }
 
-const getCurrentHospitalId = (d) => {
-  return getStringValueByIndex(d[conf.cell.current_hospital_id], 1)
+const getCurrentHospitalId = async (d) => {
+  const hospitalName = getStringValueByIndex(d[conf.cell.current_hospital_id], 0)
+  let hospitalId = null
+
+  if (hospitalName) {
+    hospitalId = await findHospital(hospitalName)
+  }
+
+  return hospitalId
 }
 
 const getIsPatientAddressSame = (d) => {
@@ -188,9 +195,9 @@ const getFinalResult = (d) => {
   if(!d[conf.cell.final_result]) return null
 
   let resultCode = null
-  const result = _toString(d[conf.cell.final_result])
+  let result = _toString(d[conf.cell.final_result])
 
-  if (result) { result.trim().toLowerCase() }
+  if (result) { result = result.trim().toLowerCase() }
 
   switch(result) {
     case 'selesai isolasi/sembuh':

@@ -3,7 +3,7 @@ const xlsx = require('node-xlsx')
 const mongoose = require('mongoose')
 const conf = require('./config.json')
 const caseSheet = require('./getters/index')
-const { isTemplateVerified } = require('./helper')
+// const { isTemplateVerified } = require('./helper')
 
 const extractSheetToJson = async (request) => {
     //  generate unique import batch id (debug purpose)
@@ -21,7 +21,7 @@ const extractSheetToJson = async (request) => {
 
       if (!caseSheet.isRowFilled(d)) continue;
 
-      let obj = caseSheet.getBuiltCreateCasePayload(d, uniqueBatchId)
+      let obj = await caseSheet.getBuiltCreateCasePayload(d, uniqueBatchId)
 
       Object.keys(obj).map(k => {
         if (obj[k] && obj[k].trim) {

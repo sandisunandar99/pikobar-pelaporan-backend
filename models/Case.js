@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
-const { doFlagging } = require('../helpers/cases/flagger')
+const { doFlagging, assignPrePostFlag } = require('../helpers/cases/flagger')
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const uniqueValidator = require('mongoose-unique-validator')
 
@@ -231,11 +231,9 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
  * If case deleted,
  * Set 'is_case_deleted' in the CloseContact documents to TRUE
 */
-CaseSchema.pre('save', async function (next) {
-  const CloseContact = new mongoose.models["CloseContact"]
-  if (this.delete_status === 'deleted') {
-    await CloseContact.onDeleteCase(this._id)
-  }
+CaseSchema.pre('save', function (next) {
+  const flags = assignPrePostFlag(this)
+  Object.assign(this, flags)
   next()
 })
 

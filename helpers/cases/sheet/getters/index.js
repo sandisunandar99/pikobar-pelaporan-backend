@@ -49,10 +49,10 @@ const caseAdditionalInfo = (d) => {
 }
 
 // history attributes
-const historyLocation = (d) => {
+const historyLocation = async (d) => {
   return {
     current_location_type: sheet.getCurrentLocationType(d),
-    current_hospital_id: sheet.getCurrentHospitalId(d),
+    current_hospital_id: await sheet.getCurrentHospitalId(d),
     is_patient_address_same: sheet.getIsPatientAddressSame(d),
     current_location_district_code: sheet.getCurrentLocationDistrictCode(d),
     current_location_subdistrict_code: sheet.getCurrentLocationSubdistrictCode(d),
@@ -90,12 +90,12 @@ const historyCondition = (d) => {
 }
 
 
-const getBuiltCreateCasePayload = (d, uniqueBatchId) => {
+const getBuiltCreateCasePayload = async (d, uniqueBatchId) => {
   return {
     ...caseIdentity(d),
     ...caseAddress(d),
     ...caseAdditionalInfo(d),
-    ...historyLocation(d),
+    ...await historyLocation(d),
     ...historyCondition(d),
     input_source: `import-feature-${uniqueBatchId}`,
   }

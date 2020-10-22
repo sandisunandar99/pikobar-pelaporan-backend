@@ -78,8 +78,9 @@ const getArrayValues = (reference, cellString) => {
 
   for (let i = 0; i < cellArray.length; i++) {
       const val = _toString(cellArray[i]).trim().toLowerCase()
+      const founded = reference.find(v => v.toLowerCase() === val)
 
-      if (reference.includes(val)) registered.push(val)
+      if (founded) registered.push(founded)
       else unknown.push(val)
   }
 

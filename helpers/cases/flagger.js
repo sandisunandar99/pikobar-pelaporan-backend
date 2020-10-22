@@ -118,6 +118,33 @@ const handleClosecontactFlag = async (Case, idCase) => {
   })
 }
 
+const flagOnSection = (flag, field) => {
+  if (field && field.length) {
+    flag.status_inspection_support = 1
+  }
+
+  return flag
+}
+
+const assignPrePostFlag = (payload) => {
+  let flag = {}
+
+  const {
+    inspection_support,
+    visited_local_area,
+    visited_public_place,
+    travelling_history,
+  } = payload
+
+  flag = flagOnSection(flag, inspection_support)
+  flag = flagOnSection(flag, visited_local_area)
+  flag = flagOnSection(flag, visited_public_place)
+  flag = flagOnSection(flag, travelling_history)
+
+  return flag
+}
+
 module.exports = {
   doFlagging,
+  assignPrePostFlag,
 }
