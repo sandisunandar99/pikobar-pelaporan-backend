@@ -126,6 +126,7 @@ const flagOnSection = (flag, field) => {
   return flag
 }
 
+// assign completed section status
 const assignPrePostFlag = (payload) => {
   let flag = {}
 
