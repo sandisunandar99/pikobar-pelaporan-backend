@@ -1,10 +1,11 @@
 const sheet = {
-  ...require('./Case'),
-  ...require('./History'),
+  ...require('./case.getters'),
+  ...require('./history.getters'),
 }
 
 const caseIdentity = (d) => {
   return {
+    num: sheet.getNum(d),
     interviewers_name: sheet.getInterviewerName(d),
     interviewers_phone_number: sheet.getInterviewerPhoneNumber(d),
     interview_date: sheet.getInterviewDate(d),

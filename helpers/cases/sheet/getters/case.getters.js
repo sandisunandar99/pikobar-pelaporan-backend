@@ -9,6 +9,10 @@ const {
   getInspectionResult
 } = require('./attributes/inspection_support')
 
+const getNum = (d) => {
+  return _toString(d[conf.cell.num])
+}
+
 const getInterviewerName = (d) => {
   return _toString(d[conf.cell.interviewers_name]) || undefined
 }
@@ -22,7 +26,7 @@ const getInterviewDate = (d) => {
 }
 
 const getNik = (d) => {
-  return _toString(d[conf.cell.nik]) || null
+  return _toString(d[conf.cell.nik]) || undefined
 }
 
 const getPhoneNumber = (d) => {
@@ -128,7 +132,32 @@ const getNationalityName = (d) => {
 }
 
 const getIncome = (d) => {
-  return _toString(d[conf.cell.income])
+  let result = 0
+  let selected = _toString(d[conf.cell.income])
+
+  if (selected) { selected = selected.trim().toLowerCase() }
+
+  switch(selected) {
+    case 'tidak berpenghasilan':
+      result = 0
+      break;
+    case '< 1 juta':
+      result = 1
+      break;
+    case '1 s/d 3 juta':
+      result = 2
+      break;
+    case '3 s/d 5 juta':
+      result = 3
+      break;
+    case '> 5 juta':
+      result = 4
+      break;
+    default:
+      result = 0
+  }
+
+  return result
 }
 
 const getInspectionSupport = (d) => {
@@ -145,6 +174,7 @@ const getInspectionSupport = (d) => {
 
 module.exports = {
   // init,
+  getNum,
   getInterviewerName,
   getInterviewerPhoneNumber,
   getInterviewDate,

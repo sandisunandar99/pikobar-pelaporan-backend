@@ -3,9 +3,9 @@ const { _toString, _toDateString, _toUnsignedInt } = require('../../helper')
 // part of inspection support
 const getInspectionType = (d) => {
   let result = null
-  const selected = _toString(d[conf.cell.inspection_type])
+  let selected = _toString(d[conf.cell.inspection_type])
 
-  if (selected) { selected.trim().toLowerCase() }
+  if (selected) { selected = selected.trim().toLowerCase() }
 
   switch(selected) {
     case 'pcr':
@@ -32,9 +32,9 @@ const getInspectionType = (d) => {
 
 const getSpecienType = (d) => {
   let result = null
-  const selected = _toString(d[conf.cell.specimens_type])
+  let selected = _toString(d[conf.cell.specimens_type])
 
-  if (selected) { selected.trim().toLowerCase() }
+  if (selected) { selected = selected.trim().toLowerCase() }
 
   switch(selected) {
     case 'swab nasofaring':
@@ -46,7 +46,7 @@ const getSpecienType = (d) => {
     case 'swab naso-orofaring':
       result = 'Swab Naso - Orofaring'
       break;
-    case 'tcm-sars cov-2':
+    case 'darah':
       result = 'Darah'
       break;
     default:

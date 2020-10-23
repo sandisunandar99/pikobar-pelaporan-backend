@@ -104,6 +104,25 @@ const validateNik = async (recordError, nik) => {
   return recordError
 }
 
+const validateDuplicateNikReqPayload = (recordError, reqDuplicateNik, payload, nik) => {
+  const founded = payload.filter(n => n.nik === nik)
+  if (founded.length > 1 && !reqDuplicateNik.includes(nik)) {
+    const nums = founded.map(x => x.num)
+
+    const errField = lang['nik']
+    const message = ` Terdapat duplikasi NIK ${nik} pada baris nomor ${nums.join(',')}`
+
+    if (!Array.isArray(recordError[errField])) {
+      recordError[errField] = []
+    }
+
+    reqDuplicateNik.push(nik)
+    recordError[errField].push(`${message}`)
+  }
+
+  return recordError
+}
+
 const validateDistrictCode = async (recordError, code) => {
   const isDistrictCodeValid = await helper.isDistrictCodeValid(code)
 
@@ -120,18 +139,23 @@ const validateDistrictCode = async (recordError, code) => {
 
 const validate = async (payload) => {
   const errors = {}
+  const reqDuplicateNik = []
 
   for (let i = 0; i < payload.length; i++) {
     const joiResult = Joi.validate(payload[i], rules.CaseSheetRequest)
 
     const recordErrors = []
+    const { nik, address_district_code } = payload[i]
     let recordError = transformedJoiErrors(joiResult)
 
     // is address_district_code exist?
-    recordError = await validateDistrictCode(recordError, payload[i].address_district_code)
+    recordError = await validateDistrictCode(recordError, address_district_code)
 
-    // Validate duplication NIK
-    recordError = await validateNik(recordError, payload[i].nik)
+    // Validate duplication NIK on database
+    recordError = await validateNik(recordError, nik)
+
+    // validate duplication NIK on request payload
+    recordError = validateDuplicateNikReqPayload(recordError, reqDuplicateNik, payload, nik)
 
     if (Object.keys(recordError).length) {
       recordErrors.push(recordError)
@@ -155,16 +179,14 @@ const transformErrorDescription = (desc) => {
     'is required': 'Harus diisi',
     'must be a string': 'Harus berisi string',
     'must be a number': 'Harus berisi angka',
-    'length must be at least 16 characters long': 'Harus 16 digit',
-    'length must be less than or equal to 16 characters long': 'Harus 16 digit',
+    'length must be 16 characters long': 'Harus 16 digit',
   }
 
   const expression = [
     'is required',
     '|must be a string',
     '|must be a number',
-    '|length must be at least 16 characters long',
-    '|length must be less than or equal to 16 characters long',
+    '|length must be 16 characters long',
   ].join('')
 
   const result = desc.replace(new RegExp(expression, 'gi'), (matched) => {
