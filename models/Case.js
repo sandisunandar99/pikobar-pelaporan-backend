@@ -137,6 +137,8 @@ const CaseSchema = new mongoose.Schema({
   ...sectionStatus,
 }, { timestamps: true, usePushEach: true })
 
+CaseSchema.index({ nik: 1 });
+CaseSchema.index({ delete_status: 1 });
 CaseSchema.index({ author: 1 });
 CaseSchema.index({ transfer_status: 1 });
 CaseSchema.index({ transfer_to_unit_id: 1 });
