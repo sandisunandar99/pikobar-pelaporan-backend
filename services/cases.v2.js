@@ -138,7 +138,7 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
     // render pdf
     const pdfFile = await pdfmaker.generate(pdfConfig, fileName)
 
-    callback(null, pdfFile)
+    callback(null, { pdfFile, fileName })
   } catch (e) {
     callback(e, null)
   }
@@ -146,30 +146,25 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 
 async function getDetailCaseSummary(id, callback) {
   try {
-    const conditions = [
+    const filteredFields = (field, filterProp, filterValue) => {
+      return {
+        $filter: {
+          input: `$${field}`,
+          as: "item",
+          cond: { $eq: [ `$$item.${filterProp}`, filterValue ] }
+        }
+      }
+    }
+
+    const aggQuery = [
       { $match: { _id: ObjectId(id) } },
       {
         $addFields: {
           relatedCases: {
-            $concatArrays: [
-              "$close_contact_parents",
-              "$close_contact_childs",
-            ],
+            $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ],
           },
-          pcr: {
-            $filter: {
-              input: "$inspection_support",
-              as: "item",
-              cond: { $eq: [ "$$item.inspection_type", "pcr" ] }
-            }
-          },
-          rapid: {
-            $filter: {
-              input: "$inspection_support",
-              as: "item",
-              cond: { $eq: [ "$$item.inspection_type", "rapid" ] }
-            }
-          },
+          pcr: filteredFields('inspection_support', 'inspection_type', 'pcr'),
+          rapid: filteredFields('inspection_support', 'inspection_type', 'rapid'),
         },
       },
       {
@@ -181,7 +176,7 @@ async function getDetailCaseSummary(id, callback) {
         }
       }
     ]
-    const result = await Case.aggregate(conditions)
+    const result = await Case.aggregate(aggQuery)
     callback(null, result.shift())
   } catch (e) {
     callback(e, null)

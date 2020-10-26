@@ -41,7 +41,10 @@ const ExportEpidemiologicalForm = (server) => {
       request.pre.cases,
       async (err, result) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(result).header('Content-Disposition', 'attachment; filename='+fileName)
+        return reply(result.pdfFile).header(
+          'Content-Disposition',
+          'attachment; filename=' + result.fileName
+        )
       }
     )
   }
