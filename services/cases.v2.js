@@ -11,6 +11,17 @@ const Notif = require('../helpers/notification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
 
+// scope helper
+const _filteredFields = (field, filterProp, filterValue) => {
+  return {
+    $filter: {
+      input: `$${field}`,
+      as: "item",
+      cond: { $eq: [ `$$item.${filterProp}`, filterValue ] }
+    }
+  }
+}
+
 const createCase = async (pre, payload, author, callback) => {
   // guarded fields
   Helper.deleteProps(['_id', 'id_case', 'verified_status'], payload)
@@ -138,7 +149,33 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
     // render pdf
     const pdfFile = await pdfmaker.generate(pdfConfig, fileName)
 
-    callback(null, pdfFile)
+    callback(null, { pdfFile, fileName })
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+async function getDetailCaseSummary(id, callback) {
+  try {
+    const aggQuery = [
+      { $match: { _id: ObjectId(id) } },
+      { $addFields: {
+          relatedCases: {
+            $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ],
+          },
+          pcr: _filteredFields('inspection_support', 'inspection_type', 'pcr'),
+          rapid: _filteredFields('inspection_support', 'inspection_type', 'rapid'),
+      } },
+      { $project: {
+          _id: 0,
+          pcrTotal: { $size: "$pcr" },
+          rapidTotal: { $size: "$rapid" },
+          relatedCasesTotal: { $size: "$relatedCases" }
+      } }
+    ]
+
+    const result = await Case.aggregate(aggQuery)
+    callback(null, result.shift())
   } catch (e) {
     callback(e, null)
   }
@@ -147,6 +184,7 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 module.exports = [
   { name: `${service}.create`, method: createCase },
   { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
+  { name: `${service}.getDetailCaseSummary`, method: getDetailCaseSummary },
   { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
   { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
 ]
