@@ -108,6 +108,7 @@ function createHistoryIfChanged (payload, callback) {
               stage: payload.stage,
               final_result: payload.final_result,
               is_test_masif: payload.is_test_masif,
+              last_date_status_patient: payload.last_date_status_patient,
               last_history: item._id
           }
 
