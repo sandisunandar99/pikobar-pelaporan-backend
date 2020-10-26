@@ -25,8 +25,20 @@ const getInterviewDate = (d) => {
   return _toString(d[conf.cell.interview_date]) || undefined
 }
 
+const isNikExists = (d) => {
+  return !!getNik(d)
+}
+
 const getNik = (d) => {
   return _toString(d[conf.cell.nik]) || undefined
+}
+
+const getNikNote = (d) => {
+  return _toString(d[conf.cell.note_nik]) || undefined
+}
+
+const isPhoneNumberExists = (d) => {
+  return !!getPhoneNumber(d)
 }
 
 const getPhoneNumber = (d) => {
@@ -178,7 +190,10 @@ module.exports = {
   getInterviewerName,
   getInterviewerPhoneNumber,
   getInterviewDate,
+  isNikExists,
   getNik,
+  getNikNote,
+  isPhoneNumberExists,
   getPhoneNumber,
   getPhoneNumberNote,
   getName,
