@@ -47,8 +47,21 @@ const ExportEpidemiologicalForm = (server) => {
   }
 }
 
+/**
+ * GET /api/v2/cases/{id}/summary
+ */
+const GetDetailCaseSummary = (server) => {
+  return (request, reply) => {
+    server.methods.services.v2.cases.getDetailCaseSummary(
+      request.params.id,
+      callback(reply)
+    )
+  }
+}
+
 module.exports = {
   CreateCase,
   GetCaseSectionStatus,
+  GetDetailCaseSummary,
   ExportEpidemiologicalForm,
 }

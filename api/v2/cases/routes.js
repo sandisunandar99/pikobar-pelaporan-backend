@@ -49,5 +49,16 @@ module.exports = (server) =>{
       },
       handler: handlers.ExportEpidemiologicalForm(server)
     },
+    {
+      method: 'GET',
+      path: '/v2/cases/{id}/summary',
+      config: {
+        auth: 'jwt',
+        description: 'get specific case summary',
+        tags: ['api', 'cases.summary'],
+        pre: [ getCasebyId ]
+      },
+      handler: handlers.GetDetailCaseSummary(server)
+    },
   ]
 }

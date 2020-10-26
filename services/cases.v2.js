@@ -144,9 +144,54 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
   }
 }
 
+async function getDetailCaseSummary(id, callback) {
+  try {
+    const conditions = [
+      { $match: { _id: ObjectId(id) } },
+      {
+        $addFields: {
+          relatedCases: {
+            $concatArrays: [
+              "$close_contact_parents",
+              "$close_contact_childs",
+            ],
+          },
+          pcr: {
+            $filter: {
+              input: "$inspection_support",
+              as: "item",
+              cond: { $eq: [ "$$item.inspection_type", "pcr" ] }
+            }
+          },
+          rapid: {
+            $filter: {
+              input: "$inspection_support",
+              as: "item",
+              cond: { $eq: [ "$$item.inspection_type", "rapid" ] }
+            }
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          pcr: { $size: "$pcr" },
+          rapid: { $size: "$rapid" },
+          relatedCases: { $size: "$relatedCases" }
+        }
+      }
+    ]
+    const result = await Case.aggregate(conditions)
+    callback(null, result.shift())
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 module.exports = [
   { name: `${service}.create`, method: createCase },
   { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
+  { name: `${service}.getDetailCaseSummary`, method: getDetailCaseSummary },
   { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
   { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
 ]
