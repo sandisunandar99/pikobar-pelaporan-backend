@@ -175,9 +175,9 @@ async function getDetailCaseSummary(id, callback) {
       {
         $project: {
           _id: 0,
-          pcr: { $size: "$pcr" },
-          rapid: { $size: "$rapid" },
-          relatedCases: { $size: "$relatedCases" }
+          pcrTotal: { $size: "$pcr" },
+          rapidTotal: { $size: "$rapid" },
+          relatedCasesTotal: { $size: "$relatedCases" }
         }
       }
     ]
