@@ -12,7 +12,7 @@ const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
 
 // scope helper
-const filteredFields = (field, filterProp, filterValue) => {
+const _filteredFields = (field, filterProp, filterValue) => {
   return {
     $filter: {
       input: `$${field}`,
@@ -159,24 +159,21 @@ async function getDetailCaseSummary(id, callback) {
   try {
     const aggQuery = [
       { $match: { _id: ObjectId(id) } },
-      {
-        $addFields: {
+      { $addFields: {
           relatedCases: {
             $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ],
           },
-          pcr: filteredFields('inspection_support', 'inspection_type', 'pcr'),
-          rapid: filteredFields('inspection_support', 'inspection_type', 'rapid'),
-        },
-      },
-      {
-        $project: {
+          pcr: _filteredFields('inspection_support', 'inspection_type', 'pcr'),
+          rapid: _filteredFields('inspection_support', 'inspection_type', 'rapid'),
+      } },
+      { $project: {
           _id: 0,
           pcrTotal: { $size: "$pcr" },
           rapidTotal: { $size: "$rapid" },
           relatedCasesTotal: { $size: "$relatedCases" }
-        }
-      }
+      } }
     ]
+
     const result = await Case.aggregate(aggQuery)
     callback(null, result.shift())
   } catch (e) {
