@@ -55,10 +55,8 @@ const ExportEpidemiologicalForm = (server) => {
  */
 const GetDetailCaseSummary = (server) => {
   return (request, reply) => {
-    server.methods.services.v2.cases.getDetailCaseSummary(
-      request.params.id,
-      callback(reply)
-    )
+    const { id } = request.params
+    server.methods.services.v2.cases.getDetailCaseSummary(id, callback(reply))
   }
 }
 

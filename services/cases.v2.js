@@ -11,6 +11,17 @@ const Notif = require('../helpers/notification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
 
+// scope helper
+const filteredFields = (field, filterProp, filterValue) => {
+  return {
+    $filter: {
+      input: `$${field}`,
+      as: "item",
+      cond: { $eq: [ `$$item.${filterProp}`, filterValue ] }
+    }
+  }
+}
+
 const createCase = async (pre, payload, author, callback) => {
   // guarded fields
   Helper.deleteProps(['_id', 'id_case', 'verified_status'], payload)
@@ -146,16 +157,6 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 
 async function getDetailCaseSummary(id, callback) {
   try {
-    const filteredFields = (field, filterProp, filterValue) => {
-      return {
-        $filter: {
-          input: `$${field}`,
-          as: "item",
-          cond: { $eq: [ `$$item.${filterProp}`, filterValue ] }
-        }
-      }
-    }
-
     const aggQuery = [
       { $match: { _id: ObjectId(id) } },
       {
