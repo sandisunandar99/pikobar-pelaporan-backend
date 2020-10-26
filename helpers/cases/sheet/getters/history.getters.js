@@ -46,6 +46,8 @@ const getCurrentLocationAddress = (d) => {
   const locationType = d[conf.cell.current_location_type]
   const hospitalId = d[conf.cell.current_hospital_id]
   const address = d[conf.cell.current_location_address]
+  console.log(d[conf.cell.current_location_address]);
+  console.log(address);
   if (locationType == 'Ya dirawat') {
       if (!hospitalId) return null
       return hospitalId.split('-')[0] || null

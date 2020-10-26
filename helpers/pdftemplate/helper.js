@@ -1,4 +1,4 @@
-
+const moment = require('moment')
 /*
   * Age in db is in decimal
   * birth_date isn't mandatory.
