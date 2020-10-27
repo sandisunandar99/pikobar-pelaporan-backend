@@ -6,10 +6,10 @@ const demographicCondition = (grouping, query, criteria) => {
   const paramsDemographic = {
     $group: {
       _id: grouping,
-      wni: sumFunc("$status",status.status,"$nationality", "WNI"),
-      wna: sumFunc("$status",status.status, "$nationality", "WNA"),
-      male: sumFunc("$status",status.status, "$gender", "L"),
-      female: sumFunc("$status",status.status, "$gender", "P"),
+      wni: sumFunc(query_state,"$nationality", "WNI"),
+      wna: sumFunc(query_state, "$nationality", "WNA"),
+      male: sumFunc(query_state, "$gender", "L"),
+      female: sumFunc(query_state, "$gender", "P"),
       under_five: sumBetweenFunc(query_state, "$age", 0, 6),
       six_nine: sumBetweenFunc(query_state, "$age", 5, 10),
       twenty_twenty_nine: sumBetweenFunc(query_state, "$age", 19, 30),
