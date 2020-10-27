@@ -1,9 +1,10 @@
-const sumFunc = (column, value) => {
+const sumFunc = (query_state, column, value) => {
   return {
     $sum: {
       $cond: [
         {
           $and: [
+            query_state,
             { $eq: [column, value] }
           ],
         }, 1, 0]
