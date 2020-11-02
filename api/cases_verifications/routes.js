@@ -1,37 +1,31 @@
-module.exports = (server) =>{
+module.exports = (server) => {
   const handlers = require('./handlers')(server)
   const getCasebyId = require('../cases/route_prerequesites').getCasebyId(server)
   const getDetailCase = require('../cases/route_prerequesites').getDetailCase(server)
   const countCaseByDistrict = require('../cases/route_prerequesites').countCaseByDistrict(server)
   const countCasePendingByDistrict = require('../cases/route_prerequesites').countCasePendingByDistrict(server)
 
-    return [
-      // ...All Approval API todo move here
-      {
-        method: 'PUT',
-        path: '/cases/{id}/verifications-revise',
-        config: {
-          auth: 'jwt',
-          description: 'Create case verifications revise',
-          tags: ['api', 'cases.verifications'],
-          pre: [
-            getCasebyId,
-            getDetailCase,
-            countCaseByDistrict,
-            countCasePendingByDistrict
-          ]
-        },
-        handler: handlers.ReviseCaseVerification
+  const route = (method, path, callback, pre) => {
+    return {
+      method: method,
+      path: path,
+      config: {
+        description: ` ${method} verifications`,
+        tags: [ 'api', 'verifications' ],
+        pre: pre,
+        auth: 'jwt',
       },
-      {
-        method: 'POST',
-        path: '/verifications/submit',
-        config: {
-          auth: 'jwt',
-          description: 'Submit case to verify by dinkes',
-          tags: ['api', 'cases.verifications'],
-        },
-        handler: handlers.SubmitVerifications
-      },
-    ]
+      handler: handlers[callback],
+    }
+  }
+
+  return [
+    route('POST', '/verifications/submit', 'SubmitVerifications', []),
+    route('PUT', '/cases/{id}/verifications-revise', 'ReviseCaseVerification', [
+      getCasebyId,
+      getDetailCase,
+      countCaseByDistrict,
+      countCasePendingByDistrict
+    ]),
+  ]
 }

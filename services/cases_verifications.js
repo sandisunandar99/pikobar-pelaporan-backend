@@ -1,6 +1,7 @@
 const Case = require('../models/Case')
 const User = require('../models/User')
 const ObjectId = require('mongodb').ObjectID
+const service = 'services.casesVerifications'
 const { ROLE } = require('../helpers/constant')
 const Notif = require('../helpers/notification')
 const Notification = require('../models/Notification')
@@ -123,7 +124,7 @@ async function submitMultipleVerifications (services, payload, author, callback)
     for (let i = 0; i < payload.ids.length; i++) {
       const reqPayload = {
         verified_status: 'pending',
-        verified_comment: null
+        verified_comment: 'submit a verification case on hold',
       }
 
       await createCaseVerification(
@@ -141,20 +142,8 @@ async function submitMultipleVerifications (services, payload, author, callback)
 }
 
 module.exports = [
-  {
-    name: 'services.casesVerifications.get',
-    method: getCaseVerifications
-  },
-  {
-    name: 'services.casesVerifications.create',
-    method: createCaseVerification
-  },
-  {
-    name: 'services.casesVerifications.createCasesVerification',
-    method: createCasesVerification,
-  },
-  {
-    name: 'services.casesVerifications.submitMultipleVerifications',
-    method: submitMultipleVerifications,
-  },
+  { name: `${service}.get`, method: getCaseVerifications },
+  { name: `${service}.create`, method: createCaseVerification },
+  { name: `${service}.createCasesVerification`, method: createCasesVerification },
+  { name: `${service}.submitMultipleVerifications`, method: submitMultipleVerifications },
 ];
