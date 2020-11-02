@@ -22,7 +22,7 @@ module.exports = (server) => {
   }
 
   return [
-    route('POST', '/verifications/submit', 'SubmitVerifications', []),
+    route('POST', '/cases/verifications', 'SubmitVerifications', []),
     route('PUT', '/cases/{id}/verifications-revise', 'ReviseCaseVerification', preFunc),
   ]
 }

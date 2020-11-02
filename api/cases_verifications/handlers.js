@@ -59,7 +59,7 @@ module.exports = (server) => {
             })
         },
         /**
-         * POST /api/verifications/submit
+         * POST /api/cases/verifications
          */
         async SubmitVerifications(request, reply) {
           server.methods.services.casesVerifications.submitMultipleVerifications(
