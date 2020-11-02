@@ -30,7 +30,7 @@ const createCase = async (pre, payload, author, callback) => {
     const idCase = Validate.generateIdCase(author, pre, payload)
     const unitName = author.unit_id ? author.unit_id.name : null
     const verifiedStatus = author.role === ROLE.FASKES
-      ? VERIFIED_STATUS.PENDING
+      ? VERIFIED_STATUS.HOLD
       : VERIFIED_STATUS.VERIFIED
 
     const insertedCase = await Case.create({

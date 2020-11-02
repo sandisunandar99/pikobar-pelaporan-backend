@@ -2,6 +2,7 @@ const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
 const { LABEL, MESSAGES } = require('../../../helpers/dictionary')
+const { VERIFIED_STATUS } = require('../../../helpers/constant')
 
 // --------------------------------------------------
 //    Schema - Input Validations
@@ -24,7 +25,7 @@ const CaseUpdatePayload = Joi.object().keys({
 })
 
 const CaseVerifyPayload = Joi.object().keys({
-    verified_status: Joi.string().valid('pending','verified','declined').required(),
+    verified_status: Joi.string().valid(...Object.values(VERIFIED_STATUS)).required(),
     verified_comment: Joi.string().allow('', null).optional()
 })
 
