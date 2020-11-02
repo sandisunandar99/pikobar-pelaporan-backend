@@ -1,5 +1,6 @@
 module.exports = {
   VERIFIED_STATUS: {
+    HOLD: 'hold',
     PENDING: 'pending',
     VERIFIED: 'verified',
   },

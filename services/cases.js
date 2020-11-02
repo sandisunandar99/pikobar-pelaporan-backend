@@ -524,7 +524,7 @@ async function getCountPendingByDistrict(code, callback) {
   try {
     const params = {
       address_district_code: code,
-      verified_status: { $in: ['pending', 'declined'] },
+      verified_status: { $in: ['hold', 'pending', 'declined'] },
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
     const res = await Case.find(params).sort({id_case: -1}).limit(1);

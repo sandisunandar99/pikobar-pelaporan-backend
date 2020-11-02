@@ -34,8 +34,8 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     // generate new verified id_case
     if (payload.verified_status === 'verified') {
       updatePayload.id_case = Validate.generateIdCase(author, {
-        count_case: {},
-        count_case_pending: pre
+        count_case: pre,
+        count_case_pending: {}
       }, payload)
     }
 
@@ -111,6 +111,35 @@ async function createCasesVerification (services, callback) {
 
 }
 
+async function submitMultipleVerifications (services, payload, author, callback) {
+  try {
+    const { ids } = payload
+
+    if (!ids || !ids.length) {
+      throw new Error('ids must be provided as an array')
+    }
+
+    // get requirement doc to generate id case
+    for (let i = 0; i < payload.ids.length; i++) {
+      const reqPayload = {
+        verified_status: 'pending',
+        verified_comment: null
+      }
+
+      await createCaseVerification(
+        ids[i], author, null, reqPayload,
+        (err, res) => {
+          if (err) throw new Error
+        }
+      )
+
+    }
+    callback(null, true)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.casesVerifications.get',
@@ -123,5 +152,9 @@ module.exports = [
   {
     name: 'services.casesVerifications.createCasesVerification',
     method: createCasesVerification,
-  }
+  },
+  {
+    name: 'services.casesVerifications.submitMultipleVerifications',
+    method: submitMultipleVerifications,
+  },
 ];

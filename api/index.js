@@ -8,6 +8,8 @@ const register = (server, options, next) => {
     //console.log('RESPONSE_HEADER:', request.headers);
     //console.log('SERVER:', server.registrations);
     if (response.isBoom) {
+      console.log('RESPONSE :', response);
+
       Sentry.captureException(response)
 
       const reformated = {}
