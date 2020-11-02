@@ -5,6 +5,8 @@ module.exports = (server) => {
   const countCaseByDistrict = require('../cases/route_prerequesites').countCaseByDistrict(server)
   const countCasePendingByDistrict = require('../cases/route_prerequesites').countCasePendingByDistrict(server)
 
+  const preFunc = [ getCasebyId, getDetailCase, countCaseByDistrict, countCasePendingByDistrict ]
+
   const route = (method, path, callback, pre) => {
     return {
       method: method,
@@ -21,11 +23,6 @@ module.exports = (server) => {
 
   return [
     route('POST', '/verifications/submit', 'SubmitVerifications', []),
-    route('PUT', '/cases/{id}/verifications-revise', 'ReviseCaseVerification', [
-      getCasebyId,
-      getDetailCase,
-      countCaseByDistrict,
-      countCasePendingByDistrict
-    ]),
+    route('PUT', '/cases/{id}/verifications-revise', 'ReviseCaseVerification', preFunc),
   ]
 }

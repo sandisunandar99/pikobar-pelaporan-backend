@@ -1,7 +1,18 @@
+const schedule = require('node-schedule')
 const replyHelper = require('../helpers')
 const { replyJson } = require('../helpers')
 
 module.exports = (server) => {
+  // running task every 1 hours
+  schedule.scheduleJob('*/59 * * * *', function() {
+    const { services } = server.methods
+    services.casesVerifications.createCasesVerification(
+      services, (err, result) => {
+      if (err) return false
+      return true
+    })
+  });
+
     function constructCasesResponse(cases) {
         let jsonCases = {
             status: 200,

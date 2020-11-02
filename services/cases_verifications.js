@@ -2,11 +2,11 @@ const Case = require('../models/Case')
 const User = require('../models/User')
 const ObjectId = require('mongodb').ObjectID
 const service = 'services.casesVerifications'
-const { ROLE } = require('../helpers/constant')
 const Notif = require('../helpers/notification')
 const Notification = require('../models/Notification')
 const CaseVerification = require('../models/CaseVerification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
+const { ROLE, VERIFIED_STATUS } = require('../helpers/constant')
 const { getCountBasedOnDistrict } = require('../helpers/cases/global')
 
 async function getCaseVerifications (caseId, callback) {
@@ -33,7 +33,7 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     }
 
     // generate new verified id_case
-    if (payload.verified_status === 'verified') {
+    if (payload.verified_status === VERIFIED_STATUS.VERIFIED) {
       updatePayload.id_case = Validate.generateIdCase(author, {
         count_case: pre,
         count_case_pending: {}
@@ -67,7 +67,7 @@ async function createCasesVerification (services, callback) {
   const start = new Date(new Date().getTime() - (24 * 60 * 60 * 1000))
 
   const unverifiedCasesFor24Hours = await Case.find({
-    verified_status: 'pending',
+    verified_status: VERIFIED_STATUS.PENDING,
     delete_status: { $ne: 'deleted' },
     updatedAt: { $lt: start }
   })
@@ -78,7 +78,7 @@ async function createCasesVerification (services, callback) {
       const id = item._id
 
       const payload = {
-        verified_status: 'verified',
+        verified_status: VERIFIED_STATUS.VERIFIED,
         verified_comment: 'Automatically verified by the system'
       }
 
@@ -95,10 +95,9 @@ async function createCasesVerification (services, callback) {
 
       // insert verification logs
       const verificationPayload = {
+        ...payload,
         case: id,
-        verified_status: 'verified',
-        verified_comment: 'Automatically verified by the system',
-        verifier: null
+        verifier: null,
       }
 
       const verification = new CaseVerification(verificationPayload)
@@ -116,26 +115,30 @@ async function submitMultipleVerifications (services, payload, author, callback)
   try {
     const { ids } = payload
 
+    const reqPayload = {
+      verified_status: VERIFIED_STATUS.PENDING,
+      verified_comment: 'submit a verification case on hold',
+    }
+
     if (!ids || !ids.length) {
       throw new Error('ids must be provided as an array')
     }
 
-    // get requirement doc to generate id case
-    for (let i = 0; i < payload.ids.length; i++) {
-      const reqPayload = {
-        verified_status: 'pending',
-        verified_comment: 'submit a verification case on hold',
-      }
+    const result = await Case.updateMany(
+      { _id: { $in: ids }, verified_status: VERIFIED_STATUS.HOLD },
+      { $set: reqPayload },
+    )
 
-      await createCaseVerification(
-        ids[i], author, null, reqPayload,
-        (err, res) => {
-          if (err) throw new Error
-        }
-      )
-
+    // insert verification logs
+    for (let i in payload.ids) {
+      await CaseVerification.create({
+        ...reqPayload,
+        case: ids[i],
+        verifier: author._id,
+      })
     }
-    callback(null, true)
+
+    callback(null, result)
   } catch (e) {
     callback(e, null)
   }
