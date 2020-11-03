@@ -107,30 +107,12 @@ references.refActivities = [
 ]
 
 references.refFinalResults = [
-  {
-    value: '1',
-    text: 'selesai isolasi/sembuh'
-  },
-  {
-    value: '2',
-    text: 'meninggal'
-  },
-  {
-    value: '3',
-    text: 'discarded'
-  },
-  {
-    value: '4',
-    text: 'masih sakit'
-  },
-  {
-    value: '5',
-    text: 'masih dikarantina'
-  },
-  {
-    value: '0',
-    text: 'negatif'
-  },
+  { value: 0, text: 'negatif' },
+  { value: 1, text: 'selesai isolasi/sembuh' },
+  { value: 2, text: 'meninggal' },
+  { value: 3, text: 'discarded' },
+  { value: 4, text: 'masih sakit' },
+  { value: 5, text: 'masih dikarantina' },
 ]
 
 references.findHospital = async (name) => {
