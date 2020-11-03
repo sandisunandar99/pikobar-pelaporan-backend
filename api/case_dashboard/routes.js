@@ -21,6 +21,13 @@ const routingDashboard = (handlers, server, validations, role) => {
       validations.caseDashboard, role
     ),
     handler: handlers.countVisualization(server),
+  },{
+    method: 'GET', path: '/dashboard/v2/export-demographic',
+    config: configWithValidation(
+      "export demographic", "export demographic",
+      validations.caseDashboard, role
+    ),
+    handler: handlers.exportDemographic(server),
   }]
 }
 
