@@ -1,8 +1,7 @@
-const references = {}
 const { CRITERIA } = require('../../constant')
 const Unit = require('../../../models/Unit')
 
-references.refSymptoms = [
+const refSymptoms = [
   'Suhu tubuh >= 38 °C',
   'Suhu tubuh < 38 °C',
   'Batuk',
@@ -18,7 +17,7 @@ references.refSymptoms = [
   'Diare'
 ]
 
-references.refDiseases = [
+const refDiseases = [
   'Hamil',
   'Diabetes',
   'Penyakit Jantung',
@@ -30,7 +29,7 @@ references.refDiseases = [
   'PPOK',
 ]
 
-references.refApd = [
+const refApd = [
   'Gown',
   'Masker Bedah',
   'Sarung Tangan',
@@ -40,7 +39,7 @@ references.refApd = [
   'Tidak Sama Sekali',
 ]
 
-references.refHealthWorkers = [
+const refHealthWorkers = [
   { value: 'Dokter', text: 'doker' },
   { value: 'Perawat', text: 'perawat' },
   { value: 'Farmasi', text: 'farmasi' },
@@ -52,12 +51,12 @@ references.refHealthWorkers = [
   { value: 'Lainnya', text: 'lainnya' },
 ]
 
-references.refTravelingType = [
+const refTravelingType = [
   { value: 'Dari Luar Negeri', text: 'dari luar negeri' },
   { value: 'Dari Luar Kota', text: 'dari luar negeri' },
 ]
 
-references.refPlaceCategories = [
+const refPlaceCategories = [
   { value: 'Pasar Modern / Tradisional', text: 'pasar modern / tradisional' },
   { value: 'Pasar Hewan', text: 'pasar hewan' },
   { value: 'Fasilitas Kesehatan', text: 'fasilitas kesehatan' },
@@ -66,14 +65,14 @@ references.refPlaceCategories = [
   { value: 'Tempat Publik Lainnya', text: 'tempat publik lainnya' },
 ]
 
-references.refTransmissionType = [
+const refTransmissionType = [
   { value: 1, text: 'kasus impor' },
   { value: 2, text: 'kasus kontak dengan kasus impor' },
   { value: 3, text: 'kasus lokal tanpa diketahui sumber penuralannya' },
   { value: 4, text: 'kasus lokal dengan kaitan epidemiologis' },
 ]
 
-references.refClusterType = [
+const refClusterType = [
   { value: 1, text: 'lainnya' },
   { value: 2, text: 'nakes' },
   { value: 3, text: 'pasar/pusat perbelanjaan/toko' },
@@ -85,7 +84,7 @@ references.refClusterType = [
   { value: 9, text: 'rumah makan' },
 ]
 
-references.refIncomes = [
+const refIncomes = [
   { value: 0, text: 'tidak berpenghasilan' },
   { value: 1, text: '< 1 juta' },
   { value: 2, text: '1 s/d 3 juta' },
@@ -93,14 +92,14 @@ references.refIncomes = [
   { value: 4, text: '> 5 juta' },
 ]
 
-references.refCriterias = [
+const refCriterias = [
   { value: CRITERIA.CLOSE, text: 'kontak erat' },
   { value: CRITERIA.SUS, text: 'suspek' },
   { value: CRITERIA.CONF, text: 'konfirmasi' },
   { value: CRITERIA.PROB, text: 'probable' },
 ]
 
-references.refFinalResults = [
+const refFinalResults = [
   { value: '0', text: 'negatif' },
   { value: '1', text: 'selesai isolasi/sembuh' },
   { value: '2', text: 'meninggal' },
@@ -109,13 +108,13 @@ references.refFinalResults = [
   { value: '5', text: 'masih dikarantina' },
 ]
 
-references.refActivities = [
+const refActivities = [
   { value: 0, text: 'sedenter' },
   { value: 1, text: '<150 menit per-minggu' },
   { value: 2, text: '>150 menit per-minggu' },
 ]
 
-references.findHospital = async (name) => {
+const findHospital = async (name) => {
   const hospital = await Unit.findOne({
     unit_type: 'rumahsakit',
     name: new RegExp(name.trim(), 'i')
@@ -128,4 +127,18 @@ references.findHospital = async (name) => {
   return hospital._id
 }
 
-module.exports = references
+module.exports = {
+  refSymptoms,
+  refDiseases,
+  refApd,
+  refHealthWorkers,
+  refTravelingType,
+  refPlaceCategories,
+  refTransmissionType,
+  refClusterType,
+  refIncomes,
+  refCriterias,
+  refFinalResults,
+  refActivities,
+  findHospital,
+}
