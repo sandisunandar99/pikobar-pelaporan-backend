@@ -1,4 +1,5 @@
 const references = {}
+const { CRITERIA } = require('../../constant')
 const Unit = require('../../../models/Unit')
 
 references.refSymptoms = [
@@ -90,6 +91,28 @@ references.refIncomes = [
   { value: 2, text: '1 s/d 3 juta' },
   { value: 3, text: '3 s/d 5 juta' },
   { value: 4, text: '> 5 juta' },
+]
+
+references.refCriterias = [
+  { value: CRITERIA.CLOSE, text: 'kontak erat' },
+  { value: CRITERIA.SUS, text: 'suspek' },
+  { value: CRITERIA.CONF, text: 'konfirmasi' },
+  { value: CRITERIA.PROB, text: 'probable' },
+]
+
+references.refFinalResults = [
+  { value: '0', text: 'negatif' },
+  { value: '1', text: 'selesai isolasi/sembuh' },
+  { value: '2', text: 'meninggal' },
+  { value: '3', text: 'discarded' },
+  { value: '4', text: 'masih sakit' },
+  { value: '5', text: 'masih dikarantina' },
+]
+
+references.refActivities = [
+  { value: 0, text: 'sedenter' },
+  { value: 1, text: '<150 menit per-minggu' },
+  { value: 2, text: '>150 menit per-minggu' },
 ]
 
 references.findHospital = async (name) => {

@@ -136,7 +136,7 @@ helpers._toLowerCaseTrim = (v) => {
 helpers.findReference = (ref, v) => {
   const find = ref.find(r => r.text === helpers._toLowerCaseTrim(v))
 
-  if (find && find.value) {
+  if (find) {
     return find.value
   }
 
