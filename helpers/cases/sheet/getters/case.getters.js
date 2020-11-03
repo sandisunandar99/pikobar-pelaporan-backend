@@ -192,14 +192,13 @@ getters.getVisitedLocalArea = (d) => {
 }
 
 getters.getVisitedPublicPlace = (d) => {
-  const visited_public_place = {
+  return[{
     public_place_category: getPublicPlaceCategory(d),
     public_place_name: getPublicPlaceName(d),
     public_place_address: getPublicPlaceAddress(d),
     public_place_date_visited: getPublicPlaceDateVisited(d),
     public_place_duration_visited: getPublicPlaceDurationVisited(d),
-  }
-  return [ visited_public_place ]
+  }]
 }
 
 getters.getTransmissionType = (d) => {

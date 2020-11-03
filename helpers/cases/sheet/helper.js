@@ -1,26 +1,27 @@
 const config = require('./config.json')
 const lang = require('../../dictionary/id.json')
+const helpers = {}
 
-const _toString = (value) => {
+helpers._toString = (value) => {
   if (value && value.toString) return value.toString()
   return value
 }
-const _toDateString = (value) => {
+helpers._toDateString = (value) => {
   if (!value) return null
   return new Date((value - (25567 + 1))*86400*1000) || null
 }
-const _toUnsignedInt = (value) => {
+helpers._toUnsignedInt = (value) => {
   if (value && value.parseToInt) return Math.abs(value.parseToInt())
   else if (value && typeof value === 'number') return Math.abs(value)
   return value
 }
 
-const getStringValueByIndex = (value, index) => {
+helpers.getStringValueByIndex = (value, index) => {
   if (!value) return null
-  return _toString(value.split('-')[index] || null)
+  return helpers._toString(value.split('-')[index] || null)
 }
 
-const requestFileError = (payload) => {
+helpers.requestFileError = (payload) => {
   let error = false
   const useTemplateVersioning = false
 
@@ -40,7 +41,7 @@ const requestFileError = (payload) => {
 * if different means the case is in the process of insertion by another process
 * to remember, this is only a temporary method to prevent :)
 */
-const isAnotherImportProcessIsRunning = async (schema) => {
+helpers.isAnotherImportProcessIsRunning = async (schema) => {
   const delay = (t) => {
     return new Promise(resolve => setTimeout(resolve.bind(), t))
   }
@@ -53,7 +54,7 @@ const isAnotherImportProcessIsRunning = async (schema) => {
   return false
 }
 
-const isTemplateVerified = (dataSheet) => {
+helpers.isTemplateVerified = (dataSheet) => {
 
   const verfiedTemplate = config.verified_template
   if (dataSheet[1][34] !== verfiedTemplate
@@ -66,18 +67,18 @@ const isTemplateVerified = (dataSheet) => {
   return true
 }
 
-const getTransformedAge = (age) => {
+helpers.getTransformedAge = (age) => {
   if (!age) return null
-  const a = _toUnsignedInt(age) || '0'
-  return _toString(a)
+  const a = helpers._toUnsignedInt(age) || '0'
+  return helpers._toString(a)
 }
 
-const getArrayValues = (reference, cellString) => {
+helpers.getArrayValues = (reference, cellString) => {
   const unknown = [], registered = []
   const cellArray = cellString ? cellString.trim().split(',') : []
 
   for (let i = 0; i < cellArray.length; i++) {
-      const val = _toString(cellArray[i]).trim().toLowerCase()
+      const val = helpers._toString(cellArray[i]).trim().toLowerCase()
       const founded = reference.find(v => v.toLowerCase() === val)
 
       if (founded) registered.push(founded)
@@ -87,8 +88,8 @@ const getArrayValues = (reference, cellString) => {
   return { registered, unknown }
 }
 
-const getUnknownValuesOfArray = (cellValue, unknownArrs) => {
-  let value = _toString(cellValue)
+helpers.getUnknownValuesOfArray = (cellValue, unknownArrs) => {
+  let value = helpers._toString(cellValue)
   if (!unknownArrs.join) return null
 
   if (value) {
@@ -100,7 +101,7 @@ const getUnknownValuesOfArray = (cellValue, unknownArrs) => {
   return value
 }
 
-const yesNoUnknown = (value) => {
+helpers.yesNoUnknown = (value) => {
   let res = 3
 
   if (value) {
@@ -121,19 +122,19 @@ const yesNoUnknown = (value) => {
   return res
 }
 
-const trueOrFalse = (v) => {
+helpers.trueOrFalse = (v) => {
   if (v.toLowerCase) { v = v.toLowerCase() }
   return v === 'ya memiliki'
 }
 
-const _toLowerCaseTrim = (v) => {
-  let res = _toString(v)
+helpers._toLowerCaseTrim = (v) => {
+  let res = helpers._toString(v)
   if (res) { res = res.trim().toLowerCase() }
   return res
 }
 
-const findReference = (ref, v) => {
-  const find = ref.find(r => r.text === _toLowerCaseTrim(v))
+helpers.findReference = (ref, v) => {
+  const find = ref.find(r => r.text === helpers._toLowerCaseTrim(v))
 
   if (find && find.value) {
     return find.value
@@ -142,20 +143,4 @@ const findReference = (ref, v) => {
   return null
 }
 
-const modules = {
-  _toString,
-  _toDateString,
-  _toUnsignedInt,
-  trueOrFalse,
-  yesNoUnknown,
-  findReference,
-  getArrayValues,
-  requestFileError,
-  getTransformedAge,
-  isTemplateVerified,
-  getStringValueByIndex,
-  getUnknownValuesOfArray,
-  isAnotherImportProcessIsRunning,
-}
-
-module.exports = modules
+module.exports = helpers
