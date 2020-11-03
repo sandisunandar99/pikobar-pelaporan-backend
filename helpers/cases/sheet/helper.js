@@ -126,12 +126,29 @@ const trueOrFalse = (v) => {
   return v === 'ya memiliki'
 }
 
+const _toLowerCaseTrim = (v) => {
+  let res = _toString(v)
+  if (res) { res = res.trim().toLowerCase() }
+  return res
+}
+
+const findReference = (ref, v) => {
+  const find = ref.find(r => r.text === _toLowerCaseTrim(v))
+
+  if (find && find.value) {
+    return find.value
+  }
+
+  return null
+}
+
 const modules = {
   _toString,
   _toDateString,
   _toUnsignedInt,
   trueOrFalse,
   yesNoUnknown,
+  findReference,
   getArrayValues,
   requestFileError,
   getTransformedAge,

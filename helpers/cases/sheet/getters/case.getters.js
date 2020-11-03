@@ -1,79 +1,92 @@
 const conf = require('../config.json')
-const { _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge } = require('../helper')
 const {
-  getInspectionType,
-  getSpecienType,
-  getInspectionDate,
-  getInspectionLocation,
-  getSpecimenTo,
-  getInspectionResult
-} = require('./attributes/inspection_support')
+  refApd, refHealthWorkers, refTransmissionType, refClusterType, refIncomes,
+} = require('../reference')
+const {
+  _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge, trueOrFalse, findReference, getArrayValues,
+} = require('../helper')
 
-const getNum = (d) => {
+// import attributes
+const {
+  getTravelingType, getTravelingVisited, getTravelingCity, getTravelingDate, getTravelingArrive,
+} = require('./attributes/traveling_history')
+const {
+  getInspectionType, getSpecienType, getInspectionDate, getInspectionLocation, getSpecimenTo, getInspectionResult,
+} = require('./attributes/inspection_support')
+const {
+  getPublicPlaceCategory, getPublicPlaceName, getPublicPlaceAddress, getPublicPlaceDateVisited, getPublicPlaceDurationVisited
+} = require('./attributes/visited_public_place')
+const {
+  getVisitedLocalAreaProvince, getVisitedLocalAreaCity,
+} = require('./attributes/visited_local_area')
+
+const getters = {}
+
+getters.getNum = (d) => {
   return _toString(d[conf.cell.num])
 }
 
-const getInterviewerName = (d) => {
+getters.getInterviewerName = (d) => {
   return _toString(d[conf.cell.interviewers_name]) || undefined
 }
 
-const getInterviewerPhoneNumber = (d) => {
+getters.getInterviewerPhoneNumber = (d) => {
   return _toString(d[conf.cell.interviewers_phone_number]) || undefined
 }
 
-const getInterviewDate = (d) => {
+getters.getInterviewDate = (d) => {
   return _toString(d[conf.cell.interview_date]) || undefined
 }
 
-const isNikExists = (d) => {
-  return !!getNik(d)
+getters.isNikExists = (d) => {
+  return !!getters.getNik(d)
 }
 
-const getNik = (d) => {
+getters.getNik = (d) => {
   return _toString(d[conf.cell.nik]) || undefined
 }
 
-const getNikNote = (d) => {
+getters.getNikNote = (d) => {
   return _toString(d[conf.cell.note_nik]) || undefined
 }
 
-const isPhoneNumberExists = (d) => {
-  return !!getPhoneNumber(d)
+getters.isPhoneNumberExists = (d) => {
+  return !!getters.getPhoneNumber(d)
 }
 
-const getPhoneNumber = (d) => {
+getters.getPhoneNumber = (d) => {
   return _toString(d[conf.cell.phone_number])
 }
 
-const getPhoneNumberNote = (d) => {
+getters.getPhoneNumberNote = (d) => {
   return _toString(d[conf.cell.note_phone_number])
 }
 
-const getName = (d) => {
+getters.getName = (d) => {
   return _toString(d[conf.cell.name]) || undefined
 }
 
-const getNameParent = (d) => {
+getters.getNameParent = (d) => {
   return _toString(d[conf.cell.name_parents]) || undefined
 }
 
-const getPlaceOfBirth = (d) => {
+getters.getPlaceOfBirth = (d) => {
   return _toString(d[conf.cell.place_of_birth]) || undefined
 }
 
-const getBirthDate = (d) => {
+getters.getBirthDate = (d) => {
   return _toDateString(d[conf.cell.birth_date])
 }
 
-const getAge = (d) => {
+getters.getAge = (d) => {
   return getTransformedAge(d[conf.cell.age])
 }
 
-const getAgeMonth = (d) => {
+getters.getAgeMonth = (d) => {
   return getTransformedAge(d[conf.cell.month])
 }
 
-const getGender = (d) => {
+getters.getGender = (d) => {
   const gender = d[conf.cell.gender]
   if (gender) {
     return gender == 'Perempuan' ? 'P' : 'L'
@@ -81,98 +94,73 @@ const getGender = (d) => {
   return gender
 }
 
-const getAddressProvinceCode = (d) => {
+getters.getAddressProvinceCode = (d) => {
   return '32'
 }
 
-const getAddressProvinceName = (d) => {
+getters.getAddressProvinceName = (d) => {
   return 'Jawa Barat'
 }
 
-const getAddressDistrictCode = (d) => {
+getters.getAddressDistrictCode = (d) => {
   return getStringValueByIndex(d[conf.cell.address_district_code], 1)
 }
 
-const getAddressDistrictName = (d) => {
+getters.getAddressDistrictName = (d) => {
   return getStringValueByIndex(d[conf.cell.address_district_code], 0)
 }
 
-const getAddressSubdistrictCode = (d) => {
+getters.getAddressSubdistrictCode = (d) => {
   return getStringValueByIndex(d[conf.cell.address_subdistrict_code], 1)
 }
 
 
-const getAddressSubdistrictName = (d) => {
+getters.getAddressSubdistrictName = (d) => {
   return getStringValueByIndex(d[conf.cell.address_subdistrict_code], 0)
 
 }
 
-const getAddressVillageCode = (d) => {
+getters.getAddressVillageCode = (d) => {
   return getStringValueByIndex(d[conf.cell.address_village_code], 1)
 }
 
-const getAddressVillageName = (d) => {
+getters.getAddressVillageName = (d) => {
   return getStringValueByIndex(d[conf.cell.address_village_code], 0)
 }
 
-const getAddressRT = (d) => {
+getters.getAddressRT = (d) => {
   return _toUnsignedInt(d[conf.cell.rt])
 }
 
-const getAddressRW = (d) => {
+getters.getAddressRW = (d) => {
   return _toUnsignedInt(d[conf.cell.rw])
 }
 
-const getAddressStreet = (d) => {
+getters.getAddressStreet = (d) => {
   return _toString(d[conf.cell.address_street])
 }
 
-const getOccupation = (d) => {
+getters.getOccupation = (d) => {
   return _toString(d[conf.cell.occupation])
 }
 
-const getOfficeAddress = (d) => {
+getters.getOfficeAddress = (d) => {
   return _toString(d[conf.cell.office_address])
 }
 
-const getNationality = (d) => {
+getters.getNationality = (d) => {
   return _toString(d[conf.cell.nationality]) || undefined
 }
 
-const getNationalityName = (d) => {
+getters.getNationalityName = (d) => {
   return _toString(d[conf.cell.nationality_name])
 }
 
-const getIncome = (d) => {
-  let result = 0
-  let selected = _toString(d[conf.cell.income])
-
-  if (selected) { selected = selected.trim().toLowerCase() }
-
-  switch(selected) {
-    case 'tidak berpenghasilan':
-      result = 0
-      break;
-    case '< 1 juta':
-      result = 1
-      break;
-    case '1 s/d 3 juta':
-      result = 2
-      break;
-    case '3 s/d 5 juta':
-      result = 3
-      break;
-    case '> 5 juta':
-      result = 4
-      break;
-    default:
-      result = 0
-  }
-
-  return result
+getters.getIncome = (d) => {
+  return findReference(refIncomes, d[conf.cell.income])
 }
 
-const getInspectionSupport = (d) => {
+getters.getInspectionSupport = (d) => {
   const inspection_support = {
     inspection_type: getInspectionType(d),
     specimens_type: getSpecienType(d),
@@ -184,40 +172,79 @@ const getInspectionSupport = (d) => {
   return [ inspection_support ]
 }
 
-module.exports = {
-  // init,
-  getNum,
-  getInterviewerName,
-  getInterviewerPhoneNumber,
-  getInterviewDate,
-  isNikExists,
-  getNik,
-  getNikNote,
-  isPhoneNumberExists,
-  getPhoneNumber,
-  getPhoneNumberNote,
-  getName,
-  getNameParent,
-  getPlaceOfBirth,
-  getBirthDate,
-  getAge,
-  getAgeMonth,
-  getGender,
-  getAddressProvinceCode,
-  getAddressProvinceName,
-  getAddressDistrictCode,
-  getAddressDistrictName,
-  getAddressSubdistrictCode,
-  getAddressSubdistrictName,
-  getAddressVillageCode,
-  getAddressVillageName,
-  getAddressRT,
-  getAddressRW,
-  getAddressStreet,
-  getOccupation,
-  getOfficeAddress,
-  getNationality,
-  getNationalityName,
-  getIncome,
-  getInspectionSupport,
+getters.getTravelingHistory = (d) => {
+  const traveling_history = {
+    travelling_type: getTravelingType(d),
+    travelling_visited: getTravelingVisited(d),
+    travelling_city: getTravelingCity(d),
+    travelling_date: getTravelingDate(d),
+    travelling_arrive: getTravelingArrive(d),
+  }
+  return [ traveling_history ]
 }
+
+getters.getVisitedLocalArea = (d) => {
+  const visited_local_area = {
+    visited_local_area_province: getVisitedLocalAreaProvince(d),
+    visited_local_area_city: getVisitedLocalAreaCity(d),
+  }
+  return [ visited_local_area ]
+}
+
+getters.getVisitedPublicPlace = (d) => {
+  const visited_public_place = {
+    public_place_category: getPublicPlaceCategory(d),
+    public_place_name: getPublicPlaceName(d),
+    public_place_address: getPublicPlaceAddress(d),
+    public_place_date_visited: getPublicPlaceDateVisited(d),
+    public_place_duration_visited: getPublicPlaceDurationVisited(d),
+  }
+  return [ visited_public_place ]
+}
+
+getters.getTransmissionType = (d) => {
+  return findReference(refTransmissionType, d[conf.cell.transmission_type])
+}
+
+getters.getClusterType = (d) => {
+  return findReference(refClusterType, d[conf.cell.cluster_type])
+}
+
+getters.getClusterOther = (d) => {
+  return _toString(d[conf.cell.cluster_other])
+}
+
+getters.isCloseContactHeavyIspaGroup = (d) => {
+  return trueOrFalse(d[conf.cell.close_contact_heavy_ispa_group])
+}
+
+getters.isCloseContactHavePets = (d) => {
+  return !!getters.getCloseContactPets(d)
+}
+
+getters.getCloseContactPets = (d) => {
+  return _toString(d[conf.cell.close_contact_pets])
+}
+
+getters.isCloseContactHealthWorker = (d) => {
+  return !!getters.getHealthWorker(d)
+}
+
+getters.getHealthWorker = (d) => {
+  return findReference(refHealthWorkers, d[conf.cell.health_workers])
+}
+
+getters.getApdUse = (d) => {
+  const apdUse = getArrayValues(refApd, _toString(d[conf.cell.apd_use]))
+  return apdUse.registered
+}
+
+getters.isCloseContactPerformingAerosol = (d) => {
+  return !!getters.getCloseContactPerformingAerosol(d)
+}
+
+getters.getCloseContactPerformingAerosol = (d) => {
+  return _toString(d[conf.cell.close_contact_performing_aerosol])
+}
+
+module.exports = getters

@@ -49,6 +49,20 @@ const caseAdditionalInfo = (d) => {
     nationality_name: sheet.getNationalityName(d),
     income: sheet.getIncome(d),
     inspection_support: sheet.getInspectionSupport(d),
+    traveling_history: sheet.getTravelingHistory(d),
+    visited_local_area: sheet.getVisitedLocalArea(d),
+    visited_public_place: sheet.getVisitedPublicPlace(d),
+    transmission_type: sheet.getTransmissionType(d),
+    cluster_type: sheet.getClusterType(d),
+    cluster_other: sheet.getClusterOther(d),
+    close_contact_heavy_ispa_group: sheet.isCloseContactHeavyIspaGroup(d),
+    is_close_contact_have_pets: sheet.isCloseContactHavePets(d),
+    close_contact_pets: sheet.getCloseContactPets(d),
+    close_contact_health_worker: sheet.isCloseContactHealthWorker(d),
+    health_workers: sheet.getHealthWorker(d),
+    apd_use: sheet.getApdUse(d),
+    is_close_contact_performing_aerosol: sheet.isCloseContactPerformingAerosol(d),
+    close_contact_performing_aerosol: sheet.getCloseContactPerformingAerosol(d),
   }
 }
 
@@ -92,7 +106,6 @@ const historyCondition = (d) => {
     last_date_status_patient: sheet.getLastDateStatusPatient(d),
   }
 }
-
 
 const getBuiltCreateCasePayload = async (d, uniqueBatchId) => {
   return {
