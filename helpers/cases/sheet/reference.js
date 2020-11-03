@@ -108,10 +108,6 @@ references.refActivities = [
 
 references.refFinalResults = [
   {
-    value: '0',
-    text: 'negatif'
-  },
-  {
     value: '1',
     text: 'selesai isolasi/sembuh'
   },
@@ -130,6 +126,10 @@ references.refFinalResults = [
   {
     value: '5',
     text: 'masih dikarantina'
+  },
+  {
+    value: '0',
+    text: 'negatif'
   },
 ]
 
