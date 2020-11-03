@@ -1,7 +1,9 @@
+const references = {}
+const { component } = require('./helper')
 const { CRITERIA } = require('../../constant')
 const Unit = require('../../../models/Unit')
 
-const refSymptoms = [
+references.refSymptoms = [
   'Suhu tubuh >= 38 °C',
   'Suhu tubuh < 38 °C',
   'Batuk',
@@ -17,7 +19,7 @@ const refSymptoms = [
   'Diare'
 ]
 
-const refDiseases = [
+references.refDiseases = [
   'Hamil',
   'Diabetes',
   'Penyakit Jantung',
@@ -29,7 +31,7 @@ const refDiseases = [
   'PPOK',
 ]
 
-const refApd = [
+references.refApd = [
   'Gown',
   'Masker Bedah',
   'Sarung Tangan',
@@ -39,82 +41,82 @@ const refApd = [
   'Tidak Sama Sekali',
 ]
 
-const refHealthWorkers = [
-  { value: 'Dokter', text: 'doker' },
-  { value: 'Perawat', text: 'perawat' },
-  { value: 'Farmasi', text: 'farmasi' },
-  { value: 'Dokter Spesialis Paru', text: 'dokter spesialis paru' },
-  { value: 'Dokter Spesialis Lain', text: 'dokter spesialis lain' },
-  { value: 'Bidan', text: 'bidan' },
-  { value: 'Ahli Gizi', text: 'ahli gizi' },
-  { value: 'Tenaga Kesehatan Masyarakat', text: 'tenaga kesehatan masyarakat' },
-  { value: 'Lainnya', text: 'lainnya' },
+references.refHealthWorkers = [
+  component('Dokter', 'dokter'),
+  component('Perawat', 'perawat'),
+  component('Farmasi', 'farmasi'),
+  component('Dokter Spesialis Paru', 'dokter spesialis paru'),
+  component('Dokter Spesialis Lain', 'dokter spesialis lain'),
+  component('Bidan', 'bidan'),
+  component('Ahli Gizi', 'ahli gizi'),
+  component('Tenaga Kesehatan Masyarakat', 'tenaga kesehatan masyarakat'),
+  component('Lainnya', 'lainnya'),
 ]
 
-const refTravelingType = [
-  { value: 'Dari Luar Negeri', text: 'dari luar negeri' },
-  { value: 'Dari Luar Kota', text: 'dari luar negeri' },
+references.refTravelingType = [
+  component('Dari Luar Negeri', 'dari luar negeri'),
+  component('Dari Luar Kota', 'dari luar negeri'),
 ]
 
-const refPlaceCategories = [
-  { value: 'Pasar Modern / Tradisional', text: 'pasar modern / tradisional' },
-  { value: 'Pasar Hewan', text: 'pasar hewan' },
-  { value: 'Fasilitas Kesehatan', text: 'fasilitas kesehatan' },
-  { value: 'Tempat Wisata', text: 'tempat wisata' },
-  { value: 'Restoran', text: 'restoran' },
-  { value: 'Tempat Publik Lainnya', text: 'tempat publik lainnya' },
+references.refPlaceCategories = [
+  component('Pasar Modern / Tradisional', 'pasar modern / tradisional'),
+  component('Pasar Hewan', 'pasar hewan'),
+  component('Fasilitas Kesehatan', 'fasilitas kesehatan'),
+  component('Tempat Wisata', 'tempat wisata'),
+  component('Restoran', 'restoran'),
+  component('Tempat Publik Lainnya', 'tempat publik lainnya'),
 ]
 
-const refTransmissionType = [
-  { value: 1, text: 'kasus impor' },
-  { value: 2, text: 'kasus kontak dengan kasus impor' },
-  { value: 3, text: 'kasus lokal tanpa diketahui sumber penuralannya' },
-  { value: 4, text: 'kasus lokal dengan kaitan epidemiologis' },
+references.refTransmissionType = [
+  component(1, 'kasus impor'),
+  component(2, 'kasus kontak dengan kasus impor'),
+  component(3, 'kasus lokal tanpa diketahui sumber penuralannya'),
+  component(4, 'kasus lokal dengan kaitan epidemiologis'),
 ]
 
-const refClusterType = [
-  { value: 1, text: 'lainnya' },
-  { value: 2, text: 'nakes' },
-  { value: 3, text: 'pasar/pusat perbelanjaan/toko' },
-  { value: 4, text: 'pabrik' },
-  { value: 5, text: 'perkantoran' },
-  { value: 6, text: 'tempat wisata' },
-  { value: 7, text: 'tempat ibadah' },
-  { value: 8, text: 'rumah tangga' },
-  { value: 9, text: 'rumah makan' },
+references.refClusterType = [
+  component(1, 'lainnya'),
+  component(2, 'nakes'),
+  component(3, 'pasar/pusat perbelanjaan/toko'),
+  component(4, 'pabrik'),
+  component(5, 'perkantoran'),
+  component(6, 'tempat wisata'),
+  component(7, 'tempat ibadah'),
+  component(8, 'rumah tangga'),
+  component(9, 'rumah makan'),
 ]
 
-const refIncomes = [
-  { value: 0, text: 'tidak berpenghasilan' },
-  { value: 1, text: '< 1 juta' },
-  { value: 2, text: '1 s/d 3 juta' },
-  { value: 3, text: '3 s/d 5 juta' },
-  { value: 4, text: '> 5 juta' },
+references.refIncomes = [
+  component(0, 'tidak berpenghasilan'),
+  component(1, '< 1 juta'),
+  component(2, '1 s/d 3 juta'),
+  component(3, '3 s/d 5 juta'),
+  component(4, '> 5 juta'),
 ]
 
-const refCriterias = [
-  { value: CRITERIA.CLOSE, text: 'kontak erat' },
-  { value: CRITERIA.SUS, text: 'suspek' },
-  { value: CRITERIA.CONF, text: 'konfirmasi' },
-  { value: CRITERIA.PROB, text: 'probable' },
+references.refCriterias = [
+  component(CRITERIA.CLOSE, 'kontak erat'),
+  component(CRITERIA.SUS, 'suspek'),
+  component(CRITERIA.CONF, 'konfirmasi'),
+  component(CRITERIA.PROB, 'probable'),
 ]
 
-const refFinalResults = [
-  { value: '0', text: 'negatif' },
-  { value: '1', text: 'selesai isolasi/sembuh' },
-  { value: '2', text: 'meninggal' },
-  { value: '3', text: 'discarded' },
-  { value: '4', text: 'masih sakit' },
-  { value: '5', text: 'masih dikarantina' },
+references.refFinalResults = [
+  component('0', 'negatif'),
+  component('1', 'selesai isolasi/sembuh'),
+  component('2', 'meninggal'),
+  component('3', 'discarded'),
+  component('4', 'masih sakit'),
+  component('5', 'masih dikarantina'),
 ]
 
-const refActivities = [
-  { value: 0, text: 'sedenter' },
-  { value: 1, text: '<150 menit per-minggu' },
-  { value: 2, text: '>150 menit per-minggu' },
+references.refActivities = [
+  component(0, 'sedenter'),
+  component(1, '<150 menit per-minggu'),
+  component(2, '>150 menit per-minggu'),
 ]
 
-const findHospital = async (name) => {
+references.findHospital = async (name) => {
   const hospital = await Unit.findOne({
     unit_type: 'rumahsakit',
     name: new RegExp(name.trim(), 'i')
@@ -127,18 +129,4 @@ const findHospital = async (name) => {
   return hospital._id
 }
 
-module.exports = {
-  refSymptoms,
-  refDiseases,
-  refApd,
-  refHealthWorkers,
-  refTravelingType,
-  refPlaceCategories,
-  refTransmissionType,
-  refClusterType,
-  refIncomes,
-  refCriterias,
-  refFinalResults,
-  refActivities,
-  findHospital,
-}
+module.exports = references
