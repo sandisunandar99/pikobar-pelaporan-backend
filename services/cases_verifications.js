@@ -1,32 +1,13 @@
-const mongoose = require('mongoose');
-
-require('../models/Case');
-const Case = mongoose.model('Case');
-
-require('../models/CaseVerification');
-const CaseVerification = mongoose.model('CaseVerification');
-
-require('../models/DistrictCity')
-const DistrictCity = mongoose.model('Districtcity')
-
-require('../models/User')
-const User = mongoose.model('User')
-
-require('../models/Notification')
-const Notification = mongoose.model('Notification')
-
+const Case = require('../models/Case')
+const User = require('../models/User')
+const ObjectId = require('mongodb').ObjectID
+const service = 'services.casesVerifications'
 const Notif = require('../helpers/notification')
-
-const moment = require('moment');
-
-var schedule = require('node-schedule');
-// running task every 1 hours
-schedule.scheduleJob('*/59 * * * *', function(){
-  createCasesVerification((err, result) => {
-    if (err) return 'auto verification error'
-    return 'auto verification succeed'
-  })
-});
+const Notification = require('../models/Notification')
+const CaseVerification = require('../models/CaseVerification')
+const Validate = require('../helpers/cases/revamp/handlerpost')
+const { ROLE, VERIFIED_STATUS } = require('../helpers/constant')
+const { getCountBasedOnDistrict } = require('../helpers/cases/global')
 
 async function getCaseVerifications (caseId, callback) {
   try {
@@ -37,146 +18,135 @@ async function getCaseVerifications (caseId, callback) {
       .sort({ createdAt: 'desc'})
 
     verifications = verifications.map(verifications => verifications.toJSONFor())
-    
-    return callback(null, verifications)
+
+    callback(null, verifications)
   } catch (error) {
-    return callback(error, null)
+    callback(error, null)
   }
 }
 
 async function createCaseVerification (id, author, pre, payload, callback) {
   try {
-
-    let updatePayload = {
+    const updatePayload = {
       verified_comment: payload.verified_comment,
       verified_status: payload.verified_status
     }
 
-    let date = moment(new Date()).format("YY");
-    let id_case
-    let covid = "covid-"
-    let verifiedCount = '';
-    let pad = "";
-    let dinkesCode = pre.dinkes_code;
-
     // generate new verified id_case
-    if (payload.verified_status === 'verified') {
-      verifiedCount = pre.count_pasien;
-      pad = verifiedCount.toString().padStart(7, "0")
-      id_case = `${covid}${dinkesCode}${date}${pad}`;
-      updatePayload.id_case = id_case
+    if (payload.verified_status === VERIFIED_STATUS.VERIFIED) {
+      updatePayload.id_case = Validate.generateIdCase(author, {
+        count_case: pre,
+        count_case_pending: {}
+      }, payload)
     }
 
     // update case verifed status
-    const case_ = await Case.findOneAndUpdate({ _id: id}, {
-      $set: updatePayload
-    }, { new: true })
+    const case_ = await Case.findOneAndUpdate(
+      { _id: id},
+      { $set: updatePayload},
+      { new: true }
+    )
 
     // insert verification logs
     payload.verifier = author._id
     payload.case = case_._id
 
-    let item = new CaseVerification(payload)
+    const item = new CaseVerification(payload)
 
     const caseVerification = await item.save()
 
-    await Notif.send(Notification, User, case_, author, `case-verification-${payload.verified_status}`) 
-    
-    return callback(null, caseVerification)
+    await Notif.send(Notification, User, case_, author, `case-verification-${payload.verified_status}`)
+
+    callback(null, caseVerification)
   } catch (error) {
-    return callback(error, null)
+    callback(error, null)
   }
 }
 
-async function createCasesVerification (callback) {
+async function createCasesVerification (services, callback) {
   const start = new Date(new Date().getTime() - (24 * 60 * 60 * 1000))
 
   const unverifiedCasesFor24Hours = await Case.find({
-    verified_status: 'pending',
+    verified_status: VERIFIED_STATUS.PENDING,
     delete_status: { $ne: 'deleted' },
     updatedAt: { $lt: start }
   })
 
-  let promise = Promise.resolve()
-
-  for (i in unverifiedCasesFor24Hours) {
-    let item = unverifiedCasesFor24Hours[i]
-    promise = promise.then(async () => {
+  try {
+    for (i in unverifiedCasesFor24Hours) {
+      let item = unverifiedCasesFor24Hours[i]
       const id = item._id
-      const code = item.address_district_code
-      const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
 
-      let payload = {
-        verified_status: 'verified',
+      const payload = {
+        verified_status: VERIFIED_STATUS.VERIFIED,
         verified_comment: 'Automatically verified by the system'
       }
-      
+
       if (item.id_case.substr(0,3) === 'pre') {
-        const districtCases = await Case.findOne({
-          address_district_code: code, verified_status: 'verified'
-        }).sort({id_case: -1})
-
-        let count = 1
-        if (districtCases) {
-          count = (Number(districtCases.id_case.substring(12)) + 1)
-        }
-
-        let district = {
-          prov_city_code: code,
-          dinkes_code: dinkes.dinkes_kota_kode,
-          count_pasien: count
-        }
-
-        let date = moment(new Date()).format("YY");
-        let id_case
-        let covid = "covid-"
-        let verifiedCount = '';
-        let pad = "";
-        let dinkesCode = district.dinkes_code;
-
-        verifiedCount = district.count_pasien;
-        pad = verifiedCount.toString().padStart(7, "0")
-        id_case = `${covid}${dinkesCode}${date}${pad}`;
-        payload.id_case = id_case
+        // get requirement doc to generate id case
+        const pre = await getCountBasedOnDistrict(services, item.address_district_code)
+        const idCase = Validate.generateIdCase({role: ROLE.KOTAKAB}, pre, item)
+        payload.id_case = idCase
       }
-      
-      const verify = await Case.findOneAndUpdate({ _id: id}, {
+
+      await Case.updateOne({ _id: ObjectId(id) }, {
         $set: payload
-      }, { new: true })
+      })
 
       // insert verification logs
-      let verificationPayload = {
+      const verificationPayload = {
+        ...payload,
         case: id,
-        verified_status: 'verified',
-        verified_comment: 'Automatically verified by the system',
-        verifier: null
+        verifier: null,
       }
 
-      let verification = new CaseVerification(verificationPayload)
+      const verification = new CaseVerification(verificationPayload)
 
       await verification.save()
-
-      return new Promise(resolve => resolve())
-    })
+    }
+    callback(null, true)
+  } catch (error) {
+    callback(error, null)
   }
 
-  promise
-  .then(() => callback(null, null))
-  .catch(err => callback(err, null))
+}
+
+async function submitMultipleVerifications (services, payload, author, callback) {
+  try {
+    const { ids } = payload
+
+    const reqPayload = {
+      verified_status: VERIFIED_STATUS.PENDING,
+      verified_comment: 'submit a verification case on hold',
+    }
+
+    if (!ids || !ids.length) {
+      throw new Error('ids must be provided as an array')
+    }
+
+    const result = await Case.updateMany(
+      { _id: { $in: ids }, verified_status: VERIFIED_STATUS.HOLD },
+      { $set: reqPayload },
+    )
+
+    // insert verification logs
+    for (let i in payload.ids) {
+      await CaseVerification.create({
+        ...reqPayload,
+        case: ids[i],
+        verifier: author._id,
+      })
+    }
+
+    callback(null, result)
+  } catch (e) {
+    callback(e, null)
+  }
 }
 
 module.exports = [
-  {
-    name: 'services.casesVerifications.get',
-    method: getCaseVerifications
-  },
-  {
-    name: 'services.casesVerifications.create',
-    method: createCaseVerification
-  },
-  {
-    name: 'services.casesVerifications.createCasesVerification',
-    method: createCasesVerification,
-  }
+  { name: `${service}.get`, method: getCaseVerifications },
+  { name: `${service}.create`, method: createCaseVerification },
+  { name: `${service}.createCasesVerification`, method: createCasesVerification },
+  { name: `${service}.submitMultipleVerifications`, method: submitMultipleVerifications },
 ];
-
