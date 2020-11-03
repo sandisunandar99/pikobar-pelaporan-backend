@@ -192,13 +192,13 @@ getters.getVisitedLocalArea = (d) => {
 }
 
 getters.getVisitedPublicPlace = (d) => {
-  return[{
-    public_place_category: getPublicPlaceCategory(d),
-    public_place_name: getPublicPlaceName(d),
-    public_place_address: getPublicPlaceAddress(d),
-    public_place_date_visited: getPublicPlaceDateVisited(d),
-    public_place_duration_visited: getPublicPlaceDurationVisited(d),
-  }]
+  const visited_public_place = {}
+  visited_public_place.public_place_category = getPublicPlaceCategory(d)
+  visited_public_place.public_place_name = getPublicPlaceName(d)
+  visited_public_place.public_place_address = getPublicPlaceAddress(d)
+  visited_public_place.public_place_date_visited = getPublicPlaceDateVisited(d)
+  visited_public_place.public_place_duration_visited = getPublicPlaceDurationVisited(d)
+  return [ visited_public_place ]
 }
 
 getters.getTransmissionType = (d) => {
