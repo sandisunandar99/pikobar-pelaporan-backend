@@ -55,7 +55,12 @@ const sectionOthers = (this_) => {
   }
 }
 
+const combineInfo = {
+  ...sectionIdentity,
+  ...sectionClinic
+}
+
 
 module.exports = {
-  sectionIdentity, sectionClinic, sectionOthers
+  combineInfo, sectionOthers
 }

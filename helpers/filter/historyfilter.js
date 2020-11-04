@@ -2,12 +2,11 @@ const helpers = require("../custom")
 const { dateFilter } = require("../export/cases/filter")
 const { casesHistory } = require("../export/cases/lookup")
 const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/select_column")
-const { sectionIdentity, sectionClinic, sectionOthers } = require("../export/histories/column")
+const { combineInfo, sectionOthers } = require("../export/histories/column")
 
 const excellHistories = (this_) => {
   const mapingColumn = {
-    ...sectionIdentity(this_),
-    ...sectionClinic(this_),
+    ...combineInfo,
     ...helpers.checkDiagnosis(this_.diagnosis),
     "Gejala Lainnya": helpers.checkExistColumn(this_.diagnosis_other),
     ...helpers.checkDiseases(this_.diseases),
@@ -28,7 +27,7 @@ const condition = (params, search, query) => {
         $or: searching
       }
     },
-    { casesHistory },
+    { ...casesHistory },
     { $sort: { "id_case": 1} },
     {
       $project: {
