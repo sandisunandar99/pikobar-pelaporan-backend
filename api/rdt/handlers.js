@@ -125,8 +125,8 @@ const formLocationTest = (server) => {
 }
 
 const GetRdtSummaryByCities = (server) => {
-  const qByCity= request.query
   return (request, reply) => {
+    const qByCity= request.query
     server.methods.services.rdt.GetRdtSummaryByCities(qByCity,
       (err, result) => {
         replyJson(err, result, reply)
@@ -136,7 +136,8 @@ const GetRdtSummaryByCities = (server) => {
 
 const GetRdtSummaryResultByCities = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryResultByCities( request.query,
+    const qRBycity= request.query
+    server.methods.services.rdt.GetRdtSummaryResultByCities(qRBycity,
       (err, result) => {
         replyJson(err, result, reply)
       })
@@ -145,7 +146,8 @@ const GetRdtSummaryResultByCities = (server) => {
 
 const GetRdtSummaryResultListByCities = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryResultListByCities( request.query,
+    const qLbycity= request.query
+    server.methods.services.rdt.GetRdtSummaryResultListByCities(qLbycity,
       (err, result) => {
         replyJson(err, result, reply)
       })
@@ -154,8 +156,8 @@ const GetRdtSummaryResultListByCities = (server) => {
 
 const GetRdtFaskesSummaryByCities = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtFaskesSummaryByCities(
-      request.query,
+     const qByFaskes = request.query
+    server.methods.services.rdt.GetRdtFaskesSummaryByCities(qByFaskes,
       (err, result) => {
         replyJson(err, result, reply)
       })
