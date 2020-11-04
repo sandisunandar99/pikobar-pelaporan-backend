@@ -86,15 +86,15 @@ const patientStatus = (params) => {
   return finalResult
 }
 
-const criteriaConvert = (res) => {
+const criteriaConvert = (status) => {
   let criteria
-  if (res.status === CRITERIA.CONF) {
+  if (status === CRITERIA.CONF) {
     criteria = CRITERIA.CONF_ID
-  } else if (res.status === CRITERIA.PROB) {
+  } else if (status === CRITERIA.PROB) {
     criteria = CRITERIA.PROB_ID
-  } else if (res.status === CRITERIA.SUS) {
+  } else if (status === CRITERIA.SUS) {
     criteria = CRITERIA.SUS_ID
-  } else if (res.status === CRITERIA.CLOSE) {
+  } else if (status === CRITERIA.CLOSE) {
     criteria = CRITERIA.CLOSE_ID
   } else {
     criteria = ''

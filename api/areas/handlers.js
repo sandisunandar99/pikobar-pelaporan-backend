@@ -1,4 +1,3 @@
-const { replyJson } = require('../helpers')
 const { funcIfSame, queryIfSame, queryParamSame } = require('../../helpers/request')
 
 /**
@@ -8,7 +7,7 @@ const DistrictCity = (server) => {
   return async (request, reply) => {
     await queryIfSame(
       server, "areas", "getDistrictCity",
-      request, reply, replyJson
+      request, reply
     )
   }
 }
@@ -20,7 +19,7 @@ const SubDistrict = (server) => {
   return async (request, reply) => {
     await queryParamSame(
       server, "areas", "getSubDistrict",
-      request, "city_code", reply, replyJson
+      request, "city_code", reply
     )
   }
 }
@@ -32,7 +31,7 @@ const SubDistrictDetail = (server) => {
   return async (request, reply) => {
     await funcIfSame(
       server, "areas", "getSubDistrictDetail",
-      request, "sub_district_code", reply, replyJson
+      request, "sub_district_code", reply
     )
   }
 }
@@ -44,7 +43,7 @@ const Village = (server) => {
   return async (request, reply) => {
     await queryParamSame(
       server, "areas", "getVillage",
-      request, "district_code", reply, replyJson
+      request, "district_code", reply
     )
   }
 }
@@ -56,7 +55,7 @@ const VillageDetail = (server) => {
   return async (request, reply) => {
     await funcIfSame(
       server, "areas", "getVillageDetail",
-      request, "village_code", reply, replyJson
+      request, "village_code", reply
     )
   }
 }
@@ -68,7 +67,7 @@ const Hospital = (server) => {
   return async (request, reply) => {
     await queryIfSame(
       server, "areas", "getHospital",
-      request, reply, replyJson
+      request, reply
     )
   }
 }
@@ -80,7 +79,7 @@ const Lab = (server) => {
   return async (request, reply) => {
     await queryIfSame(
       server, "areas", "getLab",
-      request, reply, replyJson
+      request, reply
     )
   }
 }
@@ -92,7 +91,7 @@ const getProvince = (server) => {
   return async (request, reply) => {
     await queryIfSame(
       server, "areas", "province",
-      request, reply, replyJson
+      request, reply
     )
   }
 }
