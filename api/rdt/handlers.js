@@ -146,8 +146,8 @@ const GetRdtSummaryResultByCities = (server) => {
 
 const GetRdtSummaryResultListByCities = (server) => {
   return (request, reply) => {
-    const qLbycity= request.query
-    server.methods.services.rdt.GetRdtSummaryResultListByCities(qLbycity,
+    const {query} = request
+    server.methods.services.rdt.GetRdtSummaryResultListByCities(query,
       (err, result) => {
         replyJson(err, result, reply)
       })
@@ -156,7 +156,7 @@ const GetRdtSummaryResultListByCities = (server) => {
 
 const GetRdtFaskesSummaryByCities = (server) => {
   return (request, reply) => {
-     const {query} = request
+    const {query} = request
     server.methods.services.rdt.GetRdtFaskesSummaryByCities(query,
       (err, result) => {
         replyJson(err, result, reply)
