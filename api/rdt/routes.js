@@ -1,5 +1,5 @@
 module.exports = (server) =>{
-    const handlers = require('./handlers')(server)
+    const handlers = require('./handlers')
     const inputValidations = require('./validations/input')
     //const outputValidations = require('./validations/output')
 
@@ -21,61 +21,61 @@ module.exports = (server) =>{
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
     const cekHistoryCases = require('./route_prerequesites').cekHistoryCases(server)
     const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
-    
+
     return [
         // Get list case for form
-        {
-            method: 'GET',
-            path: '/rdt/list-idcase',
-            config: {
-                auth: 'jwt',
-                description: 'show list id_case for form',
-                tags: ['api', 'rdt'],
-                validate: inputValidations.rdtSearchValidation,
-                pre: [
-                    getDataExternal
-                ]
-            },
-            handler: handlers.GetListIdCase
-        },
-        {
-            method: 'GET',
-            path: '/rdt/list-idcase-detail',
-            config: {
-                auth: 'jwt',
-                description: 'show list id_case detil',
-                tags: ['api', 'rdt'],
-                pre:[
-                    searchIdcasefromInternal,
-                    searchIdcasefromExternal
-                ]
-            },
-            handler: handlers.GetListIdCaseDetail
-        },
-        {
-            method: 'GET',
-            path: '/rdt/list-registered-user',
-            config: {
-                auth: 'jwt',
-                description: 'show list id_case detil',
-                tags: ['api', 'rdt'],
-                pre:[
-                    getRegisteredUserfromExternal
-                ]
-            },
-            handler: handlers.GetListRegisteredUser
-        },
-        {
-            method: 'GET',
-            path: '/rdt/list-location-test',
-            config: {
-                auth: 'jwt',
-                description: 'show list location test for form multiple input rdt',
-                tags: ['api', 'rdt'],
-            },
-            handler: handlers.formLocationTest
-        },
-        // Get list rdt
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/list-idcase',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'show list id_case for form',
+        //         tags: ['api', 'rdt'],
+        //         validate: inputValidations.rdtSearchValidation,
+        //         pre: [
+        //             getDataExternal
+        //         ]
+        //     },
+        //     handler: handlers.GetListIdCase
+        // },
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/list-idcase-detail',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'show list id_case detil',
+        //         tags: ['api', 'rdt'],
+        //         pre:[
+        //             searchIdcasefromInternal,
+        //             searchIdcasefromExternal
+        //         ]
+        //     },
+        //     handler: handlers.GetListIdCaseDetail
+        // },
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/list-registered-user',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'show list id_case detil',
+        //         tags: ['api', 'rdt'],
+        //         pre:[
+        //             getRegisteredUserfromExternal
+        //         ]
+        //     },
+        //     handler: handlers.GetListRegisteredUser
+        // },
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/list-location-test',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'show list location test for form multiple input rdt',
+        //         tags: ['api', 'rdt'],
+        //     },
+        //     handler: handlers.formLocationTest
+        // },
+        // // Get list rdt
         {
             method: 'GET',
             path: '/rdt',
@@ -90,7 +90,7 @@ module.exports = (server) =>{
                     checkIfDataNotNull
                 ]
             },
-            handler: handlers.ListRdt
+            handler: handlers.ListRdt(server)
         },
         // Create rdt
         {
@@ -110,7 +110,7 @@ module.exports = (server) =>{
                     createHistoryWhenPositif
                 ]
             },
-            handler: handlers.CreateRdt
+            handler: handlers.CreateRdt(server)
         },
         {
             method: 'POST',
@@ -123,7 +123,7 @@ module.exports = (server) =>{
                     CheckRoleCreate
                 ]
             },
-            handler: handlers.CreateRdtMultiple
+            handler: handlers.CreateRdtMultiple(server)
         },
         // Get detail rdt
         {
@@ -137,107 +137,107 @@ module.exports = (server) =>{
                     CheckRoleView
                 ]
             },
-            handler: handlers.GetRdtDetail
+            handler: handlers.GetRdtDetail(server)
         },
 
-        // Get rdt hostories
-        {
-            method: 'GET',
-            path: '/rdt/{id}/histories',
-            config: {
-                auth: 'jwt',
-                description: 'show a specific rdt details',
-                tags: ['api', 'rdt'],
-                pre: [
-                    CheckRoleView
-                ]
-            },
-            handler: handlers.GetRdtHistories
-        },
+        // // Get rdt hostories
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/{id}/histories',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'show a specific rdt details',
+        //         tags: ['api', 'rdt'],
+        //         pre: [
+        //             CheckRoleView
+        //         ]
+        //     },
+        //     handler: handlers.GetRdtHistories
+        // },
 
-        // Update rdt
-        {
-            method: 'PUT',
-            path: '/rdt/{id}',
-            config: {
-                auth: 'jwt',
-                description: 'update rdt',
-                tags: ['api', 'rdt'],
-                pre: [
-                    CheckRoleUpdate
-                ]
-            },
-            handler: handlers.UpdateRdt
-        },
-        {
-            method: 'DELETE',
-            path: '/rdt/{id}',
-            config: {
-                auth: 'jwt',
-                description: 'soft delete by id rdt',
-                tags: ['api', 'rdt'],
-                pre: [
-                    CheckRoleDelete,
-                    getRdtbyId
-                    // getCasebyIdcase
-                ]
-            },
-            handler: handlers.DeleteRdt
-        },
+        // // Update rdt
+        // {
+        //     method: 'PUT',
+        //     path: '/rdt/{id}',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'update rdt',
+        //         tags: ['api', 'rdt'],
+        //         pre: [
+        //             CheckRoleUpdate
+        //         ]
+        //     },
+        //     handler: handlers.UpdateRdt
+        // },
+        // {
+        //     method: 'DELETE',
+        //     path: '/rdt/{id}',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'soft delete by id rdt',
+        //         tags: ['api', 'rdt'],
+        //         pre: [
+        //             CheckRoleDelete,
+        //             getRdtbyId
+        //             // getCasebyIdcase
+        //         ]
+        //     },
+        //     handler: handlers.DeleteRdt
+        // },
 
-        // Get RDT Test summary by cities
-        {
-            method: 'GET',
-            path: '/rdt/summary-by-cities',
-            config: {
-                auth: 'jwt',
-                description: 'Get RDT Test summary by cities',
-                tags: ['api', 'rdt']
-            },
-            handler: handlers.GetRdtSummaryByCities
-        },
+        // // Get RDT Test summary by cities
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/summary-by-cities',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'Get RDT Test summary by cities',
+        //         tags: ['api', 'rdt']
+        //     },
+        //     handler: handlers.GetRdtSummaryByCities
+        // },
 
-        // Get RDT result (positif, negatif, invalid) summary by cities
-        {
-            method: 'GET',
-            path: '/rdt/summary-result-by-cities',
-            config: {
-                auth: 'jwt',
-                description: 'Get RDT result summary by cities',
-                tags: ['api', 'rdt'],
-                pre: [
-                    CheckRoleView
-                ]
-            },
-            handler: handlers.GetRdtSummaryResultByCities
-        },
+        // // Get RDT result (positif, negatif, invalid) summary by cities
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/summary-result-by-cities',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'Get RDT result summary by cities',
+        //         tags: ['api', 'rdt'],
+        //         pre: [
+        //             CheckRoleView
+        //         ]
+        //     },
+        //     handler: handlers.GetRdtSummaryResultByCities
+        // },
 
-        // Get RDT used + result (positif, negatif, invalid) summary by cities
-        {
-            method: 'GET',
-            path: '/rdt/summary-result-list-by-cities',
-            config: {
-                auth: 'jwt',
-                description: 'Get RDT result summary list by cities',
-                tags: ['api', 'rdt'],
-                pre: [
-                    CheckRoleView
-                ]
-            },
-            handler: handlers.GetRdtSummaryResultListByCities
-        },
+        // // Get RDT used + result (positif, negatif, invalid) summary by cities
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/summary-result-list-by-cities',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'Get RDT result summary list by cities',
+        //         tags: ['api', 'rdt'],
+        //         pre: [
+        //             CheckRoleView
+        //         ]
+        //     },
+        //     handler: handlers.GetRdtSummaryResultListByCities
+        // },
 
-        // Get RDT Test Faskes summary by cities
-        {
-            method: 'GET',
-            path: '/rdt/faskes-summary-by-cities',
-            config: {
-                auth: 'jwt',
-                description: 'Get RDT Test summary by cities',
-                tags: ['api', 'rdt']
-            },
-            handler: handlers.GetRdtFaskesSummaryByCities
-        },
+        // // Get RDT Test Faskes summary by cities
+        // {
+        //     method: 'GET',
+        //     path: '/rdt/faskes-summary-by-cities',
+        //     config: {
+        //         auth: 'jwt',
+        //         description: 'Get RDT Test summary by cities',
+        //         tags: ['api', 'rdt']
+        //     },
+        //     handler: handlers.GetRdtFaskesSummaryByCities
+        // },
 
         // send message sms and whatsapps
         //  {
