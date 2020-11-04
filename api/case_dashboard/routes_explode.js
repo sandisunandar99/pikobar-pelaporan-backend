@@ -16,8 +16,8 @@ const routingExport = (handlers, server, validations, role) => {
 }
 
 module.exports = (server) => {
-  const handlers = require('./handlers')
-  const inputValidations = require('./validations/input')
   const roleView = require('../users/route_prerequesites').CheckRoleView(server)
+  const inputValidations = require('./validations/input')
+  const handlers = require('./handlers')
   return routingExport(handlers, server, inputValidations, roleView)
 }
