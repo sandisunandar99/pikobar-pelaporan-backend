@@ -1,59 +1,13 @@
 const conf = require('../../config.json')
-const { _toString, _toDateString, _toUnsignedInt } = require('../../helper')
+const { refInspectionTypes, refSpecimenTypes } = require('../../reference')
+const { _toString, _toDateString, _toUnsignedInt, findReference } = require('../../helper')
 // part of inspection support
 const getInspectionType = (d) => {
-  let result = null
-  let selected = _toString(d[conf.cell.inspection_type])
-
-  if (selected) { selected = selected.trim().toLowerCase() }
-
-  switch(selected) {
-    case 'pcr':
-      result = 'pcr'
-      break;
-    case 'rapid':
-      result = 'rapid'
-      break;
-    case 'radiologi':
-      result = 'radiologi'
-      break;
-    case 'ct-scan':
-      result = 'ct_scan'
-      break;
-    case 'tcm-sars cov-2':
-      result = 'tcm_sars_cov_2'
-      break;
-    default:
-      result = null
-  }
-
-  return result
+  return findReference(refInspectionTypes, d[conf.cell.inspection_type])
 }
 
 const getSpecienType = (d) => {
-  let result = null
-  let selected = _toString(d[conf.cell.specimens_type])
-
-  if (selected) { selected = selected.trim().toLowerCase() }
-
-  switch(selected) {
-    case 'swab nasofaring':
-      result = 'Swab Nasofaring'
-      break;
-    case 'swab orofaring':
-      result = 'Swab Orofaring'
-      break;
-    case 'swab naso-orofaring':
-      result = 'Swab Naso - Orofaring'
-      break;
-    case 'darah':
-      result = 'Darah'
-      break;
-    default:
-      result = null
-  }
-
-  return result
+  return findReference(refSpecimenTypes, d[conf.cell.specimens_type])
 }
 
 const getInspectionDate = (d) => {

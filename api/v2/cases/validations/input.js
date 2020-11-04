@@ -58,7 +58,11 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   interview_date: Joi.date().allow('', null).error(() => invalidDate('interview_date')),
   nik: Joi.string().length(16).required(),
   phone_number: Joi.string().allow('', null),
-  note_phone_number: Joi.string().allow('', null),
+  note_phone_number: Joi.string().when('phone_number', {
+    is: Joi.valid('', '-', null),
+    then: Joi.required(),
+    otherwise: Joi.allow('', null),
+  }),
   name: Joi.string().required(),
   name_parents: Joi.string().allow('', null),
   place_of_birth: Joi.string().allow('', null),

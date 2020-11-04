@@ -3,6 +3,7 @@ const lang = require('../../dictionary/id.json')
 const helpers = {}
 
 helpers._toString = (value) => {
+  if (value === '-') return null
   if (value && value.toString) return value.toString()
   return value
 }

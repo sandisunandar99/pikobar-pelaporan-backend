@@ -115,6 +115,22 @@ references.refFinalResults = [
   { value: 5, text: 'masih dikarantina' },
 ]
 
+references.refInspectionTypes = [
+  { value: 'pcr', text: 'pcr' },
+  { value: 'rapid', text: 'rapid' },
+  { value: 'radiologi', text: 'radiologi' },
+  { value: 'ct_scan', text: 'ct-scan' },
+  { value: 'tcm_sars_cov_2', text: 'tcm-sars cov-2' },
+]
+
+references.refSpecimenTypes = [
+  { value: 'swab_nasofaring', text: 'swab nasofaring' },
+  { value: 'swab_orofaring', text: 'swab orofaring' },
+  { value: 'swab_naso_orofaring', text: 'swab naso-orofaring' },
+  { value: 'blood', text: 'darah' },
+  { value: 'sputum', text: 'dahak' },
+]
+
 references.findHospital = async (name) => {
   const hospital = await Unit.findOne({
     unit_type: 'rumahsakit',

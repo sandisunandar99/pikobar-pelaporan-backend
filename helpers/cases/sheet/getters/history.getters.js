@@ -158,7 +158,9 @@ getters.getStatus = (d) => {
 }
 
 getters.getFinalResult = (d) => {
-  return findReference(refFinalResults, d[conf.cell.final_result])
+  if (!d[conf.cell.status]) return undefined
+  const result = findReference(refFinalResults, d[conf.cell.final_result])
+  return result ? _toString(result) : null
 }
 
 getters.getLastDateStatusPatient = (d) => {
