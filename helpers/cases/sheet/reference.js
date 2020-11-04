@@ -126,6 +126,7 @@ references.refInspectionTypes = [
 ]
 
 references.refSpecimenTypes = [
+  { value: null, text: null }, // try to fix similiar blocks
   { value: SPECIMEN_TYPES.SWAB_NASO, text: 'swab nasofaring' },
   { value: SPECIMEN_TYPES.SWAB_OROF, text: 'swab orofaring' },
   { value: SPECIMEN_TYPES.SWAB_NASO_OROF, text: 'swab naso-orofaring' },
