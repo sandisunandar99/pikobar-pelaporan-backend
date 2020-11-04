@@ -16,6 +16,15 @@ const author = {
   }
 }
 
+const casesHistory = {
+  $lookup: {
+    from: "histories",
+    localField: "_id",
+    foreignField: "case",
+    as: "histories"
+  }
+}
+
 module.exports = {
-  histories, author
+  histories, author, casesHistory
 }
