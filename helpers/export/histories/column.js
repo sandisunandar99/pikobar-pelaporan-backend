@@ -55,9 +55,11 @@ const sectionOthers = (this_) => {
   }
 }
 
-const combineInfo = {
-  ...sectionIdentity,
-  ...sectionClinic
+const combineInfo = (this_) => {
+  return {
+    ...sectionIdentity(this_),
+    ...sectionClinic(this_)
+  }
 }
 
 

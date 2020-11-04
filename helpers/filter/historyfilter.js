@@ -6,7 +6,7 @@ const { combineInfo, sectionOthers } = require("../export/histories/column")
 
 const excellHistories = (this_) => {
   const mapingColumn = {
-    ...combineInfo,
+    ...combineInfo(this_),
     ...helpers.checkDiagnosis(this_.diagnosis),
     "Gejala Lainnya": helpers.checkExistColumn(this_.diagnosis_other),
     ...helpers.checkDiseases(this_.diseases),
@@ -18,8 +18,8 @@ const excellHistories = (this_) => {
 
 const condition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
-  let createdAt = dateFilter(query)
-  let andParam = { ...createdAt, ...params }
+  // let createdAt = dateFilter(query)
+  let andParam = { ...params }
   return [
     {
       $match: {
