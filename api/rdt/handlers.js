@@ -126,8 +126,7 @@ const formLocationTest = (server) => {
 
 const GetRdtSummaryByCities = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryByCities(
-      request.query,
+    server.methods.services.rdt.GetRdtSummaryByCities( request.query,
       (err, result) => {
         replyJson(err, result, reply)
       })
@@ -136,8 +135,7 @@ const GetRdtSummaryByCities = (server) => {
 
 const GetRdtSummaryResultByCities = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryResultByCities(
-      request.query,
+    server.methods.services.rdt.GetRdtSummaryResultByCities( request.query,
       (err, result) => {
         replyJson(err, result, reply)
       })
@@ -146,8 +144,7 @@ const GetRdtSummaryResultByCities = (server) => {
 
 const GetRdtSummaryResultListByCities = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryResultListByCities(
-      request.query,
+    server.methods.services.rdt.GetRdtSummaryResultListByCities( request.query,
       (err, result) => {
         replyJson(err, result, reply)
       })
