@@ -522,13 +522,13 @@ async function getCountByDistrict(code, callback) {
 async function getCountPendingByDistrict(code, callback) {
   /* Get last number of current district id case order */
   const {
-    HOLD, PENDING, DECLINED
+    DRAFT, PENDING, DECLINED
   } = require('../helpers/constant')['VERIFIED_STATUS']
 
   try {
     const params = {
       address_district_code: code,
-      verified_status: { $in: [ HOLD, PENDING, DECLINED ] },
+      verified_status: { $in: [ DRAFT, PENDING, DECLINED ] },
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
     const res = await Case.find(params).sort({id_case: -1}).limit(1);
