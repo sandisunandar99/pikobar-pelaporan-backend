@@ -94,6 +94,7 @@ const CaseSchema = new mongoose.Schema({
   close_contact_have_pets: { type: Boolean, default: false },
   close_contact_pets: { type: String, default: null },
   close_contact_health_worker: { type: Boolean, default: false },
+  health_workers: { type: String, default: null }, // just adding leftover existing field
   apd_use: { type: Array, default: [] },
   close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
   close_contact_performing_aerosol: { type: String, default: null },
