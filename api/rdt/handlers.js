@@ -125,8 +125,9 @@ const formLocationTest = (server) => {
 }
 
 const GetRdtSummaryByCities = (server) => {
+  const qByCity= request.query
   return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryByCities( request.query,
+    server.methods.services.rdt.GetRdtSummaryByCities(qByCity,
       (err, result) => {
         replyJson(err, result, reply)
       })
