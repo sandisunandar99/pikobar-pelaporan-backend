@@ -5,7 +5,7 @@ const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/se
 const { sectionIdentity, sectionClinic, sectionOthers } = require("../export/histories/column")
 
 const excellHistories = (this_) => {
-  return {
+  const mapingColumn = {
     ...sectionIdentity(this_),
     ...sectionClinic(this_),
     ...helpers.checkDiagnosis(this_.diagnosis),
@@ -13,6 +13,8 @@ const excellHistories = (this_) => {
     ...helpers.checkDiseases(this_.diseases),
     ...sectionOthers(this_),
   }
+
+  return mapingColumn
 }
 
 const condition = (params, search, query) => {
