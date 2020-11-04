@@ -106,8 +106,8 @@ const render = (data) => {
           [
             {
               text:
-                `Status pasien terakhir : ${patientStatuses(data.final_result)} , `
-                + `Tanggal: ${formattedDate(data.last_date_status_patient)}`,
+                `Status pasien terakhir : ${patientStatuses(data.final_result)} , `+
+                `Tanggal: ${formattedDate(data.last_date_status_patient)}`,
               colSpan: 4,
               alignment: 'left'
             },{},{},{}
