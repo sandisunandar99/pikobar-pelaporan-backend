@@ -1,6 +1,8 @@
 const references = {}
-const { CRITERIA } = require('../../constant')
 const Unit = require('../../../models/Unit')
+const {
+  CRITERIA, INSPECTION_TYPES, SPECIMEN_TYPES,
+} = require('../../constant')
 
 references.refSymptoms = [
   'Suhu tubuh >= 38 °C',
@@ -116,19 +118,19 @@ references.refFinalResults = [
 ]
 
 references.refInspectionTypes = [
-  { value: 'pcr', text: 'pcr' },
-  { value: 'rapid', text: 'rapid' },
-  { value: 'radiologi', text: 'radiologi' },
-  { value: 'ct_scan', text: 'ct-scan' },
-  { value: 'tcm_sars_cov_2', text: 'tcm-sars cov-2' },
+  { value: INSPECTION_TYPES.PCR, text: 'pcr' },
+  { value: INSPECTION_TYPES.RAPID, text: 'rapid' },
+  { value: INSPECTION_TYPES.RADIOLOGY, text: 'radiologi' },
+  { value: INSPECTION_TYPES.CT_SCAN, text: 'ct-scan' },
+  { value: INSPECTION_TYPES.TCM_SARS, text: 'tcm-sars cov-2' },
 ]
 
 references.refSpecimenTypes = [
-  { value: 'swab_nasofaring', text: 'swab nasofaring' },
-  { value: 'swab_orofaring', text: 'swab orofaring' },
-  { value: 'swab_naso_orofaring', text: 'swab naso-orofaring' },
-  { value: 'blood', text: 'darah' },
-  { value: 'sputum', text: 'dahak' },
+  { value: SPECIMEN_TYPES.SWAB_NASO, text: 'swab nasofaring' },
+  { value: SPECIMEN_TYPES.SWAB_OROF, text: 'swab orofaring' },
+  { value: SPECIMEN_TYPES.SWAB_NASO_OROF, text: 'swab naso-orofaring' },
+  { value: SPECIMEN_TYPES.BLOOD, text: 'darah' },
+  { value: SPECIMEN_TYPES.SPUTUM, text: 'dahak' },
 ]
 
 references.findHospital = async (name) => {

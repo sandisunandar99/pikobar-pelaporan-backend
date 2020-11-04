@@ -110,7 +110,7 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   smoking: Joi.number().allow('', null),
   consume_alcohol: Joi.number().allow('', null),
   status: Joi.string().valid(enumCriterian).required().error(e => lang.messages.invalid_criteria ),
-  final_result: Joi.string().required(),
+  final_result: Joi.string().empty('', null).required(),
   last_date_status_patient: Joi.date().allow('', null).error(() => invalidDate('last_date_status_patient')),
 }).unknown()
 

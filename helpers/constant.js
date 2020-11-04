@@ -114,6 +114,20 @@ module.exports = {
     REFERRAL: 'RS RUJUKAN',
     NON_REFERRAL: 'RS NON RUJUKAN'
   },
+  INSPECTION_TYPES: {
+    PCR: 'pcr',
+    RAPID: 'rapid',
+    RADIOLOGY: 'radiologi',
+    CT_SCAN: 'ct_scan',
+    TCM_SARS: 'tcm_sars_cov_2',
+  },
+  SPECIMEN_TYPES: {
+    SWAB_NASO: 'swab_nasofaring',
+    SWAB_OROF: 'swab_orofaring',
+    SWAB_NASO_OROF: 'swab_naso_orofaring',
+    BLOOD: 'blood',
+    SPUTUM: 'sputum',
+  },
   DAILY_REPORT: {
     DAY: 'Hari ini',
     WEEK: '1 minggu terakhir',
