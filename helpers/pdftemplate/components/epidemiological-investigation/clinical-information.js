@@ -1,4 +1,7 @@
 const moment = require('moment')
+const {
+  PATIENT_STATUS,
+} = require('../../../constant')
 const components = {
   symptoms: require('./symptoms'),
   diseases: require('./diseases'),
@@ -15,12 +18,22 @@ const render = (data) => {
     return  data.last_history.current_location_type !== value ? '√' : '  '
   }
 
-  const isFinalResult = (value) => {
-    return data.last_history.final_result === value ? '√' : '  '
-  }
-
   const formattedDate = (d) => {
     return d ? moment(d).format('YYYY/MM/DD') : '-'
+  }
+
+  const patientStatuses = (status) => {
+    let result;
+    switch (status) {
+      case '0': result = PATIENT_STATUS.NEGATIVE; break;
+      case '1': result = PATIENT_STATUS.DONE; break;
+      case '2': result = PATIENT_STATUS.DEAD; break;
+      case '3': result = PATIENT_STATUS.DISCARDED; break;
+      case '4': result = PATIENT_STATUS.SICK; break;
+      case '5': result = PATIENT_STATUS.QUARANTINED; break;
+      default: result = '-';
+    }
+    return result
   }
 
   return [
@@ -93,10 +106,8 @@ const render = (data) => {
           [
             {
               text:
-                `Status pasien terakhir : [${isFinalResult("1")}] Sembuh `
-                + `[${isFinalResult("4")}] Masih Sakit  `
-                + `[${isFinalResult("2")}] Meninggal, `
-                + `tgl: ${formattedDate(data.last_date_status_patient)}`,
+                `Status pasien terakhir : ${patientStatuses(data.final_result)} , `
+                + `Tanggal: ${formattedDate(data.last_date_status_patient)}`,
               colSpan: 4,
               alignment: 'left'
             },{},{},{}
