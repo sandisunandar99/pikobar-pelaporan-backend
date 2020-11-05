@@ -1,5 +1,5 @@
 const helpers = require("../custom")
-const { dateFilter } = require("../export/cases/filter")
+const { dateFilter } = require("../filter/date")
 const { histories, author } = require("../export/cases/lookup")
 const { sectionIdentity, sectionInfo, sectionClinic } = require("../export/cases/column")
 const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/select_column")
@@ -17,7 +17,7 @@ const excellOutput = (this_) => {
 
 const sqlCondition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
-  let createdAt = dateFilter(query)
+  let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...createdAt, ...params }
   return [
     {
