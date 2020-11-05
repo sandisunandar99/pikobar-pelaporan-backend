@@ -182,11 +182,12 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async ListCaseExport(request, reply){
-            let query = request.query
+            const query = request.query
+            const { user } = request.auth.credentials
             const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
             server.methods.services.cases.listCaseExport(
                 query,
-                request.auth.credentials.user,
+                user,
                 (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 const jsonXls = json2xls(result);
