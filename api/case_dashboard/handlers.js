@@ -95,11 +95,14 @@ const mapingDemographic = async (result, role) => {
 }
 
 const mapingCriteria = async (result, role) => {
+
   return result.map(({ _id,
       active, sick_home, sick_hospital, recovered, decease,
     }) => (
       {
-        [lableHeader(role)]: _id, 'Masih Sakit': active, 'Isolasi Mandiri': sick_home,
+        [lableHeader(role)]: _id,
+        'Total':active + sick_home + sick_hospital + recovered + decease,
+        'Masih Sakit': active, 'Isolasi Mandiri': sick_home,
         'Isolasi Rumah Sakit': sick_hospital, 'Sembuh': recovered,
         'Meninggal': decease,
       }
