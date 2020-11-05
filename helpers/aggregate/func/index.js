@@ -37,6 +37,21 @@ const sumFuncTwo = (column, value, column1, value1) => {
   }
 }
 
+const sumFuncTree = (column, value, column1, value1, column2, value2) => {
+  return {
+    $sum: {
+      $cond: [{
+          $and: [
+            { $eq: [column, value] },
+            { $eq: [column1, value1] },
+            { $eq: [column2, value2] }
+          ],
+        }, 1, 0]
+    }
+  }
+}
+
+
 const sumBetweenFunc = (query_state, column, start, end) => {
   return {
     $sum: {
@@ -128,7 +143,7 @@ const sumCondition = (criteria, status) => {
 
 const exportsFunc = { grupFunc,
   sumFunc, sumBetweenFunc, sumWeeklyFunc,
-  sumActive, sumSick,
+  sumActive, sumSick, sumFuncTree,
   sumCondition, sumFuncOne, sumFuncTwo
 }
 
