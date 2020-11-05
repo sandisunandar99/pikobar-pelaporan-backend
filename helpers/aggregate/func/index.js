@@ -12,6 +12,31 @@ const sumFunc = (query_state, column, value) => {
   }
 }
 
+const sumFuncOne = (column, value) => {
+  return {
+    $sum: {
+      $cond: [{
+          $and: [
+            { $eq: [column, value] }
+          ],
+        }, 1, 0]
+    }
+  }
+}
+
+const sumFuncTwo = (column, value, column1, value1) => {
+  return {
+    $sum: {
+      $cond: [{
+          $and: [
+            { $eq: [column, value] },
+            { $eq: [column1, value1] }
+          ],
+        }, 1, 0]
+    }
+  }
+}
+
 const sumBetweenFunc = (query_state, column, start, end) => {
   return {
     $sum: {
@@ -103,5 +128,6 @@ const sumCondition = (criteria, status) => {
 
 module.exports = {
   sumFunc, sumBetweenFunc, sumWeeklyFunc,
-  grupFunc, sumActive, sumSick, sumCondition
+  grupFunc, sumActive, sumSick, sumCondition,
+  sumFuncOne, sumFuncTwo
 }
