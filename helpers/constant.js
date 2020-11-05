@@ -64,7 +64,7 @@ module.exports = {
     FLU: "Pilek",
     SORE_THROAT: "Sakit Tenggorokan",
     HEADACHE: "Sakit Kepala",
-    BLOWN: "Sesak Nafas",
+    BLOWN: "Sesak Napas",
     SHIVER: "Menggigil",
     WEAK: "Lemah (malaise)",
     MUSCLE_ACHE: "Nyeri Otot",

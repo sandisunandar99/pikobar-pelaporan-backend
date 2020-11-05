@@ -1,9 +1,7 @@
 const { requestIfSame } = require('../../helpers/request')
 const replyHelper = require('../helpers')
-const json2xls = require('json2xls')
-const moment = require('moment')
-const fs = require('fs')
 const { ROLE } = require('../../helpers/constant')
+const { generateExcell } = require('../../helpers/export')
 
 const countSectionTop = (server) => {
   return async (request, reply) => {
@@ -81,9 +79,16 @@ const lableHeader = (role) => {
 }
 
 const mapingDemographic = async (result, role) => {
-  return result.map(({ _id,
-      wni, wna, male, female,under_five,
-      six_nine, twenty_twenty_nine, thirty_thirty_nine
+  return result.map(({
+      _id,
+      wni,
+      wna,
+      male,
+      female,
+      under_five,
+      six_nine,
+      twenty_twenty_nine,
+      thirty_thirty_nine
     }) => (
       {
         [lableHeader(role)]: _id, 'WNI': wni, 'WNA': wna,
@@ -107,16 +112,6 @@ const mapingCriteria = async (result, role) => {
         'Meninggal': decease,
       }
   ))
-}
-
-const generateExcell = async (data, title, fullName, reply,) => {
-  const jsonXls = json2xls(data);
-  const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
-  fs.writeFileSync(fileName, jsonXls, 'binary');
-  const xlsx = fs.readFileSync(fileName)
-  reply(xlsx)
-    .header('Content-Disposition', 'attachment; filename=' + fileName);
-  return fs.unlinkSync(fileName)
 }
 
 module.exports = {
