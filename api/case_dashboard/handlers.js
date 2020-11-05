@@ -80,8 +80,9 @@ const lableHeader = (role) => {
 
 const mapingDemographic = async (result, role) => {
   return result.map(({ _id,
-      wni, wna, male, female,under_five,
-      six_nine, twenty_twenty_nine, thirty_thirty_nine
+      wni, wna, male, female,
+      under_five, six_nine,
+      twenty_twenty_nine, thirty_thirty_nine
     }) => (
       {
         [lableHeader(role)]: _id, 'WNI': wni, 'WNA': wna,
