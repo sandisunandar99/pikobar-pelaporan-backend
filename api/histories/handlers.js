@@ -88,7 +88,7 @@ module.exports = (server) => {
         },
         async exportHistory(request, reply){
           const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
-          let { query } = request.query
+          let { query } = request
           server.methods.services.histories.listHistoryExport(
             query, request.auth.credentials.user, (err, result) => {
               if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
