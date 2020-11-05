@@ -1,4 +1,4 @@
-let searchRegExp = new RegExp('/', 'g')
+const searchRegExp = new RegExp('/', 'g')
 
 const setDate = (columnDate, minDate, maxDate) => {
   return {
@@ -36,14 +36,4 @@ const oneDate = (query, columnDate) => {
 
 module.exports = {
   dateFilter, oneDate
-}
-
-function newFunction(dates, columnDate, minDate, maxDate) {
-  dates = {
-    [columnDate]: {
-      "$gte": new Date(new Date(minDate).setHours(00, 00, 00)),
-      "$lt": new Date(new Date(maxDate).setHours(23, 59, 59))
-    }
-  }
-  return dates
 }
