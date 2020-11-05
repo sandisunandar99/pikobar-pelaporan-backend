@@ -1,19 +1,44 @@
 const Check = require('../helpers/rolecheck')
 const Filter = require('../helpers/filter/casefilter')
-const { sumFuncOne, sumFuncTwo } = require('../helpers/aggregate/func')
+const { sumFuncNoMatch } = require('../helpers/aggregate/func')
 const { dateFilter } = require('../helpers/filter/date')
+
+const paramPositif = [
+  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$final_result", "POSITIF"] }
+]
+const paramNegatif = [
+  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$final_result", "NEGATIF"] }
+]
+const paramInvalid = [
+  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$final_result", "INVALID"] }
+]
+const paramReaktif = [
+  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$final_result", "REAKTIF"] }
+]
+const paramNon= [
+  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$final_result", "NON REAKTIF"] }
+]
+const paramIn= [
+  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$final_result", "INKONKLUSIF"] }
+]
 
 const groups = {
   $group: {
     _id: 'data',
-    PCR: sumFuncOne("$tool_tester", "PCR"),
-    PCR_POSITIF: sumFuncTwo("$tool_tester", "PCR", "$final_result", "POSITIF"),
-    PCR_NEGATIF: sumFuncTwo("$tool_tester", "PCR", "$final_result", "NEGATIF"),
-    PCR_INVALID: sumFuncTwo("$tool_tester", "PCR", "$final_result", "INVALID"),
-    RDT: sumFuncOne("$tool_tester", "RDT"),
-    RDT_REAKTIF: sumFuncTwo("$tool_tester", "RDT", "$final_result", "REAKTIF"),
-    RDT_NON_REAKTIF: sumFuncTwo("$tool_tester", "RDT", "$final_result", "NON REAKTIF"),
-    RDT_INKONKLUSIF: sumFuncTwo("$tool_tester", "RDT", "$final_result", "INKONKLUSIF")
+    PCR: sumFuncNoMatch([{ $eq: ["$tool_tester", "PCR"] }]),
+    PCR_POSITIF: sumFuncNoMatch(paramPositif),
+    PCR_NEGATIF: sumFuncNoMatch(paramNegatif),
+    PCR_INVALID: sumFuncNoMatch(paramInvalid),
+    RDT: sumFuncNoMatch([{ $eq: ["$tool_tester", "RDT"] }]),
+    RDT_REAKTIF: sumFuncNoMatch(paramReaktif),
+    RDT_NON_REAKTIF: sumFuncNoMatch(paramNon),
+    RDT_INKONKLUSIF: sumFuncNoMatch(paramIn)
   }
 }
 

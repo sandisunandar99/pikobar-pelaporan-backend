@@ -12,45 +12,13 @@ const sumFunc = (query_state, column, value) => {
   }
 }
 
-const sumFuncOne = (column, value) => {
+const sumFuncNoMatch = (column) => {
   return {
     $sum: {
-      $cond: [{
-          $and: [
-            { $eq: [column, value] }
-          ],
-        }, 1, 0]
+      $cond: [{ $and: column }, 1, 0]
     }
   }
 }
-
-const sumFuncTwo = (column, value, column1, value1) => {
-  return {
-    $sum: {
-      $cond: [{
-          $and: [
-            { $eq: [column, value] },
-            { $eq: [column1, value1] }
-          ],
-        }, 1, 0]
-    }
-  }
-}
-
-const sumFuncTree = (column, value, column1, value1, column2, value2) => {
-  return {
-    $sum: {
-      $cond: [{
-          $and: [
-            { $eq: [column, value] },
-            { $eq: [column1, value1] },
-            { $eq: [column2, value2] }
-          ],
-        }, 1, 0]
-    }
-  }
-}
-
 
 const sumBetweenFunc = (query_state, column, start, end) => {
   return {
@@ -143,8 +111,8 @@ const sumCondition = (criteria, status) => {
 
 const exportsFunc = { grupFunc,
   sumFunc, sumBetweenFunc, sumWeeklyFunc,
-  sumActive, sumSick, sumFuncTree,
-  sumCondition, sumFuncOne, sumFuncTwo
+  sumActive, sumSick,
+  sumCondition, sumFuncNoMatch
 }
 
 module.exports = exportsFunc
