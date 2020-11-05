@@ -1,4 +1,6 @@
-const funcIfSame = async (server, name, methods, request, param, reply, replyJson) => {
+const { replyJson } = require('../../api/helpers')
+
+const funcIfSame = async (server, name, methods, request, param, reply) => {
   server.methods.services[name][methods](
     request.params[param],
     (err, result) => {
@@ -7,7 +9,7 @@ const funcIfSame = async (server, name, methods, request, param, reply, replyJso
   )
 }
 
-const queryIfSame = async (server, name, methods, request, reply, replyJson) => {
+const queryIfSame = async (server, name, methods, request, reply) => {
   server.methods.services[name][methods](
     request.query,
     (err, result) => {
@@ -16,7 +18,7 @@ const queryIfSame = async (server, name, methods, request, reply, replyJson) => 
   )
 }
 
-const queryParamSame = async (server, name, methods, request, param, reply, replyJson) => {
+const queryParamSame = async (server, name, methods, request, param, reply) => {
   server.methods.services[name][methods](
     request.params[param],
     request.query,
@@ -26,7 +28,7 @@ const queryParamSame = async (server, name, methods, request, param, reply, repl
   )
 }
 
-const funcNoParam = async (server, name, methods, reply, replyJson) => {
+const funcNoParam = async (server, name, methods, reply) => {
   server.methods.services[name][methods](
     (err, result) => {
       replyJson(err, result, reply)
@@ -34,7 +36,7 @@ const funcNoParam = async (server, name, methods, reply, replyJson) => {
   )
 }
 
-const funcCreate = async (server, name, methods, request, reply, replyJson) => {
+const funcCreate = async (server, name, methods, request, reply) => {
   server.methods.services[name][methods](
     request,
     (err, result) => {
@@ -43,7 +45,18 @@ const funcCreate = async (server, name, methods, request, reply, replyJson) => {
   )
 }
 
+const requestIfSame = async (server, name, methods, request, reply) => {
+  const { query } = request
+  const { user } = request.auth.credentials
+  server.methods.services[name][methods](
+    query, user,
+    (err, result) => {
+      replyJson(err, result, reply)
+    }
+  )
+}
+
 module.exports = {
   funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate
+  funcCreate, requestIfSame
 }

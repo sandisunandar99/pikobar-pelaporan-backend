@@ -117,7 +117,7 @@ async function submitMultipleVerifications (services, payload, author, callback)
 
     const reqPayload = {
       verified_status: VERIFIED_STATUS.PENDING,
-      verified_comment: 'submit a verification case on hold',
+      verified_comment: 'submit a verification case on draft',
     }
 
     if (!ids || !ids.length) {
@@ -125,7 +125,7 @@ async function submitMultipleVerifications (services, payload, author, callback)
     }
 
     const result = await Case.updateMany(
-      { _id: { $in: ids }, verified_status: VERIFIED_STATUS.HOLD },
+      { _id: { $in: ids }, verified_status: VERIFIED_STATUS.DRAFT },
       { $set: reqPayload },
     )
 
