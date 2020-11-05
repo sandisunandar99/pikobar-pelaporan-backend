@@ -185,10 +185,10 @@ module.exports = (server) => {
             const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
             server.methods.services.cases.listCaseExport(
                 query, user,
-                async (err, result) => {
+                (err, result) => {
                 if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                 const title = `Data-Kasus-`
-                return await generateExcell(result, title, fullName, reply)
+                return generateExcell(result, title, fullName, reply)
             })
         },
         /**

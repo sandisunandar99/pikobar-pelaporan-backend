@@ -2,7 +2,7 @@ const json2xls = require('json2xls')
 const moment = require('moment')
 const fs = require('fs')
 
-const generateExcell = async (data, title, fullName, reply) => {
+const generateExcell = (data, title, fullName, reply) => {
   const jsonXls = json2xls(data);
   const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
   fs.writeFileSync(fileName, jsonXls, 'binary');
