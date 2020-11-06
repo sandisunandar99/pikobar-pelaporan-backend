@@ -4,36 +4,25 @@ const closeconProps = [
   'close_contact_childs'
 ]
 
-const getFieldName = (prop) => {
-  let fieldName = null
+const getSectionStatusName = (prop) => {
+  let res = null
 
   switch(prop) {
-    case 'visited_local_area':
-      fieldName = 'status_travel_local'; break;
-    case 'visited_public_place':
-      fieldName = 'status_travel_public'; break;
-    case 'travelling_history':
-      fieldName = 'status_travel_import'; break;
-    case 'inspection_support':
-      fieldName = 'status_inspection_support'; break;
-    case 'transmission_type':
-      fieldName = 'status_transmission'; break;
-    case 'cluster_type':
-      fieldName = 'status_transmission'; break;
-    case 'close_contact_heavy_ispa_group':
-      fieldName = 'status_exposurecontact'; break;
-    case 'close_contact_pets':
-      fieldName = 'status_exposurecontact'; break;
-    case 'health_workers':
-      fieldName = 'status_exposurecontact'; break;
-    case 'apd_use':
-      fieldName = 'status_exposurecontact'; break;
-    case 'close_contact_performing_aerosol':
-      fieldName = 'status_exposurecontact'; break;
-    default: fieldName = null;
+    case 'visited_local_area': res = 'status_travel_local'; break;
+    case 'visited_public_place': res = 'status_travel_public'; break;
+    case 'travelling_history': res = 'status_travel_import'; break;
+    case 'inspection_support': res = 'status_inspection_support'; break;
+    case 'transmission_type': res = 'status_transmission'; break;
+    case 'cluster_type': res = 'status_transmission'; break;
+    case 'close_contact_heavy_ispa_group': res = 'status_exposurecontact'; break;
+    case 'close_contact_pets': res = 'status_exposurecontact'; break;
+    case 'health_workers': res = 'status_exposurecontact'; break;
+    case 'apd_use': res = 'status_exposurecontact'; break;
+    case 'close_contact_performing_aerosol': res = 'status_exposurecontact'; break;
+    default: res = null;
   }
 
-  return fieldName
+  return res
 }
 
 const getProp = (opt) => {
@@ -89,7 +78,7 @@ const doFlagging = async (source, self, Case) => {
 
     const status = record[prop].length ? 1 : 0
 
-    const field = getFieldName(prop)
+    const field = getSectionStatusName(prop)
 
     if (field) {
       await Case.updateOne(
@@ -138,7 +127,7 @@ const flagOnSection = (payload, flag, prop, isArray) => {
   const value = payload[prop]
 
   if ((isArray && value.length) || (!isArray && value)) {
-    const section = getFieldName(prop)
+    const section = getSectionStatusName(prop)
     flag[section] = 1
   }
 
