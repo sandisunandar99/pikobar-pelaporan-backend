@@ -59,7 +59,7 @@ const exportCriteria = (server) => {
       request.query,
       request.auth.credentials.user,
       (err, result) => {
-        const dataCriteria = mapingCriteria(result[0].summary, role)
+        const dataCriteria = mapingCriteria(titleCriteria, result[0].summary, role)
         const title = `Rekap-Data-${titleCriteria}-`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         return generateExcell(dataCriteria, title, fullName, reply)
@@ -100,13 +100,13 @@ const mapingDemographic = (criteria, result, role) => {
   ))
 }
 
-const mapingCriteria = (result, role) => {
-
+const mapingCriteria = (titleCriteria, result, role) => {
+  const criteria = titleCriteria.replace("-"," ")
   return result.map(({ _id,
       active, sick_home, sick_hospital, recovered, decease,
     }) => (
       {
-        [lableHeader(role)]: _id,
+        [lableHeader(role)]: _id, 'Kriteria': criteria,
         'Total':active + sick_home + sick_hospital + recovered + decease,
         'Masih Sakit': active, 'Isolasi Mandiri': sick_home,
         'Isolasi Rumah Sakit': sick_hospital, 'Sembuh': recovered,
