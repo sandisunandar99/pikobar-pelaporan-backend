@@ -1,6 +1,6 @@
 const conf = require('../config.json')
 const {
-  refApd, refHealthWorkers, refTransmissionType, refClusterType, refIncomes,
+  refApd, refHealthWorkers, refTransmissionType, refClusterType, refIncomes, refTravelingType,
 } = require('../reference')
 const {
   _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge, trueOrFalse, findReference, getArrayValues,
@@ -8,7 +8,8 @@ const {
 
 // import attributes
 const {
-  getTravelingType, getTravelingVisited, getTravelingCity, getTravelingDate, getTravelingArrive,
+  getTravelingVisitedCountry, getTravelingCity, getTravelingVisitedDomestic, getTravelingDistrict,
+  getTravelingDate, getTravelingArrive,
 } = require('./attributes/traveling_history')
 const {
   getInspectionType, getSpecienType, getInspectionDate, getInspectionLocation, getSpecimenTo, getInspectionResult,
@@ -114,7 +115,6 @@ getters.getAddressSubdistrictCode = (d) => {
   return getStringValueByIndex(d[conf.cell.address_subdistrict_code], 1)
 }
 
-
 getters.getAddressSubdistrictName = (d) => {
   return getStringValueByIndex(d[conf.cell.address_subdistrict_code], 0)
 
@@ -149,11 +149,12 @@ getters.getOfficeAddress = (d) => {
 }
 
 getters.getNationality = (d) => {
-  return _toString(d[conf.cell.nationality]) || undefined
+  const isWNA = !!getters.getNationalityName(d)
+  return isWNA ? 'WNA' : 'WNI'
 }
 
 getters.getNationalityName = (d) => {
-  return _toString(d[conf.cell.nationality_name])
+  return getStringValueByIndex(d[conf.cell.nationality_name], 0)
 }
 
 getters.getIncome = (d) => {
@@ -173,14 +174,34 @@ getters.getInspectionSupport = (d) => {
 }
 
 getters.getTravelingHistory = (d) => {
-  const traveling_history = {
-    travelling_type: getTravelingType(d),
-    travelling_visited: getTravelingVisited(d),
-    travelling_city: getTravelingCity(d),
+  const traveling_history = []
+  const dates = {
     travelling_date: getTravelingDate(d),
     travelling_arrive: getTravelingArrive(d),
   }
-  return [ traveling_history ]
+
+  const builtTravelingHis = (type, visited, city) => {
+    return {
+      travelling_type: refTravelingType[type].value,
+      travelling_visited: visited,
+      travelling_city: city,
+      ...dates,
+    }
+  }
+
+  if (getTravelingVisitedCountry(d)) {
+    traveling_history.push(
+      builtTravelingHis(0, getTravelingVisitedCountry(d), getTravelingCity(d))
+    )
+  }
+
+  if (getTravelingVisitedDomestic(d)) {
+    traveling_history.push(
+      builtTravelingHis(1, getTravelingVisitedDomestic(d), getTravelingDistrict(d))
+    )
+  }
+
+  return traveling_history
 }
 
 getters.getVisitedLocalArea = (d) => {

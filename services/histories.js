@@ -50,7 +50,7 @@ function getLastHistoryByIdCase (id_case, callback) {
         .limit(1)
         .exec()
         .then(item => {
-        let res = item.map(q => q.toJSONFor())
+        let res = item
         return callback(null, res)
     })
     .catch(err => callback(err, null))

@@ -7,14 +7,30 @@ const closeconProps = [
 const getFieldName = (prop) => {
   let fieldName = null
 
-  if (prop === 'visited_local_area') {
-    fieldName = 'status_travel_local'
-  } else if (prop === 'visited_public_place') {
-    fieldName = 'status_travel_public'
-  } else if (prop === 'travelling_history') {
-    fieldName = 'status_travel_import'
-  } else if (prop === 'inspection_support') {
-    fieldName = 'status_inspection_support'
+  switch(prop) {
+    case 'visited_local_area':
+      fieldName = 'status_travel_local'; break;
+    case 'visited_public_place':
+      fieldName = 'status_travel_public'; break;
+    case 'travelling_history':
+      fieldName = 'status_travel_import'; break;
+    case 'inspection_support':
+      fieldName = 'status_inspection_support'; break;
+    case 'transmission_type':
+      fieldName = 'status_transmission'; break;
+    case 'cluster_type':
+      fieldName = 'status_transmission'; break;
+    case 'close_contact_heavy_ispa_group':
+      fieldName = 'status_exposurecontact'; break;
+    case 'close_contact_pets':
+      fieldName = 'status_exposurecontact'; break;
+    case 'health_workers':
+      fieldName = 'status_exposurecontact'; break;
+    case 'apd_use':
+      fieldName = 'status_exposurecontact'; break;
+    case 'close_contact_performing_aerosol':
+      fieldName = 'status_exposurecontact'; break;
+    default: fieldName = null;
   }
 
   return fieldName
@@ -118,9 +134,12 @@ const handleClosecontactFlag = async (Case, idCase) => {
   })
 }
 
-const flagOnSection = (flag, field) => {
-  if (field && field.length) {
-    flag.status_inspection_support = 1
+const flagOnSection = (payload, flag, prop, isArray) => {
+  const value = payload[prop]
+
+  if ((isArray && value.length) || (!isArray && value)) {
+    const section = getFieldName(prop)
+    flag[section] = 1
   }
 
   return flag
@@ -129,17 +148,19 @@ const flagOnSection = (flag, field) => {
 const assignPrePostFlag = (payload) => {
   let flag = {}
 
-  const {
-    inspection_support,
-    visited_local_area,
-    visited_public_place,
-    travelling_history,
-  } = payload
-
-  flag = flagOnSection(flag, inspection_support)
-  flag = flagOnSection(flag, visited_local_area)
-  flag = flagOnSection(flag, visited_public_place)
-  flag = flagOnSection(flag, travelling_history)
+  flag = flagOnSection(payload, flag, 'inspection_support', true)
+  flag = flagOnSection(payload, flag, 'visited_local_area', true)
+  flag = flagOnSection(payload, flag, 'visited_public_place', true)
+  flag = flagOnSection(payload, flag, 'travelling_history', true)
+  // transmission
+  flag = flagOnSection(payload, flag, 'transmission_type', false)
+  flag = flagOnSection(payload, flag, 'cluster_type', false)
+  // exposure contact
+  flag = flagOnSection(payload, flag, 'close_contact_heavy_ispa_group', false)
+  flag = flagOnSection(payload, flag, 'close_contact_pets', false)
+  flag = flagOnSection(payload, flag, 'health_workers', false)
+  flag = flagOnSection(payload, flag, 'apd_use', false)
+  flag = flagOnSection(payload, flag, 'close_contact_performing_aerosol', false)
 
   return flag
 }

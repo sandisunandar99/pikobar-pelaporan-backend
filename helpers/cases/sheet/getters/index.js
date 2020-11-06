@@ -49,7 +49,7 @@ const caseAdditionalInfo = (d) => {
     nationality_name: sheet.getNationalityName(d),
     income: sheet.getIncome(d),
     inspection_support: sheet.getInspectionSupport(d),
-    traveling_history: sheet.getTravelingHistory(d),
+    travelling_history: sheet.getTravelingHistory(d),
     visited_local_area: sheet.getVisitedLocalArea(d),
     visited_public_place: sheet.getVisitedPublicPlace(d),
     transmission_type: sheet.getTransmissionType(d),

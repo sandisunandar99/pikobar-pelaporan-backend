@@ -13,12 +13,11 @@ const {
 } = require('../helper')
 
 getters.getCurrentLocationType = (d) => {
-  if (!d[conf.cell.current_location_type]) return undefined
-  return d[conf.cell.current_location_type] == 'Ya dirawat' ? 'RS' : 'RUMAH'
+  return _toString(d[conf.cell.current_hospital_id]) ? 'RS' : 'RUMAH'
 }
 
 getters.getCurrentHospitalId = async (d) => {
-  const hospitalName = getStringValueByIndex(d[conf.cell.current_hospital_id], 0)
+  const hospitalName = _toString(d[conf.cell.current_hospital_id])
   let hospitalId = null
 
   if (hospitalName) {
@@ -46,14 +45,11 @@ getters.getCurrentLocationVillageCode = (d) => {
 }
 
 getters.getCurrentLocationAddress = (d) => {
-  const locationType = d[conf.cell.current_location_type]
-  const hospitalId = d[conf.cell.current_hospital_id]
-  const address = d[conf.cell.current_location_address]
+  const locationType = getters.getCurrentLocationType(d)
+  const hospital = _toString(d[conf.cell.current_hospital_id])
+  const address = _toString(d[conf.cell.current_location_address])
 
-  if (locationType == 'Ya dirawat') {
-      if (!hospitalId) return null
-      return hospitalId.split('-')[0] || null
-  }
+  if (locationType == 'RS') { return hospital }
   return address
 }
 
@@ -78,7 +74,7 @@ getters.getSymptoms = (d) => {
 }
 
 getters.getSymptomsOther = (d) => {
-  return getUnknownValuesOfArray(d[conf.cell.diagnosis_other], unknownSymptoms)
+  return unknownSymptoms.join(',')
 }
 
 getters.getDiseases = (d) => {
@@ -92,7 +88,7 @@ getters.getDiseases = (d) => {
 }
 
 getters.getDiseasesOther = (d) => {
-  return getUnknownValuesOfArray(d[conf.cell.diseases_other], unknownDiseases)
+  return unknownDiseases.join(',')
 }
 
 getters.getDiagnosisArds = (d) => {
@@ -108,7 +104,7 @@ getters.getOtherDiagnosis = (d) => {
 }
 
 getters.isOtherDiagnosisRespiratoryDisease = (d) => {
-  return trueOrFalse(d[conf.cell.is_other_diagnosisr_respiratory_disease])
+  return !!getters.getOtherDiagnosisRespiratoryDisease(d)
 }
 
 getters.getOtherDiagnosisRespiratoryDisease = (d) => {

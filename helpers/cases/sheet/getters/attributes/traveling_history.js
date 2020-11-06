@@ -1,18 +1,23 @@
 const conf = require('../../config.json')
-const { refTravelingType } = require('../../reference')
-const { _toString, _toDateString, findReference } = require('../../helper')
+const { _toString, _toDateString, getStringValueByIndex, } = require('../../helper')
 
 // traveling_history attributes
-const getTravelingType = (d) => {
-  return findReference(refTravelingType, d[conf.cell.traveling_type])
-}
-
-const getTravelingVisited = (d) => {
-  return _toString(d[conf.cell.travelling_visited])
+// international
+const getTravelingVisitedCountry = (d) => {
+  return getStringValueByIndex(d[conf.cell.travelling_visited_country], 0)
 }
 
 const getTravelingCity = (d) => {
   return _toString(d[conf.cell.travelling_city])
+}
+
+// domestic
+const getTravelingVisitedDomestic = (d) => {
+  return getStringValueByIndex(d[conf.cell.travelling_visited_province], 0)
+}
+
+const getTravelingDistrict = (d) => {
+  return getStringValueByIndex(d[conf.cell.travelling_district], 0)
 }
 
 const getTravelingDate = (d) => {
@@ -24,9 +29,10 @@ const getTravelingArrive = (d) => {
 }
 
 module.exports = {
-  getTravelingType,
-  getTravelingVisited,
+  getTravelingVisitedCountry,
   getTravelingCity,
+  getTravelingVisitedDomestic,
+  getTravelingDistrict,
   getTravelingDate,
   getTravelingArrive,
 }

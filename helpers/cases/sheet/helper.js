@@ -4,7 +4,7 @@ const helpers = {}
 
 helpers._toString = (value) => {
   if (value === '-') return null
-  if (value && value.toString) return value.toString()
+  if (value && value.toString) return value.toString().trim()
   return value
 }
 helpers._toDateString = (value) => {
@@ -110,14 +110,9 @@ helpers.yesNoUnknown = (value) => {
   }
 
   switch (value) {
-    case 'ya':
-      res = 1
-      break;
-    case 'tidak':
-      res = 2
-      break;
-    default:
-      res = 3
+    case 'ya': res = 1; break;
+    case 'tidak': res = 2; break;
+    default: res = 3;
   }
 
   return res
