@@ -40,7 +40,7 @@ const exportDemographic = (server) => {
     server.methods.services.case_dashboard.countSummary(
       query,
       request.auth.credentials.user,
-      async (err, result) => {
+      (err, result) => {
         const dataDemographic = mapingDemographic(criteria, result[0].demographic, role)
         const title = "Rekap-Data-Demografis"
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
@@ -58,7 +58,7 @@ const exportCriteria = (server) => {
     server.methods.services.case_dashboard.countSummary(
       request.query,
       request.auth.credentials.user,
-      async (err, result) => {
+      (err, result) => {
         const dataCriteria = mapingCriteria(result[0].summary, role)
         const title = `Rekap-Data-${titleCriteria}-`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
