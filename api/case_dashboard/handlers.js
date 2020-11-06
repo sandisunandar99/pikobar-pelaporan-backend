@@ -41,7 +41,7 @@ const exportDemographic = (server) => {
       query,
       request.auth.credentials.user,
       async (err, result) => {
-        const dataDemographic = await mapingDemographic(criteria, result[0].demographic, role)
+        const dataDemographic = mapingDemographic(criteria, result[0].demographic, role)
         const title = "Rekap-Data-Demografis"
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         return generateExcell(dataDemographic, title, fullName, reply)
@@ -59,7 +59,7 @@ const exportCriteria = (server) => {
       request.query,
       request.auth.credentials.user,
       async (err, result) => {
-        const dataCriteria = await mapingCriteria(result[0].summary, role)
+        const dataCriteria = mapingCriteria(result[0].summary, role)
         const title = `Rekap-Data-${titleCriteria}-`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         return generateExcell(dataCriteria, title, fullName, reply)
@@ -79,7 +79,7 @@ const lableHeader = (role) => {
   return labels
 }
 
-const mapingDemographic = async (criteria, result, role) => {
+const mapingDemographic = (criteria, result, role) => {
   return result.map(({
       _id,
       wni,
@@ -100,7 +100,7 @@ const mapingDemographic = async (criteria, result, role) => {
   ))
 }
 
-const mapingCriteria = async (result, role) => {
+const mapingCriteria = (result, role) => {
 
   return result.map(({ _id,
       active, sick_home, sick_hospital, recovered, decease,
