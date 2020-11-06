@@ -2,6 +2,7 @@ const { requestIfSame } = require('../../helpers/request')
 const replyHelper = require('../helpers')
 const { ROLE } = require('../../helpers/constant')
 const { generateExcell } = require('../../helpers/export')
+const { criteriaConvert } = require("../../helpers/custom")
 
 const countSectionTop = (server) => {
   return async (request, reply) => {
@@ -35,14 +36,15 @@ const exportDemographic = (server) => {
     let query = request.query
     const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
     const role = request.auth.credentials.user.role
+    const criteria = criteriaConvert(request.query.criteria)
     server.methods.services.case_dashboard.countSummary(
       query,
       request.auth.credentials.user,
-      async (err, result) => {
-        const dataDemographic = await mapingDemographic(result[0].demographic, role)
+      (err, result) => {
+        const dataDemographic = mapingDemographic(criteria, result[0].demographic, role)
         const title = "Rekap-Data-Demografis"
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return await generateExcell(dataDemographic, title, fullName, reply)
+        return generateExcell(dataDemographic, title, fullName, reply)
       }
     )
   }
@@ -52,16 +54,15 @@ const exportCriteria = (server) => {
   return async (request, reply) => {
     const { fullname, role } = request.auth.credentials.user
     const fullName = fullname.replace(/\s/g, '-')
-    const { criteriaConvert } = require("../../helpers/custom")
     const titleCriteria = criteriaConvert(request.query.criteria).replace(" ","-")
     server.methods.services.case_dashboard.countSummary(
       request.query,
       request.auth.credentials.user,
-      async (err, result) => {
-        const dataCriteria = await mapingCriteria(result[0].summary, role)
+      (err, result) => {
+        const dataCriteria = mapingCriteria(result[0].summary, role)
         const title = `Rekap-Data-${titleCriteria}-`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return await generateExcell(dataCriteria, title, fullName, reply)
+        return generateExcell(dataCriteria, title, fullName, reply)
       },
     )
   }
@@ -78,7 +79,7 @@ const lableHeader = (role) => {
   return labels
 }
 
-const mapingDemographic = async (result, role) => {
+const mapingDemographic = (criteria, result, role) => {
   return result.map(({
       _id,
       wni,
@@ -91,7 +92,7 @@ const mapingDemographic = async (result, role) => {
       thirty_thirty_nine
     }) => (
       {
-        [lableHeader(role)]: _id, 'WNI': wni, 'WNA': wna,
+        [lableHeader(role)]: _id, 'Kriteria': criteria, 'WNI': wni, 'WNA': wna,
         'Laki-Laki': male, 'Perempuan': female,
         '<5TH': under_five, '6-9TH': six_nine,
         '20-29TH': twenty_twenty_nine, '30-39TH': thirty_thirty_nine,
@@ -99,7 +100,7 @@ const mapingDemographic = async (result, role) => {
   ))
 }
 
-const mapingCriteria = async (result, role) => {
+const mapingCriteria = (result, role) => {
 
   return result.map(({ _id,
       active, sick_home, sick_hospital, recovered, decease,
