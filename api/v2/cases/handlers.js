@@ -50,7 +50,7 @@ const ExportEpidemiologicalForm = (server) => {
   }
 }
 
-/**
+/*
  * GET /api/v2/cases/{id}/summary
  */
 const GetDetailCaseSummary = (server) => {
@@ -60,9 +60,24 @@ const GetDetailCaseSummary = (server) => {
   }
 }
 
+/**
+ * POST /api/v2/cases-import
+ */
+const ImportCases = (server) => {
+  return (request, reply) => {
+    server.methods.services.v2.cases.createMultiple(
+      server.methods.services,
+      request.pre.sheet_to_json,
+      request.auth.credentials.user,
+      callback(reply),
+    )
+  }
+}
+
 module.exports = {
   CreateCase,
   GetCaseSectionStatus,
   GetDetailCaseSummary,
   ExportEpidemiologicalForm,
+  ImportCases,
 }

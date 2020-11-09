@@ -169,6 +169,7 @@ const checkExistColumn = (param) => {
 
 const rollback = async (schema, insertedIds) => {
   const ids = insertedIds.map(c => c._id)
+  if (!ids.length) return;
   return await schema.deleteMany({
     _id: { $in: ids }
   })

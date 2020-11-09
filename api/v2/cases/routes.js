@@ -1,5 +1,7 @@
 module.exports = (server) =>{
   const handlers = require('./handlers')
+  const sheetToJson = require('./route_prerequesites').sheetToJson(server)
+  const isImportBusy = require('./route_prerequesites').isImportBusy(server)
   const getCasebyId = require('../../cases/route_prerequesites').getCasebyId(server)
   const CheckRoleCreate = require('../../users/route_prerequesites').CheckRoleCreate(server)
   const checkCaseIsExists = require('../../cases/route_prerequesites').checkCaseIsExists(server)
@@ -21,7 +23,26 @@ module.exports = (server) =>{
     }
   }
 
+  const importRoute = {
+    method: 'POST',
+    path: '/v2/cases-import',
+    config: {
+      auth: 'jwt',
+      description: 'Cases import',
+      tags: ['api', 'cases'],
+      payload: {
+        maxBytes: 1000 * 1000 * 25,
+        output: 'stream',
+        parse: true,
+        allow: 'multipart/form-data'
+      },
+      pre: [ sheetToJson, isImportBusy ],
+    },
+    handler: handlers.ImportCases(server)
+  }
+
   return [
+    importRoute,
     route('POST', '/v2/cases', 'CreateCase', [
       CheckRoleCreate,
       checkCaseIsExists,
