@@ -1,6 +1,6 @@
 {
     "version": "1.0",
-    "start_row": 7,
+    "start_row": 8,
     "max_rows_allowed": 200,
     "verified_template": "VERIFIED TEMPLATE",
     "unverified_template": "UNVERIFIED TEMPLATE",
