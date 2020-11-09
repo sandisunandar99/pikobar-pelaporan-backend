@@ -236,21 +236,21 @@ async function updateHistoryById (id, payload, callback) {
 }
 
 const listHistoryExport = async (query, user, callback) => {
-  const filter = await filterCase(user, query)
+  // const filter = await filterCase(user, query)
   const filterRole = exportByRole({}, user, query)
-  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
-  let search
-  if(query.search){
-    let search_params = [
-      { id_case : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
-    ];
-    search = search_params
-  } else {
-    search = {}
-  }
+  const params = { ...filterRole, ...WHERE_GLOBAL }
+  // let search
+  // if(query.search){
+  //   let search_params = [
+  //     { id_case : new RegExp(query.search,"i") },
+  //     { name: new RegExp(query.search, "i") },
+  //   ];
+  //   search = search_params
+  // } else {
+  //   search = {}
+  // }
   params.last_history = { $exists: true, $ne: null }
-  const where = condition(params, search, query)
+  const where = condition(params, {}, query)
   try {
     const resultHistory = await Case.aggregate(where)
     callback (null, resultHistory.map(cases => excellHistories(cases)))

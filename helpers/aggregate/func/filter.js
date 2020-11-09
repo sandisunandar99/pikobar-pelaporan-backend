@@ -1,22 +1,10 @@
 const { countByRole, thisUnitCaseAuthors } = require("../../rolecheck")
 const { filterCase } = require("../../filter/casefilter")
+const { oneDate } = require("../../filter/date")
 
 const searching = async (query, user) => {
   const caseAuthors = await thisUnitCaseAuthors(user)
-  let resultFilter = {}
-  let searchRegExp = new RegExp('/', 'g')
-  if (query.start_date){
-    let queryDate = query.start_date
-    let searchDate = queryDate.replace(searchRegExp, '-')
-    resultFilter = {
-      "createdAt":{
-        "$gte": new Date(new Date(searchDate).setHours(00, 00, 00)),
-        "$lt": new Date(new Date(searchDate).setHours(23, 59, 59))
-      }
-    }
-  }else{
-    resultFilter
-  }
+  const resultFilter = oneDate(query, "createdAt")
 
   return {
     ...await filterCase(user, query),

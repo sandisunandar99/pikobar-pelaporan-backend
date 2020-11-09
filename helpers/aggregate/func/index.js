@@ -12,6 +12,14 @@ const sumFunc = (query_state, column, value) => {
   }
 }
 
+const sumFuncNoMatch = (column) => {
+  return {
+    $sum: {
+      $cond: [{ $and: column }, 1, 0]
+    }
+  }
+}
+
 const sumBetweenFunc = (query_state, column, start, end) => {
   return {
     $sum: {
@@ -101,7 +109,10 @@ const sumCondition = (criteria, status) => {
   }
 }
 
-module.exports = {
+const exportsFunc = { grupFunc,
   sumFunc, sumBetweenFunc, sumWeeklyFunc,
-  grupFunc, sumActive, sumSick, sumCondition
+  sumActive, sumSick,
+  sumCondition, sumFuncNoMatch
 }
+
+module.exports = exportsFunc

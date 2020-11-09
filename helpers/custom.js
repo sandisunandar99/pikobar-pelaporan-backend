@@ -182,7 +182,7 @@ const checkDiagnosis = (data) => {
     "Pilek": yesOrNoBool(data.includes(DIAGNOSIS.FLU)),
     "Sakit Tenggorokan": yesOrNoBool(data.includes(DIAGNOSIS.SORE_THROAT)),
     "Sakit Kepala": yesOrNoBool(data.includes(DIAGNOSIS.HEADACHE)),
-    "Sesak Nafas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
+    "Sesak Napas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
     "Menggigil": yesOrNoBool(data.includes(DIAGNOSIS.SHIVER)),
     "Lemah (malaise)": yesOrNoBool(data.includes(DIAGNOSIS.WEAK)),
     "Nyeri Otot": yesOrNoBool(data.includes(DIAGNOSIS.MUSCLE_ACHE)),
