@@ -42,7 +42,7 @@ const exportDemographic = (server) => {
       request.auth.credentials.user,
       (err, result) => {
         const dataDemographic = mapingDemographic(criteria, result[0].demographic, role)
-        const title = "Rekap-Data-Demografis"
+        const title = `Rekap-Data-Demografis-${criteria.replace(" ","-")}-`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         return generateExcell(dataDemographic, title, fullName, reply)
       }
