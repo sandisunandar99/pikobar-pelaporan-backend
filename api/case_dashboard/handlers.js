@@ -42,7 +42,7 @@ const exportDemographic = (server) => {
       request.auth.credentials.user,
       (err, result) => {
         const dataDemographic = mapingDemographic(criteria, result[0].demographic, role)
-        const title = `Rekap-Data-Demografis-${criteria.replace(" ","-")}-`
+        const title = `Rekap-Data-Demografis-${criteria.replace(" ","-")}`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         return generateExcell(dataDemographic, title, fullName, reply)
       }
@@ -60,7 +60,7 @@ const exportCriteria = (server) => {
       request.auth.credentials.user,
       (err, result) => {
         const dataCriteria = mapingCriteria(titleCriteria, result[0].summary, role)
-        const title = `Rekap-Data-${titleCriteria}-`
+        const title = `Rekap-Data-${titleCriteria}`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         return generateExcell(dataCriteria, title, fullName, reply)
       },
