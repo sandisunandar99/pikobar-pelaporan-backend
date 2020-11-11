@@ -17,16 +17,22 @@ const configWithValidation = (description, tags, validations, role) => {
   }
 }
 
+const configData = (method, description) => {
+  return {
+    config: {
+      description: ` ${method} ${description}`,
+      tags: ['api', `${description}`],
+      auth: 'jwt',
+    }
+  }
+}
+
 const routeOldNoPre = (server, method, path, description, callback) => {
   const handlers = require(`../../api/${description}/handlers`)(server)
   return {
     method: method,
     path: path,
-    config: {
-      description: ` ${method} ${description}`,
-      tags: ['api', `${description}`],
-      auth: 'jwt',
-    },
+    ...configData(method, description),
     handler: handlers[callback],
   }
 }
@@ -36,11 +42,7 @@ const routeNoPreNew = (server, method, path, description, callback) => {
   return {
     method: method,
     path: path,
-    config: {
-      description: ` ${method} ${description}`,
-      tags: ['api', `${description}`],
-      auth: 'jwt',
-    },
+    ...configData(method, description),
     handler: handlers[callback](server),
   }
 }
