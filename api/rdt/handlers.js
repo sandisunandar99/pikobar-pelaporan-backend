@@ -1,4 +1,5 @@
 const replyHelper = require('../helpers')
+const { queryIfSame } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -125,38 +126,26 @@ const formLocationTest = (server) => {
 }
 
 const GetRdtSummaryByCities = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryByCities(request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async (request, reply) => {
+     await queryIfSame(server, "rdt", "GetRdtSummaryByCities", request, reply)
   }
 }
 
 const GetRdtSummaryResultByCities = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryResultByCities(request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+      await queryIfSame(server, "rdt", "GetRdtSummaryResultByCities", request, reply)
   }
 }
 
 const GetRdtSummaryResultListByCities = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.GetRdtSummaryResultListByCities(request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+      await queryIfSame(server, "rdt", "GetRdtSummaryResultListByCities", request, reply)
   }
 }
 
 const GetRdtFaskesSummaryByCities = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.GetRdtFaskesSummaryByCities(request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+    await queryIfSame(server, "rdt", "GetRdtFaskesSummaryByCities", request, reply)
   }
 }
 
