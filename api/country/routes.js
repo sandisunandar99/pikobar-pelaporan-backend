@@ -1,21 +1,20 @@
-module.exports = (handlers) => {
-  return [{
-    method: 'GET',
-    path: '/country',
-    config: {
-      auth: 'jwt',
-      description: 'show country list',
-      tags: ['api', 'country list'],
-    },
-    handler: handlers.listCountry
-  }, {
-    method: 'GET',
-    path: '/menu',
-    config: {
-      auth: 'jwt',
-      description: 'show menu',
-      tags: ['api', 'menu'],
-    },
-    handler: handlers.listMenu
-  }]
+module.exports = (server) => {
+  const handlers = require('./handlers')(server)
+  const route = (method, path, callback) => {
+    return {
+      method: method,
+      path: path,
+      config: {
+        description: ` ${method} country`,
+        tags: ['api', 'list', 'country',],
+        auth: 'jwt',
+      },
+      handler: handlers[callback],
+    }
+  }
+
+  return [
+    route('GET', '/country', 'listCountry'),
+    route('GET', '/menu', 'listMenu'),
+  ]
 }
