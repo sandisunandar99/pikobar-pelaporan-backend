@@ -17,7 +17,8 @@ const configWithValidation = (description, tags, validations, role) => {
   }
 }
 
-const routeOldNoPre = (handlers, method, path, description, callback) => {
+const routeOldNoPre = (server, method, path, description, callback) => {
+  const handlers = require(`../../api/${description}/handlers`)(server)
   return {
     method: method,
     path: path,

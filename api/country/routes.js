@@ -1,8 +1,6 @@
 module.exports = (server, route) => {
-  const handlers = require('./handlers')(server)
-
   return [
-    route(handlers, 'GET', '/country', 'country', 'listCountry'),
-    route(handlers, 'GET', '/menu', 'menu', 'listMenu'),
+    route(server, 'GET', '/country', 'country', 'listCountry'),
+    route(server, 'GET', '/menu', 'country', 'listMenu'),
   ]
 }
