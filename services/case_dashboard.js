@@ -4,8 +4,7 @@ const Case = require('../models/Case')
 async function countSectionTop(query, user, callback) {
   try {
     const { topAggregate }  = require('../helpers/aggregate/topaggregate')
-    const condition = await topAggregate(query, user)
-    const resultCount = await Case.aggregate(condition)
+    const resultCount = await sameCondition(query, user, topAggregate)
     callback(null, resultCount)
   } catch (e) {
     callback(e, null)
@@ -15,8 +14,7 @@ async function countSectionTop(query, user, callback) {
 async function countSummary(query, user, callback) {
   try {
     const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
-    const condition = await summaryAggregate(query, user)
-    const resultCount = await Case.aggregate(condition)
+    const resultCount = await sameCondition(query, user, summaryAggregate)
     callback(null, resultCount)
   } catch (e) {
     callback(e, null)
@@ -32,6 +30,13 @@ async function countVisualization(query, user, callback) {
   } catch (e) {
     callback(e, null)
   }
+}
+
+const sameCondition = async (query, user, models) => {
+  const condition = await models(query, user)
+  const resultCount = await Case.aggregate(condition)
+
+  return resultCount
 }
 
 module.exports = [
