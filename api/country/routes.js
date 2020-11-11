@@ -1,21 +1,8 @@
-module.exports = (server) => {
+module.exports = (server, route) => {
   const handlers = require('./handlers')(server)
-  const route = (method, path, callback) => {
-    const config = {
-      description: ` ${method} country`,
-      tags: ['api', 'list', 'country',],
-      auth: 'jwt',
-    }
-    return {
-      method: method,
-      path: path,
-      config: config,
-      handler: handlers[callback],
-    }
-  }
 
   return [
-    route('GET', '/country', 'listCountry'),
-    route('GET', '/menu', 'listMenu'),
+    route(handlers, 'GET', '/country', 'country', 'listCountry'),
+    route(handlers, 'GET', '/menu', 'menu', 'listMenu'),
   ]
 }
