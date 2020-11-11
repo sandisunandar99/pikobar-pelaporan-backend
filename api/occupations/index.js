@@ -1,8 +1,7 @@
 const Routes = require('./routes')
 
 const register = (server, options, next) => {
-  const handlers = require('./handlers')(server)
-  server.route(Routes(handlers))
+  server.route(Routes(server))
   return next()
 }
 
