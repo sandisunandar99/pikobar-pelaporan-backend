@@ -17,4 +17,17 @@ const configWithValidation = (description, tags, validations, role) => {
   }
 }
 
-module. exports = { configRoute, configWithValidation }
+const routeOldNoPre = (handlers, method, path, description, callback) => {
+  return {
+    method: method,
+    path: path,
+    config: {
+      description: ` ${method} ${description}`,
+      tags: ['api', `${description}`],
+      auth: 'jwt',
+    },
+    handler: handlers[callback],
+  }
+}
+
+module. exports = { configRoute, configWithValidation, routeOldNoPre }
