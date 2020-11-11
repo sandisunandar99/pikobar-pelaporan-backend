@@ -24,7 +24,7 @@ const summaryAggregate = async (query, user) => {
     {
       "$facet": {
         "summary": [
-          groupingCondition(groups, CRITERIA)
+          groupingCondition(groups, query, CRITERIA)
         ],
         "demographic": [
           demographicCondition(groups, query, CRITERIA)

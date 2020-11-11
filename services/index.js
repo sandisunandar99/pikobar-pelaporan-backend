@@ -27,7 +27,6 @@ const register = (server, options, next) => {
     require('./history_travel'),
     require('./public_place'),
     require('./local_transmission'),
-    require('./case_exposure'),
     require('./inspection_support'),
     require('./search')
   );

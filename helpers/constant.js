@@ -1,6 +1,8 @@
 module.exports = {
   VERIFIED_STATUS: {
+    DRAFT: 'draft',
     PENDING: 'pending',
+    DECLINED: 'declined',
     VERIFIED: 'verified',
   },
   ROLE: {
@@ -57,13 +59,12 @@ module.exports = {
     GREATHER_150MINUTE: 'Latihan fisik > 150 menit'
   },
   DIAGNOSIS:{
-    HIGH_TEMPERATURE: "Suhu tubuh >= 38 °C",
-    LOW_TEMPERATURE: "Suhu tubuh < 38 °C",
+    FEVER: "DEMAM",
     COUGH: "Batuk",
     FLU: "Pilek",
     SORE_THROAT: "Sakit Tenggorokan",
     HEADACHE: "Sakit Kepala",
-    BLOWN: "Sesak Nafas",
+    BLOWN: "Sesak Napas",
     SHIVER: "Menggigil",
     WEAK: "Lemah (malaise)",
     MUSCLE_ACHE: "Nyeri Otot",
@@ -112,6 +113,20 @@ module.exports = {
   RS: {
     REFERRAL: 'RS RUJUKAN',
     NON_REFERRAL: 'RS NON RUJUKAN'
+  },
+  INSPECTION_TYPES: {
+    PCR: 'pcr',
+    RAPID: 'rapid',
+    RADIOLOGY: 'radiologi',
+    CT_SCAN: 'ct_scan',
+    TCM_SARS: 'tcm_sars_cov_2',
+  },
+  SPECIMEN_TYPES: {
+    SWAB_NASO: 'swab_nasofaring',
+    SWAB_OROF: 'swab_orofaring',
+    SWAB_NASO_OROF: 'swab_naso_orofaring',
+    BLOOD: 'blood',
+    SPUTUM: 'sputum',
   },
   DAILY_REPORT: {
     DAY: 'Hari ini',

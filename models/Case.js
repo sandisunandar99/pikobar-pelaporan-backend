@@ -1,36 +1,13 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
-const { doFlagging } = require('../helpers/cases/flagger')
+const { doFlagging, assignPrePostFlag } = require('../helpers/cases/flagger')
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const uniqueValidator = require('mongoose-unique-validator')
 
-const sectionStatus = {
-  status_identity: { type: Number, default: 0 },
-  status_clinical: { type: Number, default: 0 },
-  status_inspection_support: { type: Number, default: 0 },
-  status_travel_import: { type: Number, default: 0 },
-  status_travel_local: { type: Number, default: 0 },
-  status_travel_public: { type: Number, default: 0 },
-  status_transmission: { type: Number, default: 0 },
-  status_exposurecontact: { type: Number, default: 0 },
-  status_closecontact: { type: Number, default: 0 },
-}
-
-const refRelatedCase = [{
-  _id: false,
-  id_case: { type: String, default: null },
-  id_case_registrant: { type: String, default: null },
-  is_west_java: { type: Boolean, default: true },
-  status: { type: String, default: null },
-  relation: { type: String, default: null },
-  relation_others: { type: String, default: null },
-  activity: { type: Array, default: [] },
-  activity_others: { type: String, default: null },
-  first_contact_date: { type: Date, default: null },
-  last_contact_date: { type: Date, default: null },
-  is_access_granted: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now() },
-}]
+const {
+  sectionStatus,
+  refRelatedCase,
+} = require('./attributes')
 
 const CaseSchema = new mongoose.Schema({
   // (NIK/Nomor Kasus) ex : covid_kodeprovinsi_kodekota/kab_nokasus
@@ -117,6 +94,7 @@ const CaseSchema = new mongoose.Schema({
   close_contact_have_pets: { type: Boolean, default: false },
   close_contact_pets: { type: String, default: null },
   close_contact_health_worker: { type: Boolean, default: false },
+  health_workers: { type: String, default: null }, // just adding leftover existing field
   apd_use: { type: Array, default: [] },
   close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
   close_contact_performing_aerosol: { type: String, default: null },
@@ -160,6 +138,9 @@ const CaseSchema = new mongoose.Schema({
   ...sectionStatus,
 }, { timestamps: true, usePushEach: true })
 
+CaseSchema.index({ nik: 1 });
+CaseSchema.index({ is_west_java: 1 });
+CaseSchema.index({ delete_status: 1 });
 CaseSchema.index({ author: 1 });
 CaseSchema.index({ transfer_status: 1 });
 CaseSchema.index({ transfer_to_unit_id: 1 });
@@ -254,11 +235,9 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
  * If case deleted,
  * Set 'is_case_deleted' in the CloseContact documents to TRUE
 */
-CaseSchema.pre('save', async function (next) {
-  const CloseContact = new mongoose.models["CloseContact"]
-  if (this.delete_status === 'deleted') {
-    await CloseContact.onDeleteCase(this._id)
-  }
+CaseSchema.pre('save', function (next) {
+  const flags = assignPrePostFlag(this)
+  Object.assign(this, flags)
   next()
 })
 
