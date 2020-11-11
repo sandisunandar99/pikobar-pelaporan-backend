@@ -1,5 +1,5 @@
 module.exports = (server) =>{
-    const handlers = require('./handlers')(server);
+    const handlers = require('./handlers');
     const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server);
     const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server);
@@ -16,7 +16,7 @@ module.exports = (server) =>{
                     CheckRoleView
                 ]
             },
-            handler: handlers.ListHistory
+            handler: handlers.ListHistory(server)
         },
         {
             method: 'POST',
@@ -29,7 +29,7 @@ module.exports = (server) =>{
                     CheckRoleCreate
                 ]
             },
-            handler: handlers.CreateHistory
+            handler: handlers.CreateHistory(server)
         },
         {
             method: 'GET',
@@ -42,7 +42,7 @@ module.exports = (server) =>{
                     CheckRoleView
                 ]
             },
-            handler: handlers.GetHistoryDetail
+            handler: handlers.GetHistoryDetail(server)
         },
         {
           method: 'PUT',
@@ -55,7 +55,7 @@ module.exports = (server) =>{
               CheckRoleUpdate,
             ]
           },
-          handler: handlers.UpdateHistory
+          handler: handlers.UpdateHistory(server)
         },
         {
           method: 'DELETE',
@@ -68,7 +68,7 @@ module.exports = (server) =>{
               CheckRoleUpdate,
             ]
           },
-          handler: handlers.DeleteHistory
+          handler: handlers.DeleteHistory(server)
         },
         {
           method: 'GET',
@@ -81,7 +81,7 @@ module.exports = (server) =>{
                   CheckRoleView
               ]
           },
-          handler: handlers.exportHistory
+          handler: handlers.exportHistory(server)
         },
     ]
 }
