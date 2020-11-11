@@ -8,7 +8,7 @@ async function countSectionTop(query, user, callback) {
     const resultCount = await sameCondition(query, user, topAggregate)
     callback(null, resultCount)
   } catch (e) {
-    callback(e, null)
+    callback(`error in ${e}`, null)
   }
 }
 
