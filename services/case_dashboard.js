@@ -1,9 +1,10 @@
 'use strict'
 const Case = require('../models/Case')
+const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
+const { topAggregate }  = require('../helpers/aggregate/topaggregate')
 
 async function countSectionTop(query, user, callback) {
   try {
-    const { topAggregate }  = require('../helpers/aggregate/topaggregate')
     const resultCount = await sameCondition(query, user, topAggregate)
     callback(null, resultCount)
   } catch (e) {
@@ -13,7 +14,6 @@ async function countSectionTop(query, user, callback) {
 
 async function countSummary(query, user, callback) {
   try {
-    const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
     const resultCount = await sameCondition(query, user, summaryAggregate)
     callback(null, resultCount)
   } catch (e) {
