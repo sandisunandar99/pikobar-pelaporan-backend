@@ -1,6 +1,4 @@
-module.exports = (server) => {
-  const handlers = require('./handlers')(server)
-
+module.exports = (handlers) => {
   return [
     {
       method: 'GET',
