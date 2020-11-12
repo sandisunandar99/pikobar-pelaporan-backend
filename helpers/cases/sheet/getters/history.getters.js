@@ -10,7 +10,8 @@ const {
 const {
   _toString, _toDateString, _toUnsignedInt, getStringValueByIndex,
   getArrayValues, getUnknownValuesOfArray, yesNoUnknown, trueOrFalse, findReference,
-} = require('../helper')
+} = require('../helper');
+const { object } = require('joi');
 
 getters.getCurrentLocationType = (d) => {
   return _toString(d[conf.cell.current_hospital_id]) ? 'RS' : 'RUMAH'
@@ -164,8 +165,8 @@ getters.getLastDateStatusPatient = (d) => {
 }
 
 getters.isRowFilled = (d) => {
-  const c = conf.cell
-  if (d[c.name] || d[c.nik] || d[c.birth_date] || d[c.gender] || d[c.address_province_code]) return true
+  // assign & spread -> "unassign by reference"
+  if (d.length > 1) return true
   else return false
 }
 
