@@ -4,6 +4,7 @@ const {
 } = require('../reference')
 const {
   _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge, trueOrFalse, findReference, getArrayValues,
+  yesNoUnknown,
 } = require('../helper')
 
 // import attributes
@@ -235,7 +236,7 @@ getters.getClusterOther = (d) => {
 }
 
 getters.isCloseContactHeavyIspaGroup = (d) => {
-  return trueOrFalse(d[conf.cell.close_contact_heavy_ispa_group])
+  return yesNoUnknown(d[conf.cell.close_contact_heavy_ispa_group]) === 1
 }
 
 getters.isCloseContactHavePets = (d) => {
