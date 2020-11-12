@@ -36,7 +36,7 @@ getters.getInterviewerPhoneNumber = (d) => {
 }
 
 getters.getInterviewDate = (d) => {
-  return _toString(d[conf.cell.interview_date]) || undefined
+  return _toDateString(d[conf.cell.interview_date]) || undefined
 }
 
 getters.isNikExists = (d) => {
