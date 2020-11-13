@@ -69,6 +69,7 @@
     "version_out_of_date": "Versi template tidak didukung, Silahkan download template terbaru",
     "invalid_date_format": "harus dalam format (tttt-bb-hh)",
     "invalid_criteria": "\"Status\" harus berisi (Kontak Erat / Suspek / Probabel / Konfirmasi)",
-    "invalid_final_result": "\"Status\" harus berisi [POSITIF/SEMBUH/MENINGGAL]"
+    "invalid_final_result": "\"Status\" harus berisi [POSITIF/SEMBUH/MENINGGAL]",
+    "empty_data": "Ada kesalahan dalam import data, Tidak ada data pada file yang Anda unggah. Silakan periksa kembali data Anda!"
   }
 }

@@ -32,6 +32,8 @@ helpers.requestFileError = (payload) => {
     error = lang.messages.version_out_of_date
   }else if (payload.length > config.max_rows_allowed) {
     error = `Maksimal import kasus adalah ${config.max_rows_allowed} baris`
+  } else if (!payload.length) {
+    error = lang.messages.empty_data
   }
 
   return error
@@ -119,6 +121,7 @@ helpers.yesNoUnknown = (value) => {
 }
 
 helpers.trueOrFalse = (v) => {
+  if (!v) return
   if (v.toLowerCase) { v = v.toLowerCase() }
   return v === 'ya memiliki'
 }
