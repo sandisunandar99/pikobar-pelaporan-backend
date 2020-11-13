@@ -22,6 +22,8 @@ const {
   getVisitedLocalAreaProvince, getVisitedLocalAreaCity,
 } = require('./attributes/visited_local_area')
 
+const moment = require('moment')
+
 const getters = {}
 
 getters.getNum = (d) => {
@@ -81,7 +83,10 @@ getters.getBirthDate = (d) => {
 }
 
 getters.getAge = (d) => {
-  return getTransformedAge(d[conf.cell.age])
+  const ageYear = _toUnsignedInt(d[conf.cell.age])
+  const ageMonth = _toUnsignedInt(d[conf.cell.month])
+  const age = ageYear + (ageMonth / 12)
+  return age
 }
 
 getters.getAgeMonth = (d) => {
