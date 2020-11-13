@@ -22,8 +22,6 @@ const {
   getVisitedLocalAreaProvince, getVisitedLocalAreaCity,
 } = require('./attributes/visited_local_area')
 
-const moment = require('moment')
-
 const getters = {}
 
 getters.getNum = (d) => {
