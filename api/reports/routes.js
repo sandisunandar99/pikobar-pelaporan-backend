@@ -1,26 +1,6 @@
-module.exports = (server) =>{
-  const handlers = require('./handlers')(server)
-
+module.exports = (server, route) => {
   return [
-    {
-      method: 'GET',
-      path: '/reports/daily-report',
-      config: {
-        auth: 'jwt',
-        description: 'Daily report',
-        tags: ['api', 'reports.dailyReport'],
-      },
-      handler: handlers.DailyReport
-    },
-    {
-      method: 'GET',
-      path: '/reports/daily-report-xls',
-      config: {
-        auth: 'jwt',
-        description: 'Daily report xls',
-        tags: ['api', 'reports.dailyReport'],
-      },
-      handler: handlers.DailyReportXls
-    },
+    route(server, 'GET', '/reports/daily-report', 'reports', 'DailyReport'),
+    route(server, 'GET', '/reports/daily-report-xls', 'reports', 'DailyReportXls'),
   ]
 }
