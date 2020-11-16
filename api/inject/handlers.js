@@ -19,10 +19,7 @@ const injectRdtTest = (server) => {
       request.auth.credentials.user,
       request.pre,
       (err, result) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(
-          constructLastHistoryResponse(result)
-        ).code(200)
+         replyJson(err, result, reply)
       }
     )
   }
