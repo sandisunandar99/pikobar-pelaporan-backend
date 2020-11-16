@@ -1,26 +1,24 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
+  const handlers = require('./handlers')
+
+
+ const route = (method, path, validates, pre, callback) => {
+    return {
+      method: method,
+      path: path,
+      config: {
+        auth: 'jwt',
+        description: `${method} inject data`,
+        tags: [ 'api', 'rdt', ],
+        pre: pre,
+        validate: validates
+      },
+      handler: handlers[callback](server),
+    }
+  }
 
   return [
-    {
-      method: 'GET',
-      path: '/occupations',
-      config: {
-        auth: 'jwt',
-        description: 'show occupations',
-        tags: ['api', 'occupations'],
-      },
-      handler: handlers.ListOccupation
-    },
-    {
-      method: 'GET',
-      path: '/occupations/{id}',
-      config: {
-        auth: 'jwt',
-        description: 'show detail occupation',
-        tags: ['api', 'occupations'],
-      },
-      handler: handlers.GetOccupationDetail
-    }
+    route('GET', '/occupations', null, [], 'ListOccupation'),
+    route('GET', '/occupations/{id}', null, [], 'GetOccupationDetail'),
   ]
 }
