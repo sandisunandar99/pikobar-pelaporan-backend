@@ -177,6 +177,10 @@ getters.getInspectionSupport = (d) => {
   return [ inspection_support ]
 }
 
+getters.getTravelingHistoryBeforeSick14Days = (d) => {
+  return !!getters.getTravelingHistory(d).length
+}
+
 getters.getTravelingHistory = (d) => {
   const traveling_history = []
   const dates = {
@@ -208,12 +212,20 @@ getters.getTravelingHistory = (d) => {
   return traveling_history
 }
 
+getters.isVisitedLocalArea = (d) => {
+  return !!getters.getVisitedLocalArea(d).length
+}
+
 getters.getVisitedLocalArea = (d) => {
   const visited_local_area = {
     visited_local_area_province: getVisitedLocalAreaProvince(d),
     visited_local_area_city: getVisitedLocalAreaCity(d),
   }
-  return [ visited_local_area ]
+  return visited_local_area.visited_local_area_province ? [ visited_local_area ] : []
+}
+
+getters.isVisitedPublicPlace = (d) => {
+  return !!getters.getVisitedPublicPlace(d).length
 }
 
 getters.getVisitedPublicPlace = (d) => {
@@ -223,7 +235,7 @@ getters.getVisitedPublicPlace = (d) => {
   visited_public_place.public_place_address = getPublicPlaceAddress(d)
   visited_public_place.public_place_date_visited = getPublicPlaceDateVisited(d)
   visited_public_place.public_place_duration_visited = getPublicPlaceDurationVisited(d)
-  return [ visited_public_place ]
+  return visited_public_place.public_place_category ? [ visited_public_place ] : []
 }
 
 getters.getTransmissionType = (d) => {

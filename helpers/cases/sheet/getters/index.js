@@ -1,3 +1,5 @@
+const { isTravelingHistoryExists } = require('./case.getters')
+
 const sheet = {
   ...require('./case.getters'),
   ...require('./history.getters'),
@@ -49,8 +51,11 @@ const caseAdditionalInfo = (d) => {
     nationality_name: sheet.getNationalityName(d),
     income: sheet.getIncome(d),
     inspection_support: sheet.getInspectionSupport(d),
+    travelling_history_before_sick_14_days: sheet.getTravelingHistoryBeforeSick14Days(d),
     travelling_history: sheet.getTravelingHistory(d),
+    visited_local_area_before_sick_14_days: sheet.isVisitedLocalArea(d),
     visited_local_area: sheet.getVisitedLocalArea(d),
+    has_visited_public_place: sheet.isVisitedPublicPlace(d),
     visited_public_place: sheet.getVisitedPublicPlace(d),
     transmission_type: sheet.getTransmissionType(d),
     cluster_type: sheet.getClusterType(d),
