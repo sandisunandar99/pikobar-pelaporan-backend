@@ -1,3 +1,5 @@
+const { isTravelingHistoryExists } = require('./case.getters')
+
 const sheet = {
   ...require('./case.getters'),
   ...require('./history.getters'),
@@ -49,19 +51,27 @@ const caseAdditionalInfo = (d) => {
     nationality_name: sheet.getNationalityName(d),
     income: sheet.getIncome(d),
     inspection_support: sheet.getInspectionSupport(d),
+    travelling_history_before_sick_14_days: sheet.getTravelingHistoryBeforeSick14Days(d),
     travelling_history: sheet.getTravelingHistory(d),
+    visited_local_area_before_sick_14_days: sheet.isVisitedLocalArea(d),
     visited_local_area: sheet.getVisitedLocalArea(d),
+    has_visited_public_place: sheet.isVisitedPublicPlace(d),
     visited_public_place: sheet.getVisitedPublicPlace(d),
     transmission_type: sheet.getTransmissionType(d),
     cluster_type: sheet.getClusterType(d),
     cluster_other: sheet.getClusterOther(d),
+  }
+}
+
+const caseExposureContact = (d) => {
+  return {
     close_contact_heavy_ispa_group: sheet.isCloseContactHeavyIspaGroup(d),
-    is_close_contact_have_pets: sheet.isCloseContactHavePets(d),
+    close_contact_have_pets: sheet.isCloseContactHavePets(d),
     close_contact_pets: sheet.getCloseContactPets(d),
     close_contact_health_worker: sheet.isCloseContactHealthWorker(d),
     health_workers: sheet.getHealthWorker(d),
     apd_use: sheet.getApdUse(d),
-    is_close_contact_performing_aerosol: sheet.isCloseContactPerformingAerosol(d),
+    close_contact_performing_aerosol_procedures: sheet.isCloseContactPerformingAerosol(d),
     close_contact_performing_aerosol: sheet.getCloseContactPerformingAerosol(d),
   }
 }
@@ -112,6 +122,7 @@ const getBuiltCreateCasePayload = async (d, uniqueBatchId) => {
     ...caseIdentity(d),
     ...caseAddress(d),
     ...caseAdditionalInfo(d),
+    ...caseExposureContact(d),
     ...await historyLocation(d),
     ...historyCondition(d),
     input_source: `import-feature-${uniqueBatchId}`,

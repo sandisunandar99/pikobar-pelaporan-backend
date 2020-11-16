@@ -9,7 +9,7 @@ helpers._toString = (value) => {
 }
 helpers._toDateString = (value) => {
   if (!value) return null
-  return new Date((value - (25567 + 1))*86400*1000) || null
+  return new Date((value - (25567 + 2))*86400*1000) || null
 }
 helpers._toUnsignedInt = (value) => {
   if (value && value.parseToInt) return Math.abs(value.parseToInt())

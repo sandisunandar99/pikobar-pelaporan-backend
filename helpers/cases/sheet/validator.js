@@ -106,7 +106,7 @@ const validateNik = async (recordError, nik) => {
 
 const validateDuplicateNikReqPayload = (recordError, reqDuplicateNik, payload, nik) => {
   const founded = payload.filter(n => n.nik === nik)
-  if (founded.length > 1 && !reqDuplicateNik.includes(nik)) {
+  if (nik && founded.length > 1 && !reqDuplicateNik.includes(nik)) {
     const nums = founded.map(x => x.num)
 
     const errField = lang['nik']
