@@ -148,7 +148,7 @@ const assignPrePostFlag = (payload) => {
   flag = flagOnSection(payload, flag, 'close_contact_heavy_ispa_group', false)
   flag = flagOnSection(payload, flag, 'close_contact_pets', false)
   flag = flagOnSection(payload, flag, 'health_workers', false)
-  flag = flagOnSection(payload, flag, 'apd_use', false)
+  flag = flagOnSection(payload, flag, 'apd_use', true)
   flag = flagOnSection(payload, flag, 'close_contact_performing_aerosol', false)
 
   return flag
