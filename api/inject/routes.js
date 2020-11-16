@@ -1,5 +1,5 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
+  const handlers = require('./handlers')
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
   const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
 
@@ -13,7 +13,7 @@ module.exports = (server) => {
         tags: ['api', 'health for inject'],
         pre: [ CheckRoleView ]
       },
-      handler: handlers.injectLastHistory
+      handler: handlers.injectLastHistory(server)
     },
     {
       method: 'POST',
@@ -26,7 +26,7 @@ module.exports = (server) => {
           CheckRoleCreate
         ]
       },
-      handler: handlers.injectRdtTest
+      handler: handlers.injectRdtTest(server)
     },
   ]
 }
