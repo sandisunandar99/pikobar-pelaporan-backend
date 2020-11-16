@@ -86,15 +86,15 @@ const patientStatus = (params) => {
   return finalResult
 }
 
-const criteriaConvert = (res) => {
+const criteriaConvert = (status) => {
   let criteria
-  if (res.status === CRITERIA.CONF) {
+  if (status === CRITERIA.CONF) {
     criteria = CRITERIA.CONF_ID
-  } else if (res.status === CRITERIA.PROB) {
+  } else if (status === CRITERIA.PROB) {
     criteria = CRITERIA.PROB_ID
-  } else if (res.status === CRITERIA.SUS) {
+  } else if (status === CRITERIA.SUS) {
     criteria = CRITERIA.SUS_ID
-  } else if (res.status === CRITERIA.CLOSE) {
+  } else if (status === CRITERIA.CLOSE) {
     criteria = CRITERIA.CLOSE_ID
   } else {
     criteria = ''
@@ -169,6 +169,7 @@ const checkExistColumn = (param) => {
 
 const rollback = async (schema, insertedIds) => {
   const ids = insertedIds.map(c => c._id)
+  if (!ids.length) return;
   return await schema.deleteMany({
     _id: { $in: ids }
   })
@@ -181,7 +182,7 @@ const checkDiagnosis = (data) => {
     "Pilek": yesOrNoBool(data.includes(DIAGNOSIS.FLU)),
     "Sakit Tenggorokan": yesOrNoBool(data.includes(DIAGNOSIS.SORE_THROAT)),
     "Sakit Kepala": yesOrNoBool(data.includes(DIAGNOSIS.HEADACHE)),
-    "Sesak Nafas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
+    "Sesak Napas": yesOrNoBool(data.includes(DIAGNOSIS.BLOWN)),
     "Menggigil": yesOrNoBool(data.includes(DIAGNOSIS.SHIVER)),
     "Lemah (malaise)": yesOrNoBool(data.includes(DIAGNOSIS.WEAK)),
     "Nyeri Otot": yesOrNoBool(data.includes(DIAGNOSIS.MUSCLE_ACHE)),

@@ -4,20 +4,25 @@ const closeconProps = [
   'close_contact_childs'
 ]
 
-const getFieldName = (prop) => {
-  let fieldName = null
+const getSectionStatusName = (prop) => {
+  let res = null
 
-  if (prop === 'visited_local_area') {
-    fieldName = 'status_travel_local'
-  } else if (prop === 'visited_public_place') {
-    fieldName = 'status_travel_public'
-  } else if (prop === 'travelling_history') {
-    fieldName = 'status_travel_import'
-  } else if (prop === 'inspection_support') {
-    fieldName = 'status_inspection_support'
+  switch(prop) {
+    case 'visited_local_area': res = 'status_travel_local'; break;
+    case 'visited_public_place': res = 'status_travel_public'; break;
+    case 'travelling_history': res = 'status_travel_import'; break;
+    case 'inspection_support': res = 'status_inspection_support'; break;
+    case 'transmission_type': res = 'status_transmission'; break;
+    case 'cluster_type': res = 'status_transmission'; break;
+    case 'close_contact_heavy_ispa_group': res = 'status_exposurecontact'; break;
+    case 'close_contact_pets': res = 'status_exposurecontact'; break;
+    case 'health_workers': res = 'status_exposurecontact'; break;
+    case 'apd_use': res = 'status_exposurecontact'; break;
+    case 'close_contact_performing_aerosol': res = 'status_exposurecontact'; break;
+    default: res = null;
   }
 
-  return fieldName
+  return res
 }
 
 const getProp = (opt) => {
@@ -73,7 +78,7 @@ const doFlagging = async (source, self, Case) => {
 
     const status = record[prop].length ? 1 : 0
 
-    const field = getFieldName(prop)
+    const field = getSectionStatusName(prop)
 
     if (field) {
       await Case.updateOne(
@@ -118,6 +123,38 @@ const handleClosecontactFlag = async (Case, idCase) => {
   })
 }
 
+const flagOnSection = (payload, flag, prop, isArray) => {
+  const value = payload[prop]
+
+  if ((isArray && value.length) || (!isArray && value)) {
+    const section = getSectionStatusName(prop)
+    flag[section] = 1
+  }
+
+  return flag
+}
+
+const assignPrePostFlag = (payload) => {
+  let flag = {}
+
+  flag = flagOnSection(payload, flag, 'inspection_support', true)
+  flag = flagOnSection(payload, flag, 'visited_local_area', true)
+  flag = flagOnSection(payload, flag, 'visited_public_place', true)
+  flag = flagOnSection(payload, flag, 'travelling_history', true)
+  // transmission
+  flag = flagOnSection(payload, flag, 'transmission_type', false)
+  flag = flagOnSection(payload, flag, 'cluster_type', false)
+  // exposure contact
+  flag = flagOnSection(payload, flag, 'close_contact_heavy_ispa_group', false)
+  flag = flagOnSection(payload, flag, 'close_contact_pets', false)
+  flag = flagOnSection(payload, flag, 'health_workers', false)
+  flag = flagOnSection(payload, flag, 'apd_use', false)
+  flag = flagOnSection(payload, flag, 'close_contact_performing_aerosol', false)
+
+  return flag
+}
+
 module.exports = {
   doFlagging,
+  assignPrePostFlag,
 }

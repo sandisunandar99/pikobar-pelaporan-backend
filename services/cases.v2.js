@@ -7,15 +7,31 @@ const History = require('../models/History')
 const pdfmaker = require('../helpers/pdfmaker')
 const Notification = require('../models/Notification')
 const Notif = require('../helpers/notification')
+const { deleteProps, rollback } = require('../helpers/custom')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { VERIFIED_STATUS, ROLE } = require('../helpers/constant')
+const { getCountBasedOnDistrict } = require('../helpers/cases/global')
+
+// scope helper
+const _filteredFields = (field, filterProp, filterValue) => {
+  return {
+    $filter: {
+      input: `$${field}`,
+      as: "item",
+      cond: { $eq: [ `$$item.${filterProp}`, filterValue ] }
+    }
+  }
+}
 
 const createCase = async (pre, payload, author, callback) => {
+  // guarded fields
+  deleteProps(['_id', 'id_case', 'verified_status'], payload)
+
   try {
     const idCase = Validate.generateIdCase(author, pre, payload)
     const unitName = author.unit_id ? author.unit_id.name : null
     const verifiedStatus = author.role === ROLE.FASKES
-      ? VERIFIED_STATUS.PENDING
+      ? VERIFIED_STATUS.DRAFT
       : VERIFIED_STATUS.VERIFIED
 
     const insertedCase = await Case.create({
@@ -36,6 +52,7 @@ const createCase = async (pre, payload, author, callback) => {
       fasyankes_village_name: author.address_village_name,
       assignment_place: unitName,
       status_identity: 1,
+      status_clinical: 1,
       ...payload,
     })
 
@@ -71,6 +88,8 @@ async function getCaseSectionStatus (id, callback) {
       'status_transmission',
       'status_exposurecontact',
       'status_closecontact',
+      'verified_status',
+      'verified_comment',
     ])
 
     callback(null, result)
@@ -133,15 +152,69 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
     // render pdf
     const pdfFile = await pdfmaker.generate(pdfConfig, fileName)
 
-    callback(null, pdfFile)
+    callback(null, { pdfFile, fileName })
   } catch (e) {
+    callback(e, null)
+  }
+}
+
+async function getDetailCaseSummary(id, callback) {
+  try {
+    const aggQuery = [
+      { $match: { _id: ObjectId(id) } },
+      { $addFields: {
+          relatedCases: {
+            $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ],
+          },
+          pcr: _filteredFields('inspection_support', 'inspection_type', 'pcr'),
+          rapid: _filteredFields('inspection_support', 'inspection_type', 'rapid'),
+      } },
+      { $project: {
+          _id: 0,
+          pcrTotal: { $size: "$pcr" },
+          rapidTotal: { $size: "$rapid" },
+          relatedCasesTotal: { $size: "$relatedCases" }
+      } }
+    ]
+
+    const result = await Case.aggregate(aggQuery)
+    callback(null, result.shift())
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+async function createMultiple (services, payload, author, callback) {
+  const insertedCase = []
+  try {
+    // get requirement doc to generate id case
+    for (let i = 0; i < payload.length; i++) {
+      const pre = await getCountBasedOnDistrict(
+        services,
+        payload[i].address_district_code
+      )
+
+      await createCase(
+        pre, payload[i], author,
+        (err, res) => {
+          if (err) throw new Error
+          insertedCase.push({_id: res._id})
+        }
+      )
+
+    }
+    callback(null, { inserted: insertedCase.length })
+  } catch (e) {
+    rollback(Case, insertedCase)
     callback(e, null)
   }
 }
 
 module.exports = [
   { name: `${service}.create`, method: createCase },
+  { name: `${service}.createMultiple`, method: createMultiple },
   { name: `${service}.getCaseSectionStatus`, method: getCaseSectionStatus },
-  { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
+  { name: `${service}.getDetailCaseSummary`, method: getDetailCaseSummary },
   { name: `${service}.exportEpidemiologicalForm`, method: exportEpidemiologicalForm },
+  { name: `${service}.getCaseCountsOutsideWestJava`, method: getCaseCountsOutsideWestJava },
 ]

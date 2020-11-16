@@ -49,6 +49,7 @@ const HistorySchema = new mongoose.Schema({
     physical_check_respiration: { type: Number, default: 0 },
     physical_check_height: { type: Number, default: 0 },
     physical_check_weight: { type: Number, default: 0 },
+    last_date_status_patient: { type: Date, default: Date.now() },
     delete_status: String,
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -102,6 +103,7 @@ HistorySchema.methods.toJSONFor = function () {
         physical_check_height: this.physical_check_height,
         physical_check_weight: this.physical_check_weight,
         there_are_symptoms: this.there_are_symptoms,
+        last_date_status_patient: this.last_date_status_patient,
         createdAt : this.createdAt,
         updatedAt : this.updatedAt
     }

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
-const { doFlagging } = require('../helpers/cases/flagger')
+const { doFlagging, assignPrePostFlag } = require('../helpers/cases/flagger')
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const uniqueValidator = require('mongoose-unique-validator')
 
@@ -94,6 +94,7 @@ const CaseSchema = new mongoose.Schema({
   close_contact_have_pets: { type: Boolean, default: false },
   close_contact_pets: { type: String, default: null },
   close_contact_health_worker: { type: Boolean, default: false },
+  health_workers: { type: String, default: null }, // just adding leftover existing field
   apd_use: { type: Array, default: [] },
   close_contact_performing_aerosol_procedures: { type: Boolean, default: false },
   close_contact_performing_aerosol: { type: String, default: null },
@@ -137,6 +138,9 @@ const CaseSchema = new mongoose.Schema({
   ...sectionStatus,
 }, { timestamps: true, usePushEach: true })
 
+CaseSchema.index({ nik: 1 });
+CaseSchema.index({ is_west_java: 1 });
+CaseSchema.index({ delete_status: 1 });
 CaseSchema.index({ author: 1 });
 CaseSchema.index({ transfer_status: 1 });
 CaseSchema.index({ transfer_to_unit_id: 1 });
@@ -231,11 +235,9 @@ CaseSchema.methods.JSONSeacrhOutput = function () {
  * If case deleted,
  * Set 'is_case_deleted' in the CloseContact documents to TRUE
 */
-CaseSchema.pre('save', async function (next) {
-  const CloseContact = new mongoose.models["CloseContact"]
-  if (this.delete_status === 'deleted') {
-    await CloseContact.onDeleteCase(this._id)
-  }
+CaseSchema.pre('save', function (next) {
+  const flags = assignPrePostFlag(this)
+  Object.assign(this, flags)
   next()
 })
 

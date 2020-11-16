@@ -521,10 +521,14 @@ async function getCountByDistrict(code, callback) {
 
 async function getCountPendingByDistrict(code, callback) {
   /* Get last number of current district id case order */
+  const {
+    DRAFT, PENDING, DECLINED
+  } = require('../helpers/constant')['VERIFIED_STATUS']
+
   try {
     const params = {
       address_district_code: code,
-      verified_status: { $in: ['pending', 'declined'] },
+      verified_status: { $in: [ DRAFT, PENDING, DECLINED ] },
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
     const res = await Case.find(params).sort({id_case: -1}).limit(1);
@@ -542,127 +546,6 @@ async function getCountPendingByDistrict(code, callback) {
   } catch (error) {
     callback(error, null);
   }
-}
-
-async function importCases (raw_payload, author, pre, callback) {
-
-  const dataSheet = pre
-
-  let savedCases = null //[]
-
-  let promise = Promise.resolve()
-
-  const refHospitals = await Unit.find({unit_type: 'rumahsakit'})
-  /**
-   * # The method used temporarily
-   * Prevent duplicate id_case generated at another import process in the same time
-   * Explanation:
-   * - When counting cases, the resulting numbers will be the same if other users import simultaneously,
-   *   this causes duplication in the case id.
-   * current todo options:
-   * 1. Make the import process in series can be entered into the queue first
-   * 2. Check the current db model in process *(the current method is compared in 1 millisecond)
-   *
-   * to remember, this is only a temporary method to prevent :)
-   */
-  promise = delayIfAnotherImportProcessIsRunning(promise)
-
-  for (i in dataSheet) {
-
-    let item = dataSheet[i]
-
-    promise = promise.then(async () => {
-
-      const code = item.address_district_code
-      const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const verifStatus = author.role === 'faskes' ? ['pending', 'declined'] : ['verified']
-      const districtCases = await Case.findOne({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
-
-      let count = 1
-      let casePayload = {}
-
-      if (districtCases) {
-        const startNum = author.role === 'faskes' ? 15 : 12
-        count = (Number(districtCases.id_case.substring(startNum)) + 1)
-      }
-
-      let district = {
-        prov_city_code: code,
-        dinkes_code: dinkes.dinkes_kota_kode,
-        count_pasien: count
-      }
-
-      let verified  = {
-        verified_status: 'verified'
-      }
-
-      if (author.role === "faskes") {
-        verified.verified_status = 'pending'
-      }
-
-      // create case
-      let date = new Date().getFullYear().toString()
-      const digit = author.role === 'faskes' ? 5 : 4
-      let id_case = author.role === 'faskes' ? "precovid-" : "covid-"
-      id_case += district.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(digit - district.count_pasien.toString().length)
-      id_case += district.count_pasien
-
-      casePayload = Object.assign(item, verified)
-      casePayload = Object.assign(item, {id_case})
-
-      casePayload.author_district_code = author.code_district_city
-      casePayload.author_district_name = author.name_district_city
-      casePayload.input_source = 'import-data-sheets'
-
-      casePayload = new Case(Object.assign(casePayload, {author}))
-
-      let savedCase = await casePayload.save()
-
-      let historyPayload = { case: savedCase._id }
-
-      let hospitalId = null
-
-      if (item && item.current_location_type === 'RS') {
-
-        const hospital = refHospitals.find((h) => h.name === item.current_location_address) || null
-
-        hospitalId = hospital && hospital._id ? hospital._id : null
-
-        if (!hospitalId) {
-          if (item.other_notes) {
-            item.other_notes += ' , Dirawat di ' + item.current_location_address
-          } else {
-            item.other_notes = 'Dirawat di ' + item.current_location_address
-          }
-        }
-      }
-
-      item.current_hospital_id = hospitalId || null
-
-      if (item.first_symptom_date == "") {
-        item.first_symptom_date = Date.now()
-      }
-
-      let history = new History(Object.assign(item, historyPayload))
-
-      let savedHistory = await history.save()
-
-      let last_history = { last_history: savedHistory._id }
-      savedCase = Object.assign(savedCase, last_history)
-      savedCase = await savedCase.save()
-
-      // savedCases.push(savedCase)
-
-      return new Promise(resolve => resolve())
-
-    }).catch((e) => { throw new Error(e) })
-  }
-
-  promise
-    .then(() => callback(null, savedCases))
-    .catch(err => callback(err, null))
 }
 
 function softDeleteCase(cases,deletedBy, payload, callback) {
@@ -700,27 +583,6 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   const closeContacts = await CloseContact.find({ case: detailCase._id, delete_status: { $ne: 'deleted' } })
   Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
-}
-
-/**
-* compare data in 1 millisecond
-* if different means the case is in the process of insertion by another process
-* to remember, this is only a temporary method to prevent :)
-*/
-async function delayIfAnotherImportProcessIsRunning () {
-  const totalOne = await Case.find().countDocuments()
-  promise = delay(100)
-
-  return promise.then(async () => {
-    const totalTwo = await Case.find().countDocuments()
-    if (totalOne !== totalTwo) return delay(10000)
-
-    return new Promise(resolve => resolve())
-  })
-}
-
-function delay(t) {
-  return new Promise(resolve => setTimeout(resolve.bind(), t))
 }
 
 async function thisUnitCaseAuthors (user) {
@@ -784,10 +646,6 @@ module.exports = [
   {
     name: 'services.cases.listCaseExport',
     method: listCaseExport
-  },
-  {
-    name: 'services.cases.ImportCases',
-    method: importCases
   },
   {
     name: 'services.cases.getIdCase',

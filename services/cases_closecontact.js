@@ -3,7 +3,7 @@ const Case = require('../models/Case')
 const Helper = require('../helpers/custom')
 const { rollback } = require('../helpers/custom')
 const { CRITERIA } = require('../helpers/constant')
-const { preCountCase } = require('../helpers/cases/prerequesites')
+const { getCountBasedOnDistrict } = require('../helpers/cases/global')
 const {
   append,
   relatedPayload,
@@ -129,11 +129,11 @@ const create = async (services, pre, author, payload, callback) => {
           ...req,
         }
 
-        // prerequisites per-premierCase to creating new case
-        const pre = await preCountCase(services, req.address_district_code)
+        // get requirement doc to generate id case
+        const pre = await getCountBasedOnDistrict(services, req.address_district_code)
 
-        await services.cases_revamp.create(
-          services, createCasePayload, author, pre,
+        await services.v2.cases.create(
+          pre, createCasePayload, author,
           (err, res) => {
             if (err) throw new Error
 
