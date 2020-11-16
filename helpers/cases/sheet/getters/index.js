@@ -60,6 +60,11 @@ const caseAdditionalInfo = (d) => {
     transmission_type: sheet.getTransmissionType(d),
     cluster_type: sheet.getClusterType(d),
     cluster_other: sheet.getClusterOther(d),
+  }
+}
+
+const caseExposureContact = (d) => {
+  return {
     close_contact_heavy_ispa_group: sheet.isCloseContactHeavyIspaGroup(d),
     close_contact_have_pets: sheet.isCloseContactHavePets(d),
     close_contact_pets: sheet.getCloseContactPets(d),
@@ -117,6 +122,7 @@ const getBuiltCreateCasePayload = async (d, uniqueBatchId) => {
     ...caseIdentity(d),
     ...caseAddress(d),
     ...caseAdditionalInfo(d),
+    ...caseExposureContact(d),
     ...await historyLocation(d),
     ...historyCondition(d),
     input_source: `import-feature-${uniqueBatchId}`,
