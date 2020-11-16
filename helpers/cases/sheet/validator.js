@@ -177,7 +177,7 @@ const transformErrorDescription = (desc) => {
 
   const mapObj = {
     'is required': 'Harus diisi',
-    'must be a string': 'Harus berisi string',
+    'must be a string': 'Harus berisi huruf alfabet',
     'must be a number': 'Harus berisi angka',
     'length must be 16 characters long': 'Harus 16 digit',
   }

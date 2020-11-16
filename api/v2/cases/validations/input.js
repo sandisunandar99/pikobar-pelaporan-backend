@@ -42,12 +42,14 @@ const RequestPayload = {
 // case sheet
 const lang = require('../../../../helpers/dictionary/id.json')
 const { CRITERIA } = require('../../../../helpers/constant')
+const { refFinalResults } = require('../../../../helpers/cases/sheet/reference')
 const enumCriterian = [
   CRITERIA.CLOSE,
   CRITERIA.CONF,
   CRITERIA.PROB,
   CRITERIA.SUS,
 ]
+const enumFinalResult = refFinalResults.map(x => x.value.toString())
 const invalidDate = (key) => {
   return `"${lang[key]}" ${lang.messages.invalid_date_format}`
 }
@@ -111,8 +113,8 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   pysichal_activity: Joi.number().allow('', null),
   smoking: Joi.number().allow('', null),
   consume_alcohol: Joi.number().allow('', null),
-  status: Joi.string().valid(enumCriterian).required().error(e => lang.messages.invalid_criteria ),
-  final_result: Joi.string().empty('', null).required(),
+  status: Joi.string().valid(enumCriterian).required().error(e => lang.messages.invalid_criteria),
+  final_result: Joi.string().valid(enumFinalResult).required().error(e => lang.messages.invalid_criteria),
   last_date_status_patient: Joi.date().allow('', null).error(() => invalidDate('last_date_status_patient')),
   transmission_type: Joi.number().when('status', requiredIf(CRITERIA.CONF)),
   cluster_type: Joi.number().when('status', requiredIf(CRITERIA.CONF)),

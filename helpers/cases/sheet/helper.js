@@ -71,8 +71,8 @@ helpers.isTemplateVerified = (dataSheet) => {
 }
 
 helpers.getTransformedAge = (age) => {
-  if (!age) return null
-  const a = helpers._toUnsignedInt(age) || '0'
+  if (age < 0) return undefined
+  const a = helpers._toUnsignedInt(age) || 0
   return helpers._toString(a)
 }
 

@@ -84,7 +84,7 @@ getters.getAge = (d) => {
   const ageYear = _toUnsignedInt(d[conf.cell.age])
   const ageMonth = _toUnsignedInt(d[conf.cell.month])
   const age = ageYear + (ageMonth / 12)
-  return age
+  return age < 0 ? undefined : age
 }
 
 getters.getAgeMonth = (d) => {
