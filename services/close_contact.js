@@ -176,6 +176,7 @@ const syncCase = async (services, callback) => {
         name: res.name,
         is_phone_number_exists: res.is_phone_number_exists,
         phone_number: res.phone_number,
+        nationality: 'WNI',
         gender: res.gender,
         birth_date: res.birth_date,
         age: res.age,
