@@ -4,6 +4,7 @@ const {
 } = require('../reference')
 const {
   _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge, trueOrFalse, findReference, getArrayValues,
+  yesNoUnknown,
 } = require('../helper')
 
 // import attributes
@@ -36,7 +37,7 @@ getters.getInterviewerPhoneNumber = (d) => {
 }
 
 getters.getInterviewDate = (d) => {
-  return _toString(d[conf.cell.interview_date]) || undefined
+  return _toDateString(d[conf.cell.interview_date]) || undefined
 }
 
 getters.isNikExists = (d) => {
@@ -80,7 +81,10 @@ getters.getBirthDate = (d) => {
 }
 
 getters.getAge = (d) => {
-  return getTransformedAge(d[conf.cell.age])
+  const ageYear = _toUnsignedInt(d[conf.cell.age])
+  const ageMonth = _toUnsignedInt(d[conf.cell.month])
+  const age = ageYear + (ageMonth / 12)
+  return age
 }
 
 getters.getAgeMonth = (d) => {
@@ -173,6 +177,10 @@ getters.getInspectionSupport = (d) => {
   return [ inspection_support ]
 }
 
+getters.getTravelingHistoryBeforeSick14Days = (d) => {
+  return !!getters.getTravelingHistory(d).length
+}
+
 getters.getTravelingHistory = (d) => {
   const traveling_history = []
   const dates = {
@@ -204,12 +212,20 @@ getters.getTravelingHistory = (d) => {
   return traveling_history
 }
 
+getters.isVisitedLocalArea = (d) => {
+  return !!getters.getVisitedLocalArea(d).length
+}
+
 getters.getVisitedLocalArea = (d) => {
   const visited_local_area = {
     visited_local_area_province: getVisitedLocalAreaProvince(d),
     visited_local_area_city: getVisitedLocalAreaCity(d),
   }
-  return [ visited_local_area ]
+  return visited_local_area.visited_local_area_province ? [ visited_local_area ] : []
+}
+
+getters.isVisitedPublicPlace = (d) => {
+  return !!getters.getVisitedPublicPlace(d).length
 }
 
 getters.getVisitedPublicPlace = (d) => {
@@ -219,7 +235,7 @@ getters.getVisitedPublicPlace = (d) => {
   visited_public_place.public_place_address = getPublicPlaceAddress(d)
   visited_public_place.public_place_date_visited = getPublicPlaceDateVisited(d)
   visited_public_place.public_place_duration_visited = getPublicPlaceDurationVisited(d)
-  return [ visited_public_place ]
+  return visited_public_place.public_place_category ? [ visited_public_place ] : []
 }
 
 getters.getTransmissionType = (d) => {
@@ -235,7 +251,7 @@ getters.getClusterOther = (d) => {
 }
 
 getters.isCloseContactHeavyIspaGroup = (d) => {
-  return trueOrFalse(d[conf.cell.close_contact_heavy_ispa_group])
+  return yesNoUnknown(d[conf.cell.close_contact_heavy_ispa_group]) === 1
 }
 
 getters.isCloseContactHavePets = (d) => {
