@@ -48,7 +48,7 @@ const filterNodes = (this_) => {
 
   for (let i in this_) {
     const parents = this_[i].cases_related
-    if (!parents || !parents.length) return
+    if (!parents || !parents.length) continue
 
     for (let j in parents) {
       nodes.push({
