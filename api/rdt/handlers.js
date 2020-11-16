@@ -1,4 +1,4 @@
-const { queryIfSame } = require('../../helpers/request')
+const { queryIfSame, funcIfSame } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -50,10 +50,8 @@ const GetRdtDetail = (server) => {
 }
 
 const GetRdtHistories = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.getHistoriesByRdtId(request.params.id, (err, result) => {
-      replyJson(err, result, reply)
-    })
+  return async(request, reply) => {
+    await funcIfSame(server, "rdt", "getHistoriesByRdtId", request, "id", reply)
   }
 }
 
