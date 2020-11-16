@@ -2,7 +2,7 @@ module.exports = (server) => {
   const handlers = require('./handlers')
 
 
- const route = (method, path, validates, pre, callback) => {
+ const route_occ = (method, path, validates, pre, callback) => {
     return {
       method: method,
       path: path,
@@ -18,7 +18,7 @@ module.exports = (server) => {
   }
 
   return [
-    route('GET', '/occupations', null, [], 'ListOccupation'),
-    route('GET', '/occupations/{id}', null, [], 'GetOccupationDetail'),
+    route_occ('GET', '/occupations', null, [], 'ListOccupation'),
+    route_occ('GET', '/occupations/{id}', null, [], 'GetOccupationDetail'),
   ]
 }
