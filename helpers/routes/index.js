@@ -17,4 +17,19 @@ const configWithValidation = (description, tags, validations, role) => {
   }
 }
 
-module. exports = { configRoute, configWithValidation }
+ const configRouteComplete = (method, path, validates, pre, tag, callback)=> {
+    return {
+      method: method,
+      path: path,
+      config: {
+        auth: 'jwt',
+        description: `${method} ${tag}`,
+        tags: [ 'api', tag ],
+        pre: pre,
+        validate: validates
+      },
+      handler: callback,
+    }
+  }
+
+module.exports = { configRoute, configWithValidation, configRouteComplete }
