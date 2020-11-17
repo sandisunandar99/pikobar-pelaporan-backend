@@ -875,7 +875,8 @@ function seacrhFromInternal(query, callback) {
       }).catch(err => callback(err, null))
 }
 
-function getRegisteredUser(search_external, user, callback) {
+function getRegisteredUser(request, callback) {
+  let search_external = request.pre.reg_user_external
   return callback(null, search_external)
 }
 

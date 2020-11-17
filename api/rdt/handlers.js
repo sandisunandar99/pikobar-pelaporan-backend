@@ -56,7 +56,8 @@ const GetRdtHistories = (server) => {
 const UpdateRdt = (server) => {
   return (request, reply) => {
     server.methods.services.rdt.update(
-      request.params.id, request.payload, request.auth.credentials.user,
+      request,
+      request.auth.credentials.user,
       (err, result) => {
         replyJson(err, result, reply)
       }
@@ -103,8 +104,7 @@ const GetListIdCaseDetail = (server) => {
 const GetListRegisteredUser = (server) => {
   return (request, reply) => {
     server.methods.services.rdt.getRegisteredUser(
-      request.pre.reg_user_external,
-      request.auth.credentials.user,
+      request,
       (err, result) => {
         replyJson(err, result, reply)
       })
