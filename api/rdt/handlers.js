@@ -102,12 +102,8 @@ const GetListIdCaseDetail = (server) => {
 }
 
 const GetListRegisteredUser = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.getRegisteredUser(
-      request,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+    await funcCreate(server, "rdt", "getRegisteredUser", request, reply)
   }
 }
 
