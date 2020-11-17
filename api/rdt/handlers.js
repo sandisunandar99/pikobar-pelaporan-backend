@@ -29,15 +29,16 @@ const CreateRdt = (server) => {
 }
 
 const CreateRdtMultiple = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.createMultiple(
-      request.payload,
-      request.auth.credentials.user,
-      request.pre,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
+  return async(request, reply) => {
+     await payloadPreSame(server, "inject", "injectRdt", request, reply)
+    // server.methods.services.rdt.createMultiple(
+    //   request.payload,
+    //   request.auth.credentials.user,
+    //   request.pre,
+    //   (err, result) => {
+    //     replyJson(err, result, reply)
+    //   }
+    // )
   }
 }
 
