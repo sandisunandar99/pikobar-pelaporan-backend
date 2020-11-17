@@ -1,5 +1,5 @@
 const replyHelper = require('../helpers')
-const { funcIfSame } = require('../../helpers/request')
+const { funcIfSame, funcCreate } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -43,12 +43,8 @@ const DeleteHistory = (server) => {
 }
 
 const UpdateHistory = (server) => {
-  return (request, reply) => {
-    server.methods.services.histories.updateById(
-      request,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+    await funcCreate(server, "histories", "updateById", request, reply)
   }
 }
 
