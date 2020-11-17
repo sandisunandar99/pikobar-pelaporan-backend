@@ -43,9 +43,10 @@ const CreateRdtMultiple = (server) => {
 
 const GetRdtDetail = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.getById(request.params.id, (err, result) => {
-      replyJson(err, result, reply)
-    })
+    // server.methods.services.rdt.getById(request.params.id, (err, result) => {
+    //   replyJson(err, result, reply)
+    // })
+    await funcIfSame(server, "rdt", "getById", request, "id", reply)
   }
 }
 
