@@ -609,8 +609,11 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 }
 
-function updateRdt (id, payload, author, callback) {
-   delete payload._id
+function updateRdt (request, author, callback) {
+  const id = request.params.id
+  const payload = request.payload
+
+  delete payload._id
   // update Rdt
   payload.author_district_code = author.code_district_city
   payload.author_district_name = author.name_district_city
