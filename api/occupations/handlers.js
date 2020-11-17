@@ -1,15 +1,10 @@
-const {
-  replyJson
-} = require('../helpers')
+const {replyJson} = require('../helpers')
+const {queryIfSame} = require('../../helpers/request')
+
 
 const ListOccupation = (server) => {
-  return (request, reply) => {
-    server.methods.services.occupations.getOccupation(
-      request.query,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
+  return async(request, reply) => {
+    await queryIfSame(server, "occupations", "getOccupation", request, reply)
   }
 }
 
