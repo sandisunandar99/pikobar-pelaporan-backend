@@ -64,12 +64,14 @@
   "inspection_location": "Tempat pemeriksaan",
   "get_specimens_to": "Pengambilan spesimen-ke",
   "inspection_result": "Hasil pemeriksaan",
+  "transmission_type": "Jenis Transmisi",
+  "cluster_type": "Jenis Klaster",
   "messages": {
     "unverified_template": "Template Kasus Yang diimport tidak dikenali, Silahkan download template terbaru",
     "version_out_of_date": "Versi template tidak didukung, Silahkan download template terbaru",
     "invalid_date_format": "Harus dalam format (tttt-bb-hh)",
-    "invalid_criteria": "\"Kriteria\" Harus diisi atau Belum sesuai!",
-    "invalid_final_result": "\"Status pasien terakhir\" Harus diisi atau Belum sesuai!",
+    "invalid_criteria": "\"Kriteria\" Harus diisi sesuai opsi",
+    "invalid_final_result": "\"Status pasien terakhir\" Harus diisi sesuai opsi",
     "empty_data": "Ada kesalahan dalam import data, Tidak ada data pada file yang Anda unggah. Silakan periksa kembali data Anda!"
   }
 }
