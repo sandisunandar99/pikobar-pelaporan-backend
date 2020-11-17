@@ -36,7 +36,7 @@ const SubDistrict = (server) => {
   return async (request, reply) => {
     await queryParamSame(
       server, "areas", "getSubDistrict",
-      request, "city_code", reply
+      request, "query", "city_code", reply
     )
   }
 }

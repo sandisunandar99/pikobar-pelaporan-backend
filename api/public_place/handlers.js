@@ -1,4 +1,4 @@
-const { funcCreatePayload, funcIfSame, funcWithParam } = require('../../helpers/request')
+const { funcCreatePayload, funcIfSame, queryParamSame } = require('../../helpers/request')
 
 const createPublicPlace = (server) => {
   return async(request, reply) => {
@@ -14,7 +14,10 @@ const getPublicPlace = (server) => {
 
 const updatePublicPlace = (server) => {
   return async(request, reply) => {
-    await funcWithParam(server, "public_place", "update", request, "id_public_place", reply)
+    await queryParamSame(
+      server, "public_place", "update",
+      request, "payload", "id_public_place", reply
+    )
   }
 }
 
