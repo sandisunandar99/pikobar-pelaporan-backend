@@ -1,4 +1,4 @@
-const { queryIfSame, funcIfSame } = require('../../helpers/request')
+const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -108,11 +108,8 @@ const GetListRegisteredUser = (server) => {
 }
 
 const formLocationTest = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.getLocationTest(
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+    await funcNoParam(server, "rdt", "getLocationTest", reply)
   }
 }
 
