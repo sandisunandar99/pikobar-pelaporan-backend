@@ -6,24 +6,16 @@ module.exports = (server) =>{
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
     // const districtInputScope = require('./route_prerequesites').districtInputScope(server)
     // THIS FILE TODO DELETED
-    const configs = {
+    const configsSame ={
       auth: 'jwt',
-      description: 'update close contacts',
-      tags: ['api', 'close_contacts'],
-      validate: inputValidations.RequestPayload,
-      pre: [
-          getCloseContactbyId, /*districtInputScope*/
-      ]
+      description: 'show list of all close-contacts per-case',
+      tags: ['api', 'close_contacts']
     }
     return [
         {
             method: 'GET',
             path: '/cases/{caseId}/close-contacts',
-            config: {
-                auth: 'jwt',
-                description: 'show list of all close-contacts per-case',
-                tags: ['api', 'close_contacts']
-            },
+            config: configsSame,
             handler: handlers.ListCloseContactCase
         },
         {
@@ -52,17 +44,21 @@ module.exports = (server) =>{
         {
             method: 'GET',
             path: '/close-contacts/{closeContactId}',
-            config: {
-                auth: 'jwt',
-                description: 'show a specific close contact',
-                tags: ['api', 'close_contacts']
-            },
+            config: configsSame,
             handler: handlers.DetailCloseContact
         },
         {
             method: 'PUT',
             path: '/close-contacts/{closeContactId}',
-            config: configs,
+            config: {
+                auth: 'jwt',
+                description: 'update close contacts',
+                tags: ['api', 'close_contacts'],
+                validate: inputValidations.RequestPayload,
+                pre: [
+                    getCloseContactbyId, /*districtInputScope*/
+                ]
+            },
             handler: handlers.UpdateCloseContact
         },
         {
