@@ -1,23 +1,20 @@
 'use strict'
 const Case = require('../models/Case')
-const { topAggregate }  = require('../helpers/aggregate/topaggregate')
 const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
-const { visualizationAggregate }  = require('../helpers/aggregate/visualizationaggregate')
+const { topAggregate }  = require('../helpers/aggregate/topaggregate')
 
 async function countSectionTop(query, user, callback) {
   try {
-    const condition = await topAggregate(query, user)
-    const resultCount = await Case.aggregate(condition)
+    const resultCount = await sameCondition(query, user, topAggregate)
     callback(null, resultCount)
   } catch (e) {
-    callback(e, null)
+    callback(`error in ${e}`, null)
   }
 }
 
 async function countSummary(query, user, callback) {
   try {
-    const condition = await summaryAggregate(query, user)
-    const resultCount = await Case.aggregate(condition)
+    const resultCount = await sameCondition(query, user, summaryAggregate)
     callback(null, resultCount)
   } catch (e) {
     callback(e, null)
@@ -25,6 +22,7 @@ async function countSummary(query, user, callback) {
 }
 
 async function countVisualization(query, user, callback) {
+  const { visualizationAggregate }  = require('../helpers/aggregate/visualizationaggregate')
   try {
     const condition = await visualizationAggregate(query, user)
     const resultCount = await Case.aggregate(condition)
@@ -32,6 +30,13 @@ async function countVisualization(query, user, callback) {
   } catch (e) {
     callback(e, null)
   }
+}
+
+const sameCondition = async (query, user, models) => {
+  const condition = await models(query, user)
+  const resultCount = await Case.aggregate(condition)
+
+  return resultCount
 }
 
 module.exports = [

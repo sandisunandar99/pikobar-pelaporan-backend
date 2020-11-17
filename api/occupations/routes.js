@@ -1,9 +1,6 @@
-module.exports = (server) => {
-  const handlers = require('./handlers')
-  const {configRouteComplete} = require('../../helpers/routes')
-
+module.exports = (server, route) => {
   return [
-    configRouteComplete('GET', '/occupations', null, [], 'Occupation', handlers.ListOccupation(server)),
-    configRouteComplete('GET', '/occupations/{id}', null, [], 'Occupation', handlers.GetOccupationDetail(server)),
+    route(server, 'GET', '/occupations', 'occupations', 'ListOccupation'),
+    route(server, 'GET', '/occupations/{id}', 'occupations', 'GetOccupationDetail')
   ]
 }
