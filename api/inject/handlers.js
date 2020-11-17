@@ -1,12 +1,9 @@
 const { replyJson } = require('../helpers')
-const {payloadPreSame} = require('../../helpers/request')
+const {payloadPreSame, funcCreate} = require('../../helpers/request')
 
 const injectLastHistory = (server) => {
-  return (request, reply) => {
-    server.methods.services.inject.lastHistory(request,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+    await funcCreate(server, "inject", "lastHistory", request, reply)
   }
 }
 
