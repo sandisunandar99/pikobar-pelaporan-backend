@@ -1,4 +1,6 @@
-const { replyJson } = require('../../api/helpers')
+const {
+  replyJson
+} = require('../../api/helpers')
 
 const funcIfSame = async (server, name, methods, request, param, reply) => {
   server.methods.services[name][methods](
@@ -46,8 +48,12 @@ const funcCreate = async (server, name, methods, request, reply) => {
 }
 
 const requestIfSame = async (server, name, methods, request, reply) => {
-  const { query } = request
-  const { user } = request.auth.credentials
+  const {
+    query
+  } = request
+  const {
+    user
+  } = request.auth.credentials
   server.methods.services[name][methods](
     query, user,
     (err, result) => {
@@ -56,9 +62,14 @@ const requestIfSame = async (server, name, methods, request, reply) => {
   )
 }
 
-const payloadPreSame = async (server, name, methods, request, reply) =>{
-  const { payload, pre } = request
-  const { user } = request.auth.credentials
+const payloadPreSame = async (server, name, methods, request, reply) => {
+  const {
+    payload,
+    pre
+  } = request
+  const {
+    user
+  } = request.auth.credentials
   server.methods.services[name][methods](
     payload, user, pre,
     (err, result) => {
@@ -69,6 +80,11 @@ const payloadPreSame = async (server, name, methods, request, reply) =>{
 
 
 module.exports = {
-  funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate, requestIfSame, payloadPreSame
+  funcIfSame,
+  queryIfSame,
+  queryParamSame,
+  funcNoParam,
+  funcCreate,
+  requestIfSame,
+  payloadPreSame
 }
