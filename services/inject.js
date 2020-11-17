@@ -37,7 +37,9 @@ const lastHistory = async (query, callback) => {
 }
 
 
-const injectRdt = async (payload, author, pre, callback) => {
+const injectRdt = async (request, callback) => {
+  let payload = request.payload
+  let author = request.auth.credentials.user
   let resultForResnpose = []
 
   const process = async () => {
