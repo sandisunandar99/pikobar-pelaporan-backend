@@ -21,7 +21,7 @@ module.exports = (server) => {
           await funcNoParam(server, "country", "getCountryList", reply)
         },
         async listMenu(request, reply) {
-          await  await funcNoParam(server, "country", "getMenuList", reply)
+          await funcNoParam(server, "country", "getMenuList", reply)
         },
     } //end
 }
