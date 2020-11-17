@@ -8,7 +8,7 @@ const filterEdges = (this_) => {
   // logic status label
   if ([CRITERIA.SUS, CRITERIA.PROB, CRITERIA.CLOSE].includes(this_.status)) {
     status = 'normal'
-  } else if (this_.status === CRITERIA.CONF && !this_.final_result) {
+  } else if (this_.status === CRITERIA.CONF && (!this_.final_result || this_.final_result === '0')) {
     status = 'positive_active'
   } else if (this_.status === CRITERIA.CONF && ["1", "3", "4", "5"].includes(this_.final_result)) {
     status = 'positive_recovery'
