@@ -1,5 +1,5 @@
 module.exports = (server) => {
-    const handlers = require('./handlers')(server)
+    const handlers = require('./handlers')
     return [{
         method: 'GET',
         path: '/country',
@@ -8,7 +8,7 @@ module.exports = (server) => {
             description: 'show country list',
             tags: ['api', 'country list'],
         },
-        handler: handlers.listCountry
+        handler: handlers.listCountry(server)
     },{
         method: 'GET',
         path: '/menu',
@@ -17,6 +17,6 @@ module.exports = (server) => {
             description: 'show menu',
             tags: ['api', 'menu'],
         },
-        handler: handlers.listMenu
+        handler: handlers.listMenu(server)
     }]
 }
