@@ -1,6 +1,5 @@
 const replyHelper = require('../helpers')
 const { replyJson } = require('../helpers')
-const {payloadPreSame} = require('../../helpers/request')
 
 const injectLastHistory = (server) => {
   return (request, reply) => {
@@ -13,7 +12,14 @@ const injectLastHistory = (server) => {
 
 const injectRdtTest = (server) => {
   return async (request, reply) => {
-    await payloadPreSame(server, "inject", "injectRdt", request, reply)
+    server.methods.services.inject.injectRdt(
+      request.payload,
+      request.auth.credentials.user,
+      request.pre,
+      (err, result) => {
+         replyJson(err, result, reply)
+      }
+    )
   }
 }
 
