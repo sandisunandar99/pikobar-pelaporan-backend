@@ -1,54 +1,20 @@
-module.exports = (server) => {
-  const handlers = require('./handlers')(server)
-  const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
-  const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
-  const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
-  const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
+module.exports = (server, route) => {
+  const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
+  const CheckRoleRud = require('../users/route_prerequesites').CheckRoleCreate(server)
 
   return [
-    {
-      method: 'POST',
-      path: '/public-place/{id_case}',
-      config: {
-        auth: 'jwt',
-        description: 'create public-place',
-        tags: ['api', 'public-place'],
-        pre: [ CheckRoleCreate ]
-      },
-      handler: handlers.createPublicPlace
-    },
-    {
-      method: 'GET',
-      path: '/public-place/{id_case}',
-      config: {
-        auth: 'jwt',
-        description: 'show list public-place',
-        tags: ['api', 'public-place'],
-        pre: [ CheckRoleView ]
-      },
-      handler:  handlers.getPublicPlace
-    },
-    {
-      method: 'PUT',
-      path: '/public-place/{id_public_place}',
-      config: {
-        auth: 'jwt',
-        description: 'update public-place',
-        tags: ['api', 'public-place'],
-        pre: [ CheckRoleUpdate ],
-      },
-      handler:  handlers.updatePublicPlace
-    },
-    {
-      method: 'DELETE',
-      path: '/public-place/{id_public_place}',
-      config: {
-        auth: 'jwt',
-        description: 'delete public-place',
-        tags: ['api', 'public-place'],
-        pre: [ CheckRoleDelete ],
-      },
-      handler: handlers.deletePublicPlace
-    }
+    route(
+      server, 'POST', '/public-place/{id_case}',
+      'public_place', CheckRoleRud, 'createPublicPlace'
+    ),route(
+      server, 'GET', '/public-place/{id_case}',
+      'public_place', CheckRoleView, 'getPublicPlace'
+    ),route(
+      server, 'PUT', '/public-place/{id_public_place}',
+      'public_place', CheckRoleRud, 'updatePublicPlace'
+    ),route(
+      server, 'DELETE', '/public-place/{id_public_place}',
+      'public_place', CheckRoleRud, 'deletePublicPlace'
+    )
   ]
 }

@@ -18,10 +18,10 @@ const queryIfSame = async (server, name, methods, request, reply) => {
   )
 }
 
-const queryParamSame = async (server, name, methods, request, param, reply) => {
+const queryParamSame = async (server, name, methods, request, req, param, reply) => {
   server.methods.services[name][methods](
     request.params[param],
-    request.query,
+    request[req],
     (err, result) => {
       replyJson(err, result, reply)
     }
@@ -56,9 +56,17 @@ const requestIfSame = async (server, name, methods, request, reply) => {
   )
 }
 
-
+const funcCreatePayload = async (server, name, methods, request, param, reply) => {
+  server.methods.services[name][methods](
+    request.payload,
+    request.params[param],
+    (err, result) => {
+      replyJson(err, result, reply)
+    }
+  )
+}
 
 module.exports = {
   funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate, requestIfSame
+  funcCreate, requestIfSame, funcCreatePayload
 }

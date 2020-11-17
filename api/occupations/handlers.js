@@ -1,5 +1,5 @@
-const {replyJson} = require('../helpers')
-const {queryIfSame} = require('../../helpers/request')
+const { replyJson } = require('../helpers')
+const { queryIfSame } = require('../../helpers/request')
 
 
 const ListOccupation = (server) => {
@@ -21,5 +21,5 @@ const GetOccupationDetail = (server) => {
 
 
 module.exports = {
-ListOccupation, GetOccupationDetail
+  ListOccupation, GetOccupationDetail
 }
