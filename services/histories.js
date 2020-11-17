@@ -214,8 +214,10 @@ function createHistoryFromInputTest(payload, callback){
 
 }
 
-async function updateHistoryById (id, payload, callback) {
+async function updateHistoryById (request, callback) {
   try {
+    const id = request.params.id
+    const payload = request.payload
     // guarded fields
     Helper.deleteProps(['_id', 'case'], payload)
 

@@ -45,8 +45,7 @@ const DeleteHistory = (server) => {
 const UpdateHistory = (server) => {
   return (request, reply) => {
     server.methods.services.histories.updateById(
-      request.params.id,
-      request.payload,
+      request,
       (err, result) => {
         replyJson(err, result, reply)
       })
