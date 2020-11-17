@@ -21,9 +21,9 @@ const UnitSchema = new mongoose.Schema({
 
 UnitSchema.methods.toJSONFor = function () {
   return {
-    _id: this._id,
     unit_level: this.unit_level,
     unit_code: this.unit_code,
+    _id: this._id,
     unit_type: this.unit_type,
     rs_type: this.rs_type,
     faskes_code: this.faskes_code,
