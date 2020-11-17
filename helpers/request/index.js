@@ -56,7 +56,19 @@ const requestIfSame = async (server, name, methods, request, reply) => {
   )
 }
 
+const payloadPreSame = async (server, name, methods, request, reply) => {
+  const { payload, pre } = request
+  const { user } = request.auth.credentials
+  server.methods.services[name][methods](
+    payload, user, pre,
+    (err, result) => {
+      replyJson(err, result, reply)
+    }
+  )
+}
+
+
 module.exports = {
   funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate, requestIfSame
+  funcCreate, requestIfSame, payloadPreSame
 }
