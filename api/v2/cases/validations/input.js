@@ -42,12 +42,14 @@ const RequestPayload = {
 // case sheet
 const lang = require('../../../../helpers/dictionary/id.json')
 const { CRITERIA } = require('../../../../helpers/constant')
+const { refFinalResults } = require('../../../../helpers/cases/sheet/reference')
 const enumCriterian = [
   CRITERIA.CLOSE,
   CRITERIA.CONF,
   CRITERIA.PROB,
   CRITERIA.SUS,
 ]
+const enumFinalResult = refFinalResults.map(x => x.value.toString())
 const invalidDate = (key) => {
   return `"${lang[key]}" ${lang.messages.invalid_date_format}`
 }
@@ -64,13 +66,13 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   interview_date: Joi.date().allow('', null).error(() => invalidDate('interview_date')),
   nik: Joi.string().length(16).required(),
   phone_number: Joi.string().allow('', null),
-  note_phone_number: Joi.string().when('phone_number', requiredIf('', '-', null)),
+  note_phone_number: Joi.string().when('phone_number', requiredIf(['', '-', null])),
   name: Joi.string().required(),
   name_parents: Joi.string().allow('', null),
   place_of_birth: Joi.string().allow('', null),
-  birth_date: Joi.date().allow('', null).error(() => invalidDate('birth_date')),
-  age: Joi.number().required(),
-  month: Joi.number().required(),
+  birth_date: Joi.date().required().error(() => invalidDate('birth_date')),
+  age: Joi.number().allow(null),
+  month: Joi.number().allow(null),
   gender: Joi.string().required(),
   address_district_code: Joi.string().required(),
   address_district_name: Joi.string().required(),
@@ -111,11 +113,11 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   pysichal_activity: Joi.number().allow('', null),
   smoking: Joi.number().allow('', null),
   consume_alcohol: Joi.number().allow('', null),
-  status: Joi.string().valid(enumCriterian).required().error(e => lang.messages.invalid_criteria ),
-  final_result: Joi.string().empty('', null).required(),
+  status: Joi.string().required().valid(enumCriterian),
+  final_result: Joi.string().required().valid(enumFinalResult),
   last_date_status_patient: Joi.date().allow('', null).error(() => invalidDate('last_date_status_patient')),
-  transmission_type: Joi.number().when('status', requiredIf(CRITERIA.CONF)),
-  cluster_type: Joi.number().when('status', requiredIf(CRITERIA.CONF)),
+  transmission_type: Joi.number().when('status', requiredIf([CRITERIA.CONF])),
+  cluster_type: Joi.number().when('status', requiredIf([CRITERIA.CONF])),
   cluster_other: Joi.string().allow('', null),
 }).unknown()
 

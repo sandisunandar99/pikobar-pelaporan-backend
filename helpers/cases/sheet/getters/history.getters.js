@@ -150,12 +150,12 @@ getters.isConsumeAlcohol = (d) => {
 
 getters.getStatus = (d) => {
   const criteria =  findReference(refCriterias, d[conf.cell.status])
-  return criteria ? _toString(criteria) : null
+  return criteria ? _toString(criteria) : undefined
 }
 
 getters.getFinalResult = (d) => {
   const result = findReference(refFinalResults, d[conf.cell.final_result])
-  if (!result) return null;
+  if (!result) return undefined;
   return _toString(result)
 }
 

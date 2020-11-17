@@ -6,6 +6,7 @@ const {
   _toString, _toDateString, _toUnsignedInt, getStringValueByIndex, getTransformedAge, trueOrFalse, findReference, getArrayValues,
   yesNoUnknown,
 } = require('../helper')
+const { transformAge } = require('../../../pdftemplate/helper')
 
 // import attributes
 const {
@@ -81,14 +82,14 @@ getters.getBirthDate = (d) => {
 }
 
 getters.getAge = (d) => {
-  const ageYear = _toUnsignedInt(d[conf.cell.age])
-  const ageMonth = _toUnsignedInt(d[conf.cell.month])
-  const age = ageYear + (ageMonth / 12)
-  return age
+  const objAge = transformAge({ birth_date: getters.getBirthDate(d) })
+  const age = objAge.age + (objAge.ageInMonths / 12)
+  return !age || age < 0 ? null : age
 }
 
 getters.getAgeMonth = (d) => {
-  return getTransformedAge(d[conf.cell.month])
+  const objAge = transformAge({ birth_date: getters.getBirthDate(d) })
+  return objAge.ageInMonths || null
 }
 
 getters.getGender = (d) => {
@@ -239,11 +240,11 @@ getters.getVisitedPublicPlace = (d) => {
 }
 
 getters.getTransmissionType = (d) => {
-  return findReference(refTransmissionType, d[conf.cell.transmission_type])
+  return findReference(refTransmissionType, d[conf.cell.transmission_type]) || undefined
 }
 
 getters.getClusterType = (d) => {
-  return findReference(refClusterType, d[conf.cell.cluster_type])
+  return findReference(refClusterType, d[conf.cell.cluster_type]) || undefined
 }
 
 getters.getClusterOther = (d) => {
