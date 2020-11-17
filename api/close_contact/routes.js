@@ -6,6 +6,15 @@ module.exports = (server) =>{
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
     // const districtInputScope = require('./route_prerequesites').districtInputScope(server)
     // THIS FILE TODO DELETED
+    const configs = {
+      auth: 'jwt',
+      description: 'update close contacts',
+      tags: ['api', 'close_contacts'],
+      validate: inputValidations.RequestPayload,
+      pre: [
+          getCloseContactbyId, /*districtInputScope*/
+      ]
+    }
     return [
         {
             method: 'GET',
@@ -53,15 +62,7 @@ module.exports = (server) =>{
         {
             method: 'PUT',
             path: '/close-contacts/{closeContactId}',
-            config: {
-                auth: 'jwt',
-                description: 'update close contacts',
-                tags: ['api', 'close_contacts'],
-                validate: inputValidations.RequestPayload,
-                pre: [
-                    getCloseContactbyId, /*districtInputScope*/
-                ]
-            },
+            config: configs,
             handler: handlers.UpdateCloseContact
         },
         {

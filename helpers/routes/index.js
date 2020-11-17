@@ -47,6 +47,21 @@ const routeNoPreNew = (server, method, path, description, callback) => {
   }
 }
 
+const configRouteComplete = (method, path, validates, pre, tag, callback)=> {
+  return {
+    method: method,
+    path: path,
+    config: {
+      auth: 'jwt',
+      description: `${method} ${tag}`,
+      tags: [ 'api', tag ],
+      pre: pre,
+      validate: validates
+    },
+    handler: callback,
+  }
+}
+
 module. exports = {
   configRoute, configWithValidation, routeOldNoPre,
   routeNoPreNew, configRouteComplete
