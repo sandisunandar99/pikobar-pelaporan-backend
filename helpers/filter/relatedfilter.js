@@ -6,32 +6,26 @@ const filterEdges = (this_) => {
   let image
   let status
   // logic status label
-  if (this_.status === CRITERIA.SUS || this_.status === CRITERIA.PROB || this_.status === CRITERIA.CLOSE) {
+  if ([CRITERIA.SUS, CRITERIA.PROB, CRITERIA.CLOSE].includes(this_.status)) {
     status = 'normal'
-  }
-  if (this_.status === CRITERIA.CONF && !this_.final_result) {
+  } else if (this_.status === CRITERIA.CONF && !this_.final_result) {
     status = 'positive_active'
-  }
-  if (this_.status === CRITERIA.CONF && ["1", "3", "4", "5"].includes(this_.final_result)) {
+  } else if (this_.status === CRITERIA.CONF && ["1", "3", "4", "5"].includes(this_.final_result)) {
     status = 'positive_recovery'
-  }
-  if (this_.status === CRITERIA.CONF && this_.final_result === "2") {
+  } else if (this_.status === CRITERIA.CONF && this_.final_result === "2") {
     status = 'positive_dead'
   }
   // logic image label by age
+  this_.age = Math.floor(this_.age)
   if (this_.age >= 0 && this_.age <= 1) {
     image = `avatar/baby-${gender}-${status}.svg`
-  }
-  if (this_.age >= 2 && this_.age <= 5) {
+  } else if (this_.age >= 2 && this_.age <= 5) {
     image = `avatar/child-${gender}-${status}.svg`
-  }
-  if (this_.age >= 6 && this_.age <= 19) {
+  } else if (this_.age >= 6 && this_.age <= 19) {
     image = `avatar/teen-${gender}-${status}.svg`
-  }
-  if (this_.age >= 20 && this_.age <= 59) {
+  } else if (this_.age >= 20 && this_.age <= 59) {
     image = `avatar/adult-${gender}-${status}.svg`
-  }
-  if (this_.age >= 60) {
+  } else if (this_.age >= 60) {
     image = `avatar/elderly-${gender}-${status}.svg`
   }
   return {
