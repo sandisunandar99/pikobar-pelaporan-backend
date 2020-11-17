@@ -84,11 +84,12 @@ getters.getBirthDate = (d) => {
 getters.getAge = (d) => {
   const objAge = transformAge({ birth_date: getters.getBirthDate(d) })
   const age = objAge.age + (objAge.ageInMonths / 12)
-  return !age || age < 0 ? undefined : age
+  return !age || age < 0 ? null : age
 }
 
 getters.getAgeMonth = (d) => {
-  return getTransformedAge(d[conf.cell.month])
+  const objAge = transformAge({ birth_date: getters.getBirthDate(d) })
+  return objAge.ageInMonths || null
 }
 
 getters.getGender = (d) => {
