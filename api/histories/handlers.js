@@ -17,11 +17,8 @@ const ListHistory = (server) => {
 }
 
 const CreateHistory = (server) => {
-  return (request, reply) => {
-    server.methods.services.histories.createIfChanged(request.payload,
-      (err, result) => {
-        replyJson(err, result, reply)
-      })
+  return async(request, reply) => {
+    await funcCreate(server, "histories", "createIfChanged", request, reply)
   }
 }
 

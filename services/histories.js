@@ -65,13 +65,15 @@ function createHistory (payload, callback) {
   });
 }
 
-function createHistoryIfChanged (payload, callback) {
+function createHistoryIfChanged (request, callback) {
   /* Create history only if new history and last_history of the related case
    * has difference. If the same would just return the old history. If there
    * are any difference, would create a new history, then update the related
    * case's last_history to the newly created history. */
 
   // guarded field (cannot be filled)
+  const payload = request.payload
+
   Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).exec().then(case_obj => {
