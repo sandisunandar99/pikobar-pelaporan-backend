@@ -1,26 +1,9 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
+  const handlers = require('./handlers')
+  const {configRouteComplete} = require('../../helpers/routes')
 
   return [
-    {
-      method: 'GET',
-      path: '/occupations',
-      config: {
-        auth: 'jwt',
-        description: 'show occupations',
-        tags: ['api', 'occupations'],
-      },
-      handler: handlers.ListOccupation
-    },
-    {
-      method: 'GET',
-      path: '/occupations/{id}',
-      config: {
-        auth: 'jwt',
-        description: 'show detail occupation',
-        tags: ['api', 'occupations'],
-      },
-      handler: handlers.GetOccupationDetail
-    }
+    configRouteComplete('GET', '/occupations', null, [], 'Occupation', handlers.ListOccupation(server)),
+    configRouteComplete('GET', '/occupations/{id}', null, [], 'Occupation', handlers.GetOccupationDetail(server)),
   ]
 }
