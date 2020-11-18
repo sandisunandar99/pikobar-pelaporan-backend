@@ -1086,11 +1086,32 @@ async function migrationToCases(callback) {
     is_migrated: {$ne: true}
   })
   .populate(['last_history','author'])
-  .limit(2)
+  .limit(1)
+
+  let process = 0, success = 0
+  const range = rdt.length
+
+  rdt.forEach(async (val, key) => {
+    process ++
+
+    try {
+      // find nik for migration or unmigration data RDT
+      if (val.nik) {
+        find_nik = await Case.findOne({nik: val.nik})
+      }
+
+      console.log(find_nik);
+
+    } catch (error) {
+      console.log("ERR : "+error)
+      callback (error, null)
+    }
+  });
 
 
 
-  return callback(null, {data: rdt})
+
+  return callback(null, {data: range})
 }
 
 module.exports = [
