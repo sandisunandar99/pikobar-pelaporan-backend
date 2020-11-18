@@ -1082,7 +1082,8 @@ function sendMessagesWA(rdt) {
 async function migrationToCases(callback) {
   // get data rdt
   let rdt = await Rdt.find({
-    status: {$ne: 'deleted'}
+    status: {$ne: 'deleted'},
+    is_migrated: {$ne: true}
   })
   .populate(['last_history','author'])
   .limit(2)
