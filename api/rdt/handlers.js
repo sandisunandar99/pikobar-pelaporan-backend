@@ -152,6 +152,16 @@ const sendMessage = (server) => {
   }
 }
 
+const migrationToCase = (server) => {
+  return async(request, reply) => {
+    server.methods.services.rdt.migrationToCases(
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
+  }
+}
+
 module.exports = {
   ListRdt,
   CreateRdt,
@@ -168,5 +178,6 @@ module.exports = {
   GetRdtSummaryResultByCities,
   GetRdtSummaryResultListByCities,
   GetRdtFaskesSummaryByCities,
-  sendMessage
+  sendMessage,
+  migrationToCase
 }

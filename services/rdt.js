@@ -20,6 +20,8 @@ const DistrictCity = mongoose.model('Districtcity')
 const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
+const { method } = require('bluebird');
+const { func } = require('joi');
 
 
 async function ListRdt (query, user, callback) {
@@ -1077,6 +1079,19 @@ function sendMessagesWA(rdt) {
 
 }
 
+async function migrationToCases(callback) {
+  // get data rdt
+  let rdt = await Rdt.find({
+    status: {$ne: 'deleted'}
+  })
+  .populate(['last_history','author'])
+  .limit(2)
+
+
+
+  return callback(null, {data: rdt})
+}
+
 module.exports = [
   {
     name: 'services.rdt.list',
@@ -1178,5 +1193,9 @@ module.exports = [
     name: 'services.rdt.getLocationTest',
     method: getLocationTest
   },
+  {
+    name: 'services.rdt.migrationToCases',
+    method: migrationToCases
+  }
 ];
 

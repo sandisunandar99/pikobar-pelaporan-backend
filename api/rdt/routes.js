@@ -54,7 +54,8 @@ module.exports = (server) => {
     route('GET', '/rdt/summary-result-by-cities', null, [CheckRoleView], 'GetRdtSummaryResultByCities'),
     route('GET', '/rdt/summary-result-list-by-cities', null, [CheckRoleView], 'GetRdtSummaryResultListByCities'),
     route('GET', '/rdt/faskes-summary-by-cities', null, [CheckRoleView], 'GetRdtFaskesSummaryByCities'),
-    route('POST', '/rdt/send-messages', null, [], 'sendMessage')
+    route('POST', '/rdt/send-messages', null, [], 'sendMessage'),
+    route('POST', '/rdt/migration-to-case', null, [CheckRoleCreate], 'migrationToCase')
   ]
 
 }
