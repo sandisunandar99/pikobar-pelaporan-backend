@@ -78,7 +78,7 @@ getters.getPlaceOfBirth = (d) => {
 }
 
 getters.getBirthDate = (d) => {
-  return _toDateString(d[conf.cell.birth_date])
+  return _toDateString(d[conf.cell.birth_date]) || undefined
 }
 
 getters.getAge = (d) => {

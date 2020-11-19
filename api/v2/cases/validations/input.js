@@ -70,7 +70,18 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   name: Joi.string().required(),
   name_parents: Joi.string().allow('', null),
   place_of_birth: Joi.string().allow('', null),
-  birth_date: Joi.date().required().error(() => invalidDate('birth_date')),
+  birth_date: Joi.date().required().error((e) => {
+    let err =  e
+    if (e.length) {
+      switch (e[0].type) {
+        case 'date.base':
+          err = invalidDate('birth_date')
+          break;
+        default:
+      }
+    }
+    return err
+  }),
   age: Joi.number().allow(null),
   month: Joi.number().allow(null),
   gender: Joi.string().required(),
