@@ -1,25 +1,20 @@
 module.exports = (server) => {
+  const route = (method, path, callback) => {
     const handlers = require('./handlers')(server)
-    return [
-        {
-            method: 'GET',
-            path: '/case-related',
-            config: {
-                auth: 'jwt',
-                description: 'show case related',
-                tags: ['api', 'case related'],
-            },
-            handler: handlers.caseRelatedList,
-        },
-        {
-            method: 'GET',
-            path: '/case-related/{id_case}',
-            config: {
-                auth: 'jwt',
-                description: 'get by case related',
-                tags: ['api', 'case related'],
-            },
-            handler: handlers.caseRelatedById,
-        },
-    ]
+    return {
+      method: method,
+      path: path,
+      config: {
+        description: ` ${method} case related`,
+        tags: ['api', 'list', 'case related',],
+        auth: 'jwt',
+      },
+      handler: handlers[callback],
+    }
+  }
+  return [
+    route('GET', '/case-related', 'caseRelatedList'),
+    route('GET', '/case-related/{id_case}', 'caseRelatedById'),
+    route('PATCH', '/case-related/sync', 'caseRelatedSync'),
+  ]
 }

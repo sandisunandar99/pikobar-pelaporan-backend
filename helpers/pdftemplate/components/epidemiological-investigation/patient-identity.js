@@ -1,7 +1,10 @@
 const moment = require('moment')
+const { transformAge } = require('../../helper')
 const { CRITERIA } = require('../../../constant')
 const render = (data) => {
-  const ageInMonths = moment().diff(data.birth_date, 'months') || 0
+  const age = transformAge(data)['age']
+  const ageInMonths = transformAge(data)['ageInMonths']
+
   return {
       style: 'tableExample',
       color: '#444',
@@ -65,7 +68,7 @@ const render = (data) => {
           ],
           [
             { text: `Tgl lahir: ${data.birth_date ? moment(data.birth_date).format('YYYY/MM/DD') : '-' }` },
-            { text: `Umur: ${data.age || 0 } tahun, ${ageInMonths < 12 ? ageInMonths : ageInMonths%12 } bulan` },
+            { text: `Umur: ${age} tahun, ${ageInMonths} bulan` },
             { text: `${data.gender === 'L' ? '[√]' : '[  ]'} Laki-laki
               ${data.gender === 'P' ? '[√]' : '[  ]'} Perempuan` },
             { text: 'Pekerjaan: ' + (data.occupation || '-') },
@@ -89,9 +92,9 @@ const render = (data) => {
             { text: `: ${data.phone_number || '-' }`, borderColor: ['black', 'white', 'black', 'black'] },
           ],
           [
-            { text: `Longitude: -`, colSpan: 2 },
+            { text: `Latitude: ${data.latitude || '-' }`, colSpan: 2 },
             {},
-            { text: `Longitude: -`, colSpan: 2 },
+            { text: `Longitude: ${data.longitude || '-' }`, colSpan: 2 },
             {},
           ]
         ],

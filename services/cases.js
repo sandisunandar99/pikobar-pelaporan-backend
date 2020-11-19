@@ -1,31 +1,16 @@
-const mongoose = require('mongoose');
-
-require('../models/Case');
-const Case = mongoose.model('Case');
-
-require('../models/Unit');
-const Unit = mongoose.model('Unit');
-
-require('../models/History')
-const History = mongoose.model('History')
-
-require('../models/User')
-const User = mongoose.model('User')
-
-require('../models/Notification')
-const Notification = mongoose.model('Notification')
-
-require('../models/CaseTransfer')
-const CaseTransfer = mongoose.model('CaseTransfer')
-
-require('../models/DistrictCity')
-const DistrictCity = mongoose.model('Districtcity')
-const ObjectId = require('mongoose').Types.ObjectId;
+const Case = require('../models/Case');
+const Unit =require('../models/Unit')
+const History = require('../models/History')
+const User = require('../models/User')
+const Notification = require('../models/Notification')
+const DistrictCity = require('../models/DistrictCity')
 const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
-const Helper = require('../helpers/custom')
+const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
-const moment = require('moment');
+const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
+const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
+const moment = require('moment')
 
 async function ListCase (query, user, callback) {
 
@@ -89,6 +74,15 @@ async function ListCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
 
+  if(query.is_reported) {
+    params.is_reported = query.is_reported
+  }
+
+  params.is_west_java = { $ne: false }
+  if ([true, false].includes(query.is_west_java)) {
+    params.is_west_java = query.is_west_java
+  }
+
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {
@@ -126,55 +120,28 @@ async function ListCase (query, user, callback) {
   }).catch(err => callback(err, null))
 }
 
-function listCaseExport (query, user, callback) {
-  const params = {}
-
-  if(query.start_date && query.end_date){
-    params.createdAt = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
-      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
-    }
-  }
-
-  Check.exportByRole(params,user,query)
-
-  if(query.status){
-    params.status = query.status;
-  }
-  if(query.final_result){
-    params.final_result = query.final_result;
-  }
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      params.address_district_code = query.address_district_code;
-    }
-  }
-  if(query.address_village_code){
-    params.address_village_code = query.address_village_code;
-  }
-  if(query.address_subdistrict_code){
-    params.address_subdistrict_code = query.address_subdistrict_code;
-  }
-  if (query.verified_status && query.verified_status.split) {
-    params.verified_status = { $in: query.verified_status.split(',') }
-  }
+const listCaseExport = async (query, user, callback) => {
+  const filter = await Filter.filterCase(user, query)
+  const filterRole = Check.exportByRole({}, user, query)
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
+  let search
   if(query.search){
-    var search_params = [
+    let search_params = [
       { id_case : new RegExp(query.search,"i") },
       { name: new RegExp(query.search, "i") },
     ];
-    var search = search_params
+    search = search_params
   } else {
-    var search = {}
+    search = {}
   }
   params.last_history = { $exists: true, $ne: null }
-  Case.find(params)
-    .where('delete_status').ne('deleted')
-    .or(search)
-    .populate('author').populate('last_history')
-    .exec()
-    .then(cases => callback (null, cases.map(cases => cases.JSONExcellOutput())))
-    .catch(err => callback(err, null));
+  const condition = sqlCondition(params, search, query)
+  try {
+    const resultExport = await Case.aggregate(condition)
+    callback (null, resultExport.map(cases => excellOutput(cases)))
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
 function getCaseById (id, callback) {
@@ -250,82 +217,69 @@ async function getCaseSummaryFinal (query, user, callback) {
   }
 }
 
-async function getCaseSummary (query, user, callback) {
-  // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  const caseAuthors = await thisUnitCaseAuthors(user)
+async function getCaseSummary(query, user, callback) {
+  try {
+    const caseAuthors = await thisUnitCaseAuthors(user)
+    const scope = Check.countByRole(user, caseAuthors)
+    const filter = await Filter.filterCase(user, query)
+    const searching = Object.assign(scope, filter)
 
-  let searching = Check.countByRole(user,caseAuthors);
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      searching.address_district_code = query.address_district_code;
-    }
+    const conditions = [
+      { $match: {
+        $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+      }},
+      {
+        $group: {
+          _id: 'status',
+          confirmed: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.CONF] },
+                  ]
+                }, 1, 0]
+            }
+          },
+          probable: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.PROB] },
+                  ]
+                }, 1, 0]
+            }
+          },
+          suspect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.SUS] },
+                  ]
+                }, 1, 0]
+            }
+          },
+          closeContact: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.CLOSE] },
+                  ]
+                }, 1, 0]
+            }
+          },
+        },
+      },
+      { $project: { _id : 0 } },
+    ]
+    const result = await Case.aggregate(conditions)
+    callback(null, result.shift())
+  } catch (e) {
+    callback(e, null)
   }
-
-  if(query.address_village_code){
-    searching.address_village_code = query.address_village_code;
-  }
-
-  if(query.address_subdistrict_code){
-    searching.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  var aggStatus = [
-    { $match: {
-      $and: [  searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' } ]
-    }},
-    {
-      $group: { _id: "$status", total: {$sum: 1}}
-    }
-  ];
-
-  let result =  {
-    'OTG':0,
-    'OTG_PROCESS':0,
-    'OTG_DONE':0,
-    'ODP':0,
-    'ODP_PROCESS':0,
-    'ODP_DONE':0,
-    'PDP':0,
-    'PDP_PROCESS':0,
-    'PDP_DONE':0,
-    'POSITIF':0,
-    'KONTAKERAT' : 0,
-    'PROBABEL' : 0
-  }
-  Case.aggregate(aggStatus).exec().then(async item => {
-      item.forEach(function(item){
-        if (item['_id'] == 'OTG') {
-          result.OTG = item['total']
-        }
-        if (item['_id'] == 'ODP') {
-          result.ODP = item['total']
-        }
-        if (item['_id'] == 'PDP') {
-          result.PDP = item['total']
-        }
-        if (item['_id'] == 'POSITIF') {
-          result.POSITIF = item['total']
-        }
-        if (item['_id'] == 'KONTAKERAT') {
-          result.KONTAKERAT = item['total']
-        }
-      });
-
-      // OTG
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-
-      // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-
-      // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
 }
 
 async function getCaseSummaryVerification (query, user, callback) {
@@ -552,148 +506,33 @@ async function getCountByDistrict(code, callback) {
   }
 }
 
-function getCountPendingByDistrict(code, callback) {
+async function getCountPendingByDistrict(code, callback) {
   /* Get last number of current district id case order */
-  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-              .exec()
-              .then(dinkes =>{
-                Case.find({ address_district_code: code, verified_status: { $in: ['pending', 'declined'] } })
-                    .sort({id_case: -1})
-                    .exec()
-                    .then(res =>{
-                        let count = 1;
-                        if (res.length > 0)
-                          // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
-                          count = (Number(res[0].id_case.substring(15)) + 1);
-                        let result = {
-                          prov_city_code: code,
-                          dinkes_code: dinkes.dinkes_kota_kode,
-                          count_pasien: count
-                        }
-                      return callback(null, result)
-                    }).catch(err => callback(err, null))
-              })
-}
+  const {
+    DRAFT, PENDING, DECLINED
+  } = require('../helpers/constant')['VERIFIED_STATUS']
 
-async function importCases (raw_payload, author, pre, callback) {
-
-  const dataSheet = pre
-
-  let savedCases = null //[]
-
-  let promise = Promise.resolve()
-
-  const refHospitals = await Unit.find({unit_type: 'rumahsakit'})
-  /**
-   * # The method used temporarily
-   * Prevent duplicate id_case generated at another import process in the same time
-   * Explanation:
-   * - When counting cases, the resulting numbers will be the same if other users import simultaneously,
-   *   this causes duplication in the case id.
-   * current todo options:
-   * 1. Make the import process in series can be entered into the queue first
-   * 2. Check the current db model in process *(the current method is compared in 1 millisecond)
-   *
-   * to remember, this is only a temporary method to prevent :)
-   */
-  promise = delayIfAnotherImportProcessIsRunning(promise)
-
-  for (i in dataSheet) {
-
-    let item = dataSheet[i]
-
-    promise = promise.then(async () => {
-
-      const code = item.address_district_code
-      const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-      const verifStatus = author.role === 'faskes' ? ['pending', 'declined'] : ['verified']
-      const districtCases = await Case.findOne({ address_district_code: code, verified_status: { $in: verifStatus } }).sort({id_case: -1})
-
-      let count = 1
-      let casePayload = {}
-
-      if (districtCases) {
-        const startNum = author.role === 'faskes' ? 15 : 12
-        count = (Number(districtCases.id_case.substring(startNum)) + 1)
-      }
-
-      let district = {
-        prov_city_code: code,
-        dinkes_code: dinkes.dinkes_kota_kode,
-        count_pasien: count
-      }
-
-      let verified  = {
-        verified_status: 'verified'
-      }
-
-      if (author.role === "faskes") {
-        verified.verified_status = 'pending'
-      }
-
-      // create case
-      let date = new Date().getFullYear().toString()
-      const digit = author.role === 'faskes' ? 5 : 4
-      let id_case = author.role === 'faskes' ? "precovid-" : "covid-"
-      id_case += district.dinkes_code
-      id_case += date.substr(2, 2)
-      id_case += "0".repeat(digit - district.count_pasien.toString().length)
-      id_case += district.count_pasien
-
-      casePayload = Object.assign(item, verified)
-      casePayload = Object.assign(item, {id_case})
-
-      casePayload.author_district_code = author.code_district_city
-      casePayload.author_district_name = author.name_district_city
-      casePayload.input_source = 'import-data-sheets'
-
-      casePayload = new Case(Object.assign(casePayload, {author}))
-
-      let savedCase = await casePayload.save()
-
-      let historyPayload = { case: savedCase._id }
-
-      let hospitalId = null
-
-      if (item && item.current_location_type === 'RS') {
-
-        const hospital = refHospitals.find((h) => h.name === item.current_location_address) || null
-
-        hospitalId = hospital && hospital._id ? hospital._id : null
-
-        if (!hospitalId) {
-          if (item.other_notes) {
-            item.other_notes += ' , Dirawat di ' + item.current_location_address
-          } else {
-            item.other_notes = 'Dirawat di ' + item.current_location_address
-          }
-        }
-      }
-
-      item.current_hospital_id = hospitalId || null
-
-      if (item.first_symptom_date == "") {
-        item.first_symptom_date = Date.now()
-      }
-
-      let history = new History(Object.assign(item, historyPayload))
-
-      let savedHistory = await history.save()
-
-      let last_history = { last_history: savedHistory._id }
-      savedCase = Object.assign(savedCase, last_history)
-      savedCase = await savedCase.save()
-
-      // savedCases.push(savedCase)
-
-      return new Promise(resolve => resolve())
-
-    }).catch((e) => { throw new Error(e) })
+  try {
+    const params = {
+      address_district_code: code,
+      verified_status: { $in: [ DRAFT, PENDING, DECLINED ] },
+    }
+    const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
+    const res = await Case.find(params).sort({id_case: -1}).limit(1);
+    let count = 1;
+    // find array data is not null
+    if (res.length > 0){
+      count = (Number(res[0].id_case.substring(15)) + 1);
+    }
+    let result = {
+      prov_city_code: code,
+      dinkes_code: dinkes.dinkes_kota_kode,
+      count_pasien: count
+    }
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
   }
-
-  promise
-    .then(() => callback(null, savedCases))
-    .catch(err => callback(err, null))
 }
 
 function softDeleteCase(cases,deletedBy, payload, callback) {
@@ -731,27 +570,6 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   const closeContacts = await CloseContact.find({ case: detailCase._id, delete_status: { $ne: 'deleted' } })
   Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
-}
-
-/**
-* compare data in 1 millisecond
-* if different means the case is in the process of insertion by another process
-* to remember, this is only a temporary method to prevent :)
-*/
-async function delayIfAnotherImportProcessIsRunning () {
-  const totalOne = await Case.find().countDocuments()
-  promise = delay(100)
-
-  return promise.then(async () => {
-    const totalTwo = await Case.find().countDocuments()
-    if (totalOne !== totalTwo) return delay(10000)
-
-    return new Promise(resolve => resolve())
-  })
-}
-
-function delay(t) {
-  return new Promise(resolve => setTimeout(resolve.bind(), t))
 }
 
 async function thisUnitCaseAuthors (user) {
@@ -815,10 +633,6 @@ module.exports = [
   {
     name: 'services.cases.listCaseExport',
     method: listCaseExport
-  },
-  {
-    name: 'services.cases.ImportCases',
-    method: importCases
   },
   {
     name: 'services.cases.getIdCase',

@@ -1,18 +1,16 @@
 module.exports = (server) =>{
     const handlers = require('./handlers')(server)
     const inputValidations = require('./validations/input')
-    const outputValidations = require('./validations/output')
 
     const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
     const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
     const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
     const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
-    
+
     const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
     const countCasePendingByDistrict = require('./route_prerequesites').countCasePendingByDistrict(server)
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
-    const DataSheetRequest = require('./route_prerequesites').DataSheetRequest(server)
     const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
@@ -30,7 +28,6 @@ module.exports = (server) =>{
                 validate: inputValidations.CaseQueryValidations,
                  // keterangan response ini gak perlu di pakai karena sudah di validation
                 // ketika input
-                // response: outputValidations.ListCaseOutputValidationsConfig,
                 pre: [
                     CheckRoleView,
                     checkIfDataNotNull
@@ -161,22 +158,6 @@ module.exports = (server) =>{
             handler: handlers.ListCaseExport
         },
 
-        // Export Case to epidemiological investigation Form (PDF)
-        {
-            method: 'GET',
-            path: '/cases/{id}/export-to-pe-form',
-            config: {
-                auth: 'jwt',
-                description: 'Export Case to epidemiological investigation Form',
-                tags: ['api', 'epidemiological.investigation.form'],
-                pre: [
-                    CheckRoleView,
-                    getCasebyId
-                ]
-            },
-            handler: handlers.EpidemiologicalInvestigationForm
-        },
-
         // Update case
         {
             method: 'PUT',
@@ -189,7 +170,8 @@ module.exports = (server) =>{
                     CheckRoleUpdate,
                     countCaseByDistrict,
                     countCasePendingByDistrict,
-                    getCasebyId
+                    getCasebyId,
+                    checkCaseIsExists,
                 ]
             },
             handler: handlers.UpdateCase
@@ -208,28 +190,6 @@ module.exports = (server) =>{
                 ]
             },
             handler: handlers.DeleteCase
-        },
-        // Import excel case
-        {
-            method: 'POST',
-            path: '/cases-import',
-            config: {
-                auth: 'jwt',
-                description: 'Cases import',
-                tags: ['api', 'cases'],
-                validate: inputValidations.CaseImportPayloadValidations,
-                payload: {
-                    maxBytes: 1000 * 1000 * 25,
-                    output: 'stream',
-                    parse: true,
-                    allow: 'multipart/form-data'
-                },
-                pre: [
-                    CheckRoleCreate,
-                    DataSheetRequest,
-                ]
-            },
-            handler: handlers.ImportCases
         },
         // Get case name and id
         {

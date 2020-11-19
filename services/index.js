@@ -3,8 +3,10 @@ const register = (server, options, next) => {
     require('./users'),
     require('./areas'),
     require('./cases'),
+    require('./cases.v2'),
     require('./cases_transfers'),
     require('./cases_verifications'),
+    require('./cases_closecontact'),
     require('./histories'),
     require('./occupations'),
     require('./rdt'),
@@ -16,11 +18,16 @@ const register = (server, options, next) => {
     require('./map'),
     require('./unit'),
     require('./case_related'),
-    require('./case_revamp'),
     require('./close_contact'),
     require('./close_contact_histories'),
     require('./case_dashboard'),
-    require('./inject')
+    require('./reports'),
+    require('./inject'),
+    require('./history_travel'),
+    require('./public_place'),
+    require('./local_transmission'),
+    require('./inspection_support'),
+    require('./search')
   );
   server.method(services)
   return next()

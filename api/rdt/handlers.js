@@ -1,317 +1,172 @@
-const replyHelper = require('../helpers')
+const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
+const {
+  replyJson
+} = require('../helpers')
 
-module.exports = (server) => {
-    function constructRdtResponse(rdt) {
-        let jsonRdt = {
-            status: 200,
-            message: "Success",
-            data: rdt
-        }
-        // return survey
-        return jsonRdt
-    }
+const ListRdt = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.list(
+      request.query,
+      request.auth.credentials.user,
+      (err, result) => {
+        replyJson(err, result, reply)
+      })
+  }
+}
 
+const CreateRdt = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.create(
+      request.query,
+      request.payload,
+      request.auth.credentials.user,
+      request.pre,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
+  }
+}
 
-    return {
-        /**
-         * GET /api/rdt
-         * @param {*} request
-         * @param {*} reply
-         */
-        async ListRdt(request, reply){
-            let query = request.query
+const CreateRdtMultiple = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.createMultiple(
+      request.payload,
+      request.auth.credentials.user,
+      request.pre,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
+  }
+}
 
-            server.methods.services.rdt.list(
-                query,
-                request.auth.credentials.user,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructRdtResponse(result,request)
-                ).code(200)
-            })
-        },
+const GetRdtDetail = (server) => {
+  return async(request, reply) => {
+    await funcIfSame(server, "rdt", "getById", request, "id", reply)
+  }
+}
 
-        /**
-         * POST /api/rdt
-         * @param {*} request
-         * @param {*} reply
-         */
-        async CreateRdt(request, reply){
-            let payload = request.payload
-            let query  = request.query
-            server.methods.services.rdt.create(
-                query,
-                payload,
-                request.auth.credentials.user,
-                request.pre,
-                  (err, result) => {
-                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                  return reply(
-                      constructRdtResponse(result)
-                  ).code(200)
-                }
-            )
-        },
-        /**
-         * POST /api/rdt
-         * @param {*} request
-         * @param {*} reply
-         */
-        async CreateRdtMultiple(request, reply){
-            let payload = request.payload
-            server.methods.services.rdt.createMultiple(
-                payload,
-                request.auth.credentials.user,
-                request.pre,
-                  (err, result) => {
-                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                  return reply(
-                      constructRdtResponse(result)
-                  ).code(200)
-                }
-            )
-        },
+const GetRdtHistories = (server) => {
+  return async(request, reply) => {
+    await funcIfSame(server, "rdt", "getHistoriesByRdtId", request, "id", reply)
+  }
+}
 
-        /**
-         * GET /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetRdtDetail(request, reply) {
-            let id = request.params.id
-            server.methods.services.rdt.getById(id, (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructRdtResponse(item)
-                ).code(200)
-            })
-        },
+const UpdateRdt = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.update(
+      request,
+      request.auth.credentials.user,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
+  }
+}
 
-        /**
-         * GET /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetRdtHistories(request, reply) {
-            let id = request.params.id
-            server.methods.services.rdt.getHistoriesByRdtId(id, (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructRdtResponse(item)
-                ).code(200)
-            })
-        },
+const DeleteRdt = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.softDeleteRdt(
+      request.pre.rdt,
+      // request.pre.cases,
+      request.auth.credentials.user,
+      (err, result) => {
+        replyJson(err, result, reply)
+      })
+  }
+}
 
-        /**
-         * PUT /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
-        async UpdateRdt(request, reply){
-            let payload = request.payload
-            let id = request.params.id
+const GetListIdCase = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.FormSelectIdCase(
+      request.query,
+      request.auth.credentials.user,
+      request.pre.data_pendaftaran,
+      (err, result) => {
+        replyJson(err, result, reply)
+      })
+  }
+}
 
-            server.methods.services.rdt.update(
-                id,
-                payload,
-                request.auth.credentials.user,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructRdtResponse(result)
-                    ).code(200)
-                }
-            )
-        },
+const GetListIdCaseDetail = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.FormSelectIdCaseDetail(
+      request.pre.search_internal,
+      request.pre.search_external,
+      // request.auth.credentials.user,
+      (err, result) => {
+        replyJson(err, result, reply)
+      })
+  }
+}
 
-        /**
-         * DELETE /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
-        async DeleteRdt(request, reply) {
-            server.methods.services.rdt.softDeleteRdt(
-                request.pre.rdt,
-                // request.pre.cases,
-                request.auth.credentials.user,
-                (err, item) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                     return reply(
-                         constructRdtResponse(item)
-                     ).code(202)
-                })
-        },
+const GetListRegisteredUser = (server) => {
+  return async(request, reply) => {
+    await funcCreate(server, "rdt", "getRegisteredUser", request, reply)
+  }
+}
 
+const formLocationTest = (server) => {
+  return async(request, reply) => {
+    await funcNoParam(server, "rdt", "getLocationTest", reply)
+  }
+}
 
-        /**
-         * DELETE /api/rdt/{id}
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetListIdCase(request, reply) {
-            let query = request.query
-            server.methods.services.rdt.FormSelectIdCase(
-                query,
-                request.auth.credentials.user,
-                request.pre.data_pendaftaran,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructRdtResponse(result, request)
-                    ).code(200)
-            })
-        },
+const GetRdtSummaryByCities = (server) => {
+  return async (request, reply) => {
+     await queryIfSame(server, "rdt", "GetRdtSummaryByCities", request, reply)
+  }
+}
 
+const GetRdtSummaryResultByCities = (server) => {
+  return async(request, reply) => {
+      await queryIfSame(server, "rdt", "GetRdtSummaryResultByCities", request, reply)
+  }
+}
 
-        /**
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetListIdCaseDetail(request, reply) {
-            server.methods.services.rdt.FormSelectIdCaseDetail(
-                request.pre.search_internal,
-                request.pre.search_external,
-                // request.auth.credentials.user,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructRdtResponse(result, request)
-                    ).code(200)
-            })
-        },
+const GetRdtSummaryResultListByCities = (server) => {
+  return async(request, reply) => {
+      await queryIfSame(server, "rdt", "GetRdtSummaryResultListByCities", request, reply)
+  }
+}
 
+const GetRdtFaskesSummaryByCities = (server) => {
+  return async(request, reply) => {
+    await queryIfSame(server, "rdt", "GetRdtFaskesSummaryByCities", request, reply)
+  }
+}
 
-        /**
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetListRegisteredUser(request, reply) {
-            server.methods.services.rdt.getRegisteredUser(
-                request.pre.reg_user_external,
-                request.auth.credentials.user,
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructRdtResponse(result, request)
-                    ).code(200)
-            })
-        },
+const sendMessage = (server) => {
+  return (request, reply) => {
+    server.methods.services.rdt.sendMessagesSMS(
+      request.query,
+      (err, result) => {
+        replyJson(err, result, reply)
+      })
+    server.methods.services.rdt.sendMessagesWA(
+      request.query,
+      (err, result) => {
+        replyJson(err, result, reply)
+      })
+  }
+}
 
-
-        /**
-         * @param {*} request
-         * @param {*} reply
-         */
-        async formLocationTest(request, reply) {
-            server.methods.services.rdt.getLocationTest(
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructRdtResponse(result, request)
-                    ).code(200)
-            })
-        },
-
-        /**
-         * GET /api/rdt/summary-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetRdtSummaryByCities(request, reply) {
-              let query = request.query
-
-              server.methods.services.rdt.GetRdtSummaryByCities(
-                  query,
-                  (err, result) => {
-                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                      return reply(
-                          constructRdtResponse(result, request)
-                      ).code(200)
-                  })
-        },
-
-        /**
-         * GET /api/rdt/summary-result-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetRdtSummaryResultByCities(request, reply) {
-              let query = request.query
-
-              server.methods.services.rdt.GetRdtSummaryResultByCities(
-                  query,
-                  (err, result) => {
-                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                      return reply(
-                          constructRdtResponse(result, request)
-                      ).code(200)
-                  })
-        },
-
-        /**
-         * GET /api/rdt/summary-result-list-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetRdtSummaryResultListByCities(request, reply) {
-              let query = request.query
-
-              server.methods.services.rdt.GetRdtSummaryResultListByCities(
-                  query,
-                  (err, result) => {
-                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                      return reply(
-                          constructRdtResponse(result, request)
-                      ).code(200)
-                  })
-        },
-
-        /**
-         * GET /api/rdt/faskes-summary-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
-        async GetRdtFaskesSummaryByCities(request, reply) {
-              let query = request.query
-
-              server.methods.services.rdt.GetRdtFaskesSummaryByCities(
-                  query,
-                  (err, result) => {
-                      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                      return reply(
-                          constructRdtResponse(result, request)
-                      ).code(200)
-                  })
-        },
-
-
-        /**
-         * GET /api/rdt/faskes-summary-by-cities
-         * @param {*} request
-         * @param {*} reply
-         */
-        async sendMessage(result) {
-            // let query = request.query
-            // server.methods.services.rdt.sendMessagesSMS(
-            //     query,
-            //     (err, result) => {
-            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-            //         return reply(
-            //             constructRdtResponse(result, request)
-            //         ).code(200)
-            //     })
-            // server.methods.services.rdt.sendMessagesWA(
-            //     query,
-            //     (err, result) => {
-            //         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-            //         return reply(
-            //             constructRdtResponse(result, request)
-            //         ).code(200)
-            //     })
-        }
-
-
-    }//end
-
+module.exports = {
+  ListRdt,
+  CreateRdt,
+  CreateRdtMultiple,
+  GetRdtDetail,
+  GetRdtHistories,
+  UpdateRdt,
+  DeleteRdt,
+  GetListIdCase,
+  GetListIdCaseDetail,
+  GetListRegisteredUser,
+  formLocationTest,
+  GetRdtSummaryByCities,
+  GetRdtSummaryResultByCities,
+  GetRdtSummaryResultListByCities,
+  GetRdtFaskesSummaryByCities,
+  sendMessage
 }

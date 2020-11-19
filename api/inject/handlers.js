@@ -1,29 +1,18 @@
-const replyHelper = require('../helpers')
+const { replyJson } = require('../helpers')
+const {payloadPreSame, funcCreate} = require('../../helpers/request')
 
-module.exports = (server) => {
-  function constructLastHistoryResponse(last_history) {
-    let jsonLastHistory = {
-      status: 200,
-      message: "Success",
-      data: last_history
-    }
-    return jsonLastHistory
+const injectLastHistory = (server) => {
+  return async(request, reply) => {
+    await funcCreate(server, "inject", "lastHistory", request, reply)
   }
+}
 
-  return {
-    /**
-     * GET /api/inject/last-history
-     * @param {*} request
-     * @param {*} reply
-     */
-    async injectLastHistory(request, reply) {
-      server.methods.services.inject.lastHistory(request, (err, result) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(
-          constructLastHistoryResponse(result, request)
-        ).code(200)
-      }
-      )
-    },
+const injectRdtTest = (server) => {
+  return async (request, reply) => {
+    await funcCreate(server, "inject", "injectRdt", request, reply)
   }
+}
+
+module.exports = {
+  injectLastHistory,injectRdtTest
 }

@@ -17,12 +17,9 @@ const User = mongoose.model('User')
 
 require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
-const ObjectId = require('mongoose').Types.ObjectId
 const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
-const { log } = require('console');
-const { isArray } = require('lodash');
 
 
 async function ListRdt (query, user, callback) {
@@ -237,9 +234,9 @@ function GetRdtHistoryByRdtId (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function createRdt(query, payload, author, pre, callback) {
+async function createRdt(query, payload, author, pre, callback) {
 
-  if (payload.nik === null && payload.phone_number === null) {
+  if ((payload.nik === null && payload.phone_number === null) || (payload.nik ==='' && payload.phone_number === '') ) {
 
      if (payload.source_data === "external" || payload.source_data === "manual") {
        delete payload.id
@@ -280,7 +277,6 @@ function createRdt(query, payload, author, pre, callback) {
     // pad = pendingCount.toString().padStart(7, "0")
     // id_case = `${covid}${dinkesCode}${dates}${pad}`;
     // }
-
 
     let code = {
       code_test: code_test,
@@ -348,10 +344,6 @@ function createRdt(query, payload, author, pre, callback) {
 
           } else {
             // if rdt not found, create new rdt
-
-            // "code_test": "PST-100012000001"
-            // "code_tool_tester": "RDT-10012000001",
-            // "code_tool_tester": "PCR-10012000001",
             if (payload.source_data === "external" || payload.source_data === "manual") {
               delete payload.id
               delete payload.id_case
@@ -455,6 +447,13 @@ function createRdtMultiple(payload, author, pre, callback) {
               // if rdt found, update rdt
               result.author_district_code = author.code_district_city
               result.author_district_name = author.name_district_city
+              let pcr_count = rdt.pcr_count
+              let rdt_count = rdt.rdt_count
+              if (rdt.tool_tester === "PCR") {
+                result.pcr_count = pcr_count += 1
+              } else {
+                result.rdt_count = rdt_count += 1
+              }
 
               rdt = Object.assign(rdt, result);
 
@@ -474,9 +473,13 @@ function createRdtMultiple(payload, author, pre, callback) {
                   code_test += countRdt.count
 
               let code_tool_tester
+              let pcr_count = 0
+              let rdt_count = 0
               if (result.tool_tester === "PCR") {
+                pcr_count += 1
                 code_tool_tester = "PCR-"
-              }else{
+              } else {
+                rdt_count += 1
                 code_tool_tester = "RDT-"
               }
               code_tool_tester += countRdt.dinkes_code
@@ -503,7 +506,10 @@ function createRdtMultiple(payload, author, pre, callback) {
                 code_tool_tester: (code_tool_tester === undefined? "": code_tool_tester),
                 id_case: (id_case === undefined ? "": id_case),
                 author_district_code: author.code_district_city,
-                author_district_name: author.name_district_city
+                author_district_name: author.name_district_city,
+                rdt_count: rdt_count,
+                pcr_count: pcr_count,
+                source_data: "external"
               }
 
               let rdt = new Rdt(Object.assign(codes, result))
@@ -514,13 +520,16 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 
             }
-        }).then((rdts) => {
+        }).then((rdt) => {
             // whatever happen always create new TestHistory
-            let rdt_history = new RdtHistory(Object.assign(result, {rdts}))
+            let rdt_history = new RdtHistory(Object.assign(result, {rdt}))
             return rdt_history.save((err, item) => {
               if (err) console.log(err)
-              // sendMessagesSMS(rdts)
-              // sendMessagesWA(rdts)
+              // sendMessagesSMS(rdt)
+              // sendMessagesWA(rdt)
+              let last_history = { last_history: item._id }
+              rdt = Object.assign(rdt, last_history)
+              rdt.save()
             });
 
 
@@ -528,7 +537,6 @@ function createRdtMultiple(payload, author, pre, callback) {
 
     }
   }
-
 
   const returnPayload = x =>{
     return new Promise((resolve,reject) =>{
@@ -601,8 +609,11 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 }
 
-function updateRdt (id, payload, author, callback) {
-   delete payload._id
+function updateRdt (request, author, callback) {
+  const id = request.params.id
+  const payload = request.payload
+
+  delete payload._id
   // update Rdt
   payload.author_district_code = author.code_district_city
   payload.author_district_name = author.name_district_city
@@ -840,8 +851,13 @@ function seacrhFromExternal(address_district_code, search, callback) {
 }
 
 function seacrhFromInternal(query, callback) {
+  let params = new Object();
 
-  Case.findOne({address_district_code:query.address_district_code})
+  if (query.address_district_code) {
+    params.author_district_code = query.address_district_code;
+  }
+
+  Case.findOne(params)
       //  .and({
       //   status: 'ODP'
       // })
@@ -859,7 +875,8 @@ function seacrhFromInternal(query, callback) {
       }).catch(err => callback(err, null))
 }
 
-function getRegisteredUser(search_external, user, callback) {
+function getRegisteredUser(request, callback) {
+  let search_external = request.pre.reg_user_external
   return callback(null, search_external)
 }
 

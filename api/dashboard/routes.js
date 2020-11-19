@@ -1,86 +1,21 @@
-module.exports = (server) => {
-    const handlers = require('./handlers')(server);
-    const inputValidations = require('./validations/input');
-    return [
-        {
-            method: 'GET',
-            path: '/dashboard/chart-age-gender',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countGenderAge,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/chart-odp',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countOdp,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/chart-pdp',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countPdp,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/chart-otg',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countOtg,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/chart-confirm',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.countByConfirm,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/tabel-aggregate-criteria',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.tabelAggregateCriteria,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/tabel-aggregate-criteria-export',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard statistik',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.tableLapHarianExport,
-        },
-        {
-            method: 'GET',
-            path: '/dashboard/summary-input-test',
-            config: {
-                auth: 'jwt',
-                description: 'show dashboard input test',
-                tags: ['api', 'dashboard statistik'],
-            },
-            handler: handlers.summaryInputTest,
-        },
-]
+module.exports = (server) =>{
+  const handlers = require('./handlers')
+  const roleView = require('../users/route_prerequesites').CheckRoleView(server)
+  const route = (method, path, callback) => {
+    return {
+      method: method,
+      path: path,
+      config: {
+        description: ` ${method} dashboard`,
+        tags: [ 'api', 'list', 'dashboard input test', ],
+        pre: [ roleView ],
+        auth: 'jwt',
+      },
+      handler: handlers[callback](server),
+    }
+  }
+
+  return [
+    route('GET', '/dashboard/summary-input-test', 'summaryInputTest'),
+  ]
 }
