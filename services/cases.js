@@ -9,7 +9,7 @@ const Notif = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
-const { WHERE_GLOBAL } = require('../helpers/constant')
+const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
 const moment = require('moment')
 
 async function ListCase (query, user, callback) {
@@ -217,82 +217,69 @@ async function getCaseSummaryFinal (query, user, callback) {
   }
 }
 
-async function getCaseSummary (query, user, callback) {
-  // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  const caseAuthors = await thisUnitCaseAuthors(user)
+async function getCaseSummary(query, user, callback) {
+  try {
+    const caseAuthors = await thisUnitCaseAuthors(user)
+    const scope = Check.countByRole(user, caseAuthors)
+    const filter = await Filter.filterCase(user, query)
+    const searching = Object.assign(scope, filter)
 
-  let searching = Check.countByRole(user,caseAuthors);
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      searching.address_district_code = query.address_district_code;
-    }
+    const conditions = [
+      { $match: {
+        $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+      }},
+      {
+        $group: {
+          _id: 'status',
+          confirmed: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.CONF] },
+                  ]
+                }, 1, 0]
+            }
+          },
+          probable: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.PROB] },
+                  ]
+                }, 1, 0]
+            }
+          },
+          suspect: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.SUS] },
+                  ]
+                }, 1, 0]
+            }
+          },
+          closeContact: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$status', CRITERIA.CLOSE] },
+                  ]
+                }, 1, 0]
+            }
+          },
+        },
+      },
+      { $project: { _id : 0 } },
+    ]
+    const result = await Case.aggregate(conditions)
+    callback(null, result.shift())
+  } catch (e) {
+    callback(e, null)
   }
-
-  if(query.address_village_code){
-    searching.address_village_code = query.address_village_code;
-  }
-
-  if(query.address_subdistrict_code){
-    searching.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  var aggStatus = [
-    { $match: {
-      $and: [  searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' } ]
-    }},
-    {
-      $group: { _id: "$status", total: {$sum: 1}}
-    }
-  ];
-
-  let result =  {
-    'OTG':0,
-    'OTG_PROCESS':0,
-    'OTG_DONE':0,
-    'ODP':0,
-    'ODP_PROCESS':0,
-    'ODP_DONE':0,
-    'PDP':0,
-    'PDP_PROCESS':0,
-    'PDP_DONE':0,
-    'POSITIF':0,
-    'KONTAKERAT' : 0,
-    'PROBABEL' : 0
-  }
-  Case.aggregate(aggStatus).exec().then(async item => {
-      item.forEach(function(item){
-        if (item['_id'] == 'OTG') {
-          result.OTG = item['total']
-        }
-        if (item['_id'] == 'ODP') {
-          result.ODP = item['total']
-        }
-        if (item['_id'] == 'PDP') {
-          result.PDP = item['total']
-        }
-        if (item['_id'] == 'POSITIF') {
-          result.POSITIF = item['total']
-        }
-        if (item['_id'] == 'KONTAKERAT') {
-          result.KONTAKERAT = item['total']
-        }
-      });
-
-      // OTG
-      result.OTG_PROCESS = await Case.find(Object.assign(searching,{"status":"OTG", $or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified","delete_status": { $ne: "deleted" }})).countDocuments();
-      result.OTG_DONE = await Case.find(Object.assign(searching,{"status":"OTG",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-
-      // ODP
-      result.ODP_PROCESS = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.ODP_DONE = await Case.find(Object.assign(searching,{"status":"ODP",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-
-      // PDP
-      result.PDP_PROCESS = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':0}, {'stage':"0"}, {'stage':'Proses'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-      result.PDP_DONE = await Case.find(Object.assign(searching,{"status":"PDP",$or:[{'stage':1}, {'stage':"1"}, {'stage':'Selesai'}], "verified_status": "verified", "delete_status": { $ne: "deleted" }})).countDocuments();
-
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
 }
 
 async function getCaseSummaryVerification (query, user, callback) {
