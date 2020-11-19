@@ -5,16 +5,17 @@ module.exports = (server) =>{
     const getCaseById = require('./route_prerequesites').getCasebyId(server)
     const getCloseContactbyId = require('./route_prerequesites').getCloseContactbyId(server)
     // const districtInputScope = require('./route_prerequesites').districtInputScope(server)
-
+    // THIS FILE TODO DELETED
+    const configsSame ={
+      auth: 'jwt',
+      description: 'show list of all close-contacts per-case',
+      tags: ['api', 'close_contacts']
+    }
     return [
         {
             method: 'GET',
             path: '/cases/{caseId}/close-contacts',
-            config: {
-                auth: 'jwt',
-                description: 'show list of all close-contacts per-case',
-                tags: ['api', 'close_contacts']
-            },
+            config: configsSame,
             handler: handlers.ListCloseContactCase
         },
         {
@@ -43,11 +44,7 @@ module.exports = (server) =>{
         {
             method: 'GET',
             path: '/close-contacts/{closeContactId}',
-            config: {
-                auth: 'jwt',
-                description: 'show a specific close contact',
-                tags: ['api', 'close_contacts']
-            },
+            config: configsSame,
             handler: handlers.DetailCloseContact
         },
         {

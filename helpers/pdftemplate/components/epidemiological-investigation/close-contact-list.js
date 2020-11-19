@@ -1,38 +1,38 @@
+const { CRITERIA } = require('../../../constant')
+const { transformAge } = require('../../helper')
 const components = {
   diseases: require('./diseases'),
 }
 
 const render = (data) => {
-  
-  const buildContactPlaces = (data) => {
+
+  const buildCloseContactList = (data) => {
     let closeContacts = [], closeContactsDoc = []
-    for (i in data.closeContacts) {
+    for (let i = 0; i < data.closeContacts.length; i++) {
       const closeContact = data.closeContacts[i]
+
+      if (closeContact.status !== CRITERIA.CLOSE ) continue;
+
+      const activities = Array.isArray(closeContact.activity)
+        ? closeContact.activity.toString()
+        : null
 
       closeContacts.push(closeContact)
       closeContactsDoc.push([
         { text: `${closeContact.name || '-' }` },
-        { text: `${closeContact.age || '-' }` },
+        { text: `${transformAge(closeContact)['age'] || '-' }` },
         { text: `${closeContact.gender || '-' }` },
-        { text: `${closeContact.relationship || '-'}` },
+        { text: `${closeContact.relation || '-'}` },
         { text: `${closeContact.address_street || '-'}` },
         { text: `${closeContact.phone_number || '-'}` },
-        { text: `${closeContact.activity || '-'}` },
+        { text: `${activities || '-'}` },
       ])
     }
 
     if (!closeContacts.length) {
-      for (let i = 0;  i < 2; i++) {
-        closeContactsDoc.push([
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-          { text: '-' },
-        ])
-      }
+      closeContactsDoc.push([
+        { alignment: 'center', text: '- Tidak ada kontak erat -', colSpan: 7 },{},{},{},{},{},{},
+      ])
     }
 
     return closeContactsDoc
@@ -43,7 +43,7 @@ const render = (data) => {
       style: 'tableClinical',
       color: '#444',
       table: {
-        widths: [105, 25, 17, 70, 85, 70, 83],
+        widths: [85, 25, 17, 60, 75, 70, 123],
         headerRows: 1,
         body: [
           [
@@ -63,7 +63,7 @@ const render = (data) => {
             { text: 'No HP/telp yang dapat dihubungi', style: 'tableColumnSubHeader'  },
             { text: 'Aktifitas kontak yang dilakukan', style: 'tableColumnSubHeader'  },
           ],
-          ...buildContactPlaces(data)
+          ...buildCloseContactList(data)
         ],
       }
     },
