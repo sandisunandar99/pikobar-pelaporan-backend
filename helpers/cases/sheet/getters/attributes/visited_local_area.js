@@ -1,13 +1,13 @@
 const conf = require('../../config.json')
-const { _toString } = require('../../helper')
+const { _toString, getStringValueByIndex } = require('../../helper')
 
 // visited_local_area attributes
 const getVisitedLocalAreaProvince = (d) => {
-  return _toString(d[conf.cell.visited_local_area_province])
+  return getStringValueByIndex(d[conf.cell.visited_local_area_province], 0)
 }
 
 const getVisitedLocalAreaCity = (d) => {
-  return _toString(d[conf.cell.visited_local_area_city])
+  return getStringValueByIndex(d[conf.cell.visited_local_area_city], 0)
 }
 
 module.exports = {

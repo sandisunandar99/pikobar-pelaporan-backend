@@ -106,7 +106,7 @@ const validateNik = async (recordError, nik) => {
 
 const validateDuplicateNikReqPayload = (recordError, reqDuplicateNik, payload, nik) => {
   const founded = payload.filter(n => n.nik === nik)
-  if (founded.length > 1 && !reqDuplicateNik.includes(nik)) {
+  if (nik && founded.length > 1 && !reqDuplicateNik.includes(nik)) {
     const nums = founded.map(x => x.num)
 
     const errField = lang['nik']
@@ -176,8 +176,8 @@ const transformErrorDescription = (desc) => {
   }
 
   const mapObj = {
-    'is required': 'Harus diisi',
-    'must be a string': 'Harus berisi string',
+    'is required': 'Harus diisi/Belum sesuai',
+    'must be a string': 'Harus berisi huruf alfabet',
     'must be a number': 'Harus berisi angka',
     'length must be 16 characters long': 'Harus 16 digit',
   }

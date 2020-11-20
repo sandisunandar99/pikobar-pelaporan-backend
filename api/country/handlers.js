@@ -1,4 +1,5 @@
 const replyHelper = require('../helpers')
+const {funcNoParam} = require('../../helpers/request')
 
 module.exports = (server) => {
     function constructAreasResponse(country) {
@@ -17,24 +18,10 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async listCountry(request, reply) {
-            server.methods.services.country.getCountryList(
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructAreasResponse(result)
-                    ).code(200)
-                }
-            )
+          await funcNoParam(server, "country", "getCountryList", reply)
         },
         async listMenu(request, reply) {
-            server.methods.services.country.getMenuList(
-                (err, result) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructAreasResponse(result)
-                    ).code(200)
-                }
-            )
+          await funcNoParam(server, "country", "getMenuList", reply)
         },
     } //end
 }

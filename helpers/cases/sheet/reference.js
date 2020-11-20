@@ -7,6 +7,7 @@ const {
 references.refSymptoms = [
   'Suhu tubuh >= 38 °C',
   'Suhu tubuh < 38 °C',
+  'Demam',
   'Batuk',
   'Pilek',
   'Sakit Tenggorokan',

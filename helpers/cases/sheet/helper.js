@@ -9,7 +9,7 @@ helpers._toString = (value) => {
 }
 helpers._toDateString = (value) => {
   if (!value) return null
-  return new Date((value - (25567 + 1))*86400*1000) || null
+  return new Date((value - (25567 + 2))*86400*1000) || null
 }
 helpers._toUnsignedInt = (value) => {
   if (value && value.parseToInt) return Math.abs(value.parseToInt())
@@ -71,8 +71,8 @@ helpers.isTemplateVerified = (dataSheet) => {
 }
 
 helpers.getTransformedAge = (age) => {
-  if (!age) return null
-  const a = helpers._toUnsignedInt(age) || '0'
+  if (age < 0) return undefined
+  const a = helpers._toUnsignedInt(age) || 0
   return helpers._toString(a)
 }
 
