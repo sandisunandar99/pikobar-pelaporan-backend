@@ -171,9 +171,9 @@ async function getDetailCaseSummary(id, callback) {
       } },
       { $project: {
           _id: 0,
-          pcrTotal: { $size: "$pcr" },
-          rapidTotal: { $size: "$rapid" },
-          relatedCasesTotal: { $size: "$relatedCases" }
+          pcrTotal: { $size: { "$ifNull": [ "$pcr", [] ] } },
+          rapidTotal: { $size: { "$ifNull": [ "$rapid", [] ] } },
+          relatedCasesTotal: { $size: { "$ifNull": [ "$relatedCases", [] ] } },
       } }
     ]
 
