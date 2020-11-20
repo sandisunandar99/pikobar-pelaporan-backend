@@ -266,10 +266,18 @@ const listHistoryExport = async (query, user, callback) => {
 // soft delete
 async function deleteHistoryById (id, author, callback) {
   try {
-    const payload = Helper.deletedSave({}, author)
+    const last_history = await History.findById(id)
+    const histories = await History
+      .find({case: ObjectId(last_history.case)})
+      .sort({ createdAt: 'desc'})
+
+    if (histories.length === 1) {
+      throw new Error("Riwayat kasus hanya ada satu, tidak dapat dihapus!")
+    }
+
     const result = await History.updateOne(
       { _id: ObjectId(id) },
-      { $set: payload },
+      { $set: Helper.deletedSave({}, author) },
     )
     return callback(null, result)
   } catch (e) {

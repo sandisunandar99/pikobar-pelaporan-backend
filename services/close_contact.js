@@ -223,12 +223,14 @@ const syncCase = async (services, callback) => {
         status_transmission: 0,
         status_exposurecontact: 0,
         status_closecontact: 0,
+        createdAt: res.createdAt,
+        updatedAt: res.createdAt,
       }
 
       const preCreate = { cases: res.case }
       let insertedCase = null
       await services.cases.closecontact.create(
-        services, preCreate, { ...res.createdBy, role: 'dinkeskota' }, [ mappedToCasePayload ],
+        services, preCreate, Object.assign(res.createdBy, { role: 'dinkeskota' }), [ mappedToCasePayload ],
         (err, result) => {
           // console.log("ERR A:", err)
           if (err) throw new Error
