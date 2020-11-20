@@ -76,7 +76,7 @@ function createHistoryIfChanged (request, callback) {
 
   Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
 
-  Case.findById(payload.case).exec().then(case_obj => {
+  Case.findById(payload.case).select("-close_contact_health_worker").exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
       let changed = false, changed_fields=[];
