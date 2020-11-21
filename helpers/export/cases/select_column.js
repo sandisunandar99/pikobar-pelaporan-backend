@@ -48,6 +48,30 @@ const columnIdentity = {
   "diagnosis_pneumonia": "$history_list.diagnosis_pneumonia",
 }
 
+const columnIdentityClinic = {
+  "office_address": "$office_address",
+  "nationality": "$nationality",
+  "nationality_name": "$nationality_name",
+  "status": "$status",
+  "final_result": "$final_result",
+  "there_are_symptoms": "$there_are_symptoms",
+  "last_date_status_patient": "$last_date_status_patient",
+  "current_location_type": "$histories.current_location_type",
+  "current_location_address": "$histories.current_location_address",
+  "first_symptom_date": "$histories.first_symptom_date",
+  "diagnosis": "$histories.diagnosis[0]",
+  "diagnosis_other": "$histories.diagnosis_other",
+  "diseases": "$histories.diseases[0]",
+  "diseases_other": "$histories.diseases_other",
+  "diagnosis_ards": "$histories.diagnosis_ards",
+  "diagnosis_pneumonia": "$histories.diagnosis_pneumonia",
+  "other_diagnosis": "$histories.other_diagnosis",
+  "is_other_diagnosisr_respiratory_disease": "$histories.is_other_diagnosisr_respiratory_disease",
+  "other_diagnosisr_respiratory_disease": "$histories.other_diagnosisr_respiratory_disease",
+  "is_went_abroad": "$is_went_abroad",
+  "diagnosis_pneumonia": "$histories.diagnosis_pneumonia",
+}
+
 const columnAuthor = {
   "apd_use": "$apd_use",
   "smoking": "$history_list.smoking",
@@ -60,5 +84,5 @@ const columnAuthor = {
 }
 
 module.exports = {
-  columnIdentity, columnInfo, columnAuthor
+  columnIdentity, columnInfo, columnAuthor, columnIdentityClinic
 }
