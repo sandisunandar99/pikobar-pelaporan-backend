@@ -48,6 +48,30 @@ const columnIdentity = {
   "diagnosis_pneumonia": "$history_list.diagnosis_pneumonia",
 }
 
+const columnIdentityClinic = {
+  "office_address": "$office_address",
+  "nationality": "$nationality",
+  "nationality_name": "$nationality_name",
+  "status": "$status",
+  "final_result": "$final_result",
+  "there_are_symptoms": "$there_are_symptoms",
+  "last_date_status_patient": "$last_date_status_patient",
+  "current_location_type": 1,
+  "current_location_address": 1,
+  "first_symptom_date": 1,
+  "diagnosis": 1,
+  "diagnosis_other": 1,
+  "diseases": 1,
+  "diseases_other": 1,
+  "diagnosis_ards": 1,
+  "diagnosis_pneumonia": 1,
+  "other_diagnosis": 1,
+  "is_other_diagnosisr_respiratory_disease": 1,
+  "other_diagnosisr_respiratory_disease": 1,
+  "is_went_abroad": "$is_went_abroad",
+  "diagnosis_pneumonia": 1,
+}
+
 const columnAuthor = {
   "apd_use": "$apd_use",
   "smoking": "$history_list.smoking",
@@ -60,5 +84,5 @@ const columnAuthor = {
 }
 
 module.exports = {
-  columnIdentity, columnInfo, columnAuthor
+  columnIdentity, columnInfo, columnAuthor, columnIdentityClinic
 }
