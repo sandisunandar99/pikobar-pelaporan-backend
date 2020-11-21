@@ -257,7 +257,7 @@ const listHistoryExport = async (query, user, callback) => {
   const where = condition(params, search, query)
   try {
     const resultHistory = await Case.aggregate(where).allowDiskUse(true)
-     // .allowDiskUse(true) or handler memory limit in aggregate
+     // .allowDiskUse(true) for handler memory limit in aggregate
     callback (null, resultHistory.map(cases => excellHistories(cases)))
   } catch (error) {
     callback(error, null)
