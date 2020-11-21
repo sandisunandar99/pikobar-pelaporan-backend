@@ -264,14 +264,34 @@ const listHistoryExport = async (query, user, callback) => {
   }
 }
 
-// soft delete
+// soft delete (dont suudzon / its never destroy any document) (fitur baru ada di sprint 9)
 async function deleteHistoryById (id, author, callback) {
   try {
-    const payload = Helper.deletedSave({}, author)
-    const result = await History.updateOne(
-      { _id: ObjectId(id) },
-      { $set: payload },
-    )
+    const historyToDelete = await History.findById(id)
+
+    const histories = await History.find({case: ObjectId(historyToDelete.case)}).sort({ createdAt: 'desc'})
+
+    if (histories.length <= 1) {
+      throw new Error("Riwayat kasus hanya ada satu, tidak dapat dihapus!")
+    }
+
+    const result = await History.updateOne({ _id: ObjectId(id) }, { $set: Helper.deletedSave({}, author) })
+
+
+    // update if deleted history is a last history of case
+    if (historyToDelete._id.toString() == histories[0]._id.toString()) {
+      histories.shift()
+      await Case.updateOne(
+        { _id: ObjectId(historyToDelete.case) },
+        { $set: {
+            status: histories[0].status,
+            final_result: histories[0].final_result,
+            last_date_status_patient: histories[0].last_date_status_patient,
+            last_history: ObjectId(histories[0]._id),
+        } },
+      )
+    }
+
     return callback(null, result)
   } catch (e) {
     return callback(e, null)
