@@ -1,7 +1,7 @@
 const helpers = require("../custom")
 const { dateFilter } = require("../filter/date")
-const { casesHistory } = require("../export/cases/lookup")
-const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/select_column")
+const { casesHistory, author } = require("../export/cases/lookup")
+const { columnIdentityClinic, columnInfo, columnAuthor } = require("../export/cases/select_column")
 const { combineInfo, sectionOthers } = require("../export/histories/column")
 
 const excellHistories = (this_) => {
@@ -27,13 +27,13 @@ const condition = (params, search, query) => {
         $or: searching
       }
     },
-    { ...casesHistory },
+    { ...casesHistory }, { ...author },
     { $sort: { "id_case": 1} },
     {
       $project: {
         histories: {
           ...columnInfo,
-        ...columnIdentity,
+        ...columnIdentityClinic,
         ...columnAuthor
         }
       }
