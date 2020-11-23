@@ -161,11 +161,8 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 async function getDetailCaseSummary(id, callback) {
   try {
     const aggQuery = [
-      { $match: { _id: ObjectId(id) } },
-      { $addFields: {
-          relatedCases: {
-            $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ],
-          },
+      { $match: { _id: ObjectId(id) } }, { $addFields: {
+          relatedCases: { $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ] },
           pcr: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.PCR),
           rapid: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.RAPID),
           travelAbroad: _filteredFields('travelling_history', 'travelling_type', TRAVEL_TYPE.ABROAD),
@@ -185,9 +182,8 @@ async function getDetailCaseSummary(id, callback) {
 
     const result = await Case.aggregate(aggQuery)
     callback(null, result.shift())
-  } catch (e) {
-    callback(e, null)
-  }
+
+  } catch (e) { callback(e, null) }
 }
 
 async function createMultiple (services, payload, author, callback) {
