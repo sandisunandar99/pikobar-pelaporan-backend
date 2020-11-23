@@ -62,7 +62,7 @@ const manifest = {
       plugin: 'hapi-auth-jwt2'
     },
     {
-      plugin: './auth'
+      plugin: './auth/keycloak'
     },
     {
       plugin: './services'
