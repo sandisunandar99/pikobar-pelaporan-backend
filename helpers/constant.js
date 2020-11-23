@@ -168,5 +168,9 @@ module.exports = {
     SUSPECT_PROBABLE_ISOLATION: 'Jumlah kasus suspek + kasus probabel',
     CONFIRMED_ISOLATION: 'Jumlah kasus konfirmasi',
     CLOSE_CONTACT_ISOLATION: 'Jumlah kontak erat sedang dipantau'
-  }
+  },
+  TRAVEL_TYPE: {
+    ABROAD: 'Dari Luar Negeri',
+    DOMESTIC: 'Dari Luar Kota',
+  },
 }
