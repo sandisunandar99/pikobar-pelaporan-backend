@@ -36,6 +36,18 @@ const NotFoundStatus = {
   }
 }
 
+const BadRequestStatus = {
+  status: {
+    400: schemaForStatusCode(400)
+  }
+}
+
+const SuccessRequest = {
+  status: {
+    200: schemaForStatusCode(400)
+  }
+}
+
 const UnauthorizedStatus = {
   status: {
     401: schemaForStatusCode(401)
@@ -67,6 +79,7 @@ const ErrorsOnDeleteOutputValidations = _.merge({}, ErrorsOutputValidations, Not
 
 module.exports = {
   errorHandler,
+  BadRequestStatus,
   ForbiddenStatus,
   NotFoundStatus,
   UnauthorizedStatus,
@@ -78,5 +91,6 @@ module.exports = {
   ErrorsOnPostOutputValidations,
   ErrorsOnPutOutputValidations,
   ErrorsOnDeleteOutputValidations,
-  HeadersPayLoad
+  HeadersPayLoad,
+  SuccessRequest
 }
