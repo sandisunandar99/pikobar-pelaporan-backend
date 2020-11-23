@@ -74,7 +74,7 @@ function createHistoryIfChanged (request, callback) {
   // guarded field (cannot be filled)
   const payload = request.payload
 
-  Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
+  Helper.deleteProps(['_id', 'last_changed', 'delete_status', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).select("-close_contact_health_worker").exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
@@ -240,23 +240,24 @@ async function updateHistoryById (request, callback) {
 }
 
 const listHistoryExport = async (query, user, callback) => {
-  // const filter = await filterCase(user, query)
+  const filter = await filterCase(user, query)
   const filterRole = exportByRole({}, user, query)
-  const params = { ...filterRole, ...WHERE_GLOBAL }
-  // let search
-  // if(query.search){
-  //   let search_params = [
-  //     { id_case : new RegExp(query.search,"i") },
-  //     { name: new RegExp(query.search, "i") },
-  //   ];
-  //   search = search_params
-  // } else {
-  //   search = {}
-  // }
+  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
+  let search
+  if(query.search){
+    let search_params = [
+      { id_case : new RegExp(query.search,"i") },
+      { name: new RegExp(query.search, "i") },
+    ];
+    search = search_params
+  } else {
+    search = {}
+  }
   params.last_history = { $exists: true, $ne: null }
-  const where = condition(params, {}, query)
+  const where = condition(params, search, query)
   try {
-    const resultHistory = await Case.aggregate(where)
+    const resultHistory = await Case.aggregate(where).allowDiskUse(true)
+     // .allowDiskUse(true) for handler memory limit in aggregate
     callback (null, resultHistory.map(cases => excellHistories(cases)))
   } catch (error) {
     callback(error, null)
@@ -268,7 +269,9 @@ async function deleteHistoryById (id, author, callback) {
   try {
     const historyToDelete = await History.findById(id)
 
-    const histories = await History.find({case: ObjectId(historyToDelete.case)}).sort({ createdAt: 'desc'})
+    const histories = await History.find({
+      case: ObjectId(historyToDelete.case), delete_status: { $ne: 'deleted' }
+    }).sort({ createdAt: 'desc'})
 
     if (histories.length <= 1) {
       throw new Error("Riwayat kasus hanya ada satu, tidak dapat dihapus!")
