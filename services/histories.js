@@ -269,7 +269,10 @@ async function deleteHistoryById (id, author, callback) {
   try {
     const historyToDelete = await History.findById(id)
 
-    const histories = await History.find({case: ObjectId(historyToDelete.case)}).sort({ createdAt: 'desc'})
+    const histories = await History.find({
+      case: ObjectId(historyToDelete.case),
+      delete_status: { $ne: 'deleted' }
+    }).sort({ createdAt: 'desc'})
 
     if (histories.length <= 1) {
       throw new Error("Riwayat kasus hanya ada satu, tidak dapat dihapus!")
