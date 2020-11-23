@@ -3,7 +3,7 @@ const History = require('../models/History')
 const Helper = require('../helpers/custom')
 const ObjectId = require('mongodb').ObjectID
 const { exportByRole } = require('../helpers/rolecheck')
-const { WHERE_GLOBAL } = require('../helpers/constant')
+const { WHERE_GLOBAL, HISTORY_DEFAULT_SORT } = require('../helpers/constant')
 const { filterCase } = require('../helpers/filter/casefilter')
 const { condition, excellHistories } = require('../helpers/filter/historyfilter')
 
@@ -33,9 +33,8 @@ function getHistoryById (id, callback) {
 }
 
 function getHistoryByCase (id_case, callback) {
-  History.find({ case: id_case})
-        .where('delete_status').ne('deleted')
-        .sort({ last_date_status_patient: 'desc', createdAt: 'desc'})
+  History.find({ case: id_case, delete_status: { $ne: 'deleted' } })
+        .sort(HISTORY_DEFAULT_SORT)
         .exec()
         .then(item => {
         let res = item.map(q => q.toJSONFor())
@@ -47,7 +46,7 @@ function getHistoryByCase (id_case, callback) {
 function getLastHistoryByIdCase (id_case, callback) {
   History.find({ case: id_case})
         .where('delete_status').ne('deleted')
-        .sort({ last_date_status_patient: 'desc', createdAt: 'desc'})
+        .sort(HISTORY_DEFAULT_SORT)
         .limit(1)
         .exec()
         .then(item => {
@@ -71,7 +70,7 @@ function getLatestHistory(caseId) {
   const latestHis = History.findOne({
     case: ObjectId(caseId),
     delete_status: { $ne: 'deleted' },
-  }).sort({ last_date_status_patient: 'desc', createdAt: 'desc' })
+  }).sort(HISTORY_DEFAULT_SORT)
 
   return latestHis
 }
