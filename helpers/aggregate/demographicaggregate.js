@@ -17,7 +17,7 @@ const demographicCondition = (grouping, query, criteria) => {
       fifty_fifty_nine: sumBetweenFunc(query_state, "$age", 49, 60),
       sixty_sixty_nine: sumBetweenFunc(query_state, "$age", 59, 70),
       seventy_seventy_nine: sumBetweenFunc(query_state, "$age", 69, 80),
-      greater_eighty: sumBetweenFunc(query_state, "$age", 80, 150)
+      greater_eighty: sumBetweenFunc(query_state, "$age", 79, 150)
     }
   }
 
