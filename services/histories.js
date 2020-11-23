@@ -270,8 +270,7 @@ async function deleteHistoryById (id, author, callback) {
     const historyToDelete = await History.findById(id)
 
     const histories = await History.find({
-      case: ObjectId(historyToDelete.case),
-      delete_status: { $ne: 'deleted' }
+      case: ObjectId(historyToDelete.case), delete_status: { $ne: 'deleted' }
     }).sort({ createdAt: 'desc'})
 
     if (histories.length <= 1) {
