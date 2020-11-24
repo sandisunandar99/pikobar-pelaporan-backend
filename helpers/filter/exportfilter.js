@@ -3,9 +3,11 @@ const { dateFilter } = require("../filter/date")
 const { histories, author } = require("../export/cases/lookup")
 const { sectionIdentity, sectionInfo, sectionClinic } = require("../export/cases/column")
 const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/select_column")
+const { checkExistColumn } = require("../../helpers/custom")
 
 const excellOutput = (this_) => {
   return {
+    "Kode Kasus" : checkExistColumn(this_.id),
     ...sectionIdentity(this_),
     ...sectionInfo(this_),
     ...helpers.checkDiagnosis(this_.diagnosis),
