@@ -39,6 +39,11 @@ async function ListCase (query, user, callback) {
 
   var params = {}
 
+  // only provide when needed
+  if (query.author_district_code) {
+    params.author_district_code = query.author_district_code;
+  }
+
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){
       params.address_district_code = query.address_district_code;
