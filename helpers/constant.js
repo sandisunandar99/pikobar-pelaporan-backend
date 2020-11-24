@@ -45,6 +45,10 @@ module.exports = {
     verified_status: 'verified',
     is_west_java: { $ne: false },
   },
+  HISTORY_DEFAULT_SORT: {
+    last_date_status_patient: 'desc',
+    createdAt: 'desc'
+  },
   GENDER: {
     MALE: 'L',
     FEMALE: 'P',
