@@ -32,15 +32,34 @@ function getHistoryById (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function getHistoryByCase (id_case, callback) {
-  History.find({ case: id_case, delete_status: { $ne: 'deleted' } })
-        .sort(HISTORY_DEFAULT_SORT)
-        .exec()
-        .then(item => {
-        let res = item.map(q => q.toJSONFor())
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null))
+async function getHistoryByCase (id_case, callback) {
+    try {
+      const aggQuery = [
+        { $match: { case: ObjectId(id_case), delete_status: { $ne: 'deleted' } } },
+        { $lookup: {
+            from: 'villages',
+            let: { code: '$current_location_village_code' },
+            pipeline: [{ $match: { $expr: { $eq: [ '$kemendagri_desa_kode', '$$code' ] } } }],
+            as: 'villages'
+        } },
+        { $addFields: {
+            village: {
+              $cond: [ { $eq: [ { '$size': `$villages` }, 0 ] }, { $literal: {} }, { $arrayElemAt: [ '$villages', 0 ] } ]
+            }
+        } },
+        { $project: {
+            status: 1, final_result: 1, last_date_status_patient: 1, first_symptom_date: 1, diagnosis: 1, diseases: 1,
+            current_location_district: { '$ifNull': [ '$village.kemendagri_desa_nama', '' ] },
+            current_location_subdistrict: { '$ifNull': [ '$village.kemendagri_kecamatan_nama', '' ] },
+            current_location_village: { '$ifNull': [ '$village.kemendagri_desa_nama', '' ] },
+            current_location_type: 1, current_location_address: 1, createdAt: 1,
+        } },
+      ]
+
+      const result = await History.aggregate(aggQuery).sort(HISTORY_DEFAULT_SORT)
+
+      callback(null, result)
+    } catch (e) { callback(e, null) }
 }
 
 function getLastHistoryByIdCase (id_case, callback) {
