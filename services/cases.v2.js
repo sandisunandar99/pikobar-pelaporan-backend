@@ -23,6 +23,16 @@ const _filteredFields = (field, filterProp, filterValue) => {
   }
 }
 
+// helper scoped
+const lookup = {
+  $lookup: {
+    from: 'histories',
+    let: { caseId: '$_id' },
+    pipeline: [{ $match: { $expr: { $eq: [ "$case",  "$$caseId" ] }, delete_status: { $ne: 'deleted' } } }],
+    as: 'histories'
+  }
+}
+
 const createCase = async (pre, payload, author, callback) => {
   // guarded fields
   deleteProps(['_id', 'id_case', 'verified_status'], payload)
@@ -159,50 +169,32 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 }
 
 async function getDetailCaseSummary(id, callback) {
-
-  const match = { $match: { _id: ObjectId(id) } }
-
-  const lookup = {
-    $lookup: {
-      from: 'histories',
-      let: { caseId: '$_id' },
-      pipeline: [{ $match: { $expr: { $eq: [ "$case",  "$$caseId" ] }, delete_status: { $ne: 'deleted' } } }],
-      as: 'histories'
-    }
-  }
-
-  const addFields = {
-    $addFields: {
-      relatedCases: { $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ] },
-      pcr: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.PCR),
-      rapid: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.RAPID),
-      travelAbroad: _filteredFields('travelling_history', 'travelling_type', TRAVEL_TYPE.ABROAD),
-      travelDomestic: _filteredFields('travelling_history', 'travelling_type', TRAVEL_TYPE.DOMESTIC),
-    }
-  }
-
-  const project = {
-    $project: {
-      _id: 0,
-      pcrTotal: { $size: { "$ifNull": [ "$pcr", [] ] } },
-      rapidTotal: { $size: { "$ifNull": [ "$rapid", [] ] } },
-      relatedCasesTotal: { $size: { "$ifNull": [ "$relatedCases", [] ] } },
-      travelAbroadTotal: { $size: { "$ifNull": [ "$travelAbroad", [] ] } },
-      travelDomesticTotal: { $size: { "$ifNull": [ "$travelDomestic", [] ] } },
-      visitedLocalAreaTotal: { $size: { "$ifNull": [ "$visited_local_area", [] ] } },
-      visitedPublicPlaceTotal: { $size: { "$ifNull": [ "$visited_public_place", [] ] } },
-      clinicalInformationTotal: { $size: { "$ifNull": [ "$histories", [] ] } },
-    }
-  }
-
-  const aggQuery = [ match, lookup, addFields, project ]
-
   try {
+    const aggQuery = [
+      { $match: { _id: ObjectId(id) } }, lookup, { $addFields: {
+          relatedCases: { $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ] },
+          pcr: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.PCR),
+          rapid: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.RAPID),
+          travelAbroad: _filteredFields('travelling_history', 'travelling_type', TRAVEL_TYPE.ABROAD),
+          travelDomestic: _filteredFields('travelling_history', 'travelling_type', TRAVEL_TYPE.DOMESTIC),
+      } },
+      { $project: {
+          _id: 0,
+          pcrTotal: { $size: { "$ifNull": [ "$pcr", [] ] } },
+          rapidTotal: { $size: { "$ifNull": [ "$rapid", [] ] } },
+          relatedCasesTotal: { $size: { "$ifNull": [ "$relatedCases", [] ] } },
+          travelAbroadTotal: { $size: { "$ifNull": [ "$travelAbroad", [] ] } },
+          travelDomesticTotal: { $size: { "$ifNull": [ "$travelDomestic", [] ] } },
+          visitedLocalAreaTotal: { $size: { "$ifNull": [ "$visited_local_area", [] ] } },
+          visitedPublicPlaceTotal: { $size: { "$ifNull": [ "$visited_public_place", [] ] } },
+          clinicalInformationTotal: { $size: { "$ifNull": [ "$histories", [] ] } },
+      } }
+    ]
+
     const result = await Case.aggregate(aggQuery)
     callback(null, result.shift())
-  } catch (e) {
-    callback(e, null)
-  }
+
+  } catch (e) { callback(e, null) }
 }
 
 async function createMultiple (services, payload, author, callback) {
