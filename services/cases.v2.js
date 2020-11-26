@@ -23,6 +23,16 @@ const _filteredFields = (field, filterProp, filterValue) => {
   }
 }
 
+// helper scoped
+const lookup = {
+  $lookup: {
+    from: 'histories',
+    let: { caseId: '$_id' },
+    pipeline: [{ $match: { $expr: { $eq: [ "$case",  "$$caseId" ] }, delete_status: { $ne: 'deleted' } } }],
+    as: 'histories'
+  }
+}
+
 const createCase = async (pre, payload, author, callback) => {
   // guarded fields
   deleteProps(['_id', 'id_case', 'verified_status'], payload)
@@ -161,7 +171,7 @@ async function exportEpidemiologicalForm (services, thisCase, callback) {
 async function getDetailCaseSummary(id, callback) {
   try {
     const aggQuery = [
-      { $match: { _id: ObjectId(id) } }, { $addFields: {
+      { $match: { _id: ObjectId(id) } }, lookup, { $addFields: {
           relatedCases: { $concatArrays: [ "$close_contact_parents", "$close_contact_childs" ] },
           pcr: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.PCR),
           rapid: _filteredFields('inspection_support', 'inspection_type', INSPECTION_TYPES.RAPID),
@@ -177,6 +187,7 @@ async function getDetailCaseSummary(id, callback) {
           travelDomesticTotal: { $size: { "$ifNull": [ "$travelDomestic", [] ] } },
           visitedLocalAreaTotal: { $size: { "$ifNull": [ "$visited_local_area", [] ] } },
           visitedPublicPlaceTotal: { $size: { "$ifNull": [ "$visited_public_place", [] ] } },
+          clinicalInformationTotal: { $size: { "$ifNull": [ "$histories", [] ] } },
       } }
     ]
 
