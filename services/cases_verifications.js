@@ -8,7 +8,7 @@ const CaseVerification = require('../models/CaseVerification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { ROLE, VERIFIED_STATUS } = require('../helpers/constant')
 const { getCountBasedOnDistrict } = require('../helpers/cases/global')
-const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setter')
+const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
 
 async function getCaseVerifications (caseId, callback) {
   try {
