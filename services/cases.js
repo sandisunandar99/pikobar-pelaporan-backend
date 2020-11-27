@@ -8,6 +8,7 @@ const Check = require('../helpers/rolecheck')
 const Notif = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
+const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setter')
 const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
 const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
 const moment = require('moment')
@@ -399,7 +400,7 @@ function createCase (raw_payload, author, pre, callback) {
    }).catch(err => callback(err, null))
 }
 
-function updateCase (id, pre, author, payload, callback) {
+async function updateCase (id, pre, author, payload, callback) {
 
   /* can't update id_case & verified props from here */
   delete payload.id_case
@@ -431,6 +432,7 @@ function updateCase (id, pre, author, payload, callback) {
     }
 
     payload.id_case = id_case
+    await doUpdateEmbeddedClosecontactDoc(pre.cases.id_case, id_case, Case)
   }
 
   const options = { new: true }

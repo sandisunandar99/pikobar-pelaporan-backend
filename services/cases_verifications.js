@@ -8,6 +8,7 @@ const CaseVerification = require('../models/CaseVerification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { ROLE, VERIFIED_STATUS } = require('../helpers/constant')
 const { getCountBasedOnDistrict } = require('../helpers/cases/global')
+const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setter')
 
 async function getCaseVerifications (caseId, callback) {
   try {
@@ -57,6 +58,10 @@ async function createCaseVerification (id, author, pre, payload, callback) {
 
     await Notif.send(Notification, User, case_, author, `case-verification-${payload.verified_status}`)
 
+    if (payload.verified_status === VERIFIED_STATUS.VERIFIED) {
+      await doUpdateEmbeddedClosecontactDoc(pre.id_case, updatePayload.id_case, Case)
+    }
+
     callback(null, caseVerification)
   } catch (error) {
     callback(error, null)
@@ -103,6 +108,7 @@ async function createCasesVerification (services, callback) {
       const verification = new CaseVerification(verificationPayload)
 
       await verification.save()
+      await doUpdateEmbeddedClosecontactDoc(item.id_case, idCase, Case)
     }
     callback(null, true)
   } catch (error) {
