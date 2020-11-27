@@ -43,8 +43,7 @@ async function createCaseVerification (id, author, pre, payload, callback) {
 
     // update case verifed status
     const case_ = await Case.findOneAndUpdate(
-      { _id: id},
-      { $set: updatePayload},
+      { _id: id}, { $set: updatePayload},
       { new: true }
     )
 
@@ -63,9 +62,7 @@ async function createCaseVerification (id, author, pre, payload, callback) {
     }
 
     callback(null, caseVerification)
-  } catch (error) {
-    callback(error, null)
-  }
+  } catch (error) { callback(error, null) }
 }
 
 async function createCasesVerification (services, callback) {
