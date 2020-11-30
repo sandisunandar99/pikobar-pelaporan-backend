@@ -61,7 +61,7 @@ const deleteLocalTransmission = async (id_local_transmission, callback) => {
 }
 
 module.exports = [
-  { name: `${service}.create`, method: createLocalTransmission }, {
+  { name: `services.local_transmission.create`, method: createLocalTransmission }, {
     name: `${service}.read`, method: listLocalTransmission }, {
     name: `${service}.update`, method: updateLocalTransmission }, {
     name: `${service}.delete`, method: deleteLocalTransmission
