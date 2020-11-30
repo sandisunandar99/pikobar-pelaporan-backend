@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectID
 const findGlobal = async (Schema, id_case, select) => {
   try {
     return await Schema.find({ _id: id_case })
-      .select(select)
+      .select([select])
       .sort({ updatedAt: -1 })
   } catch (error) {
     return error
