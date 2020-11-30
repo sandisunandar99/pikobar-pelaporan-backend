@@ -1,5 +1,6 @@
 const InspectionSupport = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
+const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
 
 const createInspectionSupport = async (payload, id_case, callback) => {
   try {
@@ -24,9 +25,7 @@ const createInspectionSupport = async (payload, id_case, callback) => {
 
 const listInspectionSupport = async (id_case, callback) => {
   try {
-    const result = await InspectionSupport.find({ _id: id_case })
-      .select(["inspection_support"])
-      .sort({ updatedAt: -1 })
+    const result = await findGlobal(InspectionSupport, id_case, ["inspection_support"])
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -56,11 +55,11 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
 
 const deleteInspectionSupport = async (id_inspection_support, callback) => {
   try {
-    const deleted = await InspectionSupport.updateOne(
-    {
+    const id = {
       "inspection_support._id": ObjectId(id_inspection_support)
-    },
-    { $pull: { inspection_support: { _id: ObjectId(id_inspection_support) } } })
+    }
+    const pull = { inspection_support: { _id: ObjectId(id_inspection_support) } }
+    const deleted = await deleteGlobal(LocalTransmission, id, pull)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
