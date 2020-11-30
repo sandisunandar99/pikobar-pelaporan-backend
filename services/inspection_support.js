@@ -26,7 +26,8 @@ const createInspectionSupport = async (payload, id_case, callback) => {
 
 const listInspectionSupport = async (id_case, callback) => {
   try {
-    const result = await findGlobal(InspectionSupport, id_case, "inspection_support")
+    const id = id_case
+    const result = await findGlobal(InspectionSupport, id, "inspection_support")
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -57,7 +58,8 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
 
 const deleteInspectionSupport = async (id, callback) => {
   try {
-    callback(null, await deleteGlobal(InspectionSupport, "inspection_support", id))
+    const deleted = await deleteGlobal(InspectionSupport, "inspection_support", id)
+    callback(null, deleted)
   } catch (error) {
     callback(error, null)
   }
