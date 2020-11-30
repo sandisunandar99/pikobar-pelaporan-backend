@@ -6,8 +6,9 @@ const createInspectionSupport = async (payload, id_case, callback) => {
   try {
     const inserted = await InspectionSupport.updateOne(
       { "_id": ObjectId(id_case) },
-      { $addToSet: {
-        "inspection_support": {
+      {
+        $addToSet: {
+          "inspection_support": {
             "inspection_type": payload.inspection_type,
             "specimens_type": payload.specimens_type,
             "inspection_date": payload.inspection_date,
@@ -38,7 +39,8 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
       {
         "inspection_support._id": ObjectId(id_inspection_support)
       },
-      { $set: {
+      {
+        $set: {
           "inspection_support.$.inspection_type": payload.inspection_type,
           "inspection_support.$.specimens_type": payload.specimens_type,
           "inspection_support.$.inspection_date": payload.inspection_date,
@@ -53,10 +55,9 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
   }
 }
 
-const deleteInspectionSupport = async (id_inspection_support, callback) => {
+const deleteInspectionSupport = async (id, callback) => {
   try {
-    let deleted = await deleteGlobal(InspectionSupport, "inspection_support", id_inspection_support)
-    callback(null, deleted)
+    callback(null, await deleteGlobal(InspectionSupport, "inspection_support", id))
   } catch (error) {
     callback(error, null)
   }

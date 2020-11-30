@@ -47,10 +47,9 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
   }
 }
 
-const deleteLocalTransmission = async (id_local_transmission, callback) => {
+const deleteLocalTransmission = async (id, callback) => {
   try {
-    const deleted = await deleteGlobal(LocalTransmission, "visited_local_area", id_local_transmission)
-    callback(null, deleted)
+    callback(null, await deleteGlobal(LocalTransmission, "visited_local_area", id))
   } catch (error) {
     callback(error, null)
   }
