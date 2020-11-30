@@ -13,7 +13,7 @@ module.exports = (server) => {
         tags: ['api', 'inspection-support'],
         pre: [ CheckRole ]
       },
-      handler: handlers.createInspectionSupport
+      handler: handlers.createInspectionSupport(server)
     },
     {
       method: 'GET',
@@ -24,7 +24,7 @@ module.exports = (server) => {
         tags: ['api', 'inspection-support'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getInspectionSupport
+      handler:  handlers.getInspectionSupport(server)
     },
     {
       method: 'PUT',
@@ -35,7 +35,7 @@ module.exports = (server) => {
         tags: ['api', 'inspection-support'],
         pre: [ CheckRole ],
       },
-      handler:  handlers.updateInspectionSupport
+      handler:  handlers.updateInspectionSupport(server)
     },
     {
       method: 'DELETE',
@@ -46,7 +46,7 @@ module.exports = (server) => {
         tags: ['api', 'inspection-support'],
         pre: [ CheckRole ],
       },
-      handler: handlers.deleteInspectionSupport
+      handler: handlers.deleteInspectionSupport(server)
     }
   ]
 }
