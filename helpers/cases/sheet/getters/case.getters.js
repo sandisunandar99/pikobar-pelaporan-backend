@@ -175,7 +175,7 @@ getters.getInspectionSupport = (d) => {
     get_specimens_to: getSpecimenTo(d),
     inspection_result: getInspectionResult(d),
   }
-  return [ inspection_support ]
+  return inspection_support.inspection_type ? [ inspection_support ] : []
 }
 
 getters.getTravelingHistoryBeforeSick14Days = (d) => {
