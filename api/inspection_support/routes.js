@@ -1,9 +1,7 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
+  const handlers = require('./handlers')
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
-  const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
-  const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
-  const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
+  const CheckRole = require('../users/route_prerequesites').CheckRoleCreate(server)
 
   return [
     {
@@ -13,9 +11,9 @@ module.exports = (server) => {
         auth: 'jwt',
         description: 'create inspection-support',
         tags: ['api', 'inspection-support'],
-        pre: [ CheckRoleCreate ]
+        pre: [ CheckRole ]
       },
-      handler: handlers.createInspectionSupport
+      handler: handlers.createInspectionSupport(server)
     },
     {
       method: 'GET',
@@ -26,7 +24,7 @@ module.exports = (server) => {
         tags: ['api', 'inspection-support'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getInspectionSupport
+      handler:  handlers.getInspectionSupport(server)
     },
     {
       method: 'PUT',
@@ -35,9 +33,9 @@ module.exports = (server) => {
         auth: 'jwt',
         description: 'update inspection-support',
         tags: ['api', 'inspection-support'],
-        pre: [ CheckRoleUpdate ],
+        pre: [ CheckRole ],
       },
-      handler:  handlers.updateInspectionSupport
+      handler:  handlers.updateInspectionSupport(server)
     },
     {
       method: 'DELETE',
@@ -46,9 +44,9 @@ module.exports = (server) => {
         auth: 'jwt',
         description: 'delete inspection-support',
         tags: ['api', 'inspection-support'],
-        pre: [ CheckRoleDelete ],
+        pre: [ CheckRole ],
       },
-      handler: handlers.deleteInspectionSupport
+      handler: handlers.deleteInspectionSupport(server)
     }
   ]
 }
