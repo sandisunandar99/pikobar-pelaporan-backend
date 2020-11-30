@@ -187,7 +187,7 @@ const getDetailCase = server => {
                             return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                         }
 
-                        return reply(count)
+                        return reply(Object.assign(result, count))
                     })
             })
         },
