@@ -55,7 +55,7 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
 
 const deleteInspectionSupport = async (id_inspection_support, callback) => {
   try {
-    const deleted = await deleteGlobal(LocalTransmission, "inspection_support", id_inspection_support)
+    let deleted = await deleteGlobal(InspectionSupport, "inspection_support", id_inspection_support)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
