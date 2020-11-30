@@ -1,7 +1,7 @@
 module.exports = (server) => {
   const handlers = require('./handlers')
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
-  const CheckRole = require('../users/route_prerequesites').CheckRoleUpdate(server)
+  const CheckRole = require('../users/route_prerequesites').CheckRoleDelete(server)
 
   return [
     {
