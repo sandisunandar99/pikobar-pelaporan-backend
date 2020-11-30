@@ -1,6 +1,5 @@
 const Case = require('../models/Case')
 const { aggregateCondition } = require('../helpers/aggregate/mapaggregate')
-const { summaryMap } = require('../helpers/aggregate/mapsummaryaggregate')
 const { patientStatus } = require('../helpers/custom')
 
 const listMap = async (query, user, callback) => {
@@ -19,6 +18,7 @@ const listMap = async (query, user, callback) => {
 
 const listSummary = async (query, user, callback) => {
   try {
+    const { summaryMap } = require('../helpers/aggregate/mapsummaryaggregate')
     const aggregateWhere = await summaryMap(user, query)
     const result = await Case.aggregate(aggregateWhere)
     callback(null, result)
