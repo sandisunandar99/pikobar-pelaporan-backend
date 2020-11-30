@@ -1,5 +1,5 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
+  const handlers = require('./handlers')
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
   const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
   const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
@@ -15,7 +15,7 @@ module.exports = (server) => {
         tags: ['api', 'history-travel'],
         pre: [ CheckRoleCreate ]
       },
-      handler: handlers.createHistoryTravel
+      handler: handlers.createHistoryTravel(server)
     },
     {
       method: 'GET',
@@ -26,7 +26,7 @@ module.exports = (server) => {
         tags: ['api', 'history-travel'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getHistoryTravel
+      handler:  handlers.getHistoryTravel(server)
     },
     {
       method: 'PUT',
@@ -37,7 +37,7 @@ module.exports = (server) => {
         tags: ['api', 'history-travel'],
         pre: [ CheckRoleUpdate ],
       },
-      handler:  handlers.updateHistoryTravel
+      handler:  handlers.updateHistoryTravel(server)
     },
     {
       method: 'DELETE',
@@ -48,7 +48,7 @@ module.exports = (server) => {
         tags: ['api', 'history-travel'],
         pre: [ CheckRoleDelete ],
       },
-      handler: handlers.deleteHistoryTravel
+      handler: handlers.deleteHistoryTravel(server)
     }
   ]
 }
