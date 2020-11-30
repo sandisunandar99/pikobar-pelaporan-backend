@@ -1,3 +1,5 @@
+const ObjectId = require('mongodb').ObjectID
+
 const findGlobal = async (Schema, id_case, select) => {
   try {
     return await Schema.find({ _id: id_case })
@@ -8,8 +10,13 @@ const findGlobal = async (Schema, id_case, select) => {
   }
 }
 
-const deleteGlobal = async (Schema, condition, pull) => {
+const deleteGlobal = async (Schema, column, id) => {
   try {
+    const columnId = `${column}._id`
+    const condition = {
+      [columnId]: ObjectId(id)
+    }
+    const pull = { [column]: { _id: ObjectId(id) } }
     return await Schema.updateOne(condition, { $pull: pull })
   } catch (error) {
     return error

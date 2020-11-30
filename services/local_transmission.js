@@ -23,7 +23,7 @@ const createLocalTransmission = async (payload, id_case, callback) => {
 
 const listLocalTransmission = async (id_case, callback) => {
   try {
-    const result = await findGlobal(LocalTransmission, id_case, ["visited_local_area"])
+    const result = await findGlobal(LocalTransmission, id_case, "visited_local_area")
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -49,11 +49,7 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
 
 const deleteLocalTransmission = async (id_local_transmission, callback) => {
   try {
-    const id = {
-      "visited_local_area._id": ObjectId(id_local_transmission)
-    }
-    const pull = { visited_local_area: { _id: ObjectId(id_local_transmission) } }
-    const deleted = await deleteGlobal(LocalTransmission, id, pull)
+    const deleted = await deleteGlobal(LocalTransmission, "visited_local_area", id_local_transmission)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
