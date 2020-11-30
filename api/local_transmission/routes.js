@@ -1,9 +1,7 @@
 module.exports = (server) => {
-  const handlers = require('./handlers')(server)
-  const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server);
-  const CheckRoleCreate = require('../users/route_prerequesites').CheckRoleCreate(server)
-  const CheckRoleUpdate = require('../users/route_prerequesites').CheckRoleUpdate(server)
-  const CheckRoleDelete = require('../users/route_prerequesites').CheckRoleDelete(server)
+  const handlers = require('./handlers')
+  const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
+  const CheckRole = require('../users/route_prerequesites').CheckRoleUpdate(server)
 
   return [
     {
@@ -13,9 +11,9 @@ module.exports = (server) => {
         auth: 'jwt',
         description: 'create local-transmission',
         tags: ['api', 'local-transmission'],
-        pre: [ CheckRoleCreate ]
+        pre: [ CheckRole ]
       },
-      handler: handlers.createLocalTransmission
+      handler: handlers.createLocalTransmission(server)
     },
     {
       method: 'GET',
@@ -26,7 +24,7 @@ module.exports = (server) => {
         tags: ['api', 'local-transmission'],
         pre: [ CheckRoleView ]
       },
-      handler:  handlers.getLocalTransmission
+      handler:  handlers.getLocalTransmission(server)
     },
     {
       method: 'PUT',
@@ -35,9 +33,9 @@ module.exports = (server) => {
         auth: 'jwt',
         description: 'update local-transmission',
         tags: ['api', 'local-transmission'],
-        pre: [ CheckRoleUpdate ],
+        pre: [ CheckRole ],
       },
-      handler:  handlers.updateLocalTransmission
+      handler:  handlers.updateLocalTransmission(server)
     },
     {
       method: 'DELETE',
@@ -46,9 +44,9 @@ module.exports = (server) => {
         auth: 'jwt',
         description: 'delete local-transmission',
         tags: ['api', 'local-transmission'],
-        pre: [ CheckRoleDelete ],
+        pre: [ CheckRole ],
       },
-      handler: handlers.deleteLocalTransmission
+      handler: handlers.deleteLocalTransmission(server)
     }
   ]
 }

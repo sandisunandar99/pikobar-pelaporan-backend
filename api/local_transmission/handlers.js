@@ -1,65 +1,35 @@
-const replyHelper = require('../helpers');
+const { funcCreatePayload, funcIfSame, queryParamSame } = require('../../helpers/request')
 
-module.exports = (server) => {
-  function publicLocalTransmission(localTransmission) {
-    let jsonLocalTransmission = {
-      status: 200,
-      message: "Success",
-      data: localTransmission
-    }
-    return jsonLocalTransmission
-  };
-  return {
-    /**
-     * POST /api/public-place
-     * @param {*} request
-     * @param {*} reply
-     */
-    async createLocalTransmission(request, reply) {
-      server.methods.services.local_transmission.create(
-        request.payload,
-        request.params.id_case,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            publicLocalTransmission(result, request)
-          ).code(200)
-        }
-      )
-    },
-    async getLocalTransmission(request, reply) {
-      server.methods.services.local_transmission.read(
-        request.params.id_case,
-        (err, result) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            publicLocalTransmission(result, request)
-          ).code(200)
-        }
-      )
-    },
-    async updateLocalTransmission(request, reply) {
-      server.methods.services.local_transmission.update(
-        request.params.id_local_transmission,
-        request.payload,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            publicLocalTransmission(result, request)
-          ).code(200)
-        }
-      )
-    },
-    async deleteLocalTransmission(request, reply) {
-      server.methods.services.local_transmission.delete(
-        request.params.id_local_transmission,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            publicLocalTransmission(result, request)
-          ).code(200)
-        }
-      )
-    }
-  };
+const createLocalTransmission = (server) => {
+  return async(request, reply) => {
+    await funcCreatePayload(server, "local_transmission", "create", request, "id_case", reply)
+  }
+}
+
+const getLocalTransmission = (server) => {
+  return async(request, reply) => {
+    await funcIfSame(server, "local_transmission", "read", request, "id_case", reply)
+  }
+}
+
+const updateLocalTransmission = (server) => {
+  return async(request, reply) => {
+    await queryParamSame(
+      server, "local_transmission", "update",
+      request, "payload", "id_local_transmission", reply
+    )
+  }
+}
+
+const deleteLocalTransmission = (server) => {
+  return async(request, reply) => {
+    await funcIfSame(server, "local_transmission", "delete", request,
+    "id_local_transmission", reply)
+  }
+}
+
+module.exports = {
+  createLocalTransmission,
+  getLocalTransmission,
+  updateLocalTransmission, deleteLocalTransmission
 }
