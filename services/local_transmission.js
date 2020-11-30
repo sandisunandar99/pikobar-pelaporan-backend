@@ -1,5 +1,7 @@
 const LocalTransmission = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
+const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
+const service = 'services.local_transmission'
 
 const createLocalTransmission = async (payload, id_case, callback) => {
   try {
@@ -21,9 +23,7 @@ const createLocalTransmission = async (payload, id_case, callback) => {
 
 const listLocalTransmission = async (id_case, callback) => {
   try {
-    const result = await LocalTransmission.find({ _id: id_case })
-      .select(["visited_local_area"])
-      .sort({ updatedAt: -1 })
+    const result = await findGlobal(LocalTransmission, id_case, ["visited_local_area"])
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -49,11 +49,11 @@ const updateLocalTransmission = async (id_local_transmission, payload, callback)
 
 const deleteLocalTransmission = async (id_local_transmission, callback) => {
   try {
-    const deleted = await LocalTransmission.updateOne(
-    {
+    const id = {
       "visited_local_area._id": ObjectId(id_local_transmission)
-    },
-    { $pull: { visited_local_area: { _id: ObjectId(id_local_transmission) } } })
+    }
+    const pull = { visited_local_area: { _id: ObjectId(id_local_transmission) } }
+    const deleted = await deleteGlobal(LocalTransmission, id, pull)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
@@ -62,16 +62,16 @@ const deleteLocalTransmission = async (id_local_transmission, callback) => {
 
 module.exports = [
   {
-    name: 'services.local_transmission.create',
+    name: `${service}.create`,
     method: createLocalTransmission
   }, {
-    name: 'services.local_transmission.read',
+    name: `${service}.read`,
     method: listLocalTransmission
   }, {
-    name: 'services.local_transmission.update',
+    name: `${service}.update`,
     method: updateLocalTransmission
   }, {
-    name: 'services.local_transmission.delete',
+    name: `${service}.delete`,
     method: deleteLocalTransmission
   },
 ]
