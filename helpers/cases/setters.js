@@ -21,6 +21,8 @@ const doUpdateEmbeddedClosecontactDoc = async (oldIdCase, newIdCase, Case) => {
       const document = allEmbeddedDocuments[i]
       await updating('close_contact_parents', 'id_case', document._id)
       await updating('close_contact_childs', 'id_case', document._id)
+      await updating('close_contact_parents', 'id_case_registrant', document._id)
+      await updating('close_contact_childs', 'id_case_registrant', document._id)
     }
 
   } catch (e) {}
