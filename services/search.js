@@ -29,10 +29,10 @@ const getCases = async (query, callback) => {
         status: 1,
         name: 1,
         label: { $concat: [
-            { $toString: "$id_case" }, "/",
-            { $toString: "$name" }, "/",
-            { $toString: "$nik" }, "/",
-            { $toString: "$phone_number" },
+          { $ifNull: [ { $toString: "$id_case" }, ""] }, "/",
+          { $ifNull: [ { $toString: "$name" }, ""] }, "/",
+          { $ifNull: [ { $toString: "$nik" }, ""] }, "/",
+          { $ifNull: [ { $toString: "$phone_number" }, ""] },
           ]
         },
         nik: 1,
