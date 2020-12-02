@@ -2,7 +2,8 @@ const RdtHistory = require('../models/RdtHistory')
 
 async function ListRdtHistory(callback) {
   try {
-    const result = await RdtHistory.find().sort({ createdAt: 'desc' })
+    const sort = { createdAt: 'desc' }
+    const result = await RdtHistory.find().sort(sort)
     callback(null, result.map(q => q.toJSONFor()))
   } catch (error) {
     callback(error, null)
