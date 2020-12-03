@@ -81,7 +81,7 @@ const checkIfDataNotNull = server => {
         request.query,
         request.auth.credentials.user,
         (err, result) => {
-          if (result !== null) {
+          if (result) {
             if (result.rdt.length === 0) {
               return reply(replyHelper.customResponse(200, message, null)).code(200).takeover()
             } else {
