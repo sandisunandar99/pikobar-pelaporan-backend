@@ -9,7 +9,7 @@ const validationBeforeInput = server => {
       if (payloadDistrict === userDistrict) {
         return reply(userDistrict)
       } else {
-        return reply(replyHelper.responseRdt(403, message, null)).code(403).takeover()
+        return reply(replyHelper.customResponse(403, message, null)).code(403).takeover()
       }
     },
     assign: 'validation_before_input'
@@ -85,12 +85,12 @@ const checkIfDataNotNull = server => {
         (err, result) => {
           if (result !== null) {
             if (result.rdt.length === 0) {
-              return reply(replyHelper.responseRdt(200, message, null)).code(200).takeover()
+              return reply(replyHelper.customResponse(200, message, null)).code(200).takeover()
             } else {
               return reply()
             }
           } else {
-            return reply(replyHelper.responseRdt(200, message, null)).code(200).takeover()
+            return reply(replyHelper.customResponse(200, message, null)).code(200).takeover()
           }
         })
     },

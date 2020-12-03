@@ -93,7 +93,7 @@ const successResponse = (result) => {
   return jsonOutput
 }
 
-const responseRdt = (status,message,result) => {
+const customResponse = (status, message, result) => {
   let jsonOutput = {
     status: status,
     message: message,
@@ -113,5 +113,5 @@ module.exports = {
   constructErrorResponse,
   CommentReferenceError,
   successResponse,
-  replyJson, responseRdt
+  replyJson, customResponse
 }
