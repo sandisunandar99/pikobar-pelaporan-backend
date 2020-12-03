@@ -20,7 +20,7 @@ const countRdtCode = server => {
   return {
     method: (request, reply) => {
       const { address_district_code } = request.payload
-      methodOneParam(server, 'getCountRdtCode', address_district_code, reply)
+      methodOneParam(server, 'rdt', 'getCountRdtCode', address_district_code, reply)
     },
     assign: 'count_rdt'
   }
@@ -45,7 +45,7 @@ const countCaseByDistrict = server => {
 const getRdtbyId = server => {
   return {
     method: (request, reply) => {
-      methodOneParam(server, 'getById', request.params.id, reply)
+      methodOneParam(server, 'rdt', 'getById', request.params.id, reply)
     },
     assign: 'rdt'
   }
@@ -55,7 +55,7 @@ const getCasebyIdcase = server => {
   return {
     method: (request, reply) => {
       const idcase = request.pre.rdt.id_case
-      methodOneParam(server, 'getCaseByidcase', idcase, reply)
+      methodOneParam(server, 'rdt', 'getCaseByidcase', idcase, reply)
     },
     assign: 'cases'
   }
@@ -65,7 +65,7 @@ const getCodeDinkes = server => {
   return {
     method: (request, reply) => {
       let code = request.payload.address_district_code
-      methodOneParam(server, 'getCodeDinkes', code, reply)
+      methodOneParam(server, 'rdt', 'getCodeDinkes', code, reply)
     },
     assign: 'code_dinkes'
   }
@@ -120,7 +120,7 @@ const searchIdcasefromInternal = server => {
   return {
     method: (request, reply) => {
       const { query } = request
-      methodOneParam(server, 'seacrhFromInternal', query, reply)
+      methodOneParam(server, 'rdt', 'seacrhFromInternal', query, reply)
     },
     assign: 'search_internal'
   }
@@ -129,7 +129,7 @@ const searchIdcasefromInternal = server => {
 const getRegisteredUserfromExternal = server => {
   return {
     method: (request, reply) => {
-      methodOneParam(server, 'getRegisteredFromExternal', request.query, reply)
+      methodOneParam(server, 'rdt', 'getRegisteredFromExternal', request.query, reply)
     },
     assign: 'reg_user_external'
   }
@@ -170,8 +170,8 @@ const sameMethod = (server, name, request, reply) => {
     })
 }
 
-const methodOneParam = (server, name, param, reply) => {
-  return server.methods.services.rdt[name](param, (err, item) => {
+const methodOneParam = (server, service, name, param, reply) => {
+  return server.methods.services[service][name](param, (err, item) => {
     if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
     return reply(item)
   })
@@ -182,12 +182,7 @@ const sameCondition = (server, name, payloads, request, reply) => {
   const tool_tester = request.payload.tool_tester
   const final_result = request.payload.final_result
   if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF") {
-    server.methods.services.histories[name](
-      payloads,
-      (err, item) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(item)
-      })
+    methodOneParam(server, 'histories', name, payloads, reply)
   } else {
     return reply()
   }
