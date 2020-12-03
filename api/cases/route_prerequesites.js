@@ -1,4 +1,5 @@
 const replyHelper = require('../helpers')
+const { conditionPreReq } = require('../../utils/conditional')
 
 const validationBeforeInput = server => {
     return {
@@ -137,19 +138,9 @@ const checkIfDataNotNull = server =>{
             const message = `Data untuk ${user.fullname} belum ada.`
 
              server.methods.services.cases.list(
-                 query,
-                 user,
-                 (err, result) => {
-                     if(result !== null){
-                        if (result.cases.length === 0) {
-                            return reply(replyHelper.customResponse(200, message, null)).code(200).takeover()
-                        }else{
-                            return reply()
-                        }
-                     }else{
-                        return reply(replyHelper.customResponse(200, message, null)).code(200).takeover()
-                     }
-                 })
+                query, user,
+                (err, result) => { conditionPreReq(result, 'cases', reply, message) }
+              )
          },
          assign: 'check_cases'
      }

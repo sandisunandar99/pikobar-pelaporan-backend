@@ -1,4 +1,5 @@
 const replyHelper = require('../helpers')
+const { conditionPreReq } = require('../../utils/conditional')
 
 const validationBeforeInput = server => {
   return {
@@ -74,25 +75,14 @@ const getCodeDinkes = server => {
 const checkIfDataNotNull = server => {
   return {
     method: (request, reply) => {
-      let fullname = user.fullname
-      let message = `Data untuk ${fullname} belum ada.`
+      const fullname = request.auth.credentials.user.fullname
+      const message = `Data untuk ${fullname} belum ada.`
 
       server.methods.services.rdt.list(
         request.query,
         request.auth.credentials.user,
-        (err, result) => {
-          if (result) {
-            if (result.rdt.length === 0) {
-              return reply(
-                replyHelper.customResponse(200, message, null))
-                .code(200).takeover()
-            } else {
-              return reply()
-            }
-          } else {
-            return reply(replyHelper.customResponse(200, message, null)).code(200).takeover()
-          }
-        })
+        (err, result) => { conditionPreReq(result, 'rdt', reply, message) }
+      )
     },
     assign: 'check_rdt'
   }
