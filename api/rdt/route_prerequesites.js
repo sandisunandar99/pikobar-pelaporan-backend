@@ -19,8 +19,8 @@ const validationBeforeInput = server => {
 const countRdtCode = server => {
   return {
     method: (request, reply) => {
-      const districtCode = request.payload.address_district_code
-      methodOneParam(server, 'getCountRdtCode', districtCode, reply)
+      const { address_district_code } = request.payload
+      methodOneParam(server, 'getCountRdtCode', address_district_code, reply)
     },
     assign: 'count_rdt'
   }
@@ -54,13 +54,8 @@ const getRdtbyId = server => {
 const getCasebyIdcase = server => {
   return {
     method: (request, reply) => {
-      let idcase = request.pre.rdt.id_case
-      server.methods.services.rdt.getCaseByidcase(
-        idcase,
-        (err, item) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(item)
-        })
+      const idcase = request.pre.rdt.id_case
+      methodOneParam(server, 'getCaseByidcase', idcase, reply)
     },
     assign: 'cases'
   }
@@ -124,7 +119,8 @@ const searchIdcasefromExternal = server => {
 const searchIdcasefromInternal = server => {
   return {
     method: (request, reply) => {
-      methodOneParam(server, 'seacrhFromInternal', request.query, reply)
+      const { query } = request
+      methodOneParam(server, 'seacrhFromInternal', query, reply)
     },
     assign: 'search_internal'
   }
