@@ -168,5 +168,11 @@ module.exports = {
     SUSPECT_PROBABLE_ISOLATION: 'Jumlah kasus suspek + kasus probabel',
     CONFIRMED_ISOLATION: 'Jumlah kasus konfirmasi',
     CLOSE_CONTACT_ISOLATION: 'Jumlah kontak erat sedang dipantau'
+  },
+  CLICK_ACTION: {
+    CASES_LIST: 'cases-list',
+    CASES_VERIFICATION_LIST: 'cases-verification-list',
+    RDT_LIST: 'rdt-list',
+    SYSTEM_UPDATES: 'system-updates',
   }
 }

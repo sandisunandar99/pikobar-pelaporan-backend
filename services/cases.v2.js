@@ -68,7 +68,7 @@ const createCase = async (pre, payload, author, callback) => {
       { upsert: true, new: true },
     )
 
-    await Notif.send(Notification, User, insertedCase, author, 'case-created')
+    Notif.send(Notification, User, insertedCase, author, `${author.role}-case-created`)
     callback(null, insertedCase)
   } catch (error) {
     callback(error, null)
