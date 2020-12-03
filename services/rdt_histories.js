@@ -1,25 +1,22 @@
-const mongoose = require('mongoose');
+const RdtHistory = require('../models/RdtHistory')
 
-require('../models/RdtHistory');
-
-const RdtHistory = mongoose.model('History');
-
-function ListRdtHistory (callback) {
-    RdtHistory.find()
-        .sort({ createdAt: 'desc'})
-        .exec()
-        .then(item => {
-            let res = item.map(q => q.toJSONFor())
-            return callback(null, res)
-        })
-        .catch(err => callback(err, null))
+async function ListRdtHistory(callback) {
+  try {
+    const sort = { createdAt: 'desc' }
+    const result = await RdtHistory.find().sort(sort)
+    callback(null, result.map(q => q.toJSONFor()))
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
-function getRdtHistoryById (id, callback) {
-  RdtHistory.findById(id).exec().then(item => {
-    return callback(null, item.toJSONFor())
-  })
-  .catch(err => callback(err, null))
+async function getRdtHistoryById(id, callback) {
+  try {
+    const result = await RdtHistory.findById(id)
+    callback(null, result.toJSONFor())
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
 module.exports = [
@@ -31,5 +28,5 @@ module.exports = [
     name: 'services.rdt_histories.getById',
     method: getRdtHistoryById
   },
-];
+]
 
