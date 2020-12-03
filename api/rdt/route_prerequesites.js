@@ -75,13 +75,11 @@ const checkIfDataNotNull = server => {
   return {
     method: (request, reply) => {
       let fullname = user.fullname
-      let query = request.query
       let message = `Data untuk ${fullname} belum ada.`
-      let user = request.auth.credentials.user
 
       server.methods.services.rdt.list(
-        query,
-        user,
+        request.query,
+        request.auth.credentials.user,
         (err, result) => {
           if (result !== null) {
             if (result.rdt.length === 0) {
