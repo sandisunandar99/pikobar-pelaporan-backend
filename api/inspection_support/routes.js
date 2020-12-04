@@ -2,12 +2,13 @@ module.exports = (server, route) => {
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
   const CheckRole = require('../users/route_prerequesites').CheckRoleDelete(server)
   const service = 'inspection_support'
-  const path = '/inspection-support/'
+  const pathCase = '/inspection-support/{id_case}'
+  const pathInspec = '/inspection-support/{id_inspection_support}'
 
   return [
-    route(server, 'POST', `${path}{id_case}`, service, CheckRole, 'createInspectionSupport'),
-    route(server, 'GET', `${path}{id_case}`, service, CheckRoleView, 'getInspectionSupport'),
-    route(server, 'PUT', `${path}{id_inspection_support}`, service, CheckRole, 'updateInspectionSupport'),
-    route(server, 'DELETE', `${path}{id_inspection_support}`, service, CheckRole, 'deleteInspectionSupport')
+    route(server, 'POST', pathCase, service, CheckRole, 'createInspectionSupport'),
+    route(server, 'GET', pathCase, service, CheckRoleView, 'getInspectionSupport'),
+    route(server, 'PUT', pathInspec, service, CheckRole, 'updateInspectionSupport'),
+    route(server, 'DELETE', pathInspec, service, CheckRole, 'deleteInspectionSupport')
   ]
 }
