@@ -1,5 +1,6 @@
 const PublicPlace = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
+const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
 
 const createPublicPlace = async (payload, id_case, callback) => {
   try {
@@ -24,9 +25,9 @@ const createPublicPlace = async (payload, id_case, callback) => {
 
 const listPublicPlace = async (id_case, callback) => {
   try {
-    const result = await PublicPlace.find({_id: id_case})
-    .select(["visited_public_place"])
-    .sort({ updatedAt:-1 })
+    const id = id_case
+    const select = 'visited_public_place'
+    const result = await findGlobal(PublicPlace, id, select)
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -53,11 +54,8 @@ const updatePublicPlace = async (id_public_place, payload, callback) => {
 
 const deletePublicPlace = async (id_public_place, callback) => {
   try {
-    const deleted = await PublicPlace.updateOne(
-    {
-      "visited_public_place._id": ObjectId(id_public_place)
-    },
-    { $pull: { visited_public_place: { _id: ObjectId(id_public_place) } } })
+    const select = 'visited_public_place'
+    const deleted = await deleteGlobal(PublicPlace, select, id_public_place)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
