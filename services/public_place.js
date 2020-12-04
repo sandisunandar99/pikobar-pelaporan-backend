@@ -26,7 +26,8 @@ const createPublicPlace = async (payload, id_case, callback) => {
 const listPublicPlace = async (id_case, callback) => {
   try {
     const id = id_case
-    const result = await findGlobal(PublicPlace, id, "visited_public_place")
+    const select = 'visited_public_place'
+    const result = await findGlobal(PublicPlace, id, select)
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -53,7 +54,8 @@ const updatePublicPlace = async (id_public_place, payload, callback) => {
 
 const deletePublicPlace = async (id_public_place, callback) => {
   try {
-    const deleted = await deleteGlobal(PublicPlace, "visited_public_place", id_public_place)
+    const select = 'visited_public_place'
+    const deleted = await deleteGlobal(PublicPlace, select, id_public_place)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
