@@ -3,7 +3,7 @@ const History = require('../models/History')
 const Helper = require('../helpers/custom')
 const ObjectId = require('mongodb').ObjectID
 const { exportByRole } = require('../helpers/rolecheck')
-const { WHERE_GLOBAL } = require('../helpers/constant')
+const { WHERE_GLOBAL, HISTORY_DEFAULT_SORT } = require('../helpers/constant')
 const { filterCase } = require('../helpers/filter/casefilter')
 const { condition, excellHistories } = require('../helpers/filter/historyfilter')
 
@@ -32,21 +32,40 @@ function getHistoryById (id, callback) {
   .catch(err => callback(err, null))
 }
 
-function getHistoryByCase (id_case, callback) {
-  History.find({ case: id_case})
-        .where('delete_status').ne('deleted')
-        .sort({ createdAt: 'desc'})
-        .exec()
-        .then(item => {
-        let res = item.map(q => q.toJSONFor())
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null))
+async function getHistoryByCase (id_case, callback) {
+    try {
+      const aggQuery = [
+        { $match: { case: ObjectId(id_case), delete_status: { $ne: 'deleted' } } },
+        { $lookup: {
+            from: 'villages',
+            let: { code: '$current_location_village_code' },
+            pipeline: [{ $match: { $expr: { $eq: [ '$kemendagri_desa_kode', '$$code' ] } } }],
+            as: 'villages'
+        } },
+        { $addFields: {
+            village: {
+              $cond: [ { $eq: [ { '$size': `$villages` }, 0 ] }, { $literal: {} }, { $arrayElemAt: [ '$villages', 0 ] } ]
+            }
+        } },
+        { $project: {
+            status: 1, final_result: 1, last_date_status_patient: 1, first_symptom_date: 1, diagnosis: 1, diseases: 1,
+            current_location_district: { '$ifNull': [ '$village.kemendagri_desa_nama', '' ] },
+            current_location_subdistrict: { '$ifNull': [ '$village.kemendagri_kecamatan_nama', '' ] },
+            current_location_village: { '$ifNull': [ '$village.kemendagri_desa_nama', '' ] },
+            current_location_type: 1, current_location_address: 1, createdAt: 1,
+        } },
+      ]
+
+      const result = await History.aggregate(aggQuery).sort(HISTORY_DEFAULT_SORT)
+
+      callback(null, result)
+    } catch (e) { callback(e, null) }
 }
 
 function getLastHistoryByIdCase (id_case, callback) {
   History.find({ case: id_case})
-        .sort({ createdAt: 'desc'})
+        .where('delete_status').ne('deleted')
+        .sort(HISTORY_DEFAULT_SORT)
         .limit(1)
         .exec()
         .then(item => {
@@ -63,6 +82,16 @@ function createHistory (payload, callback) {
     if (err) return callback(err, null);
     return callback(null, item);
   });
+}
+
+// get latest history sort by last_date_status_patient
+function getLatestHistory(caseId) {
+  const latestHis = History.findOne({
+    case: ObjectId(caseId),
+    delete_status: { $ne: 'deleted' },
+  }).sort(HISTORY_DEFAULT_SORT)
+
+  return latestHis
 }
 
 function createHistoryIfChanged (request, callback) {
@@ -101,17 +130,19 @@ function createHistoryIfChanged (request, callback) {
       }
 
       if (changed) {
-        new_history.save((err, item) => {
+        new_history.save( async (err, item) => {
           if (err) return callback(err, null);
+
+          const latestHis = await getLatestHistory(payload.case)
 
           // update case
           let update_case = {
-              status: payload.status,
-              stage: payload.stage,
-              final_result: payload.final_result,
-              is_test_masif: payload.is_test_masif,
-              last_date_status_patient: payload.last_date_status_patient,
-              last_history: item._id
+              status: latestHis.status,
+              stage: latestHis.stage,
+              final_result: latestHis.final_result,
+              is_test_masif: latestHis.is_test_masif,
+              last_date_status_patient: latestHis.last_date_status_patient,
+              last_history: latestHis._id
           }
 
           let objcase = Object.assign(case_obj, update_case)
@@ -271,7 +302,7 @@ async function deleteHistoryById (id, author, callback) {
 
     const histories = await History.find({
       case: ObjectId(historyToDelete.case), delete_status: { $ne: 'deleted' }
-    }).sort({ createdAt: 'desc'})
+    }).sort({ last_date_status_patient: 'desc', createdAt: 'desc'})
 
     if (histories.length <= 1) {
       throw new Error("Riwayat kasus hanya ada satu, tidak dapat dihapus!")

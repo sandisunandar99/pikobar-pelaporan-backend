@@ -23,9 +23,10 @@ async function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
-  let sort = { updatedAt: 'desc' };
+  let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   if (query.sort && query.sort.split) {
     let splits = query.sort.split(':')
+    sort.last_date_status_patient = splits[1];
     sort[splits[0]] = splits[1];
   }
 
@@ -39,6 +40,11 @@ async function ListCase (query, user, callback) {
   };
 
   var params = {}
+
+  // only provide when needed
+  if (query.author_district_code) {
+    params.author_district_code = query.author_district_code;
+  }
 
   if(user.role == "dinkesprov" || user.role == "superadmin"){
     if(query.address_district_code){

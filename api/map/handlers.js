@@ -14,6 +14,15 @@ const mapList = (server) => {
     )
   }
 }
+
+const mapSummary = (server) => {
+  return async (request, reply) => {
+    await requestIfSame(
+      server, "map", "listSummary",
+      request, reply
+    )
+  }
+}
 module.exports = {
-  mapList
+  mapList, mapSummary
 }

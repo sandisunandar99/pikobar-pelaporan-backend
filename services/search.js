@@ -1,12 +1,10 @@
 const Case = require('../models/Case')
 
 const getCases = async (query, callback) => {
-  let search = {}
-  const params = {
-    delete_status: { $ne: 'deleted' }
-  }
+  const search = {}
+  const params = { delete_status: { $ne: 'deleted' } }
 
-  if(query.status){
+  if(query.status) {
     params.status = query.status
   }
 
@@ -15,42 +13,50 @@ const getCases = async (query, callback) => {
   }
 
   if(query.keyword) {
-    search = [
-      { id_case : new RegExp(query.keyword,'i') },
-      { name: new RegExp(query.keyword, 'i') },
+    search.$or = [
+      { name: new RegExp(`^${query.keyword}`, 'i') },
       { nik: new RegExp(query.keyword, 'i') },
+      { id_case : new RegExp(query.keyword,'i') },
       { phone_number: new RegExp(query.keyword, 'i') },
     ]
   }
 
-  const select = [
-    'id_case',
-    'status',
-    'name',
-    'nik',
-    'phone_number',
-    'place_of_birth',
-    'birth_date',
-    'occupation',
-    'gender',
-    'address_street',
-    'address_district_code',
-    'address_district_name',
-    'address_subdistrict_code',
-    'address_subdistrict_name',
-    'address_village_code',
-    'address_village_name',
-    'rt',
-    'rw',
-    'verified_status',
+  const aggQuery = [
+    { $match: { ...params, ...search } },
+    {
+      $project: {
+        id_case: 1,
+        status: 1,
+        name: 1,
+        label: { $concat: [
+          { $ifNull: [ { $toString: "$id_case" }, ""] }, "/",
+          { $ifNull: [ { $toString: "$name" }, ""] }, "/",
+          { $ifNull: [ { $toString: "$nik" }, ""] }, "/",
+          { $ifNull: [ { $toString: "$phone_number" }, ""] },
+          ]
+        },
+        nik: 1,
+        phone_number: 1,
+        place_of_birth: 1,
+        birth_date: 1,
+        occupation: 1,
+        gender: 1,
+        address_street: 1,
+        address_district_code: 1,
+        address_district_name: 1,
+        address_subdistrict_code: 1,
+        address_subdistrict_name: 1,
+        address_village_code: 1,
+        address_village_name: 1,
+        rt: 1,
+        rw: 1,
+        verified_status: 1,
+      }
+    }
   ]
 
   try {
-    const result = await Case
-      .find(params)
-      .or(search)
-      .select(select)
-      .limit(10)
+    const result = await Case.aggregate(aggQuery).limit(10)
 
     callback (null, result)
   } catch (error) {
@@ -61,6 +67,6 @@ const getCases = async (query, callback) => {
 module.exports = [
   {
     name: 'services.search.getCases',
-    method: getCases
+    method: getCases,
   }
 ]

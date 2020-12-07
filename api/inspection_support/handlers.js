@@ -1,60 +1,35 @@
-const replyHelper = require('../helpers');
+const { funcCreatePayload, funcIfSame, queryParamSame } = require('../../helpers/request')
 
-module.exports = (server) => {
-  function inspectionSupport(data) {
-    let jsonInspectionSupport = {
-      status: 200,
-      message: "Success",
-      data: data
-    }
-    return jsonInspectionSupport
-  };
-  return {
-    async createInspectionSupport(request, reply) {
-      server.methods.services.inspection_support.create(
-        request.payload,
-        request.params.id_case,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            inspectionSupport(result, request)
-          ).code(200)
-        }
-      )
-    },
-    async getInspectionSupport(request, reply) {
-      server.methods.services.inspection_support.read(
-        request.params.id_case,
-        (err, result) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            inspectionSupport(result, request)
-          ).code(200)
-        }
-      )
-    },
-    async updateInspectionSupport(request, reply) {
-      server.methods.services.inspection_support.update(
-        request.params.id_inspection_support,
-        request.payload,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            inspectionSupport(result, request)
-          ).code(200)
-        }
-      )
-    },
-    async deleteInspectionSupport(request, reply) {
-      server.methods.services.inspection_support.delete(
-        request.params.id_inspection_support,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-          return reply(
-            inspectionSupport(result, request)
-          ).code(200)
-        }
-      )
-    }
-  };
+const createInspectionSupport = (server) => {
+  return async(request, reply) => {
+    await funcCreatePayload(server, "inspection_support", "create", request, "id_case", reply)
+  }
+}
+
+const getInspectionSupport = (server) => {
+  return async(request, reply) => {
+    await funcIfSame(server, "inspection_support", "read", request, "id_case", reply)
+  }
+}
+
+const updateInspectionSupport = (server) => {
+  return async(request, reply) => {
+    await queryParamSame(
+      server, "inspection_support", "update",
+      request, "payload", "id_inspection_support", reply
+    )
+  }
+}
+
+const deleteInspectionSupport = (server) => {
+  return async(request, reply) => {
+    await funcIfSame(server, "inspection_support", "delete", request,
+    "id_inspection_support", reply)
+  }
+}
+
+module.exports = {
+  createInspectionSupport,
+  getInspectionSupport,
+  updateInspectionSupport, deleteInspectionSupport
 }
