@@ -5,6 +5,9 @@ const isTrue = (data, value) => data[value] ? '√' : '  '
 const isFalse = (data, value) =>  !data[value] ? '√' : '  '
 const formattedDate = d => d ? moment(d).format('YYYY/MM/DD') : '-'
 const handleEmpty = v => v || '-'
+const objEmptyContactHistory = [
+  { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{}
+]
 
 const objectTravelPlaces = (records, exception) => {
   const res = []
@@ -120,9 +123,7 @@ const buildSuspectContact = (data, criterias) => {
 
   const res = objectSuspectContact(records, criterias)
 
-  if (!res.length) {
-    res.push([{ alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{}])
-  }
+  if (!res.length) res.push(objEmptyContactHistory)
 
   return res
 }
@@ -258,4 +259,4 @@ const render = (data) => {
   ]
 }
 
-module.exports = { render }
+module.exports = { render, objEmptyContactHistory }
