@@ -25,6 +25,11 @@ const transformAge = (data) => {
   return tramsformed
 }
 
+const generetaPdfRow = (value, options) => {
+  return { alignment: options.alignment, text: value }
+}
+
 module.exports = {
   transformAge,
+  generetaPdfRow,
 }

@@ -43,6 +43,8 @@ const buildRow = (row, label, prop) => {
   ]
 }
 
+const { SPECIMEN_TYPES } = require('../../../constant')
+
 const render = (data) => {
   groupByType(data)
   return [
@@ -86,10 +88,10 @@ const render = (data) => {
               alignment: 'left'
             },{},{},{},{},{},{},{}
           ],
-          buildRow('1', 'Nasopharyngeal (NP) Swab', 'Swab Nasofaring'),
-          buildRow('2', 'Oropharyngeal (NP) Swab', 'Swab Orofaring'),
-          buildRow('3', 'Sputum', 'Sputum'),
-          buildRow('4', 'Serum', 'Serum'),
+          buildRow('1', 'Nasopharyngeal (NP) Swab', SPECIMEN_TYPES.SWAB_NASO),
+          buildRow('2', 'Oropharyngeal (NP) Swab', SPECIMEN_TYPES.SWAB_OROF),
+          buildRow('3', 'Sputum', SPECIMEN_TYPES.SPUTUM),
+          buildRow('4', 'Serum', 'serum'),
           [
             {
               text: 'Pemeriksaan lain',
@@ -98,8 +100,8 @@ const render = (data) => {
               alignment: 'left'
             },{},{},{},{},{},{},{}
           ],
-          buildRow('1', 'Darah', 'Darah'),
-          buildRow('2', 'Serum', 'Serum'),
+          buildRow('1', 'Darah', SPECIMEN_TYPES.BLOOD),
+          buildRow('2', 'Serum', 'serum'),
           buildRow('3', 'Lain, Sebutkan\n.', 'Lainnya'),
         ],
       }
