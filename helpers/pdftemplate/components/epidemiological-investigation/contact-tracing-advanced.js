@@ -3,6 +3,7 @@ const {
 } = require('../../../constant')
 
 const moment = require('moment')
+const { rest } = require('lodash')
 
 const isTrue = (value) => {
   return value ? '√' : '  '
@@ -14,6 +15,10 @@ const isFalse = (value) => {
 
 const formattedDate = (d) => {
   return d ? moment(d).format('YYYY/MM/DD') : '-'
+}
+
+const handleEmpty = (v) => {
+  return v || '-'
 }
 
 const confirmedContact = (data, criterias) => {
@@ -37,27 +42,31 @@ const confirmedContact = (data, criterias) => {
   return res
 }
 
-const buildConfirmedContact = (data, criterias) => {
-  let res = []
-
-  let records = []
-  if (data && data.closeContacts) {
-    records = data.closeContacts
-  }
-
+const objectConfirmedContact = (records, criterias) => {
+  const res = []
   for (i in records) {
     const rec = records[i]
-    if (!criterias.includes(rec.status)) continue
+    if (!criterias.includes(rec.status)) {
+      continue
+    }
 
     res.push([
-        { alignment: 'left', text: rec.name || '-' },
-        { alignment: 'left', text: rec.address_street || '-' },
-        { alignment: 'center', text: rec.close_contact_relation || '-' },
+        { alignment: 'left', text: handleEmpty(rec.name) },
+        { alignment: 'left', text: handleEmpty(rec.address_street) },
+        { alignment: 'center', text: handleEmpty(rec.close_contact_relation) },
         { alignment: 'center', text: formattedDate(rec.first_contact_date) },
         { alignment: 'center', text: formattedDate(rec.last_contact_date) },
     ])
   }
 
+  return res
+}
+
+const buildConfirmedContact = (data, criterias) => {
+  let records = []
+  if (data && data.closeContacts) { records = data.closeContacts }
+
+  const res = objectConfirmedContact(records, criterias)
   if (!res.length) {
     res.push([
       { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{},
@@ -71,25 +80,16 @@ const compConfirmedContact = data => {
   return [
     [
       {
-        text: 'D FAKTOR KONTAK/PAPARAN (lanjutan)',
-        style: 'tableHeader',
-        colSpan: 5,
-        alignment: 'left'
+        text: 'D FAKTOR KONTAK/PAPARAN (lanjutan)', style: 'tableHeader', colSpan: 5,  alignment: 'left',
       },{},{},{},{}
     ],
     [
       {
-        // border: ['black', '','','black'],
-        text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak erat dengan kasus konfirmasi dan probable COVID-19?',
-        colSpan: 2,
-        alignment: 'left'
-      },
-      {},
+        text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak erat dengan kasus konfirmasi dan probable COVID-19?', colSpan: 2, alignment: 'left',
+      },{},
       {
-        // border: ['', '','black','black'],
         text: `: [${confirmedContact(data, [CRITERIA.CONF]) ? '√' : '  ' }] Ya   [${!confirmedContact(data, [CRITERIA.CONF]) ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
-        colSpan: 3,
-        alignment: 'left'
+        colSpan: 3, alignment: 'left'
       },{},{}
     ],
     [
@@ -131,33 +131,18 @@ const compHealthWorker = data => {
   }
   return [
     [
-      {
-        text: 'Apakah pasien seorang petugas kesehatan?',
-        colSpan: 2,
-        alignment: 'left'
-      },
-      {},
-      {
-        text: `: [${isTrue(officer)}] Ya   [${isFalse(officer)}] Tdk  [  ] Tdk Tahu`,
-        colSpan: 3,
-        alignment: 'left'
-      },{},{}
+      { text: 'Apakah pasien seorang petugas kesehatan?', colSpan: 2, alignment: 'left' }, {},
+      { text: `: [${isTrue(officer)}] Ya   [${isFalse(officer)}] Tdk  [  ] Tdk Tahu`, colSpan: 3, alignment: 'left' },{},{}
     ],
     [
-      {
-        text: 'Jika iya Palat pelindung diri (APD) apa yang digunakan?',
-        colSpan: 2,
-        alignment: 'left'
-      },
-      {},
+      { text: 'Jika iya Palat pelindung diri (APD) apa yang digunakan?', colSpan: 2, alignment: 'left,' }, {},
       {
         text: `: [${isProtected('gown')}] Gown   [${isProtected('masker bedah')}] Masker Medis   [${isProtected('sarung tangan')}] Sarung tangan
           : [${isProtected('masker n95 standar ffp3')}] Masker NI0SH-N95, AN EU STANDARD FFP2
           : [${isProtected('ffp3')}] FFP3
           : [${isProtected('kacamata pelindung goggle')}] Kacamata pelindung (goggle)
           : [${isProtected('tidak sama sekali')}] Tidak memakai APD`,
-        colSpan: 3,
-        alignment: 'left'
+        colSpan: 3, alignment: 'left',
       },{},{}
     ],
   ]
@@ -175,7 +160,7 @@ const compAerosolProcedure = data => {
       },
       {},
       {
-        text: `: [${isTrue(aerosol)}] Ya   [${isFalse(aerosol)}] Tdk, Sebutkan: ${aerosolSubject || '-'}`,
+        text: `: [${isTrue(aerosol)}] Ya   [${isFalse(aerosol)}] Tdk, Sebutkan: ${handleEmpty(aerosolSubject)}`,
         colSpan: 3,
         alignment: 'left'
       },{},{}

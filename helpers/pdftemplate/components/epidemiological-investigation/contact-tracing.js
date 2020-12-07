@@ -4,16 +4,10 @@ const { CRITERIA } = require('../../../constant')
 const isTrue = (data, value) => data[value] ? '√' : '  '
 const isFalse = (data, value) =>  !data[value] ? '√' : '  '
 const formattedDate = d => d ? moment(d).format('YYYY/MM/DD') : '-'
+const handleEmpty = v => v || '-'
 
-const buildTravelPlaces = (data, place, type) => {
-  let res = [], exception
-
-  const records = data[place] || []
-
-  switch (type) {
-    case 'domestic': exception = 'Dari Luar Kota'; break;
-    default: exception = 'Dari Luar Negeri';
-  }
+const objectTravelPlaces = (records, exception) => {
+  const res = []
 
   for (i in records) {
     const rec = records[i]
@@ -21,13 +15,24 @@ const buildTravelPlaces = (data, place, type) => {
     if (rec.travelling_type === exception) continue
 
     res.push([
-        { alignment: 'center', text: rec.travelling_visited || '-' },
-        { alignment: 'center', text: rec.travelling_city || '-' },
+        { alignment: 'center', text: handleEmpty(rec.travelling_visited) },
+        { alignment: 'center', text: handleEmpty(rec.travelling_city) },
         { alignment: 'center', text: formattedDate(rec.travelling_date) },
         { alignment: 'center', text: formattedDate(rec.travelling_arrive) },
     ])
   }
 
+  return res
+}
+const buildTravelPlaces = (data, place, type) => {
+  let exception
+  switch (type) {
+    case 'domestic': exception = 'Dari Luar Kota'; break;
+    default: exception = 'Dari Luar Negeri';
+  }
+
+  const records = data[place] || []
+  const res = objectTravelPlaces(records, exception)
   if (!res.length) {
     res.push([{ alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 4 },{},{},{}])
   }
@@ -35,19 +40,23 @@ const buildTravelPlaces = (data, place, type) => {
   return res
 }
 
-const buildResidences = (data) => {
-  let res = []
+const objectResidence = (data) => {
+  const res = []
 
   const records = data.visited_local_area || []
 
   for (i in records) {
     const rec = records[i]
     res.push([
-        { alignment: 'center', colSpan: 2, text: rec.visited_local_area_province || '-' },{},
-        { alignment: 'center', colSpan: 2, text: rec.visited_local_area_city || '-' },{}
+        { alignment: 'center', colSpan: 2, text: handleEmpty(rec.visited_local_area_province) },{},
+        { alignment: 'center', colSpan: 2, text: handleEmpty(rec.visited_local_area_city) },{}
     ])
   }
 
+  return res
+}
+const buildResidences = (data) => {
+  const res = objectResidence (data)
   if (!res.length) {
     res.push([{ alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 4 },{},{},{}])
   }
@@ -85,27 +94,31 @@ const suspectContact = (data, criterias) => {
   return res
 }
 
-
-const buildSuspectContact = (data, criterias) => {
-  let res = []
-
-  let records = []
-  if (data && data.closeContacts) {
-    records = data.closeContacts
-  }
-
+const objectSuspectContact = (records, criterias) => {
+  const res = []
   for (i in records) {
     const rec = records[i]
     if (!criterias.includes(rec.status)) continue
 
     res.push([
-        { alignment: 'left', text: rec.name || '-' },
-        { alignment: 'left', text: rec.address_street || '-' },
-        { alignment: 'center', text: rec.relation || '-' },
+        { alignment: 'left', text: handleEmpty(rec.name) },
+        { alignment: 'left', text: handleEmpty(rec.address_street) },
+        { alignment: 'center', text: handleEmpty(rec.relation) },
         { alignment: 'center', text: formattedDate(rec.first_contact_date) },
         { alignment: 'center', text: formattedDate(rec.last_contact_date) },
     ])
   }
+
+  return res
+}
+
+const buildSuspectContact = (data, criterias) => {
+  let records = []
+  if (data && data.closeContacts) {
+    records = data.closeContacts
+  }
+
+  const res = objectSuspectContact(records, criterias)
 
   if (!res.length) {
     res.push([{ alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{}])
@@ -117,25 +130,16 @@ const buildSuspectContact = (data, criterias) => {
 const compTravelingHis = data => {
   return [
     [
-      {
-        text: 'D FAKTOR RIWAYAT PERJALANAN',
-        style: 'tableHeader',
-        colSpan: 4,
-        alignment: 'left'
-      },{},{},{}
+      { text: 'D FAKTOR RIWAYAT PERJALANAN', style: 'tableHeader', colSpan: 4, alignment: 'left' },{},{},{}
     ],
     [
       {
-        border: ['black', 'black','','black'],
+        border: ['black', 'black','','black'], colSpan: 2, alignment: 'left',
         text: 'Dalam 14 hari sebelum sakit, apakah memiliki riwayat Perjalanan ke luar negeri?',
-        colSpan: 2,
-        alignment: 'left'
       },{},
       {
-        border: ['', 'black','black','black'],
+        border: ['', 'black','black','black'], colSpan: 2, alignment: 'left',
         text: `: [${travelType(data, 'INTL') ? '√' : '  ' }] Ya   [${!travelType(data, 'INTL') ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
-        colSpan: 2,
-        alignment: 'left'
       },{}
     ],
     [
@@ -210,11 +214,9 @@ const compSuspectContact = data => {
         text: 'Dalam 14 hari sebelum sakit, apakah memiliki kontak dengan kasus suspek/probable COVID-19 ?',
         colSpan: 2,
         alignment: 'left'
-      },
-      {},
+      },{},
       {
         border: ['', 'black','black','black'],
-        text: '',
         text: `: [${suspectContact(data, [CRITERIA.SUS, CRITERIA.PROB]) ? '√' : '  ' }] Ya   [${!suspectContact(data, [CRITERIA.SUS, CRITERIA.PROB]) ? '√' : '  ' }] Tdk  [  ] Tdk Tahu`,
         colSpan: 3,
         alignment: 'left'
