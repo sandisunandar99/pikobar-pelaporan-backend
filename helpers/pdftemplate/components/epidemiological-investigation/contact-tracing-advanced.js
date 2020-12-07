@@ -3,8 +3,7 @@ const {
 } = require('../../../constant')
 
 const moment = require('moment')
-const { rest } = require('lodash')
-
+const { generetaPdfRow } = require('../../helper')
 const isTrue = (value) => {
   return value ? '√' : '  '
 }
@@ -51,11 +50,11 @@ const objectConfirmedContact = (records, criterias) => {
     }
 
     res.push([
-        { alignment: 'left', text: handleEmpty(rec.name) },
-        { alignment: 'left', text: handleEmpty(rec.address_street) },
-        { alignment: 'center', text: handleEmpty(rec.close_contact_relation) },
-        { alignment: 'center', text: formattedDate(rec.first_contact_date) },
-        { alignment: 'center', text: formattedDate(rec.last_contact_date) },
+      generetaPdfRow(handleEmpty(rec.name), { alignment: 'left' }),
+      generetaPdfRow(handleEmpty(rec.address_street), { alignment: 'left' }),
+      generetaPdfRow(handleEmpty(rec.close_contact_relation), { alignment: 'center' }),
+      generetaPdfRow(handleEmpty(rec.first_contact_date), { alignment: 'center' }),
+      generetaPdfRow(handleEmpty(rec.last_contact_date), { alignment: 'center' }),
     ])
   }
 
@@ -63,16 +62,10 @@ const objectConfirmedContact = (records, criterias) => {
 }
 
 const buildConfirmedContact = (data, criterias) => {
-  let records = []
-  if (data && data.closeContacts) { records = data.closeContacts }
-
-  const res = objectConfirmedContact(records, criterias)
+  const res = objectConfirmedContact(data.closeContacts || [], criterias)
   if (!res.length) {
-    res.push([
-      { alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{},
-    ])
+    res.push([{ alignment: 'center', text: '- Tidak ada riwayat -', colSpan: 5 },{},{},{},{},])
   }
-
   return res
 }
 

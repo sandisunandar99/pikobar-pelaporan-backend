@@ -1,7 +1,7 @@
 
 const moment = require('moment')
 const render = (data) => {
-  
+
   const symptoms = data.last_history.diagnosis.map(s => s.toLowerCase())
 
   const isTrue = (value) => {
