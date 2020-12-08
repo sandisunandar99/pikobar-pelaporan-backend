@@ -1,7 +1,7 @@
 const Routes = require('./routes')
-const { routeOldNoPre } = require('../../helpers/routes')
+const { routeNoPreNew } = require('../../helpers/routes')
 const register = (server, options, next) => {
-  server.route(Routes(server, routeOldNoPre))
+  server.route(Routes(server, routeNoPreNew))
   return next()
 }
 
