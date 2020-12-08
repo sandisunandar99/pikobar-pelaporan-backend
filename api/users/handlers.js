@@ -2,19 +2,19 @@ const replyHelper = require('../helpers')
 
 module.exports = (server) => {
   function constructUserResponse(user) {
-    let authUser = { 
+    let authUser = {
       status : 200,
       message: true,
-      data : user.toAuthJSON() 
+      data : user.toAuthJSON()
     }
     return authUser;
   }
 
   function constructUsersResponse(user) {
-    let userResponse = { 
+    let userResponse = {
       status : 200,
       message: true,
-      data : user 
+      data : user
     }
     return userResponse;
   }
@@ -164,7 +164,7 @@ module.exports = (server) => {
     async loginUser(request, reply) {
       let payload = request.payload
       server.methods.services.users.getByUsername(
-        payload.username, 
+        payload.username,
         (err, user) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
@@ -201,17 +201,17 @@ module.exports = (server) => {
       })
     },
     /**
-     * PUT /api/users/{id}
+     * PUT /api/users/{id}/devices
      * @param {*} request
      * @param {*} reply
      */
-    async updateUsersFcmToken (request, reply) {
-      server.methods.services.users.updateUsersFcmToken(
+    async updateUserDevice (request, reply) {
+      server.methods.services.users.updateUserDevice(
         request.params.id, request.payload,
         request.auth.credentials.user._id,
-        (err, listUser) => {
+        (err, res) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        return reply(constructUsersResponse(res));
       })
     },
     /**

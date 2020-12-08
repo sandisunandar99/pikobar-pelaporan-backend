@@ -3,6 +3,8 @@ require('../models/Unit');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Unit = mongoose.model('Unit');
+const ObjectId = require('mongodb').ObjectID;
+const UserDevice = require('../models/UserDevice');
 const paginate = require('../helpers/paginate');
 const custom = require('../helpers/custom');
 const filters = require('../helpers/filter/userfilter');
@@ -45,7 +47,7 @@ const getUserBySpecifiedKey = async (key, value, callback) => {
     const user = await User.findOne({ [key]: value });
     if (user) {
       result = user.JSONCase();
-    }    
+    }
     callback(null, result);
   } catch (error) {
     callback(error, null);
@@ -166,14 +168,15 @@ const listUserIds = async (user, query, callback) => {
   }
 }
 
-const updateUsersFcmToken = async (id, payload, author, callback) => {
+const updateUserDevice = async (id, payload, author, callback) => {
   try {
-    const params = { fcm_token: payload.fcm_token }
-    const result = await User.findByIdAndUpdate(id,
-      { $set: params }, { new: true });
-    callback(null, result);
-  } catch (error) {
-    callback(error, null);
+    const { app_id, token } = payload
+    const res = await UserDevice.updateOne(
+      { user_id: ObjectId(id) },
+      { $set: { app_id, token } }, { upsert: true })
+    callback(null, res)
+  } catch (e) {
+    callback(e, null)
   }
 }
 
@@ -231,8 +234,8 @@ module.exports = [
     method: listUserIds,
   },
   {
-    name: "services.users.updateUsersFcmToken",
-    method: updateUsersFcmToken,
+    name: "services.users.updateUserDevice",
+    method: updateUserDevice,
   },
   {
     name: "services.users.getFaskesOfUser",

@@ -191,19 +191,19 @@ module.exports = (server) => {
       },
       handler: handlers.getListUserIds
     },
-    // Update fcm token 
+    // Update fcm token
     {
-      method: 'PUT',
-      path: '/users/{id}/fcm-token',
+      method: 'POST',
+      path: '/users/{id}/devices',
       config: {
         auth: 'jwt',
-        description: 'update user fcm token',
+        description: 'update user device',
         tags: ['api', 'users'],
         pre: [
           CheckRoleUpdate
         ]
       },
-      handler: handlers.updateUsersFcmToken
+      handler: handlers.updateUserDevice
     },
     // Get user notifications
     {
