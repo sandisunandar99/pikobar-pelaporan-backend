@@ -1,5 +1,4 @@
 const {
-    ROLE,
     CRITERIA,
     WHERE_GLOBAL
 } = require('../constant')
@@ -15,22 +14,7 @@ const {
     transformedFields
 } = require('./transformer')
 
-const aggCaseDailyReport = (user, query, searching, dates) => {
-
-    if(user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN){
-      if(query.address_district_code){
-        searching.author_district_code = query.address_district_code
-      }
-    }
-
-    if (query.address_village_code) {
-      searching.address_village_code = query.address_village_code;
-    }
-
-    if (query.address_subdistrict_code) {
-      searching.address_subdistrict_code = query.address_subdistrict_code;
-    }
-
+const aggCaseDailyReport = (searching, dates) => {
     const match = {
         $match: {
             $and: [
