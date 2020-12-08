@@ -23,6 +23,14 @@ const aggCaseDailyReport = (user, query, searching, dates) => {
       }
     }
 
+    if (query.address_village_code) {
+      searching.address_village_code = query.address_village_code;
+    }
+
+    if (query.address_subdistrict_code) {
+      searching.address_subdistrict_code = query.address_subdistrict_code;
+    }
+
     const match = {
         $match: {
             $and: [
