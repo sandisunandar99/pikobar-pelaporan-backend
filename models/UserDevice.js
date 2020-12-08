@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const UserDeviceSchema = new mongoose.Schema({
-  app_id: {
+  appId: {
     type: String,
     required: true,
   },
@@ -9,7 +9,7 @@ const UserDeviceSchema = new mongoose.Schema({
     type: String,
     default: 'webapp'
   },
-  user_id: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },

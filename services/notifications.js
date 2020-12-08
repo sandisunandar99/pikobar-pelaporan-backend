@@ -1,50 +1,40 @@
-const mongoose = require('mongoose');
-
-require('../models/Notification');
-const Notification = mongoose.model('Notification');
-
+const paginate = require('../helpers/paginate')
+const Notification = require('../models/Notification')
 
 async function getUserNotifications (userId, callback) {
   try {
-
-    let notifications = await Notification
-      .find({ recipient: userId, is_read: false })
-      .populate([, 'sender', 'recipient'])
-      .sort({ createdAt: 'desc'})
-      .limit(15)
-
-    notifications = notifications.map(notifications => notifications.toJSONFor())
-    
-    return callback(null, notifications)
-  } catch (error) {
-    return callback(null, error)
+    const sorts = { createdAt: 'desc' }
+    const options = paginate.optionsLabel(query, sorts, [])
+    const params = filters.filterUser(query, userId)
+    const searchParams = filters.searchUser(query)
+    const result = User.find(params).or(searchParams)
+    const paginateResult = await Notification.paginate(result, options)
+    callback(null, paginateResult)
+  } catch (e) {
+    callback(e, null)
   }
 }
 
-async function getUserNotification (userId, notifId, callback) {
+async function markAsRead (query, callback) {
   try {
-
-    let notification = await Notification
-      .findOne({ _id: notifId, recipient: userId })
-      .populate(['case','sender', 'recipient'])
-      .sort({ createdAt: 'desc'})
-
-    notification = notification.toJSONFor()
-    
-    return callback(null, notification)
-  } catch (error) {
-    return callback(null, error)
+    const { id } = query
+    const res = await Notification.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { isRead: true } }
+    )
+    callback(null, res)
+  } catch (e) {
+    callback(e, null)
   }
 }
 
 module.exports = [
   {
     name: 'services.notifications.get',
-    method: getUserNotifications
+    method: getUserNotifications,
   },
   {
-    name: 'services.notifications.show',
-    method: getUserNotification
-  }
-];
-
+    name: 'services.notifications.markAsRead',
+    method: markAsRead,
+  },
+]

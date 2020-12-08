@@ -1,84 +1,94 @@
+const { model } = require('mongoose')
 const lang = require('./dictionary/id.json')
+const { sendMessageNotification } = require('./firebase')
+const { CLICK_ACTION, EVENT_TYPE, ROLE } = require('./constant')
+
 const {
   case_has_been_declined,
   case_has_been_verified,
   faskes_cases_created,
   faskes_cases_recreated,
 } = lang.titles
-const { sendMessageNotification } = require('./firebase')
-
-const { CLICK_ACTION, ROLE } = require('./constant')
 
 const { KOTAKAB, FASKES } = ROLE
 
 const {
-  CASES_LIST, CASES_VERIFICATION_LIST, RDT_LIST, SYSTEM_UPDATES,
+  ACT_CASES_LIST,
+  ACT_CASES_VERIFICATION_LIST,
+  ACT_RDT_LIST,
+  ACT_SYSTEM_UPDATES,
 } = CLICK_ACTION
 
-const MessageNotification = (title, body, clickAction, to) => {
-  return {
-    title: title,
-    body: body,
-    clickAction: clickAction,
-    to: to,
-  }
+const {
+  EVT_CASE_CREATED,
+  EVT_CASE_REVISED,
+  EVT_CASE_VERIFIED,
+  EVT_CASE_DECLINED,
+} = EVENT_TYPE
+
+const eventName = (role, event) => `${role}:${event}`
+
+const MessageNotification = (title, body, eventRole, eventType, clickAction, to) => {
+  return { title, body, eventRole, eventType, clickAction, to }
 }
 
 const getMessagePayload = (event, data, author) => {
-  let messageBody, params = []
+  let message, payload = {}
 
   switch (event) {
-    case 'faskes-case-created':
-      messageBody = `Terdapat ${faskes_cases_created} ${author.fullname} a/n ${data.name.toUpperCase()}`
-      params = [ faskes_cases_created, messageBody, CASES_VERIFICATION_LIST, KOTAKAB ]
+    case eventName(FASKES, EVT_CASE_CREATED):
+      message = `Terdapat ${faskes_cases_created} ${author.fullname} a/n ${data.name.toUpperCase()}`
+      payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, KOTAKAB)
       break
-    case 'case-verification-verified':
-      messageBody = `${case_has_been_verified} a/n Masih Dummy`
-      params = [ case_has_been_verified, messageBody, CASES_VERIFICATION_LIST, FASKES ]
+    case eventName(KOTAKAB, 'EVT_CASE_VERIFIED'):
+      message = `${case_has_been_verified} a/n Masih Dummy`
+      payload = MessageNotification(case_has_been_verified, message, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, FASKES)
       break
-    case 'case-verification-declined':
-      messageBody = `${case_has_been_declined} a/n Masih Dummy`
-      params = [ case_has_been_declined, messageBody, CASES_VERIFICATION_LIST, FASKES ]
+    case eventName(KOTAKAB, EVT_CASE_DECLINED):
+      message = `${case_has_been_declined} a/n Masih Dummy`
+      payload = MessageNotification(case_has_been_declined, message, KOTAKAB, EVT_CASE_DECLINED, ACT_CASES_VERIFICATION_LIST, FASKES)
       break
-    case 'case-verification-pending':
-      messageBody = `${faskes_cases_recreated} a/n Masih Dummy`
-      params = [ faskes_cases_recreated, messageBody, CASES_VERIFICATION_LIST, KOTAKAB ]
+    case eventName(FASKES, 'EVT_CASE_REVISED'):
+      message = `${faskes_cases_recreated} a/n Masih Dummy`
+      payload = MessageNotification(faskes_cases_recreated, message, FASKES, EVT_CASE_REVISED, ACT_CASES_VERIFICATION_LIST, KOTAKAB)
       break
     default:
   }
 
-  return MessageNotification(...params)
+  return payload
 }
 
-const send = async (Notification, User, referenceCase, author, event) => {
+const notify = async (event, data, author) => {
   try {
-    const messgPayload = getMessagePayload(event, referenceCase, author)
-    const { title, body, clickAction, to } = messgPayload
+    const messgPayload = getMessagePayload(eventName(author.role, event), data, author)
+    const { title, body, eventRole, eventType, clickAction, to } = messgPayload
 
     if (!to) return
 
-    const recipientIds = await User.find({role: to, code_district_city: author.code_district_city}).select(['_id', 'fcm_token'])
+    const recipientUIds = await model('User').find({role: to, code_district_city: author.code_district_city}).select(['_id'])
+    recipientUIds.map(u => u._id)
 
-    if (!recipientIds) return
+    const deviceTokens = await model('UserDevice').find({ userId: { $in: recipientUIds } }).select(['token', 'userId'])
 
-    let payload = []
-    for (i in recipientIds) {
-      item = recipientIds[i]
-      payload.push(new Notification({
-        tag: title,
+    const payload = [], tokens = [];
+    for (i in deviceTokens) {
+      deviceToken = deviceTokens[i]
+      tokens.push(deviceToken.token)
+      payload.push({
         message: body,
-        case: referenceCase._id || null,
-        sender: author._id,
-        recipient: item._id,
-        read_at: null
-      }))
+        eventRole: eventRole,
+        eventType: eventType,
+        referenceId: data._id,
+        senderId: author._id,
+        recipientId: deviceToken.userId,
+      })
     }
 
-    const devicesToken = recipientIds.filter(x => !!x.fcm_token).map(obj => obj.fcm_token)
+    if (!tokens.length) return
 
     // firebase cloud messaging: send multicast
-    sendMessageNotification(devicesToken, title, body, clickAction)
-    return Notification.insertMany(payload)
+    sendMessageNotification(tokens, title, body, clickAction)
+    return model('Notification').insertMany(payload)
   } catch (error) {
     console.log('err', error)
     return error
@@ -86,5 +96,5 @@ const send = async (Notification, User, referenceCase, author, event) => {
 }
 
 module.exports = {
-    send
+  notify,
 }

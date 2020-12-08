@@ -12,8 +12,8 @@ try {
   console.log('errInitFirebase', e)
 }
 
-// notify func to send multicast
-const notify = (message) => {
+// sendMulticast func
+const sendMulticast = (message) => {
   return admin.messaging().sendMulticast(message)
 }
 
@@ -21,7 +21,7 @@ const notify = (message) => {
 const _debugger = async (message) => {
 
   try {
-    const res = await notify(message)
+    const res = await sendMulticast(message)
     console.log(res.successCount + ' messages were sent successfully')
 
     if (res.failureCount > 0) {
@@ -58,7 +58,7 @@ const sendMessageNotification = (devicesToken, title, body, clickAction) => {
 
     try {
       if (debug) return _debugger(message)
-      return notify(message)
+      return sendMulticast(message)
     } catch (e) {
       console.log('onNotify', e)
     }

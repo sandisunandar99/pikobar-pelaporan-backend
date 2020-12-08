@@ -227,13 +227,13 @@ module.exports = (server) => {
       });
     },
     /**
-     * GET /api/users/{id}/notifications/{notifId}
+     * PUT /api/users/{id}/notifications/reead
      * @param {*} request
      * @param {*} reply
      */
-    async getUserNotification (request, reply) {
-      server.methods.services.notifications.show(
-        request.params.id, request.params.notifId, (err, res) => {
+    async markAsRead (request, reply) {
+      server.methods.services.notifications.markAsRead(
+        request.query, (err, res) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
         return reply(constructUsersResponse(res));
       });

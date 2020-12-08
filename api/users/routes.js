@@ -221,17 +221,17 @@ module.exports = (server) => {
     },
     // Get user notifications detail
     {
-      method: 'GET',
-      path: '/users/{id}/notifications/{notifId}',
+      method: 'PUT',
+      path: '/users/{id}/notifications/read',
       config: {
         auth: 'jwt',
-        description: 'Get user notifications detail',
+        description: 'mark as read notification',
         tags: ['api', 'users'],
           pre: [
             CheckRoleView
           ]
       },
-      handler: handlers.getUserNotification
+      handler: handlers.markAsRead
     },
   ]
 }

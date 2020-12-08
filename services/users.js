@@ -170,10 +170,10 @@ const listUserIds = async (user, query, callback) => {
 
 const updateUserDevice = async (id, payload, author, callback) => {
   try {
-    const { app_id, token } = payload
+    const { appId, token } = payload
     const res = await UserDevice.updateOne(
-      { user_id: ObjectId(id) },
-      { $set: { app_id, token } }, { upsert: true })
+      { userId: ObjectId(id) },
+      { $set: { appId, token } }, { upsert: true })
     callback(null, res)
   } catch (e) {
     callback(e, null)
