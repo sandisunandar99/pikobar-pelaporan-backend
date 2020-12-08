@@ -66,21 +66,19 @@ const notify = async (event, data, author) => {
     if (!to) return
 
     const recipientUIds = await model('User').find({role: to, code_district_city: author.code_district_city}).select(['_id'])
-    recipientUIds.map(u => u._id)
 
-    const deviceTokens = await model('UserDevice').find({ userId: { $in: recipientUIds } }).select(['token', 'userId'])
+    const deviceTokens = await model('UserDevice').find({ userId: { $in: recipientUIds.map(u => u._id) } }).select(['token', 'userId'])
 
     const payload = [], tokens = [];
     for (i in deviceTokens) {
-      deviceToken = deviceTokens[i]
-      tokens.push(deviceToken.token)
+      tokens.push(deviceTokens[i].token)
       payload.push({
         message: body,
         eventRole: eventRole,
         eventType: eventType,
         referenceId: data._id,
         senderId: author._id,
-        recipientId: deviceToken.userId,
+        recipientId: deviceTokens[i].userId,
       })
     }
 

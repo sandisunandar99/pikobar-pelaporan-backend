@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const NotificationSchema = new mongoose.Schema({
     message: {
@@ -34,4 +35,5 @@ const NotificationSchema = new mongoose.Schema({
 NotificationSchema.index( { isRead: 1 } )
 NotificationSchema.index( { recipientId: 1 } )
 
+NotificationSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('Notification', NotificationSchema)

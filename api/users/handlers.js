@@ -1,4 +1,8 @@
 const replyHelper = require('../helpers')
+const { replyJson } = require('../helpers')
+const callback = (reply) => {
+  return (err, result) => replyJson(err, result, reply)
+}
 
 module.exports = (server) => {
   function constructUserResponse(user) {
@@ -221,10 +225,7 @@ module.exports = (server) => {
      */
     async getUserNotifications (request, reply) {
       server.methods.services.notifications.get(
-        request.params.id, (err, res) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(res));
-      });
+        request.params.id, request.query, callback(reply));
     },
     /**
      * PUT /api/users/{id}/notifications/reead
@@ -232,11 +233,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async markAsRead (request, reply) {
-      server.methods.services.notifications.markAsRead(
-        request.query, (err, res) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(res));
-      });
+      server.methods.services.notifications.markAsRead(request.query, callback(reply));
     }
   }
 }

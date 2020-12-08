@@ -1,13 +1,15 @@
+const ObjectId = require('mongodb').ObjectID
 const paginate = require('../helpers/paginate')
 const Notification = require('../models/Notification')
+const filters = require('../helpers/filter/notificationFilter')
 
-async function getUserNotifications (userId, callback) {
+async function getUserNotifications (userId, query, callback) {
   try {
     const sorts = { createdAt: 'desc' }
-    const options = paginate.optionsLabel(query, sorts, [])
-    const params = filters.filterUser(query, userId)
-    const searchParams = filters.searchUser(query)
-    const result = User.find(params).or(searchParams)
+    const options = paginate.optionsLabel({ page: 1, limit: 10, ...query}, sorts, [])
+    const params = filters.filterNotification(query, userId)
+    const searchParams = filters.searchNotification(query)
+    const result = Notification.find(params).or(searchParams)
     const paginateResult = await Notification.paginate(result, options)
     callback(null, paginateResult)
   } catch (e) {
