@@ -17,12 +17,7 @@ const filterNotification = (query, userId) => {
 
 const searchNotification = (query) => {
   let search_params = {}
-  if (query.search) {
-      search_params = [
-          { message: new RegExp(query.search, "i") },
-      ]
-  }
-
+  if (query.search) { search_params = [ { message: new RegExp(query.search, "i") } ] }
   return search_params
 }
 
