@@ -1,4 +1,6 @@
 const replyHelper = require('../helpers')
+const {extractToJson} = require('../../helpers/rdt/sheet')
+
 
 const validationBeforeInput = server => {
     return {
@@ -68,7 +70,7 @@ const getCasebyIdcase = server =>{
              let idcase = request.pre.rdt.id_case
               server.methods.services.rdt.getCaseByidcase(
                   idcase,
-                  (err, item) => {     
+                  (err, item) => {
                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
                  return reply(item)
              })
@@ -210,7 +212,6 @@ const cekHistoryCases = server =>{
     }
 }
 
-
 const createHistoryWhenPositif = server =>{
     return {
         method: (request, reply) => {
@@ -224,7 +225,7 @@ const createHistoryWhenPositif = server =>{
                     payloads,
                     (err, item) => {
                         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                        
+
                         return reply(item)
                     })
             }else{
@@ -234,6 +235,16 @@ const createHistoryWhenPositif = server =>{
         assign : 'create_history_when_positif'
     }
 }
+
+const convertToJson = server => {
+  return {
+    method: async (request, reply) => {
+      const payload = await extractToJson(request)
+    },
+    assign: 'convert_to_json'
+  }
+}
+
 
 module.exports ={
     countRdtCode,
@@ -248,5 +259,6 @@ module.exports ={
     validationBeforeInput,
     getRegisteredUserfromExternal,
     cekHistoryCases,
-    createHistoryWhenPositif
+    createHistoryWhenPositif,
+    convertToJson
 }
