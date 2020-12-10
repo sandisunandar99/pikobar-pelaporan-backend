@@ -1,3 +1,4 @@
+const request = require('request')
 const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
 const {
   replyJson
@@ -152,6 +153,12 @@ const sendMessage = (server) => {
   }
 }
 
+const ImportRdt = (server) => {
+  return async (request, reply) => {
+    console.log("ssssssssssssssssss import ");
+  }
+}
+
 module.exports = {
   ListRdt,
   CreateRdt,
@@ -168,5 +175,6 @@ module.exports = {
   GetRdtSummaryResultByCities,
   GetRdtSummaryResultListByCities,
   GetRdtFaskesSummaryByCities,
-  sendMessage
+  sendMessage,
+  ImportRdt
 }
