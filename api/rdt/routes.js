@@ -21,6 +21,8 @@ module.exports = (server) => {
   const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
   const cekHistoryCases = require('./route_prerequesites').cekHistoryCases(server)
   const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
+  const convertToJson = require('./route_prerequesites').convertToJson(server)
+  // const isImportBusy = require('../v2/cases/route_prerequesites').isImportBusy(server)
 
   const route = (method, path, validates, pre, callback) => {
     return {
@@ -37,8 +39,26 @@ module.exports = (server) => {
     }
   }
 
+  const importRDT = {
+    method: 'POST',
+    path: '/rdt-import',
+    config: {
+      auth: 'jwt',
+      description: 'RDT import',
+      tags: ['api', 'rdt'],
+      payload: {
+        maxBytes: 1000 * 1000 * 25,
+        output: 'stream',
+        parse: true,
+        allow: 'multipart/form-data'
+      },
+      pre: [ convertToJson ],
+    },
+    handler: handlers.ImportRdt(server)
+  }
 
   return [
+    importRDT,
     route('GET', '/rdt', inputValidations.RdtQueryValidations, [CheckRoleView, checkIfDataNotNull], 'ListRdt'),
     route('GET', '/rdt/list-idcase', inputValidations.rdtSearchValidation, [getDataExternal], 'GetListIdCase'),
     route('GET', '/rdt/list-idcase-detail', null, [searchIdcasefromInternal, searchIdcasefromExternal], 'GetListIdCaseDetail'),
