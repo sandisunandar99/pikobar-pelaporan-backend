@@ -47,9 +47,9 @@ const getMessagePayload = (event, data, author) => {
     case eventName(KOTAKAB, EVT_CASE_DECLINED):
       message = `Kasus ${data.name.toUpperCase()} telah ditolak oleh ${author.fullname}`
       payload = MessageNotification(case_has_been_declined, message, KOTAKAB, EVT_CASE_DECLINED, ACT_CASES_VERIFICATION_LIST, ['none'], [data.author]); break;
-    case eventName(FASKES, 'EVT_CASE_REVISED'):
-      message = `${faskes_cases_recreated} a/n EVT_CASE_REVISED Dummy`
-      payload = MessageNotification(faskes_cases_recreated, message, FASKES, EVT_CASE_REVISED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
+    case eventName(FASKES, EVT_CASE_REVISED):
+      message = `${author.fullname} telah menginput kasus baru atas nama ${data.name.toUpperCase()}`
+      payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
     case eventName('scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE):
       message = `Pasien ${data.name.toUpperCase()} sudah menjalani 14 hari karantina mandiri`
       payload = MessageNotification(faskes_cases_recreated, message, 'scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE, ACT_CASES_LIST, [KOTAKAB], [data.author]); break;

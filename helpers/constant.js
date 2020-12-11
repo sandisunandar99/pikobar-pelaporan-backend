@@ -7,7 +7,7 @@ module.exports = {
   },
   EVENT_TYPE: {
     EVT_CASE_CREATED: 'CaseCreated',
-    EVT_CASE_REVISED: 'CaseRevised',
+    EVT_CASE_REVISED: 'CasePending',
     EVT_CASE_VERIFIED: 'CaseVerified',
     EVT_CASE_DECLINED: 'CaseDeclined',
     EVT_CLOSECONTACT_FINISHED_QUARANTINE: 'ClosecContactFinishedQuarantine',
