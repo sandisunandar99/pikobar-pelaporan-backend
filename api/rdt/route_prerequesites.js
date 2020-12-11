@@ -1,6 +1,6 @@
 const replyHelper = require('../helpers')
 const {extractToJson} = require('../../helpers/rdt/sheet')
-
+const {requestFileError} = require('../../helpers/cases/sheet/helper')
 
 const validationBeforeInput = server => {
     return {
@@ -240,13 +240,24 @@ const convertToJson = server => {
   return {
     method: async (request, reply) => {
       const payload = await extractToJson(request)
-      console.log("preeee");
-      console.log(payload);
+
+      if (requestFileError(payload)) {
+        return reply(BadRequest(requestFileError(payload))).code(400).takeover()
+      }
+
     },
     assign: 'convert_to_json'
   }
 }
 
+
+const BadRequest = (errors) => {
+  return {
+    status: 400,
+    message: 'Bad request.',
+    errors: errors,
+  }
+}
 
 module.exports ={
     countRdtCode,
