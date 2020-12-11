@@ -34,22 +34,25 @@ const MessageNotification = (title, body, eventRole, eventType, clickAction, to,
   return { title, body, eventRole, eventType, clickAction, to, toSpecificUsers }
 }
 
+const getCaseCreatedPayload = (author, data) => {
+  const message = `${author.fullname} telah menginput kasus baru atas nama ${data.name.toUpperCase()}`
+  return MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], [])
+}
+
 // TODO DIRAPIHAKAN
 const getMessagePayload = (event, data, author) => {
   let message, payload = {}
 
   switch (event) {
     case eventName(FASKES, EVT_CASE_CREATED):
-      message = `${author.fullname} telah menginput kasus baru atas nama ${data.name.toUpperCase()}`
-      payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
+      payload = getCaseCreatedPayload(author, data); break;
     case eventName(KOTAKAB, 'EVT_CASE_VERIFIED'):
       payload = MessageNotification(case_has_been_verified, `${case_has_been_verified} a/n Dummy`, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, [FASKES], []); break;
     case eventName(KOTAKAB, EVT_CASE_DECLINED):
       message = `Kasus ${data.name.toUpperCase()} telah ditolak oleh ${author.fullname}`
       payload = MessageNotification(case_has_been_declined, message, KOTAKAB, EVT_CASE_DECLINED, ACT_CASES_VERIFICATION_LIST, ['none'], [data.author]); break;
     case eventName(FASKES, EVT_CASE_REVISED):
-      message = `${author.fullname} telah menginput kasus baru atas nama ${data.name.toUpperCase()}`
-      payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
+      payload = getCaseCreatedPayload(author, data); break;
     case eventName('scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE):
       message = `Pasien ${data.name.toUpperCase()} sudah menjalani 14 hari karantina mandiri`
       payload = MessageNotification(faskes_cases_recreated, message, 'scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE, ACT_CASES_LIST, [KOTAKAB], [data.author]); break;
