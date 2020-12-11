@@ -1,8 +1,9 @@
-const { funcCreatePayload, funcIfSame, queryParamSame } = require('../../helpers/request')
+const { funcCreateDynamic, funcIfSame, queryParamSame } = require('../../helpers/request')
 
 const createInspectionSupport = (server) => {
   return async(request, reply) => {
-    await funcCreatePayload(server, "inspection_support", "create", request, "id_case", reply)
+    await funcCreateDynamic(server, "inspection_support", "create", request,
+    "payload", "params.id_case", reply)
   }
 }
 

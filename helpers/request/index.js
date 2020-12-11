@@ -56,20 +56,10 @@ const requestIfSame = async (server, name, methods, request, reply) => {
   )
 }
 
-const funcCreatePayload = async (server, name, methods, request, param, reply) => {
-  server.methods.services[name][methods](
-    request.payload,
-    request.params[param],
-    (err, result) => {
-      replyJson(err, result, reply)
-    }
-  )
-}
-
-const funcCreateDynamic = async (server, name, methods, request, req, user, reply) => {
+const funcCreateDynamic = async (server, name, methods, request, req, otherReq, reply) => {
   server.methods.services[name][methods](
     request[req],
-    request[user],
+    request[otherReq],
     (err, result) => {
       replyJson(err, result, reply)
     }
@@ -78,5 +68,5 @@ const funcCreateDynamic = async (server, name, methods, request, req, user, repl
 
 module.exports = {
   funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate, requestIfSame, funcCreatePayload, funcCreateDynamic
+  funcCreate, requestIfSame, funcCreateDynamic
 }
