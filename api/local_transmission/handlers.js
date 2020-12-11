@@ -4,7 +4,6 @@ const createLocalTransmission = (server) => {
   return async(request, reply) => {
     await funcCreateDynamic(server, "local_transmission", "create", request,
     "payload", "params.id_case", reply)
-  }
 }
 
 const getLocalTransmission = (server) => {

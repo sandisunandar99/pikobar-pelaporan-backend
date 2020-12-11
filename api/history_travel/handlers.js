@@ -4,7 +4,6 @@ const createHistoryTravel = (server) => {
   return async(request, reply) => {
     await funcCreateDynamic(server, "history_travel", "create", request,
     "payload", "params.id_case", reply)
-  }
 }
 
 const getHistoryTravel = (server) => {
