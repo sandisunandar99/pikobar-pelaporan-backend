@@ -8,7 +8,6 @@ const filters = require('../helpers/filter/notificationFilter')
 const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
 const { notify } = require('../helpers/notification')
 
-
 // run job
 schedule.scheduleJob('0 10 * * *', () => {
   JobClosecContactFinishedQuarantine()

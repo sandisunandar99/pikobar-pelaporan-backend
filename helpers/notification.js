@@ -34,35 +34,50 @@ const MessageNotification = (title, body, eventRole, eventType, clickAction, to,
   return { title, body, eventRole, eventType, clickAction, to, toSpecificUsers }
 }
 
+// TODO DIRAPIHAKAN
 const getMessagePayload = (event, data, author) => {
   let message, payload = {}
 
   switch (event) {
     case eventName(FASKES, EVT_CASE_CREATED):
       message = `${author.fullname} telah menginput kasus baru atas nama ${data.name.toUpperCase()}`
-      payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], [])
-      break
+      payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
     case eventName(KOTAKAB, 'EVT_CASE_VERIFIED'):
       message = `${case_has_been_verified} a/n Masih Dummy`
-      payload = MessageNotification(case_has_been_verified, message, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, [FASKES], [])
-      break
+      payload = MessageNotification(case_has_been_verified, message, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, [FASKES], []); break;
     case eventName(KOTAKAB, EVT_CASE_DECLINED):
       message = `${case_has_been_declined} a/n Masih Dummy`
       message = `Kasus ${data.name.toUpperCase()} telah ditolak oleh ${author.fullname}`
-      payload = MessageNotification(case_has_been_declined, message, KOTAKAB, EVT_CASE_DECLINED, ACT_CASES_VERIFICATION_LIST, ['none'], [data.author])
-      break
+      payload = MessageNotification(case_has_been_declined, message, KOTAKAB, EVT_CASE_DECLINED, ACT_CASES_VERIFICATION_LIST, ['none'], [data.author]); break;
     case eventName(FASKES, 'EVT_CASE_REVISED'):
-      message = `${faskes_cases_recreated} a/n Masih Dummy`
-      payload = MessageNotification(faskes_cases_recreated, message, FASKES, EVT_CASE_REVISED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], [])
-      break
+      message = `${faskes_cases_recreated} a/n EVT_CASE_REVISED Dummy`
+      payload = MessageNotification(faskes_cases_recreated, message, FASKES, EVT_CASE_REVISED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
     case eventName('scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE):
       message = `Pasien ${data.name.toUpperCase()} sudah menjalani 14 hari karantina mandiri`
-      payload = MessageNotification(faskes_cases_recreated, message, 'scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE, ACT_CASES_LIST, [KOTAKAB], [data.author])
-      break
+      payload = MessageNotification(faskes_cases_recreated, message, 'scheduler', EVT_CLOSECONTACT_FINISHED_QUARANTINE, ACT_CASES_LIST, [KOTAKAB], [data.author]); break;
     default:
   }
 
   return payload
+}
+
+const getDistrictCode = (author, data) => {
+  return author.role === 'scheduler'
+    ? data.author_district_code
+    : author.code_district_city
+}
+
+const getRecipientIds = (author, data, to, usersIn) => {
+  return model('User').find({
+    $or: [ { role: { $in: to } }, usersIn ],
+    code_district_city: getDistrictCode(author, data)
+  }).select(['_id'])
+}
+
+const getDeviceTokens = (recipientUIds) => {
+  return model('UserDevice').find({
+    userId: { $in: recipientUIds.map(u => u._id) }
+  }).select(['token'])
 }
 
 const notify = async (event, data, author) => {
@@ -73,17 +88,14 @@ const notify = async (event, data, author) => {
     if (!to || !to.length) return
 
     const usersIn = { _id: { $in: toSpecificUsers } }
-    const districtCode = author.role === 'scheduler' ? data.author_district_code : author.code_district_city
-    const recipientUIds = await model('User').find({ $or: [ { role: { $in: to } }, usersIn ], code_district_city: districtCode}).select(['_id'])
-    const deviceTokens = await model('UserDevice').find({ userId: { $in: recipientUIds.map(u => u._id) } }).select(['token'])
+    const recipientUIds = await getRecipientIds(author, data, to, usersIn)
+    const deviceTokens = await getDeviceTokens(recipientUIds)
 
     const payload = []
     for (i in recipientUIds) {
       payload.push({
+        ...messgPayload,
         message: body,
-        eventRole: eventRole,
-        eventType: eventType,
-        clickAction: clickAction,
         referenceId: data._id,
         senderId: author._id,
         recipientId: recipientUIds[i]._id,
