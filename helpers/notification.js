@@ -45,7 +45,6 @@ const getMessagePayload = (event, data, author) => {
     case eventName(KOTAKAB, 'EVT_CASE_VERIFIED'):
       payload = MessageNotification(case_has_been_verified, `${case_has_been_verified} a/n Dummy`, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, [FASKES], []); break;
     case eventName(KOTAKAB, EVT_CASE_DECLINED):
-      message = `${case_has_been_declined} a/n Masih Dummy`
       message = `Kasus ${data.name.toUpperCase()} telah ditolak oleh ${author.fullname}`
       payload = MessageNotification(case_has_been_declined, message, KOTAKAB, EVT_CASE_DECLINED, ACT_CASES_VERIFICATION_LIST, ['none'], [data.author]); break;
     case eventName(FASKES, 'EVT_CASE_REVISED'):
