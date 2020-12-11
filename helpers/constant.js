@@ -10,6 +10,7 @@ module.exports = {
     EVT_CASE_REVISED: 'CaseRevised',
     EVT_CASE_VERIFIED: 'CaseVerified',
     EVT_CASE_DECLINED: 'CaseDeclined',
+    EVT_CLOSECONTACT_FINISHED_QUARANTINE: 'ClosecContactFinishedQuarantine',
   },
   VERIFIED_STATUS: {
     DRAFT: 'draft',

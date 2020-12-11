@@ -14,6 +14,10 @@ const NotificationSchema = new mongoose.Schema({
       required: true,
       type: String,
     },
+    clickAction: {
+      required: true,
+      type: String,
+    },
     referenceId: {
       default: null,
       type: mongoose.Schema.Types.ObjectId,
