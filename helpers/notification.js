@@ -43,8 +43,7 @@ const getMessagePayload = (event, data, author) => {
       message = `${author.fullname} telah menginput kasus baru atas nama ${data.name.toUpperCase()}`
       payload = MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], []); break;
     case eventName(KOTAKAB, 'EVT_CASE_VERIFIED'):
-      message = `${case_has_been_verified} a/n Masih Dummy`
-      payload = MessageNotification(case_has_been_verified, message, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, [FASKES], []); break;
+      payload = MessageNotification(case_has_been_verified, `${case_has_been_verified} a/n Dummy`, KOTAKAB, EVT_CASE_VERIFIED, ACT_CASES_LIST, [FASKES], []); break;
     case eventName(KOTAKAB, EVT_CASE_DECLINED):
       message = `${case_has_been_declined} a/n Masih Dummy`
       message = `Kasus ${data.name.toUpperCase()} telah ditolak oleh ${author.fullname}`
