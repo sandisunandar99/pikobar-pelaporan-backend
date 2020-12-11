@@ -240,6 +240,8 @@ const convertToJson = server => {
   return {
     method: async (request, reply) => {
       const payload = await extractToJson(request)
+      console.log("preeee");
+      console.log(payload);
     },
     assign: 'convert_to_json'
   }
