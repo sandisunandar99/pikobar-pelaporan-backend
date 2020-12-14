@@ -1,6 +1,7 @@
 const replyHelper = require('../helpers')
 const {extractToJson} = require('../../helpers/rdt/sheet')
-const {requestFileError} = require('../../helpers/cases/sheet/helper')
+const {requestFileError, isAnotherImportProcessIsRunning} = require('../../helpers/cases/sheet/helper')
+const {validation} = require('../../helpers/rdt/sheet/validation')
 
 const validationBeforeInput = server => {
     return {
@@ -245,11 +246,35 @@ const convertToJson = server => {
         return reply(BadRequest(requestFileError(payload))).code(400).takeover()
       }
 
+      const err = await validation(payload)
+      if (err.length) {
+        return reply(BadRequest(err)).code(400).takeover()
+      }
+
+      return reply(payload)
     },
     assign: 'convert_to_json'
   }
 }
 
+const systemBusy = server => {
+  return {
+    method: async (request, reply) => {
+      const res = await isAnotherImportProcessIsRunning(
+        require('../../models/Rdt')
+      )
+
+      if (!res) return reply(res)
+
+      return reply({
+        status: 422,
+        message: 'Proses import lainnya sedang berjalan, coba beberapa saat lagi!',
+        data: null
+      }).code(422).takeover()
+    },
+    assign: 'system_busy',
+  }
+}
 
 const BadRequest = (errors) => {
   return {
@@ -273,5 +298,6 @@ module.exports ={
     getRegisteredUserfromExternal,
     cekHistoryCases,
     createHistoryWhenPositif,
-    convertToJson
+    convertToJson,
+    systemBusy
 }
