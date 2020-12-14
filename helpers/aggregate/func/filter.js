@@ -24,7 +24,7 @@ const byRole = (ROLE, user) =>{
 }
 
 const rdtFilter = (query) => {
-  let queryStrings
+  let queryStrings = {}
   if (query.test_tools) {
     const splits = query.test_tools.split('-');
     if(splits[0] && splits[1]) {
@@ -32,9 +32,8 @@ const rdtFilter = (query) => {
     }else{
       queryStrings = { "final_result": splits[0] }
     }
-  } else {
-    queryStrings = { }
   }
+
   return queryStrings;
 }
 

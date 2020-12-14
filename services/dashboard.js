@@ -26,8 +26,12 @@ const summaryGender = async (query, user, callback) => {
 const summaryAge = async (query, user, callback) => {
   try {
     const condition = await conditionAge(query, user)
-    const resultCount = await Rdt.aggregate(condition)
-    verificationData(resultCount, callback)
+    const result = await Rdt.aggregate(condition)
+    if (result) {
+      return callback(null, result)
+    } else {
+      return callback(null, 'something wrong')
+    }
   } catch (e) {
     callback(e, null)
   }
