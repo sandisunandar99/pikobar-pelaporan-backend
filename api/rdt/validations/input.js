@@ -40,7 +40,46 @@ const rdtSearchValidation = {
     failAction: validateOptions.failAction
 }
 
+const requiredIf = (value) => {
+  return {
+    is: Joi.valid(...value),
+    then: Joi.required(),
+    otherwise: Joi.allow('', null),
+  }
+}
+
+const RdtsheetRequest = Joi.object().options({ abortEarly: false }).keys({
+  target: Joi.string().required(),
+  category: Joi.string().required(),
+  name: Joi.string().required(),
+  nik: Joi.string().length(16).required(),
+  phone_number: Joi.string().allow('', null),
+  gender: Joi.string().required(),
+  age: Joi.number().allow('',null),
+  birth_date: Joi.date().required(),
+  address_district_code: Joi.string().required(),
+  address_district_name: Joi.string().required(),
+  address_subdistrict_code: Joi.string().required(),
+  address_subdistrict_name: Joi.string().required(),
+  address_village_code: Joi.string().required(),
+  address_village_name: Joi.string().required(),
+  address_street: Joi.string().required(),
+  nationality: Joi.string().required(),
+  nationality_name: Joi.string().allow('', null),
+  tool_tester: Joi.string().required(),
+  test_method: Joi.string().allow('',null),
+  test_location_type: Joi.string().required(),
+  test_location: Joi.string().required(),
+  final_result: Joi.string().required(),
+  swab_to: Joi.number().required(),
+  test_date: Joi.date().required(),
+  test_note: Joi.string().allow('',null),
+  note_nik: Joi.string().when('nik', requiredIf(['', '-', null])),
+  note_phone_number: Joi.string().when('phone_number', requiredIf(['', '-', null])),
+  }).unknown()
+
 module.exports = {
-    RdtQueryValidations,
-    rdtSearchValidation
+  RdtsheetRequest,
+  RdtQueryValidations,
+  rdtSearchValidation
 }
