@@ -22,7 +22,7 @@ module.exports = (server) => {
   const cekHistoryCases = require('./route_prerequesites').cekHistoryCases(server)
   const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
   const convertToJson = require('./route_prerequesites').convertToJson(server)
-  // const isImportBusy = require('../v2/cases/route_prerequesites').isImportBusy(server)
+  const systemBusy = require('./route_prerequesites').systemBusy(server)
 
   const route = (method, path, validates, pre, callback) => {
     return {
@@ -52,7 +52,7 @@ module.exports = (server) => {
         parse: true,
         allow: 'multipart/form-data'
       },
-      pre: [ convertToJson ],
+      pre: [ convertToJson, systemBusy],
     },
     handler: handlers.ImportRdt(server)
   }
