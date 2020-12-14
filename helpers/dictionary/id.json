@@ -1,4 +1,15 @@
 {
+  "target": "Target Tes",
+  "category": "Kategori Tes",
+  "tool_tester": "Alat Tester",
+  "test_method" : "Metode tes",
+  "test_location_type": "Tipe Lokasi Tes",
+  "test_location": "Lokasi tes",
+  "swab_to": "Swab ke-",
+  "test_date": "Tanggal tes",
+  "test_note": "Catatan hasil tes",
+  "note_nik": "Alasan tidak ada NIK",
+
   "interviewers_name": "Nama Pewawancara",
   "interviewers_phone_number": "No HP Pewawancara",
   "interview_date": "Tanggal Wawancara",
