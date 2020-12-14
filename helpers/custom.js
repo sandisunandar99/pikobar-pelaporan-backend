@@ -225,10 +225,14 @@ const dateReplace = (date) => {
   return searchDate
 }
 
+const ucwords = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
   convertIncome, convertPysichal, checkDiagnosis,
   checkDiseases, checkExistColumn, rollback, locationPatient, yesOrNoBool,
-  dateReplace
+  dateReplace, ucwords,
 }

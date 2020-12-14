@@ -25,7 +25,8 @@ const register = (server, options, next) => {
     require('./CloseContact'),
     require('./CloseContactHistory'),
     require('./Specimen'),
-    
+    require('./UserDevice'),
+
     server.app.db = {
       link: db.db,
       User: db.model('User'),
@@ -42,6 +43,7 @@ const register = (server, options, next) => {
       LocationTest: db.model('Lab'),
       CloseContact: db.model('CloseContact'),
       Specimen: db.model('Specimen'),
+      UserDevice: db.model('UserDevice'),
     };
 
     return next();

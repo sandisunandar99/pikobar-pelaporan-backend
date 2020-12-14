@@ -24,7 +24,6 @@ const UserSchema = new mongoose.Schema({
   address_province_name: { type: String, default:"Jawa Barat"},
   hash: String,
   salt: String,
-  fcm_token: String,
   unit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Unit' ,default:null},
   delete_status: { type: String, default:null},
   deletedAt: { type: Date, default:null},

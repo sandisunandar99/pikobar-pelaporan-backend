@@ -1,20 +1,24 @@
 const replyHelper = require('../helpers')
+const { replyJson } = require('../helpers')
+const callback = (reply) => {
+  return (err, result) => replyJson(err, result, reply)
+}
 
 module.exports = (server) => {
   function constructUserResponse(user) {
-    let authUser = { 
+    let authUser = {
       status : 200,
       message: true,
-      data : user.toAuthJSON() 
+      data : user.toAuthJSON()
     }
     return authUser;
   }
 
   function constructUsersResponse(user) {
-    let userResponse = { 
+    let userResponse = {
       status : 200,
       message: true,
-      data : user 
+      data : user
     }
     return userResponse;
   }
@@ -164,7 +168,7 @@ module.exports = (server) => {
     async loginUser(request, reply) {
       let payload = request.payload
       server.methods.services.users.getByUsername(
-        payload.username, 
+        payload.username,
         (err, user) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
 
@@ -201,17 +205,17 @@ module.exports = (server) => {
       })
     },
     /**
-     * PUT /api/users/{id}
+     * PUT /api/users/{id}/devices
      * @param {*} request
      * @param {*} reply
      */
-    async updateUsersFcmToken (request, reply) {
-      server.methods.services.users.updateUsersFcmToken(
+    async updateUserDevice (request, reply) {
+      server.methods.services.users.updateUserDevice(
         request.params.id, request.payload,
         request.auth.credentials.user._id,
-        (err, listUser) => {
+        (err, res) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        return reply(constructUsersResponse(res));
       })
     },
     /**
@@ -221,22 +225,15 @@ module.exports = (server) => {
      */
     async getUserNotifications (request, reply) {
       server.methods.services.notifications.get(
-        request.params.id, (err, res) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(res));
-      });
+        request.params.id, request.query, callback(reply));
     },
     /**
-     * GET /api/users/{id}/notifications/{notifId}
+     * PUT /api/users/{id}/notifications/reead
      * @param {*} request
      * @param {*} reply
      */
-    async getUserNotification (request, reply) {
-      server.methods.services.notifications.show(
-        request.params.id, request.params.notifId, (err, res) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(res));
-      });
+    async markAsRead (request, reply) {
+      server.methods.services.notifications.markAsRead(request.query, callback(reply));
     }
   }
 }
