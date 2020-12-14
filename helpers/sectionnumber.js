@@ -16,15 +16,15 @@ const paramInvalid = [
   { $eq: ["$final_result", "INVALID"] }
 ]
 const paramReaktif = [
-  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$tool_tester", "RDT"] },
   { $eq: ["$final_result", "REAKTIF"] }
 ]
 const paramNon= [
-  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$tool_tester", "RDT"] },
   { $eq: ["$final_result", "NON REAKTIF"] }
 ]
 const paramIn= [
-  { $eq: ["$tool_tester", "PCR"] },
+  { $eq: ["$tool_tester", "RDT"] },
   { $eq: ["$final_result", "INKONKLUSIF"] }
 ]
 

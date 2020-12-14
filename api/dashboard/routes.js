@@ -17,5 +17,7 @@ module.exports = (server) =>{
 
   return [
     route('GET', '/dashboard/summary-input-test', 'summaryInputTest'),
+    route('GET', '/dashboard/summary-test-result', 'summaryTestResult'),
+    route('GET', '/dashboard/summary-test-result-gender', 'summaryTestResultGender'),
   ]
 }

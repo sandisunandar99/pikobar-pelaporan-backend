@@ -50,6 +50,10 @@ const filterCase = async (user, query) => {
     params.final_result = query.final_result;
   }
 
+  if (query.tool_tester) {
+    params.tool_tester = query.tool_tester;
+  }
+
   return params;
 }
 

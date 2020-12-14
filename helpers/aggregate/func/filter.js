@@ -23,6 +23,21 @@ const byRole = (ROLE, user) =>{
   return groups
 }
 
+const rdtFilter = (query) => {
+  let queryStrings
+  if (query.test_tools) {
+    const splits = query.test_tools.split('-');
+    if(splits[0] && splits[1]) {
+      queryStrings = { "tool_tester": splits[0], "final_result": splits[1] }
+    }else{
+      queryStrings = { "final_result": splits[0] }
+    }
+  } else {
+    queryStrings = { }
+  }
+  return queryStrings;
+}
+
 module.exports = {
-  searching, byRole
+  searching, byRole, rdtFilter
 }
