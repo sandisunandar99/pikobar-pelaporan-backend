@@ -56,10 +56,10 @@ const requestIfSame = async (server, name, methods, request, reply) => {
   )
 }
 
-const funcCreatePayload = async (server, name, methods, request, param, reply) => {
+const funcCreateDynamic = async (server, name, methods, request, req, otherReq, reply) => {
   server.methods.services[name][methods](
-    request.payload,
-    request.params[param],
+    request[req],
+    request[otherReq],
     (err, result) => {
       replyJson(err, result, reply)
     }
@@ -68,5 +68,5 @@ const funcCreatePayload = async (server, name, methods, request, param, reply) =
 
 module.exports = {
   funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate, requestIfSame, funcCreatePayload
+  funcCreate, requestIfSame, funcCreateDynamic
 }

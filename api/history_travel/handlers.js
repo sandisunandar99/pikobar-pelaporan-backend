@@ -1,9 +1,9 @@
-const { funcCreatePayload, funcIfSame, queryParamSame } = require('../../helpers/request')
+const { funcCreateDynamic, funcIfSame, queryParamSame } = require('../../helpers/request')
 
 const createHistoryTravel = (server) => {
   return async(request, reply) => {
-    await funcCreatePayload(server, "history_travel", "create", request, "id_case", reply)
-  }
+    await funcCreateDynamic(server, "history_travel", "create", request,
+    "payload", "params.id_case", reply)
 }
 
 const getHistoryTravel = (server) => {

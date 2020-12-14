@@ -1,12 +1,18 @@
 const Routes = require('./routes')
+const OtherRoutes = require('./routes_explode')
 
-const register = (server, options, next) =>{
-    server.route(Routes(server))
-    return next()
+const register = (server, options, next) => {
+  routing(server)
+  return next()
 }
 
-register.attributes ={
-    pkg: require('./package.json')
+const routing = (server) => {
+  server.route(Routes(server))
+  server.route(OtherRoutes(server))
+}
+
+register.attributes = {
+  pkg: require('./package.json')
 }
 
 module.exports = register
