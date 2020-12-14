@@ -1,5 +1,5 @@
 const request = require('request')
-const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
+const { queryIfSame, funcIfSame, funcNoParam, funcCreate } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -155,7 +155,12 @@ const sendMessage = (server) => {
 
 const ImportRdt = (server) => {
   return async (request, reply) => {
-    console.log("ssssssssssssssssss import ");
+    server.methods.services.inject.ImportRdt(
+      request,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
   }
 }
 
