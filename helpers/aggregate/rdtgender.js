@@ -1,37 +1,20 @@
 const { searching, rdtFilter } = require("./func/filter")
+const { sumFuncNoMatch } = require("./func")
 
 const conditionGender = async (query, user) => {
   const search = await searching(query, user)
   const filter = rdtFilter(query)
-  const conditions = [
-    {
-      $match: {
-        $and: [search, { ...filter }]
-      }
-    },
+  const male = [{ $eq: ["$gender", "L"] }]
+  const female = [{ $eq: ["$gender", "P"] }]
+  const conditions = [{ $match: {
+    $and: [search, { ...filter }]
+    }
+  },
     {
       $group: {
         _id: 'gender',
-        male: {
-          $sum: {
-            $cond: [
-              {
-                $and: [
-                  { $eq: ['$gender', 'L'] },
-                ]
-              }, 1, 0]
-          }
-        },
-        female: {
-          $sum: {
-            $cond: [
-              {
-                $and: [
-                  { $eq: ['$gender', 'P'] },
-                ]
-              }, 1, 0]
-          }
-        },
+        male: sumFuncNoMatch(male),
+        female: sumFuncNoMatch(female)
       },
     }, { $project: { _id: 0 } }
   ]
