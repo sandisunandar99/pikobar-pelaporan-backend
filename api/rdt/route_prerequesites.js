@@ -170,22 +170,6 @@ const methodOneParam = (server, service, name, param, reply) => {
   })
 }
 
-            if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF"){
-                server.methods.services.histories.createHistoryFromInputTest(
-                    payloads,
-                    (err, item) => {
-                        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                        
-                        return reply(item)
-                    })
-            }else{
-                return reply()
-            }
-        },
-        assign : 'create_history_when_positif'
-    }
-}
-
 const convertToJson = server => {
   return {
     method: async (request, reply) => {
