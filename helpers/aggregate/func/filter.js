@@ -23,14 +23,14 @@ const byRole = (ROLE, user) =>{
   return groups
 }
 
-const rdtFilter = (query) => {
+const filterSplit = (query, param, splitOne, splitTwo) => {
   let queryStrings = {}
-  if (query.test_tools) {
-    const splits = query.test_tools.split('-');
+  if (query[param]) {
+    const splits = query[param].split('-');
     if(splits[0] && splits[1]) {
-      queryStrings = { "tool_tester": splits[0], "final_result": splits[1] }
+      queryStrings = { [splitOne]: splits[0], [splitTwo]: splits[1] }
     }else{
-      queryStrings = { "final_result": splits[0] }
+      queryStrings = { [splitOne]: splits[0] }
     }
   }
 
@@ -38,5 +38,5 @@ const rdtFilter = (query) => {
 }
 
 module.exports = {
-  searching, byRole, rdtFilter
+  searching, byRole, filterSplit
 }

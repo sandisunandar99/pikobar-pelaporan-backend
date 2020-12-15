@@ -1,4 +1,4 @@
-const { searching, rdtFilter } = require('./func/filter')
+const { searching, filterSplit } = require('./func/filter')
 const { sumBetweenFunc } = require('./func')
 
 const converts = { $convert:{ input: '$age', to: 'double' } }
@@ -23,7 +23,7 @@ const paramGroup = (group, value) => {
 
 const conditionAge = async (query, user) => {
   const search = await searching(query, user)
-  const filter = rdtFilter(query)
+  const filter = filterSplit(query, 'test_tools', 'final_result', 'tool_tester')
   const conditions = [{
     $match: {
       $and: [search, { ...filter }]
