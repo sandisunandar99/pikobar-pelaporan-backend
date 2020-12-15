@@ -20,7 +20,27 @@ const summaryAggregate = async (query, user) => {
         as: "last_history"
       }
     },
-    { $unwind: "$last_history" },
+    { $unwind: {
+        path: "$last_history",
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $lookup: {
+        from: "districtcities",
+        localField: "address_district_code",
+        foreignField: "kemendagri_kabupaten_kode",
+        as: "kota"
+      }
+    },
+    {
+        $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$kota", 0 ] }, "$$ROOT" ] } }
+    },
+    {
+      "$project" : {
+          "kota": 0,
+      }
+    },
     {
       "$facet": {
         "summary": [

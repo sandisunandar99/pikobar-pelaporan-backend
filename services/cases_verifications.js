@@ -2,7 +2,8 @@ const Case = require('../models/Case')
 const User = require('../models/User')
 const ObjectId = require('mongodb').ObjectID
 const service = 'services.casesVerifications'
-const Notif = require('../helpers/notification')
+const { ucwords } = require('../helpers/custom')
+const { notify } = require('../helpers/notification')
 const Notification = require('../models/Notification')
 const CaseVerification = require('../models/CaseVerification')
 const Validate = require('../helpers/cases/revamp/handlerpost')
@@ -55,12 +56,11 @@ async function createCaseVerification (id, author, pre, payload, callback) {
 
     const caseVerification = await item.save()
 
-    await Notif.send(Notification, User, case_, author, `case-verification-${payload.verified_status}`)
-
     if (payload.verified_status === VERIFIED_STATUS.VERIFIED) {
       await doUpdateEmbeddedClosecontactDoc(pre.id_case, updatePayload.id_case, Case)
     }
 
+    notify(`Case${ucwords(payload.verified_status)}`, case_, author)
     callback(null, caseVerification)
   } catch (error) { callback(error, null) }
 }

@@ -27,7 +27,8 @@ const register = (server, options, next) => {
     require('./public_place'),
     require('./local_transmission'),
     require('./inspection_support'),
-    require('./search')
+    require('./search'),
+    require('./cases_other')
   );
   server.method(services)
   return next()

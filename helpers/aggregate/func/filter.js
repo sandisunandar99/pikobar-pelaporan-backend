@@ -16,7 +16,8 @@ const searching = async (query, user) => {
 const byRole = (ROLE, user) =>{
   let groups
   if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
-    groups = { $toUpper : "$address_district_name"}
+    // groups = { $toUpper : "$address_district_name"}
+    groups = { $toUpper : "$kemendagri_kabupaten_nama"}
   }else{
     groups = { $toUpper : "$address_subdistrict_name"}
   }
