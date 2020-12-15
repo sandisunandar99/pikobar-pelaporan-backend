@@ -50,6 +50,12 @@ module.exports = (server) => {
       path: '/areas/province',
       config: configRoute("show west java", "areas", CheckRoleView),
       handler: handlers.getProvince(server)
+    },
+    {
+      method: 'GET',
+      path: '/areas/list-unit-lab',
+      config: configRoute("show west java unit and lab", "areas", CheckRoleView),
+      handler: handlers.getUnitLab(server)
     }
   ]
 }

@@ -96,7 +96,16 @@ const getProvince = (server) => {
   }
 }
 
+const getUnitLab = (server) => {
+  return async (request, reply) => {
+    await queryIfSame(
+      server, "areas", "mergeHospitalLab",
+      request, reply
+    )
+  }
+}
+
 module.exports = {
   DistrictCity, SubDistrict, SubDistrictDetail, Village,
-  VillageDetail, Hospital, Lab, getProvince
+  VillageDetail, Hospital, Lab, getProvince, getUnitLab
 }
