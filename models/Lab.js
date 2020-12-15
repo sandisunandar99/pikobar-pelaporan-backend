@@ -9,7 +9,7 @@ const LabSchema = new mongoose.Schema({
 LabSchema.methods.toJSONFor = function () {
     return {
         _id: this._id,
-        lab_name: this.lab_name,
+        name: this.lab_name,
         location: this.location,
     }
 }

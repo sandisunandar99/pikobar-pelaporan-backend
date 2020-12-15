@@ -99,7 +99,9 @@ const getHospital = async (query, callback) => {
   }
 
   try {
-    const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
+    const resLab = await Lab.find()
+    const resUnit = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
+    const res = [...resUnit,...resLab.map((r) => r.toJSONFor())]
     callback(null, res)
   } catch (error) {
     callback(error, null)
