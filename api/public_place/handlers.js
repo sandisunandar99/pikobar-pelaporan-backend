@@ -3,7 +3,8 @@ const { funcCreateDynamic, funcIfSame, queryParamSame } = require('../../helpers
 const createPublicPlace = (server) => {
   return async(request, reply) => {
     await funcCreateDynamic(server, "public_place", "create", request,
-    "payload", "params.id_case", reply)
+    "payload", request.params.id_case, reply
+    )
   }
 }
 

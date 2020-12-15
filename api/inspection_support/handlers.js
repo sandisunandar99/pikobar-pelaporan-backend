@@ -3,7 +3,9 @@ const { funcCreateDynamic, funcIfSame, queryParamSame } = require('../../helpers
 const createInspectionSupport = (server) => {
   return async(request, reply) => {
     await funcCreateDynamic(server, "inspection_support", "create", request,
-    "payload", "params.id_case", reply)
+    "payload", request.params.id_case, reply
+    )
+  }
 }
 
 const getInspectionSupport = (server) => {

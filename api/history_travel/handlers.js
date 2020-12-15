@@ -3,7 +3,9 @@ const { funcCreateDynamic, funcIfSame, queryParamSame } = require('../../helpers
 const createHistoryTravel = (server) => {
   return async(request, reply) => {
     await funcCreateDynamic(server, "history_travel", "create", request,
-    "payload", "params.id_case", reply)
+    "payload", request.params.id_case, reply
+    )
+  }
 }
 
 const getHistoryTravel = (server) => {
