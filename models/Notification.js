@@ -1,27 +1,43 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const NotificationSchema = new mongoose.Schema({
-    tag: { type: String, lowercase: true, default: null},
-    message: { type: String, lowercase: true, default: null},
-    case: { type: mongoose.Schema.Types.ObjectId, ref: 'Case' },
-    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    is_read : { type: Boolean, default: false }
-}, { timestamps : true });
-
-NotificationSchema.index( { is_read: 1 } )
-NotificationSchema.index( { recipient: 1 } )
-
-NotificationSchema.methods.toJSONFor = function () {
-    return {
-        _id: this._id,
-        tag: this.tag,
-        message: this.message,
-        case : this.case ? this.case.JSONFormIdCase() : null,
-        sender : this.sender ? this.sender.JSONCase() : null,
-        recipient : this.recipient ? this.recipient.JSONCase() : null,
-        is_read: this.is_read
+    message: {
+      required: true,
+      type: String,
+    },
+    eventRole: {
+      required: true,
+      type: String,
+    },
+    eventType: {
+      required: true,
+      type: String,
+    },
+    clickAction: {
+      required: true,
+      type: String,
+    },
+    referenceId: {
+      default: null,
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    senderId: {
+      ref: 'User',
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    recipientId: {
+      ref: 'User',
+      type: mongoose.Schema.Types.ObjectId
+    },
+    isRead : {
+      default: false,
+      type: Boolean,
     }
-}
+}, { timestamps : true })
 
+NotificationSchema.index( { isRead: 1 } )
+NotificationSchema.index( { recipientId: 1 } )
+
+NotificationSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('Notification', NotificationSchema)

@@ -73,5 +73,11 @@
     "invalid_criteria": "\"Kriteria\" Harus diisi sesuai opsi",
     "invalid_final_result": "\"Status pasien terakhir\" Harus diisi sesuai opsi",
     "empty_data": "Ada kesalahan dalam import data, Tidak ada data pada file yang Anda unggah. Silakan periksa kembali data Anda!"
+  },
+  "titles": {
+    "case_has_been_verified": "Kasus Berhasil diverifikasi",
+    "case_has_been_declined": "Kasus ditolak",
+    "faskes_cases_created": "Pengajuan Kasus Baru Dari faskes",
+    "faskes_cases_recreated": "Pengajuan Kembali Kasus yang ditolak Dari faskes"
   }
 }
