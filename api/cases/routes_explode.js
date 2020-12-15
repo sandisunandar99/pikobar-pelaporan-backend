@@ -5,7 +5,7 @@ module.exports = (server) => {
   return [
     {
       method: 'PUT',
-      path: '/cases/multiple-update',
+      path: '/v2/cases/multiple-update',
       config: {
         auth: 'jwt',
         description: 'update cases multiplt by id case',
