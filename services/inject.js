@@ -1,3 +1,4 @@
+const { result } = require('lodash');
 const mongoose = require('mongoose');
 const Case = require('../models/Case')
 const History = require('../models/History')
@@ -7,7 +8,7 @@ require('../models/DistrictCity')
 const DistrictCity = mongoose.model('Districtcity')
 require('../models/RdtHistory')
 const RdtHistory = mongoose.model('RdtHistory');
-
+const {rollback} = require('../helpers/custom')
 
 const lastHistory = async (query, callback) => {
   try {
@@ -83,6 +84,7 @@ const injectRdt = async (request, callback) => {
 
       let rdt = new Rdt(Object.assign(codes, result))
       rdt = Object.assign(rdt, { author })
+      resultForResnpose.push(rdt._id)
       rdt.save().then(rdt => {
         let arr = {...codes, ...result}
         let rdtHistory = new RdtHistory(Object.assign(arr,{rdt}))
@@ -103,7 +105,6 @@ const injectRdt = async (request, callback) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(x)
-        resultForResnpose.push(x)
       }, 100)
     })
   }
@@ -140,10 +141,29 @@ const injectRdt = async (request, callback) => {
   process().then(() => {
     return callback(null, resultForResnpose)
   })
-
-
 }
 
+
+const ImportRdt = async (request, callback) => {
+  const injected = []
+  try {
+    request.payload = request.pre.convert_to_json,
+    await injectRdt(
+      request,
+      (err, res) => {
+        if(err) throw new Error
+        res.forEach( (val, key) => {
+          injected.push({_id: val._id})
+        });
+        callback (null, {inserted: injected.length})
+      }
+    )
+
+  } catch (error) {
+    rollback(Rdt, injectRdt)
+    callback(error, null)
+  }
+}
 
 module.exports = [
   {
@@ -153,6 +173,10 @@ module.exports = [
   {
     name: 'services.inject.injectRdt',
     method: injectRdt
-  }
+  },
+  {
+    name: 'services.inject.ImportRdt',
+    method: ImportRdt
+  },
 ];
 

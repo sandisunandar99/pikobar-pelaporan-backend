@@ -1,4 +1,5 @@
-const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
+const request = require('request')
+const { queryIfSame, funcIfSame, funcNoParam, funcCreate } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -152,6 +153,17 @@ const sendMessage = (server) => {
   }
 }
 
+const ImportRdt = (server) => {
+  return async (request, reply) => {
+    server.methods.services.inject.ImportRdt(
+      request,
+      (err, result) => {
+        replyJson(err, result, reply)
+      }
+    )
+  }
+}
+
 module.exports = {
   ListRdt,
   CreateRdt,
@@ -168,5 +180,6 @@ module.exports = {
   GetRdtSummaryResultByCities,
   GetRdtSummaryResultListByCities,
   GetRdtFaskesSummaryByCities,
-  sendMessage
+  sendMessage,
+  ImportRdt
 }

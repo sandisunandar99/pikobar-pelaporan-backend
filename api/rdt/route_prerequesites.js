@@ -1,5 +1,8 @@
 const replyHelper = require('../helpers')
 const { conditionPreReq } = require('../../utils/conditional')
+const {extractToJson} = require('../../helpers/rdt/sheet')
+const {requestFileError, isAnotherImportProcessIsRunning} = require('../../helpers/cases/sheet/helper')
+const {validation} = require('../../helpers/rdt/sheet/validation')
 
 const validationBeforeInput = server => {
   return {
@@ -167,29 +170,83 @@ const methodOneParam = (server, service, name, param, reply) => {
   })
 }
 
-const sameCondition = (server, name, payloads, request, reply) => {
-  const source_data = request.payload.source_data
-  const tool_tester = request.payload.tool_tester
-  const final_result = request.payload.final_result
-  if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF") {
-    methodOneParam(server, 'histories', name, payloads, reply)
-  } else {
-    return reply()
+            if (source_data === "internal" && tool_tester === "PCR" && final_result === "POSITIF"){
+                server.methods.services.histories.createHistoryFromInputTest(
+                    payloads,
+                    (err, item) => {
+                        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+                        
+                        return reply(item)
+                    })
+            }else{
+                return reply()
+            }
+        },
+        assign : 'create_history_when_positif'
+    }
+}
+
+const convertToJson = server => {
+  return {
+    method: async (request, reply) => {
+      const payload = await extractToJson(request)
+
+      if (requestFileError(payload)) {
+        return reply(BadRequest(requestFileError(payload))).code(400).takeover()
+      }
+
+      const err = await validation(payload)
+      if (err.length) {
+        return reply(BadRequest(err)).code(400).takeover()
+      }
+
+      return reply(payload)
+    },
+    assign: 'convert_to_json'
   }
 }
 
-module.exports = {
-  countRdtCode,
-  getRdtbyId,
-  getCasebyIdcase,
-  getCodeDinkes,
-  countCaseByDistrict,
-  checkIfDataNotNull,
-  getDataExternal,
-  searchIdcasefromInternal,
-  searchIdcasefromExternal,
-  validationBeforeInput,
-  getRegisteredUserfromExternal,
-  cekHistoryCases,
-  createHistoryWhenPositif
+const systemBusy = server => {
+  return {
+    method: async (request, reply) => {
+      const res = await isAnotherImportProcessIsRunning(
+        require('../../models/Rdt')
+      )
+
+      if (!res) return reply(res)
+
+      return reply({
+        status: 422,
+        message: 'Proses import lainnya sedang berjalan, coba beberapa saat lagi!',
+        data: null
+      }).code(422).takeover()
+    },
+    assign: 'system_busy',
+  }
+}
+
+const BadRequest = (errors) => {
+  return {
+    status: 400,
+    message: 'Bad request.',
+    errors: errors,
+  }
+}
+
+module.exports ={
+    countRdtCode,
+    getRdtbyId,
+    getCasebyIdcase,
+    getCodeDinkes,
+    countCaseByDistrict,
+    checkIfDataNotNull,
+    getDataExternal,
+    searchIdcasefromInternal,
+    searchIdcasefromExternal,
+    validationBeforeInput,
+    getRegisteredUserfromExternal,
+    cekHistoryCases,
+    createHistoryWhenPositif,
+    convertToJson,
+    systemBusy
 }

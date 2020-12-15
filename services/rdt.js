@@ -22,6 +22,7 @@ const https = require('https')
 const url = require('url');
 
 
+
 async function ListRdt (query, user, callback) {
 
   const myCustomLabels = {
@@ -1077,6 +1078,7 @@ function sendMessagesWA(rdt) {
 
 }
 
+
 module.exports = [
   {
     name: 'services.rdt.list',
@@ -1177,6 +1179,6 @@ module.exports = [
   {
     name: 'services.rdt.getLocationTest',
     method: getLocationTest
-  },
+  }
 ];
 
