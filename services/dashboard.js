@@ -1,6 +1,7 @@
 const Rdt = require('../models/Rdt')
 const Sql = require('../helpers/sectionnumber')
 const { conditionGender } = require('../helpers/aggregate/rdtgender')
+const { conditionSummary } = require('../helpers/aggregate/rdtaggregate')
 const { conditionAge} = require('../helpers/aggregate/rdtage')
 
 const summaryInputTest = async (query, user, callback) => {
@@ -10,6 +11,16 @@ const summaryInputTest = async (query, user, callback) => {
     callback(null, result)
   } catch (error) {
     callback(error, null)
+  }
+}
+
+const summaryTestResult = async (query, user, callback) => {
+  try {
+    const condition = await conditionSummary(query, user)
+    const resultCount = await Rdt.aggregate(condition)
+    verificationData(resultCount, callback)
+  } catch (e) {
+    callback(e, null)
   }
 }
 
@@ -55,5 +66,8 @@ module.exports = [
   }, {
     name: "services.dashboard.summaryAge",
     method: summaryAge
+  }, {
+    name: "services.dashboard.summaryTestResult",
+    method: summaryTestResult
   }
 ]
