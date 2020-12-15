@@ -106,6 +106,17 @@ const getHospital = async (query, callback) => {
   }
 }
 
+const mergeHospitalLab = async (query, callback) => {
+  try {
+    const resLab = await Lab.find()
+    const resUnit = await Unit.find({ rs_jabar:true, unit_type: 'rumahsakit' })
+    const res = [...resUnit,...resLab.map((r) => r.toJSONFor())]
+    callback(null, res)
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
 const getLab = async (query, callback) => {
   var params = new Object();
 
@@ -162,5 +173,8 @@ module.exports = [
   {
     name: 'services.areas.province',
     method: province
+  },{
+    name: 'services.areas.mergeHospitalLab',
+    method: mergeHospitalLab
   },
 ]

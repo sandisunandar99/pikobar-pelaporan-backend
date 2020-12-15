@@ -1,63 +1,44 @@
-const fs = require('fs')
-const moment = require('moment')
-const json2xls = require('json2xls')
 const replyHelper = require('../helpers')
 const {
   transformedXlsFor
 } = require('../../helpers/reports/transformer')
+const { requestIfSame } = require('../../helpers/request')
+const { generateExcell } = require('../../helpers/export')
 
-module.exports = (server) => {
-  function constructReportResponse(report) {
-    let jsonReport = {
-      status: 200,
-      message: "Success",
-      data: report
-    }
-    // return report
-    return jsonReport
+/**
+ * GET /api/reports/daily-report
+ * @param {*} request
+ * @param {*} reply
+*/
+const dailyReport = (server) => {
+  return async (request, reply) => {
+    await requestIfSame(
+      server, "reports", "dailyReport",
+      request, reply
+    )
   }
+}
 
-  return {
-    /**
-     * GET /api/reports/daily-report
-     * @param {*} request
-     * @param {*} reply
-     */
-    async DailyReport(request, reply){
-      server.methods.services.reports.dailyReport(
-        request.query,
-        request.auth.credentials.user,
-        (err, result) => {
+/**
+  * GET /api/reports/daily-report-xls
+  * @param {*} request
+  * @param {*} reply
+*/
+const dailyReportXls = (server) => {
+  return async (request, reply) => {
+    const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
+    const query = request.query
+    const credentials = request.auth.credentials.user
+    server.methods.services.reports.dailyReport(
+      query, credentials,
+      (err, result) => {
+        const transformed = transformedXlsFor(result)
+        const title = `Daily-Report`
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(
-          constructReportResponse(result, request)
-        ).code(200)
+        return generateExcell(transformed, title, fullName, reply)
       })
-    },
-    /**
-     * GET /api/reports/daily-report-xls
-     * @param {*} request
-     * @param {*} reply
-     */
-    async DailyReportXls(request, reply){
-      const fullName = request.auth.credentials.user.fullname.replace(/\s/g, '-')
-      server.methods.services.reports.dailyReport(
-          request.query,
-          request.auth.credentials.user,
-          (err, result) => {
-            if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-
-            const transformed = transformedXlsFor(result)
-            const jsonXls = json2xls(transformed)
-            const fileName = `Daily-Report-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
-
-            fs.writeFileSync(fileName, jsonXls, 'binary')
-            const xlsx = fs.readFileSync(fileName)
-
-            reply(xlsx)
-              .header('Content-Disposition', 'attachment filename='+fileName)
-            return fs.unlinkSync(fileName)
-        })
-    },
   }
+}
+module.exports = {
+  dailyReport, dailyReportXls
 }

@@ -191,19 +191,19 @@ module.exports = (server) => {
       },
       handler: handlers.getListUserIds
     },
-    // Update fcm token 
+    // Update fcm token
     {
-      method: 'PUT',
-      path: '/users/{id}/fcm-token',
+      method: 'POST',
+      path: '/users/{id}/devices',
       config: {
         auth: 'jwt',
-        description: 'update user fcm token',
+        description: 'update user device',
         tags: ['api', 'users'],
         pre: [
           CheckRoleUpdate
         ]
       },
-      handler: handlers.updateUsersFcmToken
+      handler: handlers.updateUserDevice
     },
     // Get user notifications
     {
@@ -221,17 +221,17 @@ module.exports = (server) => {
     },
     // Get user notifications detail
     {
-      method: 'GET',
-      path: '/users/{id}/notifications/{notifId}',
+      method: 'PUT',
+      path: '/users/{id}/notifications/read',
       config: {
         auth: 'jwt',
-        description: 'Get user notifications detail',
+        description: 'mark as read notification',
         tags: ['api', 'users'],
           pre: [
             CheckRoleView
           ]
       },
-      handler: handlers.getUserNotification
+      handler: handlers.markAsRead
     },
   ]
 }

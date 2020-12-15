@@ -5,7 +5,7 @@ const User = require('../models/User')
 const Notification = require('../models/Notification')
 const DistrictCity = require('../models/DistrictCity')
 const Check = require('../helpers/rolecheck')
-const Notif = require('../helpers/notification')
+const { notify } = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
@@ -399,7 +399,7 @@ function createCase (raw_payload, author, pre, callback) {
       x = Object.assign(x, last_history)
       x.save().then(async final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
 
-        await Notif.send(Notification, User, x, author, 'case-created')
+        notify('CaseCreated', x, author)
         return callback(null, final)
       })
     })
