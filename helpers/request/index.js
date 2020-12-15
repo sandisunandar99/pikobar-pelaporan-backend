@@ -59,7 +59,7 @@ const requestIfSame = async (server, name, methods, request, reply) => {
 const funcCreateDynamic = async (server, name, methods, request, req, otherReq, reply) => {
   server.methods.services[name][methods](
     request[req],
-    request[otherReq],
+    otherReq,
     (err, result) => {
       replyJson(err, result, reply)
     }
