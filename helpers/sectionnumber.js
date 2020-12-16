@@ -55,9 +55,9 @@ const projectResult = {
   RDT_INKONKLUSIF: 1
 }
 
-const summaryInputTest = async (user, query) => {
+const summaryInputTest = (user, query) => {
   const search = Check.countByRole(user)
-  const filter = await Filter.filterRdt(user, query)
+  const filter = Filter.filterRdt(user, query)
   const searching = Object.assign(search, filter)
   const test_date = dateFilter(query, "test_date")
   const queryInputTest = [

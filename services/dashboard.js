@@ -10,7 +10,7 @@ const servicesAge = 'services.dashboard.summaryAge'
 
 const summaryInputTest = async (query, user, callback) => {
   try {
-    const querySummary = await Sql.summaryInputTest(user, query)
+    const querySummary = Sql.summaryInputTest(user, query)
     const result = await Rdt.aggregate(querySummary)
     callback(null, result)
   } catch (error) {

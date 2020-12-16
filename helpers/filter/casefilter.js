@@ -24,7 +24,7 @@ const filterCase = async (user, query) => {
   return params;
 }
 
-const filterRdt = async (user, query) => {
+const filterRdt = (user, query) => {
   const params = {};
 
   if (user.role == "dinkesprov" || user.role == "superadmin") {
