@@ -17,7 +17,8 @@ const summaryInputTest = async (query, user, callback) => {
 
 const summaryTestResult = async (query, user, callback) => {
   try {
-    const condition = await conditionSummary(query, user)
+    const queryParam = query
+    const condition = await conditionSummary(queryParam, user)
     const resultCount = await Rdt.aggregate(condition)
     verificationData(resultCount, callback)
   } catch (e) {
