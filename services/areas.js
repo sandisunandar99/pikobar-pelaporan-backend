@@ -108,9 +108,8 @@ const getHospital = async (query, callback) => {
 
 const mergeHospitalLab = async (query, callback) => {
   try {
-    let params = true
     if (query.rs_jabar) {
-      params = query.rs_jabar
+      params = query.rs_jabar === 'true'
     }
     const resLab = await Lab.find()
     const resUnit = await Unit.find({ rs_jabar:params, unit_type: 'rumahsakit' })
