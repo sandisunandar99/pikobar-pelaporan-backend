@@ -3,7 +3,10 @@ const Sql = require('../helpers/sectionnumber')
 const { conditionGender } = require('../helpers/aggregate/rdtgender')
 const { conditionSummary } = require('../helpers/aggregate/rdtaggregate')
 const { conditionAge} = require('../helpers/aggregate/rdtage')
-const services = 'services.dashboard.'
+const servicesInput = 'services.dashboard.summaryInputTest'
+const servicesResult = 'services.dashboard.summaryGender'
+const servicesGender = 'services.dashboard.summaryAge'
+const servicesAge = 'services.dashboard.summaryTestResult'
 
 const summaryInputTest = async (query, user, callback) => {
   try {
@@ -59,16 +62,8 @@ const verificationData = (result, callback) => {
 }
 
 module.exports = [
-  {
-    name: `${services}summaryInputTest`,method: summaryInputTest
-  },
-  {
-    name: `${services}summaryGender`, method: summaryGender
-  },
-  {
-    name: `${services}summaryAge`, method: summaryAge
-  },
-  {
-    name: `${services}summaryTestResult`, method: summaryTestResult
-  }
+  { name: servicesInput ,method: summaryInputTest },
+  { name: servicesResult, method: summaryTestResult},
+  { name: servicesGender, method: summaryGender },
+  { name: servicesAge, method: summaryAge },
 ]
