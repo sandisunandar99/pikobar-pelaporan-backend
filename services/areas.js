@@ -108,8 +108,12 @@ const getHospital = async (query, callback) => {
 
 const mergeHospitalLab = async (query, callback) => {
   try {
+    let params = true
+    if (query.rs_jabar) {
+      params = query.rs_jabar
+    }
     const resLab = await Lab.find()
-    const resUnit = await Unit.find({ rs_jabar:true, unit_type: 'rumahsakit' })
+    const resUnit = await Unit.find({ rs_jabar:params, unit_type: 'rumahsakit' })
     const res = [...resUnit,...resLab.map((r) => r.toJSONFor())]
     callback(null, res)
   } catch (error) {
