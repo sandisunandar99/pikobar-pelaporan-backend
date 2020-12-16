@@ -1,5 +1,6 @@
+const { sumActive, sumSick, sumCondition, sumFuncNoMatch } = require("./func")
+
 const groupingCondition = (grouping, query, criteria) => {
-  const { sumActive, sumSick, sumCondition } = require("./func")
   const { filterNotGrouping } = require("./globalcondtion")
   const column = filterNotGrouping(query, criteria)
   const params = {
@@ -16,6 +17,18 @@ const groupingCondition = (grouping, query, criteria) => {
   return params
 }
 
+const groupingRdt = (grouping) => {
+  const params = {
+    $group: {
+      _id: grouping,
+      rdt: sumFuncNoMatch([{ $eq: ["$tool_tester", "PCR"] }]),
+      pcr: sumFuncNoMatch([{ $eq: ["$tool_tester", "RDT"] }]),
+    }
+  }
+
+  return params
+}
+
 module.exports = {
-  groupingCondition
+  groupingCondition, groupingRdt
 }
