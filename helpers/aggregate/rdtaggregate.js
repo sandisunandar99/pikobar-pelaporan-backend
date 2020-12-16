@@ -4,6 +4,7 @@ const { groupingRdt } = require('./groupaggregate')
 const { ROLE } = require('../constant')
 const { byRole } = require('./func/filter')
 const { districtcities } = require('./func/lookup')
+const { groupByMonth } = require('./rdtmonth')
 
 const conditionSummary = async (query, user) => {
   const search = await searching(query, user)
@@ -21,6 +22,7 @@ const conditionSummary = async (query, user) => {
   { '$project' : { 'kota': 0 } },
   {
     '$facet': {
+      'month': [groupByMonth()],
       'summary': [groupingRdt(groups)],
       'targets': [grupFunc([search, { ...filter }], '$target')],
     }
