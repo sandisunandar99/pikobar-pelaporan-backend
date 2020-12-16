@@ -108,6 +108,7 @@ const getHospital = async (query, callback) => {
 
 const mergeHospitalLab = async (query, callback) => {
   try {
+    let params = true
     if (query.rs_jabar) {
       params = query.rs_jabar === 'true'
     }
