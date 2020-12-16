@@ -4,9 +4,9 @@ const { conditionGender } = require('../helpers/aggregate/rdtgender')
 const { conditionSummary } = require('../helpers/aggregate/rdtaggregate')
 const { conditionAge} = require('../helpers/aggregate/rdtage')
 const servicesInput = 'services.dashboard.summaryInputTest'
-const servicesResult = 'services.dashboard.summaryGender'
-const servicesGender = 'services.dashboard.summaryAge'
-const servicesAge = 'services.dashboard.summaryTestResult'
+const servicesResult = 'services.dashboard.summaryTestResult'
+const servicesGender = 'services.dashboard.summaryGender'
+const servicesAge = 'services.dashboard.summaryAge'
 
 const summaryInputTest = async (query, user, callback) => {
   try {
