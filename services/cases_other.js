@@ -11,8 +11,11 @@ const conditional = async (result, payload, val) => {
       res.stage = res.stage,
       res.final_result = payload.final_result,
       res.last_date_status_patient = payload.last_date_status_patient,
-      res.current_location_type = 'OTHERS'
-      await History.create(res)
+      res.current_location_type = res.current_location_type
+      const getData = await History.create(res)
+      await Case.updateOne({'_id': res.case}, {
+        $set: { 'last_history': getData._id }}
+      )
     })
   } else {
     const bodys = {
@@ -22,7 +25,8 @@ const conditional = async (result, payload, val) => {
       last_date_status_patient: payload.last_date_status_patient,
       current_location_type: 'OTHERS'
     }
-    await History.create(bodys)
+    const getData = await History.create(bodys)
+    await Case.updateOne({'_id': ObjectId(val)}, { $set: { 'last_history': getData._id }})
   }
 }
 
@@ -37,7 +41,7 @@ const multipleUpdate = async (payload, user, callback) => {
     )
 
     for (let val of maping) {
-      const result = await History.find({ case: val })
+      const result = await History.find({ case: val , 'delete_status' : { $ne: 'deleted'}})
         .sort(HISTORY_DEFAULT_SORT).limit(1).lean()
       await conditional(result, payload, val)
     }
