@@ -26,9 +26,7 @@ const conditional = async (result, payload, val) => {
       current_location_type: 'OTHERS'
     }
     const getData = await History.create(bodys)
-    await Case.updateOne({'_id': ObjectId(val)}, {
-      $set: { 'last_history': getData._id }}
-    )
+    await Case.updateOne({'_id': ObjectId(val)}, { $set: { 'last_history': getData._id }})
   }
 }
 
@@ -43,8 +41,7 @@ const multipleUpdate = async (payload, user, callback) => {
     )
 
     for (let val of maping) {
-      const result = await History.find({ case: val })
-        .where('delete_status').ne('deleted')
+      const result = await History.find({ case: val , 'delete_status' : { $ne: 'deleted'}})
         .sort(HISTORY_DEFAULT_SORT).limit(1).lean()
       await conditional(result, payload, val)
     }
