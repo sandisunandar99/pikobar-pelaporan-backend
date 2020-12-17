@@ -6,7 +6,6 @@ const { HISTORY_DEFAULT_SORT } = require('../helpers/constant')
 const conditional = async (result, payload, val) => {
   if (result.length > 0) {
     result.map(async res => {
-      const _id = res._id
       delete res._id;
       res.status = payload.status,
       res.stage = res.stage,
@@ -14,7 +13,7 @@ const conditional = async (result, payload, val) => {
       res.last_date_status_patient = payload.last_date_status_patient,
       res.current_location_type = res.current_location_type
       const getData = await History.create(res)
-      await Case.updateOne({'_id': ObjectId(_id)}, {
+      await Case.updateOne({'_id': res.case}, {
         $set: { 'last_history': getData._id }}
       )
     })
