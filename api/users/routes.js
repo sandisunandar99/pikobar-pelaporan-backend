@@ -205,33 +205,5 @@ module.exports = (server) => {
       },
       handler: handlers.updateUserDevice
     },
-    // Get user notifications
-    {
-      method: 'GET',
-      path: '/users/{id}/notifications',
-      config: {
-        auth: 'jwt',
-        description: 'Get user notifications by user id',
-        tags: ['api', 'users'],
-          pre: [
-            CheckRoleView
-          ]
-      },
-      handler: handlers.getUserNotifications
-    },
-    // Get user notifications detail
-    {
-      method: 'PUT',
-      path: '/users/{id}/notifications/read',
-      config: {
-        auth: 'jwt',
-        description: 'mark as read notification',
-        tags: ['api', 'users'],
-          pre: [
-            CheckRoleView
-          ]
-      },
-      handler: handlers.markAsRead
-    },
   ]
 }
