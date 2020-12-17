@@ -1,28 +1,9 @@
-const replyHelper = require('../helpers')
 const { replyJson } = require('../helpers')
 const callback = (reply) => {
   return (err, result) => replyJson(err, result, reply)
 }
 
 module.exports = (server) => {
-  function constructUserResponse(user) {
-    let authUser = {
-      status : 200,
-      message: true,
-      data : user.toAuthJSON()
-    }
-    return authUser;
-  }
-
-  function constructUsersResponse(user) {
-    let userResponse = {
-      status : 200,
-      message: true,
-      data : user
-    }
-    return userResponse;
-  }
-
   return {
     /**
      * GET /api/notifications
