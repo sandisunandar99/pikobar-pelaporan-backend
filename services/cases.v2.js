@@ -4,7 +4,6 @@ const Case = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 const History = require('../models/History')
 const pdfmaker = require('../helpers/pdfmaker')
-const { notify } = require('../helpers/notification')
 const { deleteProps, rollback } = require('../helpers/custom')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { INSPECTION_TYPES, VERIFIED_STATUS, TRAVEL_TYPE, ROLE } = require('../helpers/constant')
@@ -76,7 +75,6 @@ const createCase = async (pre, payload, author, callback) => {
       { upsert: true, new: true },
     )
 
-    notify('CaseCreated', insertedCase, author)
     callback(null, insertedCase)
   } catch (error) {
     callback(error, null)
