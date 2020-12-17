@@ -24,6 +24,20 @@ const byRole = (ROLE, user) =>{
   return groups
 }
 
+const filterSplit = (query, param, splitOne, splitTwo) => {
+  let queryStrings = {}
+  if (query[param]) {
+    const splits = query[param].split('-');
+    if(splits[0] && splits[1]) {
+      queryStrings = { [splitOne]: splits[0], [splitTwo]: splits[1] }
+    }else{
+      queryStrings = { [splitOne]: splits[0] }
+    }
+  }
+
+  return queryStrings;
+}
+
 module.exports = {
-  searching, byRole
+  searching, byRole, filterSplit
 }
