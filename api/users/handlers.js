@@ -218,22 +218,5 @@ module.exports = (server) => {
         return reply(constructUsersResponse(res));
       })
     },
-    /**
-     * GET /api/users/{id}/notifications
-     * @param {*} request
-     * @param {*} reply
-     */
-    async getUserNotifications (request, reply) {
-      server.methods.services.notifications.get(
-        request.params.id, request.query, callback(reply));
-    },
-    /**
-     * PUT /api/users/{id}/notifications/reead
-     * @param {*} request
-     * @param {*} reply
-     */
-    async markAsRead (request, reply) {
-      server.methods.services.notifications.markAsRead(request.query, callback(reply));
-    }
   }
 }
