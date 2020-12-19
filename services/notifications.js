@@ -1,5 +1,6 @@
 const moment = require('moment')
 const Case = require('../models/Case')
+const service = 'services.notifications'
 const schedule = require('node-schedule')
 const ObjectId = require('mongodb').ObjectID
 const paginate = require('../helpers/paginate')
@@ -87,16 +88,7 @@ async function JobClosecContactFinishedQuarantine () {
 }
 
 module.exports = [
-  {
-    name: 'services.notifications.get',
-    method: getUserNotifications,
-  },
-  {
-    name: 'services.notifications.markAsRead',
-    method: markAsRead,
-  },
-  {
-    name: 'services.notifications.summary',
-    method: getUserNotificationsSummary,
-  }
+  { name: `${service}.get`, method: getUserNotifications },
+  { name: `${service}.markAsRead`, method: markAsRead },
+  { name: `${service}.summary`, method: getUserNotificationsSummary }
 ]
