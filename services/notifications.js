@@ -13,11 +13,11 @@ schedule.scheduleJob('0 10 * * *', () => {
   JobClosecContactFinishedQuarantine()
 })
 
-async function getUserNotifications (userId, query, callback) {
+async function getUserNotifications (uid, query, callback) {
   try {
     const sorts = { createdAt: 'desc' }
     const options = paginate.optionsLabel({ page: 1, limit: 10, ...query}, sorts, [])
-    const params = filters.filterNotification(query, userId)
+    const params = filters.filterNotification(query, uid)
     const searchParams = filters.searchNotification(query)
     const result = Notification.find(params).or(searchParams)
     const paginateResult = await Notification.paginate(result, options)
@@ -35,6 +35,24 @@ async function markAsRead (query, callback) {
       { ...params },
       { $set: { isRead: true } }
     )
+    callback(null, res)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+async function getUserNotificationsSummary (uid, callback) {
+
+  const getCount = (isRead) => {
+    return Notification.find({ recipientId: uid, isRead: isRead }).countDocuments()
+  }
+
+  try {
+    const res = {
+      read: await getCount(true),
+      unread: await getCount(false),
+    }
+
     callback(null, res)
   } catch (e) {
     callback(e, null)
@@ -77,4 +95,8 @@ module.exports = [
     name: 'services.notifications.markAsRead',
     method: markAsRead,
   },
+  {
+    name: 'services.notifications.summary',
+    method: getUserNotificationsSummary,
+  }
 ]

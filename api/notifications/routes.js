@@ -19,5 +19,6 @@ module.exports = (server) => {
      // Get user notifications
      route('GET', '/notifications', 'getUserNotifications'),
      route('PUT', '/notifications/read', 'markAsRead'),
+     route('GET', '/notifications/summary', 'summary'),
   ]
 }
