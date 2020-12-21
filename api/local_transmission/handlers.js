@@ -1,8 +1,10 @@
-const { funcCreatePayload, funcIfSame, queryParamSame } = require('../../helpers/request')
+const { funcCreateDynamic, funcIfSame, queryParamSame } = require('../../helpers/request')
 
 const createLocalTransmission = (server) => {
   return async(request, reply) => {
-    await funcCreatePayload(server, "local_transmission", "create", request, "id_case", reply)
+    await funcCreateDynamic(server, "local_transmission", "create", request,
+    "payload", request.params.id_case, reply
+    )
   }
 }
 

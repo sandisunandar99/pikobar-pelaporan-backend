@@ -1,6 +1,6 @@
 module.exports = (server, route) => {
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
-  const CheckRole = require('../users/route_prerequesites').CheckRoleDelete(server)
+  const CheckRole = require('../users/route_prerequesites').CheckRoleCreate(server)
   const service = 'inspection_support'
   const pathCase = '/inspection-support/{id_case}'
   const pathInspec = '/inspection-support/{id_inspection_support}'

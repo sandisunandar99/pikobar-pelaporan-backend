@@ -1,12 +1,9 @@
 const moment = require('moment')
 const service = 'services.v2.cases'
-const User = require('../models/User')
 const Case = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 const History = require('../models/History')
 const pdfmaker = require('../helpers/pdfmaker')
-const Notification = require('../models/Notification')
-const Notif = require('../helpers/notification')
 const { deleteProps, rollback } = require('../helpers/custom')
 const Validate = require('../helpers/cases/revamp/handlerpost')
 const { INSPECTION_TYPES, VERIFIED_STATUS, TRAVEL_TYPE, ROLE } = require('../helpers/constant')
@@ -78,7 +75,6 @@ const createCase = async (pre, payload, author, callback) => {
       { upsert: true, new: true },
     )
 
-    await Notif.send(Notification, User, insertedCase, author, 'case-created')
     callback(null, insertedCase)
   } catch (error) {
     callback(error, null)

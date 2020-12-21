@@ -5,7 +5,7 @@ const User = require('../models/User')
 const Notification = require('../models/Notification')
 const DistrictCity = require('../models/DistrictCity')
 const Check = require('../helpers/rolecheck')
-const Notif = require('../helpers/notification')
+const { notify } = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
@@ -23,7 +23,9 @@ async function ListCase (query, user, callback) {
     meta: '_meta'
   };
 
-  let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+  // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+  // kembali ke awal
+  let sort = { updatedAt: 'desc' };
   if (query.sort && query.sort.split) {
     let splits = query.sort.split(':')
     sort.last_date_status_patient = splits[1];
@@ -399,7 +401,7 @@ function createCase (raw_payload, author, pre, callback) {
       x = Object.assign(x, last_history)
       x.save().then(async final =>{ // step 3: udpate last_history di case ambil object ID nya hitory
 
-        await Notif.send(Notification, User, x, author, 'case-created')
+        notify('CaseCreated', x, author)
         return callback(null, final)
       })
     })

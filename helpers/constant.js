@@ -1,4 +1,17 @@
 module.exports = {
+  CLICK_ACTION: {
+    ACT_CASES_LIST: 'cases-list',
+    ACT_CASES_VERIFICATION_LIST: 'cases-verification-list',
+    ACT_RDT_LIST: 'rdt-list',
+    ACT_SYSTEM_UPDATES: 'system-updates',
+  },
+  EVENT_TYPE: {
+    EVT_CASE_CREATED: 'CaseCreated',
+    EVT_CASE_REVISED: 'CasePending',
+    EVT_CASE_VERIFIED: 'CaseVerified',
+    EVT_CASE_DECLINED: 'CaseDeclined',
+    EVT_CLOSECONTACT_FINISHED_QUARANTINE: 'ClosecContactFinishedQuarantine',
+  },
   VERIFIED_STATUS: {
     DRAFT: 'draft',
     PENDING: 'pending',
