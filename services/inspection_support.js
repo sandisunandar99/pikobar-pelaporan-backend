@@ -13,6 +13,8 @@ const createInspectionSupport = async (payload, id_case, callback) => {
             "specimens_type": payload.specimens_type,
             "inspection_date": payload.inspection_date,
             "inspection_location": payload.inspection_location,
+            "is_other_location": payload.is_other_location,
+            "other_inspection_location": payload.other_inspection_location,
             "get_specimens_to": payload.get_specimens_to,
             "inspection_result": payload.inspection_result,
           }
@@ -46,6 +48,8 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
           "inspection_support.$.specimens_type": payload.specimens_type,
           "inspection_support.$.inspection_date": payload.inspection_date,
           "inspection_support.$.inspection_location": payload.inspection_location,
+          "inspection_support.$.is_other_location": payload.is_other_location,
+          "inspection_support.$.other_inspection_location": payload.other_inspection_location,
           "inspection_support.$.get_specimens_to": payload.get_specimens_to,
           "inspection_support.$.inspection_result": payload.inspection_result,
         }
