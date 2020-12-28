@@ -70,7 +70,30 @@ const injectRdt = async (request, callback) => {
       code_tool_tester += countRdt.count
 
       let id_case = null
+      let v_target
+      switch ((result.target).toUpperCase()) {
+        case "KONFIRMASI" || "TERKONFIRMASI":
+          v_target = "COFIRMATION"
+          break;
+        case "KONTAK ERAT":
+          v_target = "CLOSECONTACT"
+          break;
+        case "SUSPEK":
+          v_target = "SUSPECT"
+          break;
+        case "PROBABLE":
+          v_target = "PROBABLE"
+          break;
+        case "LAINNYA":
+          v_target = "LAINNYA"
+          break;
+        default:
+          v_target = (result.target).toUpperCase()
+          break;
+      }
+
       let codes = {
+        target: v_target,
         code_test: (code_test === undefined ? "" : code_test),
         code_tool_tester: (code_tool_tester === undefined ? "" : code_tool_tester),
         id_case: (id_case === undefined ? "" : id_case),
@@ -81,7 +104,7 @@ const injectRdt = async (request, callback) => {
         source_data: "external"
       }
 
-      let rdt = new Rdt(Object.assign(codes, result))
+      let rdt = new Rdt(Object.assign(result, codes))
       rdt = Object.assign(rdt, { author })
       rdt.save().then(rdt => {
         let arr = {...codes, ...result}
@@ -94,8 +117,6 @@ const injectRdt = async (request, callback) => {
           return rdt.save()
         })
       })
-
-
     }
   }
 
