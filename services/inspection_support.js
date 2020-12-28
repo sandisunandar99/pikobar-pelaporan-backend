@@ -3,28 +3,19 @@ const ObjectId = require('mongodb').ObjectID
 const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
 
 const labeling = (condition, payload) => {
-  if (condition === 'add') {
-    return {
-      'inspection_type': payload.inspection_type,
-      'specimens_type': payload.specimens_type,
-      'inspection_date': payload.inspection_date,
-      'inspection_location': payload.inspection_location,
-      'is_other_location': payload.is_other_location,
-      'other_inspection_location': payload.other_inspection_location,
-      'get_specimens_to': payload.get_specimens_to,
-      'inspection_result': payload.inspection_result,
-    }
-  } else {
-    return {
-      'inspection_support.$.inspection_type': payload.inspection_type,
-      'inspection_support.$.specimens_type': payload.specimens_type,
-      'inspection_support.$.inspection_date': payload.inspection_date,
-      'inspection_support.$.inspection_location': payload.inspection_location,
-      'inspection_support.$.is_other_location': payload.is_other_location,
-      'inspection_support.$.other_inspection_location': payload.other_inspection_location,
-      'inspection_support.$.get_specimens_to': payload.get_specimens_to,
-      'inspection_support.$.inspection_result': payload.inspection_result,
-    }
+  let updateSet = ''
+  if (condition === 'update') {
+    updateSet = 'inspection_support.$.'
+  }
+  return {
+    [`${updateSet}inspection_type`]: payload.inspection_type,
+    [`${updateSet}specimens_type`]: payload.specimens_type,
+    [`${updateSet}inspection_date`]: payload.inspection_date,
+    [`${updateSet}inspection_location`]: payload.inspection_location,
+    [`${updateSet}is_other_location`]: payload.is_other_location,
+    [`${updateSet}other_inspection_location`]: payload.other_inspection_location,
+    [`${updateSet}get_specimens_to`]: payload.get_specimens_to,
+    [`${updateSet}inspection_result`]: payload.inspection_result,
   }
 }
 
@@ -32,7 +23,7 @@ const createInspectionSupport = async (payload, id_case, callback) => {
   try {
     const inserted = await InspectionSupport.updateOne(
       { '_id': ObjectId(id_case) },
-      { $addToSet: { 'inspection_support': labeling('add', payload) }},
+      { $addToSet: { 'inspection_support': labeling('add', payload) } },
       { new: true })
     callback(null, inserted)
   } catch (error) {
