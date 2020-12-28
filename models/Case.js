@@ -104,6 +104,8 @@ const CaseSchema = new mongoose.Schema({
     specimens_type: { type: String, default: null },
     inspection_date: { type: Date, default: '' },
     inspection_location: { type: String, default: null },
+    is_other_location: { type: Boolean, default: false },
+    other_inspection_location: { type: String, default: null },
     get_specimens_to: { type: Number, default: 0 },
     inspection_result: { type: String, default: null }
   }],
