@@ -2,24 +2,38 @@ const InspectionSupport = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
 
+const labeling = (condition, payload) => {
+  if (condition === 'add') {
+    return {
+      'inspection_type': payload.inspection_type,
+      'specimens_type': payload.specimens_type,
+      'inspection_date': payload.inspection_date,
+      'inspection_location': payload.inspection_location,
+      'is_other_location': payload.is_other_location,
+      'other_inspection_location': payload.other_inspection_location,
+      'get_specimens_to': payload.get_specimens_to,
+      'inspection_result': payload.inspection_result,
+    }
+  } else {
+    return {
+      'inspection_support.$.inspection_type': payload.inspection_type,
+      'inspection_support.$.specimens_type': payload.specimens_type,
+      'inspection_support.$.inspection_date': payload.inspection_date,
+      'inspection_support.$.inspection_location': payload.inspection_location,
+      'inspection_support.$.is_other_location': payload.is_other_location,
+      'inspection_support.$.other_inspection_location': payload.other_inspection_location,
+      'inspection_support.$.get_specimens_to': payload.get_specimens_to,
+      'inspection_support.$.inspection_result': payload.inspection_result,
+    }
+  }
+}
+
 const createInspectionSupport = async (payload, id_case, callback) => {
   try {
     const inserted = await InspectionSupport.updateOne(
-      { "_id": ObjectId(id_case) },
-      {
-        $addToSet: {
-          "inspection_support": {
-            "inspection_type": payload.inspection_type,
-            "specimens_type": payload.specimens_type,
-            "inspection_date": payload.inspection_date,
-            "inspection_location": payload.inspection_location,
-            "is_other_location": payload.is_other_location,
-            "other_inspection_location": payload.other_inspection_location,
-            "get_specimens_to": payload.get_specimens_to,
-            "inspection_result": payload.inspection_result,
-          }
-        }
-      }, { new: true })
+      { '_id': ObjectId(id_case) },
+      { $addToSet: { 'inspection_support': labeling('add', payload) }},
+      { new: true })
     callback(null, inserted)
   } catch (error) {
     callback(error, null)
@@ -29,7 +43,7 @@ const createInspectionSupport = async (payload, id_case, callback) => {
 const listInspectionSupport = async (id_case, callback) => {
   try {
     const id = id_case
-    const result = await findGlobal(InspectionSupport, id, "inspection_support")
+    const result = await findGlobal(InspectionSupport, id, 'inspection_support')
     callback(null, result)
   } catch (error) {
     callback(error, null)
@@ -40,20 +54,10 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
   try {
     const updated = await InspectionSupport.updateOne(
       {
-        "inspection_support._id": ObjectId(id_inspection_support)
+        'inspection_support._id': ObjectId(id_inspection_support)
       },
-      {
-        $set: {
-          "inspection_support.$.inspection_type": payload.inspection_type,
-          "inspection_support.$.specimens_type": payload.specimens_type,
-          "inspection_support.$.inspection_date": payload.inspection_date,
-          "inspection_support.$.inspection_location": payload.inspection_location,
-          "inspection_support.$.is_other_location": payload.is_other_location,
-          "inspection_support.$.other_inspection_location": payload.other_inspection_location,
-          "inspection_support.$.get_specimens_to": payload.get_specimens_to,
-          "inspection_support.$.inspection_result": payload.inspection_result,
-        }
-      }, { new: true })
+      { $set: labeling('update', payload) },
+      { new: true })
     callback(null, updated)
   } catch (error) {
     callback(error, null)
@@ -62,7 +66,7 @@ const updateInspectionSupport = async (id_inspection_support, payload, callback)
 
 const deleteInspectionSupport = async (id, callback) => {
   try {
-    const deleted = await deleteGlobal(InspectionSupport, "inspection_support", id)
+    const deleted = await deleteGlobal(InspectionSupport, 'inspection_support', id)
     callback(null, deleted)
   } catch (error) {
     callback(error, null)
