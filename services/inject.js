@@ -73,7 +73,7 @@ const injectRdt = async (request, callback) => {
       let v_target
       switch ((result.target).toUpperCase()) {
         case "KONFIRMASI" || "TERKONFIRMASI":
-          v_target = "COFIRMATION"
+          v_target = "CONFIRMATION"
           break;
         case "KONTAK ERAT":
           v_target = "CLOSECONTACT"
