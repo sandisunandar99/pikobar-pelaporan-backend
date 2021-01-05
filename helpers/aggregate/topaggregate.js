@@ -47,23 +47,17 @@ const groupProbable = {
   }
 }
 
-const groupSuspect = {
-  $group: {
-    _id: 'suscpect',
-    sick: sumFuncNoMatch(parseEquivalent(CRITERIA.SUS, '4')),
-    discarded: sumFuncNoMatch(parseEquivalent(CRITERIA.SUS, '3')),
+const groupSame = (id, param, criteria, resultone, resulttwo) => {
+  return {
+    $group: {
+      _id: id,
+      [param]: sumFuncNoMatch(parseEquivalent(criteria, resultone)),
+      discarded: sumFuncNoMatch(parseEquivalent(criteria, resulttwo)),
+    }
   }
 }
 
-const groupClose = {
-  $group: {
-    _id: 'closeContact',
-    quarantine: sumFuncNoMatch(parseEquivalent(CRITERIA.CLOSE, '5')),
-    discarded: sumFuncNoMatch(parseEquivalent(CRITERIA.CLOSE, '3')),
-  }
-}
-
-const filtering = (caseAuthors, query, user) => {
+const filterRole = (caseAuthors, query, user) => {
   let searching = countByRole(user, caseAuthors)
 
   if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
@@ -71,6 +65,13 @@ const filtering = (caseAuthors, query, user) => {
       searching.address_district_code = query.address_district_code
     }
   }
+
+  return searching
+}
+
+const filtering = (caseAuthors, query, user) => {
+
+  let searching = filterRole(caseAuthors, query, user)
 
   if (query.address_village_code) {
     searching.address_village_code = query.address_village_code
@@ -86,7 +87,7 @@ const filtering = (caseAuthors, query, user) => {
 const topAggregate = async (query, user) => {
   const caseAuthors = await thisUnitCaseAuthors(user)
   const filter = filtering(caseAuthors, query, user)
-  
+
   const conditions = [
     {
       $match: {
@@ -97,8 +98,8 @@ const topAggregate = async (query, user) => {
       "$facet": {
         'confirmed': [ groupConfrimed ],
         'probable': [ groupProbable ],
-        'suspect': [ groupSuspect ],
-        'closeContact': [ groupClose ],
+        'suspect': [ groupSame('suspect', 'sick', CRITERIA.SUS, '4', '3') ],
+        'closeContact': [ groupSame('closeContact', 'quarantine', CRITERIA.CLOSE, '5', '3') ],
       }
     },
     {
