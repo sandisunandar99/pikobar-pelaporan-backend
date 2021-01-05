@@ -1,26 +1,21 @@
 const replyHelper = require('../helpers')
-const { funcIfSame } = require('../../helpers/request')
+const { funcIfSame, requestIfSame } = require('../../helpers/request')
+
+/**
+ * GET /api/case-related
+ * @param {*} request
+ * @param {*} reply
+**/
 
 module.exports = (server) => {
-
   return {
-    /**
-     * GET /api/case-related
-     * @param {*} request
-     * @param {*} reply
-     */
     async caseRelatedList(request, reply) {
-      server.methods.services.case_related.list(
-        request.query,
-        request.auth.credentials.user,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-          return reply(replyHelper.successResponse(result)).code(200);
-        }
+      await requestIfSame(
+        server, 'case_related', 'list', request, reply
       )
     },
     async caseRelatedById(request, reply) {
-      return await funcIfSame(
+      await funcIfSame(
         server, "case_related", "getById",
         request, "id_case", reply
       )
@@ -34,5 +29,5 @@ module.exports = (server) => {
         }
       )
     },
-  } //end
+  }
 }
