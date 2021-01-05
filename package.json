@@ -10,8 +10,8 @@
   "scripts": {
     "start": "npm-run-all --parallel start:server",
     "start:server": "nodemon --max-old-space-size=2048 --legacy-watch server.js",
-    "test": "nyc --reporter=html mocha --timeout 10000",
-    "coverage": "nyc --reporter=text mocha --check-coverage --lines 90"
+    "test": "DEBUG=true mocha --timeout 30000 --exit",
+    "coverage": "nyc npm run test"
   },
   "author": "Sandi Sunandar",
   "homepage": "https://github.com/jabardigitalservice/pikobar-pelaporan-backend#readme",
