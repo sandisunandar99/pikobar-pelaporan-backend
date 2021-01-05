@@ -1,14 +1,7 @@
-const replyHelper = require('../helpers');
+const replyHelper = require('../helpers')
+const { funcIfSame } = require('../../helpers/request')
 
 module.exports = (server) => {
-  const caseRelatedResponse = (caseRelated) => {
-    let result = {
-      status: 200,
-      message: "Success",
-      data: caseRelated,
-    }
-    return result;
-  };
 
   return {
     /**
@@ -22,16 +15,14 @@ module.exports = (server) => {
         request.auth.credentials.user,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-          return reply(caseRelatedResponse(result)).code(200);
+          return reply(replyHelper.successResponse(result)).code(200);
         }
       )
     },
     async caseRelatedById(request, reply) {
-      server.methods.services.case_related.getById(request.params.id_case,
-        (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-          return reply(caseRelatedResponse(result, request)).code(200);
-        }
+      return await funcIfSame(
+        server, "case_related", "getById",
+        request, "id_case", reply
       )
     },
     async caseRelatedSync(request, reply) {
@@ -39,7 +30,7 @@ module.exports = (server) => {
         server.methods.services,
         (err, result) => {
           if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-          return reply(caseRelatedResponse(result, request)).code(200);
+          return reply(replyHelper.successResponse(result, request)).code(200);
         }
       )
     },
