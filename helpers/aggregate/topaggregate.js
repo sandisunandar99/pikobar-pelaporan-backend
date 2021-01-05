@@ -1,11 +1,69 @@
 const { countByRole, thisUnitCaseAuthors } = require('../rolecheck')
 const { CRITERIA, ROLE } = require('../constant')
+const { sumFuncNoMatch } = require("./func")
 
-const topAggregate = async (query, user) => {
-  // If Faskes, retrieve all users in this faskes unit,
-  // all users in the same FASKES must have the same summary.
-  // ** if only based on author, every an author in this unit(faskes) will be has a different summary)
-  const caseAuthors = await thisUnitCaseAuthors(user)
+const lookup = {
+  $lookup: {
+    from: 'histories',
+    localField: 'last_history',
+    foreignField: '_id',
+    as: 'last_history'
+  }
+}
+
+const parseEquivalent = (criteria, result) => {
+  return [
+    { $eq: ['$status', criteria] },
+    { $eq: ['$final_result', result] }
+  ]
+}
+
+const groupConfrimed = {
+  $group: {
+    _id: 'confrimed',
+    sick_home: sumFuncNoMatch([
+      { $eq: ['$final_result', '4'] },
+      { $eq: ['$status', CRITERIA.CONF] },
+      { $eq: ['$last_history.current_location_type', 'RUMAH'] },
+    ]), sick_hospital: sumFuncNoMatch([
+      { $eq: ['$final_result', '4'] },
+      { $eq: ['$status', CRITERIA.CONF] },
+      { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
+    ]),
+    recovered: sumFuncNoMatch(parseEquivalent(CRITERIA.CONF, '1')),
+    decease: sumFuncNoMatch(parseEquivalent(CRITERIA.CONF, '2'))
+  }
+}
+
+const groupProbable = {
+  $group: {
+    _id: 'probable',
+    sick: sumFuncNoMatch([
+      { $eq: ['$final_result', '4'] },
+      { $eq: ['$status', CRITERIA.PROB] },
+    ]),
+    recovered: sumFuncNoMatch(parseEquivalent(CRITERIA.PROB, '1')),
+    decease: sumFuncNoMatch(parseEquivalent(CRITERIA.PROB, '2')),
+  }
+}
+
+const groupSuspect = {
+  $group: {
+    _id: 'suscpect',
+    sick: sumFuncNoMatch(parseEquivalent(CRITERIA.SUS, '4')),
+    discarded: sumFuncNoMatch(parseEquivalent(CRITERIA.SUS, '3')),
+  }
+}
+
+const groupClose = {
+  $group: {
+    _id: 'closeContact',
+    quarantine: sumFuncNoMatch(parseEquivalent(CRITERIA.CLOSE, '5')),
+    discarded: sumFuncNoMatch(parseEquivalent(CRITERIA.CLOSE, '3')),
+  }
+}
+
+const filtering = (caseAuthors, query, user) => {
   let searching = countByRole(user, caseAuthors)
 
   if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
@@ -22,174 +80,25 @@ const topAggregate = async (query, user) => {
     searching.address_subdistrict_code = query.address_subdistrict_code
   }
 
+  return searching
+}
+
+const topAggregate = async (query, user) => {
+  const caseAuthors = await thisUnitCaseAuthors(user)
+  const filter = filtering(caseAuthors, query, user)
+  
   const conditions = [
     {
       $match: {
-        $and: [searching, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' }]
+        $and: [filter, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' }]
       }
-    },
-    {
-      $lookup: {
-        from: 'histories',
-        localField: 'last_history',
-        foreignField: '_id',
-        as: 'last_history'
-      }
-    },
-    { $unwind: '$last_history' },
+    }, lookup, { $unwind: '$last_history' },
     {
       "$facet": {
-        'confirmed': [
-          {
-            $group: {
-              _id: 'confirmed',
-              sick_home: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '4'] },
-                        { $eq: ['$status', CRITERIA.CONF] },
-                        { $eq: ['$last_history.current_location_type', 'RUMAH'] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              sick_hospital: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '4'] },
-                        { $eq: ['$status', CRITERIA.CONF] },
-                        { $in: ["$last_history.current_location_type", ["RS", "OTHERS"]] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              recovered: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$status', CRITERIA.CONF] },
-                        { $eq: ['$final_result', '1'] }
-                      ]
-                    }, 1, 0]
-                }
-              },
-              decease: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$status', CRITERIA.CONF] },
-                        { $eq: ['$final_result', '2'] }
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
-        ],
-        'probable': [
-          {
-            $group: {
-              _id: 'probable',
-              sick: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '4'] },
-                        { $eq: ['$status', CRITERIA.PROB] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              recovered: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '1'] },
-                        { $eq: ['$status', CRITERIA.PROB] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              decease: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '2'] },
-                        { $eq: ['$status', CRITERIA.PROB] },
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
-        ],
-        'suspect': [
-          {
-            $group: {
-              _id: 'suspect',
-              sick: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '4'] },
-                        { $eq: ['$status', CRITERIA.SUS] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              discarded: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '3'] },
-                        { $eq: ['$status', CRITERIA.SUS] },
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
-        ],
-        'closeContact': [
-          {
-            $group: {
-              _id: 'closeContact',
-              quarantine: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '5'] },
-                        { $eq: ['$status', CRITERIA.CLOSE] },
-                      ]
-                    }, 1, 0]
-                }
-              },
-              discarded: {
-                $sum: {
-                  $cond: [
-                    {
-                      $and: [
-                        { $eq: ['$final_result', '3'] },
-                        { $eq: ['$status', CRITERIA.CLOSE] },
-                      ]
-                    }, 1, 0]
-                }
-              }
-            }
-          }
-        ],
+        'confirmed': [ groupConfrimed ],
+        'probable': [ groupProbable ],
+        'suspect': [ groupSuspect ],
+        'closeContact': [ groupClose ],
       }
     },
     {
