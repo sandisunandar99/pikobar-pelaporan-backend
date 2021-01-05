@@ -101,11 +101,14 @@ const criteriaConvert = (status) => {
 
 const convertYesOrNO = (param) => {
   let result
-  switch (param) {
-    case 1: result = ANSWER.YA; break;
-    case 2: result = ANSWER.TIDAK; break;
-    case 3: result = ANSWER.TIDAK_TAHU; break;
-    default: result = '';
+  if (param === 1) {
+    result = ANSWER.YA
+  } else if (param === 2) {
+    result = ANSWER.TIDAK
+  } else if (param === 3) {
+    result = ANSWER.TIDAK_TAHU
+  } else {
+    result = ''
   }
 
   return result
