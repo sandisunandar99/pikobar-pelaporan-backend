@@ -1,15 +1,15 @@
 ## RULE OF UNIT TESTING
-this is unit testing functional for api pikobar-pelaporan-backend using mocha and chai
+this is unit testing functional for api pikobar-pelaporan-backend using mocha and chai for coverage using istanbul and istanbul cli uisng `nyc`
 ## DOCUMENTATION
 
 - how to create function
-```nodejs
+```js
 describe('description name of cuntional test', () => {
-   describe('description of test method or ', () => {
-     it('desription your test function rule', async () => {
-        // todo code here
-     })
-   })
+  describe('description of test method and endpoint', () => {
+    it('desription your test function rule', async () => {
+      // todo code here
+    })
+  })
 }
 ```
 ## CORE STACK
