@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  mongo:
+    image: 'bitnami/mongodb:4.4.3'
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_REPLICA_SET_NAME=master
+      - MONGODB_ADVERTISED_HOSTNAME=mongo
+      - MONGODB_REPLICA_SET_MODE=primary
+      #- MONGODB_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    volumes:
+      - 'mongodb_master_data:/bitnami'
+    networks:
+      - crowdsource-api-network
+
+  mongo-secondary:
+    image: 'bitnami/mongodb:4.4.3'
+    ports:
+       - "27027:27017"
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_REPLICA_SET_NAME=slave
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_INITIAL_PRIMARY_HOST=mongo
+      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
+      #- MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    networks:
+      - crowdsource-api-network
+
+  mongo-arbiter:
+    image: 'bitnami/mongodb:4.4.3'
+    ports:
+       - "27037:27017"
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_REPLICA_SET_NAME=arbiter
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_INITIAL_PRIMARY_HOST=mongo
+      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    networks:
+      - crowdsource-api-network
+
+  #backend:
+  #  image: ${I_API}
+  #  build:
+  #      context: .
+  #      dockerfile: Dockerfile
+  #  ports:
+  #      - "3333:3333"
+  #  volumes:
+  #      - .:/app
+  #      - /app/node_modules
+  #  links:
+  #      - mongo
+  #  restart: always
+  #  depends_on:
+  #      - mongo
+  #  environment:
+  #      MONGODB_URI: ${MONGO_DB_URI}
+  #  networks:
+   #     - crowdsource-api-network
+
+volumes:
+  mongodb_master_data:
+    driver: local
+
+networks:
+  crowdsource-api-network:
+    driver: bridge
+    ipam:
+      driver: default
