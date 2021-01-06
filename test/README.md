@@ -4,7 +4,7 @@ this is unit testing functional for api pikobar-pelaporan-backend using mocha an
 
 - how to create function
 ```js
-describe('description name of cuntional test', () => {
+describe('description name of functional test', () => {
   describe('description of test method and endpoint', () => {
     it('desription your test function rule', async () => {
       // todo code here
