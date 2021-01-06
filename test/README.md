@@ -1,4 +1,5 @@
 ## RULE OF UNIT TESTING
+this is unit testing functional for api pikobar-pelaporan-backend using mocha and chai
 ## DOCUMENTATION
 
 - how to create function
