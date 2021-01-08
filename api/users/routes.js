@@ -4,8 +4,8 @@ const outputValidations = require('./validations/output');
 const filterConfig = (validation, output, description, role) => {
   return {
       auth: 'jwt',
-      validate: validation,
-      response: output,
+      validate: inputValidations[validation],
+      response: outputValidations[output],
       description: description,
       tags: ['api', 'users'],
       pre: role
@@ -123,8 +123,8 @@ module.exports = (server) => {
       method: 'PUT',
       path: '/users/change-password',
       config: filterConfig(
-        inputValidations.UpdatePayload,
-        outputValidations.AuthOnPutOutputValidationConfig,
+        'UpdatePayload',
+        'AuthOnPutOutputValidationConfig',
         'Update me in user',
         [ CheckRoleUpdate ]
       ),
@@ -163,8 +163,8 @@ module.exports = (server) => {
       method: 'POST',
       path: '/users',
       config: filterConfig(
-        inputValidations.RegisterPayload,
-        outputValidations.AuthOnRegisterOutputValidationConfig,
+        'RegisterPayload',
+        'AuthOnRegisterOutputValidationConfig',
         'Add user',
         [ CheckRoleCreate ]
       ),
