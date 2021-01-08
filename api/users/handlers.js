@@ -1,4 +1,5 @@
 const { replyJson, constructErrorResponse } = require('../helpers')
+const { queryIfSame } = require('../../helpers/request')
 
 function constructUserResponse(user) {
   let authUser = {
@@ -78,10 +79,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async checkUser (request, reply) {
-      server.methods.services.users.checkUser(
-        request.query, (err, listUser) => {
-          replyJson(err, listUser, reply)
-      });
+      await queryIfSame(server, 'users', 'checkUser', request, reply)
     },
     /**
      * GET /api/users
