@@ -1,27 +1,40 @@
-const replyHelper = require('../helpers')
-const { replyJson } = require('../helpers')
-const callback = (reply) => {
-  return (err, result) => replyJson(err, result, reply)
+const { replyJson, constructErrorResponse } = require('../helpers')
+
+function constructUserResponse(user) {
+  let authUser = {
+    status : 200,
+    message: true,
+    data : user.toAuthJSON()
+  }
+  return authUser
+}
+
+const sameMethod = (server, req, rep, method, status) => {
+  server.methods.services.users[method](
+    req.params.id,
+    req.payload,
+    status,
+    req.auth.credentials.user._id,
+    (err, result) => { replyJson(err, result, rep) }
+  )
+}
+
+const sameQuery = (server, req, rep, method) => {
+  server.methods.services.users[method](
+    req.auth.credentials.user,
+    req.query,
+    (err, result) => { replyJson(err, result, rep) }
+  )
+}
+
+const sameRequest = (server, req, rep, status) => {
+  server.methods.services.users.getById(
+    req.params.id, status, (err, result) => {
+      replyJson(err, result, rep)
+  });
 }
 
 module.exports = (server) => {
-  function constructUserResponse(user) {
-    let authUser = {
-      status : 200,
-      message: true,
-      data : user.toAuthJSON()
-    }
-    return authUser;
-  }
-
-  function constructUsersResponse(user) {
-    let userResponse = {
-      status : 200,
-      message: true,
-      data : user
-    }
-    return userResponse;
-  }
 
   return {
     /**
@@ -30,12 +43,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async getListUser (request, reply) {
-      server.methods.services.users.listUser(
-        request.auth.credentials.user,
-        request.query, (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(constructUsersResponse(listUser))
-      })
+      sameQuery(server, request, reply, 'listUser')
     },
     /**
      * GET /api/users/{id}
@@ -43,11 +51,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async getUserById (request, reply) {
-      server.methods.services.users.getById(
-        request.params.id, "update", (err, userById) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(userById));
-      });
+      sameRequest(server, request, reply, 'update')
     },
     /**
      * GET /api/users/username/{value}
@@ -57,8 +61,7 @@ module.exports = (server) => {
     async getUserByUsername (request, reply) {
       server.methods.services.users.getBySpecifiedKey(
         'username', request.params.value, (err, userById) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(userById));
+          replyJson(err, userById, reply)
       });
     },
     /**
@@ -67,11 +70,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async resetPassword (request, reply) {
-      server.methods.services.users.getById(
-        request.params.id, "reset", (err, userReset) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(userReset));
-      });
+      sameRequest(server, request, reply, 'reset')
     },
     /**
      * GET /api/users/{id}
@@ -81,8 +80,7 @@ module.exports = (server) => {
     async checkUser (request, reply) {
       server.methods.services.users.checkUser(
         request.query, (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+          replyJson(err, listUser, reply)
       });
     },
     /**
@@ -101,8 +99,7 @@ module.exports = (server) => {
     async getFaskesOfCurrentUser (request, reply) {
       server.methods.services.users.getFaskesOfUser(
         request.auth.credentials.user, (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+          replyJson(err, listUser, reply)
       });
     },
     /**
@@ -111,13 +108,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async deleteUsers (request, reply) {
-      server.methods.services.users.updateUsers(
-        request.params.id, request.payload, "delete",
-        request.auth.credentials.user._id,
-        (err, callbackDelete) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(callbackDelete));
-      })
+      sameMethod(server, request, reply, 'updateUsers', 'delete')
     },
     /**
      * PUT /api/users/{id}
@@ -125,13 +116,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async updateUsers (request, reply) {
-      server.methods.services.users.updateUsers(
-        request.params.id, request.payload, "update",
-        request.auth.credentials.user._id,
-        (err, callbackUpdate) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(callbackUpdate));
-      })
+      sameMethod(server, request, reply, 'updateUsers', 'update')
     },
     /**
      * PUT /api/users/change-password
@@ -142,8 +127,7 @@ module.exports = (server) => {
       let payload = request.payload
       let user = request.auth.credentials.user
       server.methods.services.users.update(user, payload, (err, updatedUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(constructUserResponse(updatedUser))
+        replyJson(err, updatedUser, reply)
       })
     },
     /**
@@ -155,9 +139,7 @@ module.exports = (server) => {
       let payload = request.payload
       server.methods.services.users.create(payload, (err, user) => {
       // TODO: Better error response
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        if (!user) return reply().code(422)
-        return reply(constructUsersResponse(user))
+        replyJson(err, user, reply)
       })
     },
     /**
@@ -170,7 +152,7 @@ module.exports = (server) => {
       server.methods.services.users.getByUsername(
         payload.username,
         (err, user) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        if (err) return reply(constructErrorResponse(err)).code(422)
 
         if (!user) {
           return reply({
@@ -197,12 +179,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async getListUserIds (request, reply) {
-      server.methods.services.users.listUserIds(
-        request.auth.credentials.user,
-        request.query, (err, listUserIds) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(constructUsersResponse(listUserIds))
-      })
+      sameQuery(server, request, reply, 'listUserIds')
     },
     /**
      * PUT /api/users/{id}/devices
@@ -214,8 +191,7 @@ module.exports = (server) => {
         request.params.id, request.payload,
         request.auth.credentials.user._id,
         (err, res) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(res));
+          replyJson(err, res, reply)
       })
     },
   }
