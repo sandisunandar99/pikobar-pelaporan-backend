@@ -36,8 +36,8 @@ const rdtByMonth = () => {
     {
       $match: {
         createdAt: {
-          "$gte": new Date(`${getYear}-01-01`),
-          "$lt": new Date(`${getYear}-12-31`)
+          "$gte": new Date(`${getYear}-01-01`).setHours(00, 00, 00),
+          "$lt": new Date(`${getYear}-12-31`).setHours(23, 59, 59)
         }
       }
     },
