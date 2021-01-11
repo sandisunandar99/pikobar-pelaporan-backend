@@ -5,6 +5,28 @@ const { ROLE } = require('../constant')
 const { byRole } = require('./func/filter')
 const { districtcities } = require('./func/lookup')
 
+const validationDataMonth = () => {
+  let newArray = []
+
+  for (i = 1; i < 13; i++) {
+    let obj = {}
+      obj['_id'] = i
+      obj['rdt'] = 0
+      obj['pcr'] = 0
+      newArray.push(obj);
+  }
+
+  return newArray
+}
+
+const monthProject = {
+  $cond: {
+    if: { $gt:[{ $size:"$month"}, 1] },
+    then: '$month',
+    else: validationDataMonth()
+  }
+}
+
 const conditionSummary = async (query, user) => {
   const search = await searching(query, user)
   const filter = filterSplit(query, 'test_tools', 'final_result', 'tool_tester')
@@ -26,7 +48,7 @@ const conditionSummary = async (query, user) => {
   },
   {
     '$project': {
-      'month': '$month', 'summary': '$summary',
+      'month': monthProject, 'summary': '$summary',
       'targets': '$targets'
     }
   }]
