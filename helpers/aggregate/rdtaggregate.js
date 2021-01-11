@@ -1,16 +1,18 @@
 const { searching, filterSplit } = require('./func/filter')
 const { grupFunc } = require('./func')
 const { groupingRdt, rdtByMonth } = require('./groupaggregate')
-const { ROLE } = require('../constant')
+const { ROLE, MONTH } = require('../constant')
 const { byRole } = require('./func/filter')
 const { districtcities } = require('./func/lookup')
 
 const validationDataMonth = () => {
+  const month = MONTH.EN
   let newArray = []
 
-  for (i = 1; i < 13; i++) {
+  for (let key in month) {
     let obj = {}
-      obj['_id'] = i
+      obj['_id'] = parseInt(key) + parseInt(1)
+      obj['name'] = month[key]
       obj['rdt'] = 0
       obj['pcr'] = 0
       newArray.push(obj);
@@ -21,7 +23,7 @@ const validationDataMonth = () => {
 
 const monthProject = {
   $cond: {
-    if: { $gt:[{ $size:"$month"}, 1] },
+    if: { $gt:[{ $size:'$month'}, 1] },
     then: '$month',
     else: validationDataMonth()
   }

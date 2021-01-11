@@ -1,3 +1,4 @@
+const { MONTH } = require("../constant")
 const { sumActive, sumSick, sumCondition, sumFuncNoMatch } = require("./func")
 
 const groupingCondition = (grouping, query, criteria) => {
@@ -29,6 +30,21 @@ const groupingRdt = (grouping) => {
   return params
 }
 
+const field = {
+  $addFields: {
+    name: {
+      $let: {
+        vars: {
+          monthsInString: [, ...MONTH.EN]
+        },
+        in: {
+          $arrayElemAt: ['$$monthsInString', '$_id']
+        }
+      }
+    }
+  }
+}
+
 const date = new Date()
 const getYear = date.getFullYear()
 const rdtByMonth = () => {
@@ -54,7 +70,7 @@ const rdtByMonth = () => {
           }
         },
       }
-    }, { $sort: { _id: 1 } },
+    }, { $sort: { _id: 1 } }, field
   ]
   return params
 }
