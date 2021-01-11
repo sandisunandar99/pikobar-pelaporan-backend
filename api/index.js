@@ -49,7 +49,6 @@ const register = (server, options, next) => {
   server.register(require('./category'))
   server.register(require('./country'))
   server.register(require('./dashboard'))
-  server.register(require('./logistics'))
   server.register(require('./map'))
   server.register(require('./unit'))
   server.register(require('./case_related'))
