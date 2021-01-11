@@ -189,5 +189,8 @@ module.exports = {
   TRAVEL_TYPE: {
     ABROAD: 'Dari Luar Negeri',
     DOMESTIC: 'Dari Luar Kota',
-  },
+  },MONTH:{
+    EN: ['January','February','March','April','May','June','July',
+    'August','September','October','November','December']
+  }
 }
