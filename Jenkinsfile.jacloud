@@ -119,39 +119,39 @@ pipeline {
                     // deploy kubernetes cluster production
                     withVault([configuration: configuration, vaultSecrets: secretsProd]) {   
          
-                        sh 'sed -i "s/%HOST%/${HOST}/g" kubernetes/deployment-pelaporan-api.yaml'
-                        sh 'sed -i "s/%PORT%/${PORT}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%SECRET_KEY%/${SECRET_KEY}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%HOST%/${HOST}/g" kubernetes/production/deployment-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PORT%/${PORT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SECRET_KEY%/${SECRET_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%MONGO_DB_URI%/${MONGO_DB_URI}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%MONGO_DB_URI%/${MONGO_DB_URI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%URL_PENDAFTARAN_COVID%/${URL_PENDAFTARAN_COVID}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%URL_PENDAFTARAN_COVID%/${URL_PENDAFTARAN_COVID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%URL_USER_PENDAFTARAN_COVID%/${URL_USER_PENDAFTARAN_COVID}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%URL_USER_PENDAFTARAN_COVID%/${URL_USER_PENDAFTARAN_COVID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%SMS_URL_SERVER%/${SMS_URL_SERVER}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%SMS_USERNAME%/${SMS_USERNAME}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SMS_URL_SERVER%/${SMS_URL_SERVER}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SMS_USERNAME%/${SMS_USERNAME}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%WA_URL%/${WA_URL}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%WA_USER%/${WA_USER}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%WA_URL%/${WA_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%WA_USER%/${WA_USER}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%SENTRY_DSN%/${SENTRY_DSN}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SENTRY_DSN%/${SENTRY_DSN}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
-                        sh 'sed -i "s/%APP_CONVERT%/${APP_CONVERT}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%APP_CONVERT%/${APP_CONVERT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
     
-                        sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_CLIENT_EMAIL%/${FIREBASE_CLIENT_EMAIL}/g" kubernetes/secret-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_CLIENT_ID%/${FIREBASE_CLIENT_ID}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_CLIENT_X509_CERT_URL%/${FIREBASE_CLIENT_X509_CERT_URL}/g" kubernetes/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_DATABASE_URL%/${FIREBASE_DATABASE_URL}/g" kubernetes/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_EMAIL%/${FIREBASE_CLIENT_EMAIL}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_ID%/${FIREBASE_CLIENT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_X509_CERT_URL%/${FIREBASE_CLIENT_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_DATABASE_URL%/${FIREBASE_DATABASE_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
              
-                        sh 'sed -i "s/%SMS_KEY%/${SMS_KEY}/g" kubernetes/secret-pelaporan-api.yaml'
-                        sh 'sed -i "s/%WA_TOKEN%/${WA_TOKEN}/g" kubernetes/secret-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY_ID%/${FIREBASE_PRIVATE_KEY_ID}/g" kubernetes/secret-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SMS_KEY%/${SMS_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%WA_TOKEN%/${WA_TOKEN}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY_ID%/${FIREBASE_PRIVATE_KEY_ID}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
 
 
                         sh '''
@@ -163,15 +163,15 @@ pipeline {
                             kubectl config set-credentials pelaporan-dev --client-key=client.key --embed-certs=true
                             kubectl config set-cluster $CLUSTER_NAME_JACLOUD --insecure-skip-tls-verify=true
 
-                            kubectl apply -f kubernetes/deployment-pelaporan-api.yaml --dry-run=client --validate
-                            kubectl apply -f kubernetes/service-pelaporan-api.yaml --dry-run=client --validate
-                            kubectl apply -f kubernetes/configmap-pelaporan-api.yaml --dry-run=client --validate
-                            kubectl apply -f kubernetes/secret-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/deployment-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/service-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/configmap-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/secret-pelaporan-api.yaml --dry-run=client --validate
 
-                            kubectl apply -f kubernetes/deployment-pelaporan-api.yaml
-                            kubectl apply -f kubernetes/configmap-pelaporan-api.yaml
-                            kubectl apply -f kubernetes/secret-pelaporan-api.yaml
-                            kubectl apply -f kubernetes/service-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/deployment-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/configmap-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/secret-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/service-pelaporan-api.yaml
                             kubectl get pods --namespace pikobar-pelaporan
                         '''
                     }
