@@ -6,6 +6,7 @@ const { MONTH } = require('../constant')
 const validationDataMonth = () => {
   const month = MONTH.EN
   let newArray = []
+  let newArrayRdt = []
 
   for (let key in month) {
     let obj = {}
@@ -16,15 +17,28 @@ const validationDataMonth = () => {
       newArray.push(obj);
   }
 
-  return newArray
+  for (let key in month) {
+    let obj = {}
+      obj['_id'] = parseInt(key) + parseInt(1)
+      obj['name'] = month[key]
+      obj['reaktif'] = 0
+      obj['non_reaktif'] = 0
+      obj['inkonkuslif'] = 0
+      newArrayRdt.push(obj);
+  }
+
+  return {
+    'months' : newArray,
+    'monthrdt': newArrayRdt
+  }
 }
 
-const monthProject = (month) => {
+const monthProject = (month, condition) => {
   return {
       $cond: {
       if: { $gt:[{ $size:month}, 1] },
       then: month,
-      else: validationDataMonth()
+      else: validationDataMonth()[condition]
     }
   }
 }
@@ -46,9 +60,9 @@ const conditionSummary = async (query, user) => {
   },
   {
     '$project': {
-      'month': monthProject('$month'),
-      'month_rdt': monthProject('$month_rdt'),
-      'month_pcr': monthProject('$month_pcr')
+      'month': monthProject('$month', 'months'),
+      'month_rdt': monthProject('$month_rdt', 'monthrdt'),
+      'month_pcr': monthProject('$month_pcr', 'monthrdt')
     }
   }]
   return conditions
