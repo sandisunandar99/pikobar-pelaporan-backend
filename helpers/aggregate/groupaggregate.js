@@ -1,5 +1,5 @@
 const { MONTH } = require("../constant")
-const { sumActive, sumSick, sumCondition, sumFuncNoMatch } = require("./func")
+const { sumActive, sumSick, sumCondition, sumFunc, sumFuncNoMatch } = require("./func")
 
 const groupingCondition = (grouping, query, criteria) => {
   const { filterNotGrouping } = require("./globalcondtion")
@@ -18,12 +18,12 @@ const groupingCondition = (grouping, query, criteria) => {
   return params
 }
 
-const groupingRdt = (grouping) => {
+const groupingRdt = (match, grouping) => {
   const params = {
     $group: {
       _id: grouping,
-      rdt: sumFuncNoMatch([{ $eq: ["$tool_tester", "PCR"] }]),
-      pcr: sumFuncNoMatch([{ $eq: ["$tool_tester", "RDT"] }]),
+      rdt: sumFunc(match, [{ $eq: ["$tool_tester", "PCR"] }]),
+      pcr: sumFunc(match, [{ $eq: ["$tool_tester", "RDT"] }]),
     }
   }
 
@@ -45,18 +45,16 @@ const field = {
   }
 }
 
-const date = new Date()
-const getYear = date.getFullYear()
-const rdtByMonth = () => {
-  const params = [
-    {
-      $match: {
-        createdAt: {
-          "$gte": new Date(`${getYear}-01-01`).setHours(00, 00, 00),
-          "$lt": new Date(`${getYear}-12-31`).setHours(23, 59, 59)
-        }
-      }
-    },
+// const date = new Date()
+// const getYear = date.getFullYear()
+// {
+//   createdAt: {
+//     "$gte": new Date(`${getYear}-01-01`).setHours(00, 00, 00),
+//     "$lt": new Date(`${getYear}-12-31`).setHours(23, 59, 59)
+//   }
+// }
+const byMonth = (match) => {
+  const params = [ match,
     {
       "$group": {
         "_id": { $month: '$createdAt' },
@@ -75,6 +73,28 @@ const rdtByMonth = () => {
   return params
 }
 
+const filterEquivalent = (status, result) => {
+  const filter = [
+    { $eq: ["$tool_tester", status] },
+    { $eq: ["$final_result", result ] }
+  ]
+  return sumFuncNoMatch(filter)
+}
+
+const byMonthRdt = (match, status) => {
+  const params = [ match,
+    {
+      '$group': {
+        '_id': { $month: '$createdAt' },
+        'reaktif': filterEquivalent(status, 'REAKTIF'),
+        'non_reaktif': filterEquivalent(status, 'NON REAKTIF'),
+        'inkonkuslif': filterEquivalent(status, 'INKONKLUSIF')
+      }
+    }, { $sort: { _id: 1 } }, field
+  ]
+  return params
+}
+
 module.exports = {
-  groupingCondition, groupingRdt, rdtByMonth
+  groupingCondition, groupingRdt, byMonth, byMonthRdt
 }
