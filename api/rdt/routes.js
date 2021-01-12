@@ -39,26 +39,28 @@ module.exports = (server) => {
     }
   }
 
-  const importRDT = {
-    method: 'POST',
-    path: '/rdt-import',
-    config: {
-      auth: 'jwt',
-      description: 'RDT import',
-      tags: ['api', 'rdt'],
-      payload: {
-        maxBytes: 1000 * 1000 * 25,
-        output: 'stream',
-        parse: true,
-        allow: 'multipart/form-data'
+  const routeImport = (method, path, callback) => {
+    return {
+      method: method,
+      path: path,
+      config: {
+        auth: 'jwt',
+        description: 'RDT import',
+        tags: ['api', 'rdt'],
+        payload: {
+          maxBytes: 1000 * 1000 * 25,
+          output: 'stream',
+          parse: true,
+          allow: 'multipart/form-data'
+        },
+        pre: [ convertToJson, systemBusy],
       },
-      pre: [ convertToJson, systemBusy],
-    },
-    handler: handlers.ImportRdt(server)
+      handler: handlers[callback](server),
+    }
   }
 
   return [
-    importRDT,
+    routeImport('POST','/rdt-import','ImportRdt'),
     route('GET', '/rdt', inputValidations.RdtQueryValidations, [CheckRoleView, checkIfDataNotNull], 'ListRdt'),
     route('GET', '/rdt/list-idcase', inputValidations.rdtSearchValidation, [getDataExternal], 'GetListIdCase'),
     route('GET', '/rdt/list-idcase-detail', null, [searchIdcasefromInternal, searchIdcasefromExternal], 'GetListIdCaseDetail'),
