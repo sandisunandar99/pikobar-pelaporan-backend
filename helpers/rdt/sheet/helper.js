@@ -4,12 +4,14 @@ const sheet = {
 
 const createPayload = (data, uniqueBatchId) =>{
   return {
-    ...createRdt(data),
+    ...createRdt1(data),
+    ...createRdt2(data),
     source_data: `import-rdt-${uniqueBatchId}`
   }
 }
 
-const createRdt = (data) =>{
+
+const createRdt1 = (data) => {
   return {
     no: sheet.getNum(data),
     target: sheet.getTarget(data),
@@ -26,7 +28,13 @@ const createRdt = (data) =>{
     address_subdistrict_name: sheet.getAddressSubdistrictName(data),
     address_village_code: sheet.getAddressVillageCode(data),
     address_village_name: sheet.getAddressVillageName(data),
-    address_street: sheet.getAddressStreet(data),
+    address_street: sheet.getAddressStreet(data)
+  }
+}
+
+
+const createRdt2 = (data) =>{
+  return {
     nationality: sheet.getNationality(data),
     nationality_name: sheet.getNationalityName(data),
     tool_tester: sheet.getToolTester(data),
