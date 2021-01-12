@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const rules = require('../../../api/rdt/validations/input')
 const lang =require('../../dictionary/id.json')
-const {transformFieldErrors} = require('../../cases/sheet/validator')
+const {transformedErrorResponse} = require('../../cases/sheet/validator')
 
 const validation = async(payload) => {
   const errors ={}
@@ -63,19 +63,6 @@ const translateLangId = (transformedErrors, errField, errMsg) => {
   }
 
   return transformedErrors
-}
-
-const transformedErrorResponse = (errors) => {
-  // transform error response
-  const transformed = []
-  for (let i in errors) {
-    const rowErrors = transformFieldErrors(errors, i)
-    transformed.push({
-      rowNumber: i,
-      data: rowErrors,
-    })
-  }
-  return transformed
 }
 
 
