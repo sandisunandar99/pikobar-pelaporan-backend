@@ -1,8 +1,8 @@
 const dir = './upload/'
 const xlsx = require('node-xlsx')
-const mongoose = require('mongoose')
 const config = require('../sheet/config.json')
 const {createPayload} = require('./helper')
+const {handleFileUpload, handleFileUnlink} = require('../../cases/sheet/handler')
 
 const extractToJson = async (request) => {
     //  generate unique import batch id (debug purpose)
@@ -33,36 +33,6 @@ const extractToJson = async (request) => {
     return payload
 }
 
-const handleFileUpload = file => {
-  const fs = require('fs')
-  const dir = './upload/'
-
-  return new Promise((resolve, reject) => {
-    var filename = new Date().getTime() + '_' + file.hapi.filename.replace(' ', '')
-    const data = file._data
-
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir)
-    }
-
-    fs.writeFile(dir + filename, data, err => {
-      if (err) {
-        return callback(err, null)
-      }
-      resolve({ filename: filename })
-    })
-  })
-}
-
-const handleFileUnlink = file => {
-  const fs = require('fs')
-  return fs.unlink(file, (err) => {
-      if (err) {
-        console.error(err)
-        return
-      }
-  })
-}
 
 module.exports ={
   extractToJson
