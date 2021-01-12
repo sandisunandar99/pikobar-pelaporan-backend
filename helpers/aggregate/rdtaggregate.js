@@ -1,12 +1,13 @@
 const { searching, filterSplit } = require('./func/filter')
 const { dateFilter } = require('../filter/date')
-const { byMonth, byMonthRdt } = require('./groupaggregate')
+const { byMonth, byMonthRdt, byMonthPcr } = require('./groupaggregate')
 const { MONTH } = require('../constant')
 
 const validationDataMonth = () => {
   const month = MONTH.EN
   let newArray = []
   let newArrayRdt = []
+  let newArrayPcr = []
 
   for (let key in month) {
     let obj = {}
@@ -27,9 +28,20 @@ const validationDataMonth = () => {
       newArrayRdt.push(obj);
   }
 
+  for (let key in month) {
+    let obj = {}
+      obj['_id'] = parseInt(key) + parseInt(1)
+      obj['name'] = month[key]
+      obj['positif'] = 0
+      obj['negatif'] = 0
+      obj['invalid'] = 0
+      newArrayPcr.push(obj);
+  }
+
   return {
     'months' : newArray,
-    'monthrdt': newArrayRdt
+    'monthrdt': newArrayRdt,
+    'monthpcr': newArrayPcr
   }
 }
 
@@ -55,14 +67,14 @@ const conditionSummary = async (query, user) => {
     '$facet': {
       'month': byMonth(match),
       'month_rdt': byMonthRdt(match, 'RDT'),
-      'month_pcr': byMonthRdt(match, 'PCR')
+      'month_pcr': byMonthPcr(match, 'PCR')
     }
   },
   {
     '$project': {
       'month': monthProject('$month', 'months'),
       'month_rdt': monthProject('$month_rdt', 'monthrdt'),
-      'month_pcr': monthProject('$month_pcr', 'monthrdt')
+      'month_pcr': monthProject('$month_pcr', 'monthpcr')
     }
   }]
   return conditions
