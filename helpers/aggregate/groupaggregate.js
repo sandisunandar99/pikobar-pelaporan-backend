@@ -81,6 +81,8 @@ const filterEquivalent = (status, result) => {
   return sumFuncNoMatch(filter)
 }
 
+const month = { $month: '$createdAt' }
+
 const byMonthRdt = (match, status) => {
   const params = [ match,
     {
@@ -99,7 +101,7 @@ const byMonthPcr = (match, status) => {
   const params = [ match,
     {
       '$group': {
-        '_id': { $month: '$createdAt' },
+        '_id': month,
         'positif': filterEquivalent(status, 'POSITIF'),
         'negaitf': filterEquivalent(status, 'NEGATIF'),
         'invalid': filterEquivalent(status, 'INVALID')
