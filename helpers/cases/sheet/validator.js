@@ -198,5 +198,5 @@ const transformErrorDescription = (desc) => {
 
 module.exports = {
   validate,
-  transformFieldErrors
+  transformedErrorResponse
 }
