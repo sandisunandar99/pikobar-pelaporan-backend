@@ -36,7 +36,7 @@ const validationDataMonth = () => {
 const monthProject = (month, condition) => {
   return {
       $cond: {
-      if: { $gt:[{ $size:month}, 1] },
+      if: { $gt: [{ $size:month}, 1] },
       then: month,
       else: validationDataMonth()[condition]
     }
