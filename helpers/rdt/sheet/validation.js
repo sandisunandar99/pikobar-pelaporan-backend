@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const rules = require('../../../api/rdt/validations/input')
 const lang =require('../../dictionary/id.json')
-const {transformedErrorResponse} = require('../../cases/sheet/validator')
+const {transformedErrorResponse, translateLangId} = require('../../cases/sheet/validator')
 
 const validation = async(payload) => {
   const errors ={}
@@ -45,23 +45,6 @@ const joiErrors = (joiResult) => {
       errMsg
     )
   }
-  return transformedErrors
-}
-
-const translateLangId = (transformedErrors, errField, errMsg) => {
-  if (errMsg.replace && lang[errField]) {
-    errMsg = errMsg.replace(errField, lang[errField])
-    errField = lang[errField]
-  }
-
-  if (!Array.isArray(transformedErrors[errField])) {
-    transformedErrors[errField] = []
-  }
-
-  if (!transformedErrors[errField].includes(errMsg)) {
-    transformedErrors[errField].push(errMsg)
-  }
-
   return transformedErrors
 }
 
