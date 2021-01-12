@@ -35,25 +35,23 @@ const conditionSummary = async (query, user) => {
   const filter = filterSplit(query, 'test_tools', 'final_result', 'tool_tester')
   const groups = byRole(ROLE, user)
   const filterDate = dateFilter(query, 'createdAt')
-  const conditions = [{
+  const match = {
     $match: { $and: [search, { ...filter, ...filterDate } ] }
-  },
-  { ...districtcities },
+  }
+  const conditions = [ match, { ...districtcities },
   {
     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$kota', 0 ] }, '$$ROOT' ] } }
   },
   { '$project' : { 'kota': 0 } },
   {
     '$facet': {
-      'month': rdtByMonth(filterDate),
-      'summary': [groupingRdt(groups)],
-      'targets': [grupFunc([search, { ...filter, ...filterDate } ], '$target')],
+      'month': rdtByMonth(match), 'summary': [groupingRdt([{...search, ...filter } ], groups)],
+      'targets': [grupFunc([ match ], '$target')],
     }
   },
   {
     '$project': {
-      'month': monthProject, 'summary': '$summary',
-      'targets': '$targets'
+      'month': monthProject, 'summary': '$summary', 'targets': '$targets'
     }
   }]
   return conditions

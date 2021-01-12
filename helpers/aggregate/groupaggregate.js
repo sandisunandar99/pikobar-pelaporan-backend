@@ -1,5 +1,5 @@
 const { MONTH } = require("../constant")
-const { sumActive, sumSick, sumCondition, sumFuncNoMatch } = require("./func")
+const { sumActive, sumSick, sumCondition, sumFunc } = require("./func")
 
 const groupingCondition = (grouping, query, criteria) => {
   const { filterNotGrouping } = require("./globalcondtion")
@@ -18,12 +18,12 @@ const groupingCondition = (grouping, query, criteria) => {
   return params
 }
 
-const groupingRdt = (grouping) => {
+const groupingRdt = (match, grouping) => {
   const params = {
     $group: {
       _id: grouping,
-      rdt: sumFuncNoMatch([{ $eq: ["$tool_tester", "PCR"] }]),
-      pcr: sumFuncNoMatch([{ $eq: ["$tool_tester", "RDT"] }]),
+      rdt: sumFunc(match, [{ $eq: ["$tool_tester", "PCR"] }]),
+      pcr: sumFunc(match, [{ $eq: ["$tool_tester", "RDT"] }]),
     }
   }
 
@@ -54,10 +54,7 @@ const field = {
 //   }
 // }
 const rdtByMonth = (match) => {
-  const params = [
-    {
-      $match: match
-    },
+  const params = [ match,
     {
       "$group": {
         "_id": { $month: '$createdAt' },
