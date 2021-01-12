@@ -73,33 +73,25 @@ const byMonth = (match) => {
   return params
 }
 
+const filterEquivalent = (status, result) => {
+  return {
+    $sum: {
+      $cond: [{ $and: [
+        { $eq: ["$tool_tester", status] },
+        { $eq: ["$final_result", result ] }
+      ] }, 1, 0]
+    }
+  }
+}
+
 const byMonthRdt = (match, status) => {
   const params = [ match,
     {
-      "$group": {
-        "_id": { $month: '$createdAt' },
-        "reaktif": {
-          $sum: {
-            $cond: [{ $and: [
-              { $eq: ["$tool_tester", status] },
-              { $eq: ["$final_result", "REAKTIF"] }
-            ] }, 1, 0]
-          }
-        }, "non_reaktif": {
-          $sum: {
-            $cond: [{ $and: [
-              { $eq: ["$tool_tester", status] },
-              { $eq: ["$final_result", "NON REAKTIF"] }
-            ] }, 1, 0]
-          }
-        },"inkonkuslif": {
-          $sum: {
-            $cond: [{ $and: [
-              { $eq: ["$tool_tester", status] },
-              { $eq: ["$final_result", "INKONKLUSIF"] }
-            ] }, 1, 0]
-          }
-        }
+      '$group': {
+        '_id': { $month: '$createdAt' },
+        'reaktif': filterEquivalent(status, 'REAKTIF'),
+        'non_reaktif': filterEquivalent(status, 'NON REAKTIF'),
+        'inkonkuslif': filterEquivalent(status, 'INKONKLUSIF')
       }
     }, { $sort: { _id: 1 } }, field
   ]
