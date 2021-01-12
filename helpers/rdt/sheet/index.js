@@ -18,21 +18,20 @@ const extractToJson = async (request) => {
 
     for (let i in dataSheet) {
       const data = dataSheet[i]
-      let obj = await createPayload(data, uniqueBatchId)
+      let x = await createPayload(data, uniqueBatchId)
 
-      Object.keys(obj).map(k => {
-        if (obj[k] && obj[k].trim) {
-          obj[k] = obj[k].trim()
+      Object.keys(x).map(k => {
+        if (x[k] && x[k].trim) {
+          x[k] = x[k].trim()
         }
       })
 
-      payload.push(obj)
+      payload.push(x)
     }
 
     handleFileUnlink(dir + uploaded.filename)
     return payload
 }
-
 
 module.exports ={
   extractToJson
