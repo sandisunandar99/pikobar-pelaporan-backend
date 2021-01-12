@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const rules = require('../../../api/rdt/validations/input')
 const lang =require('../../dictionary/id.json')
+const {transformFieldErrors} = require('../../cases/sheet/validator')
 
 const validation = async(payload) => {
   const errors ={}
@@ -75,62 +76,6 @@ const transformedErrorResponse = (errors) => {
     })
   }
   return transformed
-}
-
-const transformFieldErrors = (errors, index) => {
-  const rowErrors = []
-
-  for (let error in errors[index]) {
-    const fieldErrors = errors[index][error] || {}
-
-    for (let fieldName in fieldErrors) {
-      const desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
-      const transformedFieldErrors = {}
-
-      transformedFieldErrors.columnName = fieldName
-      transformedFieldErrors.description = desc
-      rowErrors.push(transformedFieldErrors)
-    }
-
-  }
-
-  return rowErrors
-}
-
-const concatErrorsOnSpecificFIeld = (fieldErrors, fieldName) => {
-  let desc = ''
-  if (fieldErrors[fieldName].join) {
-    const rawDesc = fieldErrors[fieldName].join(',')
-    desc = transformErrorDescription(rawDesc)
-  }
-
-  return desc
-}
-
-const transformErrorDescription = (desc) => {
-  if (!desc || !desc.replace) {
-    return desc
-  }
-
-  const mapObj = {
-    'is required': 'Harus diisi/Belum sesuai',
-    'must be a string': 'Harus berisi huruf alfabet',
-    'must be a number': 'Harus berisi angka',
-    'length must be 16 characters long': 'Harus 16 digit',
-  }
-
-  const expression = [
-    'is required',
-    '|must be a string',
-    '|must be a number',
-    '|length must be 16 characters long',
-  ].join('')
-
-  const result = desc.replace(new RegExp(expression, 'gi'), (matched) => {
-    return mapObj[matched]
-  })
-
-  return result
 }
 
 
