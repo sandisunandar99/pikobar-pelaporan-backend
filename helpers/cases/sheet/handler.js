@@ -82,4 +82,6 @@ module.exports = {
   isNikExists,
   extractSheetToJson,
   isDistrictCodeValid,
+  handleFileUpload,
+  handleFileUnlink
 }
