@@ -119,6 +119,7 @@ pipeline {
                     // deploy kubernetes cluster production
                     withVault([configuration: configuration, vaultSecrets: secretsProd]) {   
          
+                        sh 'sed -i "s/%VERSION%/${VERSION}/g" kubernetes/production/deployment-pelaporan-api.yaml'
                         sh 'sed -i "s/%HOST%/${HOST}/g" kubernetes/production/deployment-pelaporan-api.yaml'
                         sh 'sed -i "s/%PORT%/${PORT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%SECRET_KEY%/${SECRET_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
