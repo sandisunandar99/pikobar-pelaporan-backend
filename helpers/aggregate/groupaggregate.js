@@ -53,7 +53,7 @@ const field = {
 //     "$lt": new Date(`${getYear}-12-31`).setHours(23, 59, 59)
 //   }
 // }
-const rdtByMonth = (match) => {
+const byMonth = (match) => {
   const params = [ match,
     {
       "$group": {
@@ -73,6 +73,39 @@ const rdtByMonth = (match) => {
   return params
 }
 
+const byMonthRdt = (match, status) => {
+  const params = [ match,
+    {
+      "$group": {
+        "_id": { $month: '$createdAt' },
+        "reaktif": {
+          $sum: {
+            $cond: [{ $and: [
+              { $eq: ["$tool_tester", status] },
+              { $eq: ["$final_result", "REAKTIF"] }
+            ] }, 1, 0]
+          }
+        }, "non_reaktif": {
+          $sum: {
+            $cond: [{ $and: [
+              { $eq: ["$tool_tester", status] },
+              { $eq: ["$final_result", "NON REAKTIF"] }
+            ] }, 1, 0]
+          }
+        },"inkonkuslif": {
+          $sum: {
+            $cond: [{ $and: [
+              { $eq: ["$tool_tester", status] },
+              { $eq: ["$final_result", "INKONKLUSIF"] }
+            ] }, 1, 0]
+          }
+        }
+      }
+    }, { $sort: { _id: 1 } }, field
+  ]
+  return params
+}
+
 module.exports = {
-  groupingCondition, groupingRdt, rdtByMonth
+  groupingCondition, groupingRdt, byMonth, byMonthRdt
 }

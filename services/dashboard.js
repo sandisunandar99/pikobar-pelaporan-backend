@@ -2,9 +2,11 @@ const Rdt = require('../models/Rdt')
 const Sql = require('../helpers/sectionnumber')
 const { conditionGender } = require('../helpers/aggregate/rdtgender')
 const { conditionSummary } = require('../helpers/aggregate/rdtaggregate')
-const { conditionAge} = require('../helpers/aggregate/rdtage')
+const { conditionAge } = require('../helpers/aggregate/rdtage')
+const { conditionLocation } = require('../helpers/aggregate/rdtlocation')
 const servicesInput = 'services.dashboard.summaryInputTest'
 const servicesResult = 'services.dashboard.summaryTestResult'
+const servicesLocation = 'services.dashboard.summaryTestResultLocation'
 const servicesGender = 'services.dashboard.summaryGender'
 const servicesAge = 'services.dashboard.summaryAge'
 
@@ -22,6 +24,18 @@ const summaryTestResult = async (query, user, callback) => {
   try {
     const queryParam = query
     const condition = await conditionSummary(queryParam, user)
+    const resultCount = await Rdt.aggregate(condition)
+    verificationData(resultCount, callback)
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+const summaryTestResultLocation = async (query, user, callback) => {
+  try {
+    const queryParam = query
+    const users = user
+    const condition = await conditionLocation(queryParam, users)
     const resultCount = await Rdt.aggregate(condition)
     verificationData(resultCount, callback)
   } catch (e) {
@@ -64,6 +78,7 @@ const verificationData = (result, callback) => {
 module.exports = [
   { name: servicesInput ,method: summaryInputTest },
   { name: servicesResult, method: summaryTestResult},
+  { name: servicesLocation, method: summaryTestResultLocation},
   { name: servicesGender, method: summaryGender },
   { name: servicesAge, method: summaryAge },
 ]

@@ -18,6 +18,15 @@ const summaryTestResult = (server) => {
   }
 }
 
+const summaryTestResultLocation = (server) => {
+  return async (request, reply) => {
+    await requestIfSame(
+      server, "dashboard", "summaryTestResultLocation",
+      request, reply
+    )
+  }
+}
+
 const summaryTestResultGender = (server) => {
   return async (request, reply) => {
     await requestIfSame(
@@ -38,5 +47,5 @@ const summaryTestResultAge = (server) => {
 
 module.exports = {
   summaryInputTest, summaryTestResult, summaryTestResultGender,
-  summaryTestResultAge
+  summaryTestResultAge, summaryTestResultLocation
 }
