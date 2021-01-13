@@ -1,35 +1,38 @@
 const { searching, filterSplit } = require('./func/filter')
 const { dateFilter } = require('../filter/date')
-const { byMonth, byMonthRdt } = require('./groupaggregate')
+const { byMonth, byMonthRdt, byMonthPcr } = require('./groupaggregate')
 const { MONTH } = require('../constant')
 
+const month = MONTH.EN
+let newArray = []
+let newArrayRdt = []
+let newArrayPcr = []
+
 const validationDataMonth = () => {
-  const month = MONTH.EN
-  let newArray = []
-  let newArrayRdt = []
-
   for (let key in month) {
     let obj = {}
-      obj['_id'] = parseInt(key) + parseInt(1)
-      obj['name'] = month[key]
-      obj['rdt'] = 0
-      obj['pcr'] = 0
-      newArray.push(obj);
+    let objRdt = {}
+    let objPcr = {}
+    obj['_id'] = parseInt(key) + parseInt(1)
+    obj['name'] = month[key]
+    obj['rdt'] = 0
+    obj['pcr'] = 0
+    newArray.push(obj)
+    objRdt['_id'] = parseInt(key) + parseInt(1)
+    objRdt['name'] = month[key]
+    objRdt['reaktif'] = 0
+    objRdt['non_reaktif'] = 0
+    objRdt['inkonkuslif'] = 0
+    newArrayRdt.push(objRdt)
+    objPcr['_id'] = parseInt(key) + parseInt(1)
+    objPcr['name'] = month[key]
+    objPcr['positif'] = 0
+    objPcr['negatif'] = 0
+    objPcr['invalid'] = 0
+    newArrayPcr.push(objPcr)
   }
-
-  for (let key in month) {
-    let obj = {}
-      obj['_id'] = parseInt(key) + parseInt(1)
-      obj['name'] = month[key]
-      obj['reaktif'] = 0
-      obj['non_reaktif'] = 0
-      obj['inkonkuslif'] = 0
-      newArrayRdt.push(obj);
-  }
-
   return {
-    'months' : newArray,
-    'monthrdt': newArrayRdt
+    'months' : newArray, 'monthrdt': newArrayRdt, 'monthpcr': newArrayPcr
   }
 }
 
@@ -55,14 +58,14 @@ const conditionSummary = async (query, user) => {
     '$facet': {
       'month': byMonth(match),
       'month_rdt': byMonthRdt(match, 'RDT'),
-      'month_pcr': byMonthRdt(match, 'PCR')
+      'month_pcr': byMonthPcr(match, 'PCR')
     }
   },
   {
     '$project': {
       'month': monthProject('$month', 'months'),
       'month_rdt': monthProject('$month_rdt', 'monthrdt'),
-      'month_pcr': monthProject('$month_pcr', 'monthrdt')
+      'month_pcr': monthProject('$month_pcr', 'monthpcr')
     }
   }]
   return conditions

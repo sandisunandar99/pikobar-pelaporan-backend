@@ -81,6 +81,8 @@ const filterEquivalent = (status, result) => {
   return sumFuncNoMatch(filter)
 }
 
+const month = { $month: '$createdAt' }
+
 const byMonthRdt = (match, status) => {
   const params = [ match,
     {
@@ -95,6 +97,20 @@ const byMonthRdt = (match, status) => {
   return params
 }
 
+const byMonthPcr = (match, status) => {
+  const params = [ match,
+    {
+      '$group': {
+        '_id': month,
+        'positif': filterEquivalent(status, 'POSITIF'),
+        'negaitf': filterEquivalent(status, 'NEGATIF'),
+        'invalid': filterEquivalent(status, 'INVALID')
+      }
+    }, { $sort: { _id: 1 } }, field
+  ]
+  return params
+}
+
 module.exports = {
-  groupingCondition, groupingRdt, byMonth, byMonthRdt
+  groupingCondition, groupingRdt, byMonth, byMonthRdt, byMonthPcr
 }
