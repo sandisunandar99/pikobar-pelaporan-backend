@@ -32,8 +32,19 @@ const validationDataMonth = () => {
     newArrayPcr.push(objPcr)
   }
   return {
-    'months' : newArray, 'monthrdt': newArrayRdt, 'monthpcr': newArrayPcr
+    'months' : filteredArr(newArray), 'monthrdt': filteredArr(newArrayRdt), 'monthpcr': filteredArr(newArrayPcr)
   }
+}
+
+const filteredArr = (data) => {
+  return data.reduce((acc, current) => {
+    const x = acc.find(item => item._id === current._id);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, [])
 }
 
 const monthProject = (month, condition) => {
