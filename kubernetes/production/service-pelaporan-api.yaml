@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  pelaporan-api-app
+  namespace: pikobar-pelaporan
+  labels:
+    app:  pelaporan-api-app
+spec:
+  selector:
+    app:  pelaporan-api-app
+  ports:
+  - port: 3333
+    targetPort: 3333
+  type: ClusterIP
