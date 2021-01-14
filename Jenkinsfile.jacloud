@@ -147,11 +147,13 @@ pipeline {
                         sh 'sed -i "s/%FIREBASE_CLIENT_X509_CERT_URL%/${FIREBASE_CLIENT_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_DATABASE_URL%/${FIREBASE_DATABASE_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
+                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
              
                         sh 'sed -i "s/%SMS_KEY%/${SMS_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
                         sh 'sed -i "s/%WA_TOKEN%/${WA_TOKEN}/g" kubernetes/production/secret-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_PRIVATE_KEY_ID%/${FIREBASE_PRIVATE_KEY_ID}/g" kubernetes/production/secret-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        
 
 
                         sh '''
