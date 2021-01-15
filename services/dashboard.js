@@ -1,5 +1,6 @@
 const Rdt = require('../models/Rdt')
 const Sql = require('../helpers/sectionnumber')
+const { CRITERIA } = require('../helpers/constant')
 const { conditionGender } = require('../helpers/aggregate/rdtgender')
 const { conditionSummary } = require('../helpers/aggregate/rdtaggregate')
 const { conditionAge } = require('../helpers/aggregate/rdtage')
@@ -37,7 +38,25 @@ const summaryTestResultLocation = async (query, user, callback) => {
     const users = user
     const condition = await conditionLocation(queryParam, users)
     const resultCount = await Rdt.aggregate(condition)
-    verificationData(resultCount, callback)
+    const manipulateData = resultCount.map((row) => {
+      row.targets.map((i) => {
+        if (i._id === CRITERIA.CLOSE){
+          i._id = CRITERIA.CLOSE_ID
+        }
+        if (i._id === CRITERIA.SUS){
+          i._id = CRITERIA.SUS_ID
+        }
+        if (i._id === CRITERIA.PROB){
+          i._id = CRITERIA.PROB_ID
+        }
+        if (i._id === CRITERIA.CONF){
+          i._id = CRITERIA.CONF_ID
+        }
+        return i
+      })
+      return row
+    })
+    verificationData(manipulateData, callback)
   } catch (e) {
     callback(e, null)
   }

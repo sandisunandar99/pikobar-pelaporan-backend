@@ -22,8 +22,8 @@ const groupingRdt = (match, grouping) => {
   const params = {
     $group: {
       _id: grouping,
-      rdt: sumFunc(match, [{ $eq: ["$tool_tester", "PCR"] }]),
-      pcr: sumFunc(match, [{ $eq: ["$tool_tester", "RDT"] }]),
+      rdt: sumFunc(match, "$tool_tester", "PCR"),
+      pcr: sumFunc(match, "$tool_tester", "RDT"),
     }
   }
 
