@@ -34,9 +34,7 @@ const summaryTestResult = async (query, user, callback) => {
 
 const summaryTestResultLocation = async (query, user, callback) => {
   try {
-    const queryParam = query
-    const users = user
-    const condition = await conditionLocation(queryParam, users)
+    const condition = await conditionLocation(query, user)
     const resultCount = await Rdt.aggregate(condition)
     const manipulateData = resultCount.map((row) => {
       row.targets.map((i) => {
