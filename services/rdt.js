@@ -63,14 +63,10 @@ async function ListRdt (query, user, callback) {
   if(query.test_address_district_code){
     params.test_address_district_code = query.test_address_district_code;
   }
-   if (user.role == "dinkesprov" || user.role == "superadmin") {
-     if (query.address_district_code) {
-       params.address_district_code = query.address_district_code;
-     }
-   }
-  if(user.role == "dinkeskota"){
-    // params.author = new ObjectId(user._id);
-    params.author_district_code = user.code_district_city;
+  if (user.role == "dinkesprov" || user.role == "superadmin") {
+    if (query.address_district_code) {
+      params.address_district_code = query.address_district_code;
+    }
   }
 
   if(query.start_date && query.end_date){
