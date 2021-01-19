@@ -1,4 +1,3 @@
-'use strict'
 const Case = require('../models/Case')
 const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
 const { topAggregate }  = require('../helpers/aggregate/topaggregate')
