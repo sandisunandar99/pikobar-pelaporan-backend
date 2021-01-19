@@ -611,7 +611,7 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 function updateRdt (request, author, callback) {
   const id = request.params.id
-  const payload = request.payload
+  let payload = request.payload
 
   delete payload._id
   // update Rdt

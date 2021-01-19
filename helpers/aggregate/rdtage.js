@@ -25,7 +25,7 @@ const paramGroup = (group, value) => {
 const conditionAge = async (query, user) => {
   const search = await searching(query, user)
   const filter = filterSplit(query, 'test_tools', 'final_result', 'tool_tester')
-  const filterDate = dateFilter(query, 'createdAt')
+  const filterDate = dateFilter(query, 'test_date')
   const conditions = [{
     $match: {
       $and: [search, { ...filter, ...filterDate }]
