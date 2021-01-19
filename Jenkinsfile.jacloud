@@ -120,7 +120,7 @@ pipeline {
                     withVault([configuration: configuration, vaultSecrets: secretsProd]) {   
          
                         sh 'sed -i "s/%VERSION%/${VERSION}/g" kubernetes/production/deployment-pelaporan-api.yaml'
-                        sh 'sed -i "s/%HOST%/${HOST}/g" kubernetes/production/deployment-pelaporan-api.yaml'
+                        sh 'sed -i "s/%HOST%/${HOST}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%PORT%/${PORT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%SECRET_KEY%/${SECRET_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
@@ -142,17 +142,18 @@ pipeline {
 
     
                         sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_CLIENT_EMAIL%/${FIREBASE_CLIENT_EMAIL}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_EMAIL%/${FIREBASE_CLIENT_EMAIL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_CLIENT_ID%/${FIREBASE_CLIENT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_CLIENT_X509_CERT_URL%/${FIREBASE_CLIENT_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_DATABASE_URL%/${FIREBASE_DATABASE_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
 
              
                         sh 'sed -i "s/%SMS_KEY%/${SMS_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
                         sh 'sed -i "s/%WA_TOKEN%/${WA_TOKEN}/g" kubernetes/production/secret-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_PRIVATE_KEY_ID%/${FIREBASE_PRIVATE_KEY_ID}/g" kubernetes/production/secret-pelaporan-api.yaml'
-                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        
 
 
                         sh '''
