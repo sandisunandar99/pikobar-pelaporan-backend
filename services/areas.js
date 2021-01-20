@@ -9,10 +9,10 @@ const sameCondition = async (schema, condition, sort) => {
   return await schema.find(condition).sort(sort)
 }
 
-const condition = (column, value, sortColumn, sortValue) => {
+const condition = (kecamatan_kode) => {
   return {
-    'where': { [column] : [value] },
-    'sort': { [sortColumn] : [sortValue] }
+    'where': { kemendagri_kecamatan_kode : kecamatan_kode },
+    'sort': { kemendagri_kecamatan_nama : 'asc' }
   }
 }
 
@@ -61,10 +61,7 @@ const getSubDistrict = async (city_code, request, callback) => {
 
 const getSubDistrictDetail = async (kecamatan_kode, callback) => {
   try {
-    const { where, sort } = condition(
-      'kemendagri_kecamatan_kode', kecamatan_kode,
-      'kemendagri_kecamatan_nama', 'asc'
-    )
+    const { where, sort } = condition(kecamatan_kode)
     const res = await sameCondition(SubDistrict, where, sort)
     callback(null, res.map(res => res.toJSONFor()))
   } catch (error) {
@@ -90,11 +87,9 @@ const getVillage = async (kecamatan_code, request, callback) => {
 
 const getVillageDetail = async (desa_kode, callback) => {
   try {
-    const { where, sort } = condition(
-      'kemendagri_desa_kode', desa_kode,
-      'kemendagri_desa_nama', 'asc'
-    )
-    const res = await sameCondition(Village, where, sort)
+    const condition = { kemendagri_desa_kode: desa_kode }
+    const sort = { kemendagri_desa_nama: 'asc' }
+    const res = await sameCondition(Village, condition, sort)
     callback(null, res.map(res => res.toJSONFor()))
   } catch (error) {
     callback(error, null)
