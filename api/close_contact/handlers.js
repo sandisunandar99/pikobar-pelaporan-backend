@@ -105,34 +105,6 @@ module.exports = (server) => {
         })
     },
     /**
-     *
-     *
-     * @param {*} request
-     * @param {*} reply
-     */
-    async ListCloseContactCaseV2(request, reply) {
-      server.methods.services.closeContacts.v2.getByCase(
-        request.pre.cases,
-        (err, result) => {
-          replyJson(err, result, reply)
-        })
-    },
-    /**
-     * POST /api/cases/{caseId}/close-contacts-v2
-     * @param {*} request
-     * @param {*} reply
-     */
-    async CreateCloseContactV2(request, reply) {
-      server.methods.services.closeContacts.v2.create(
-        server.methods.services,
-        request.pre,
-        request.auth.credentials.user,
-        request.payload,
-        (err, result) => {
-          replyJson(err, result, reply)
-        })
-    },
-    /**
      * PUT /api/cases/{caseId}/close-contacts-v2
      * @param {*} request
      * @param {*} reply
