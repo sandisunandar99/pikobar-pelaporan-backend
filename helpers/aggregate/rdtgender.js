@@ -8,10 +8,11 @@ const conditionGender = async (query, user) => {
   const male = [{ $eq: ["$gender", "L"] }]
   const female = [{ $eq: ["$gender", "P"] }]
   const filterDate = dateFilter(query, 'createdAt')
-  const conditions = [{ $match: {
+  const match = { $match: {
     $and: [search, { ...filter, ...filterDate }]
     }
-  },
+  }
+  const conditions = [ match,
     {
       $group: {
         _id: 'gender',
