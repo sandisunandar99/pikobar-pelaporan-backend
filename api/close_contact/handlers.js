@@ -1,6 +1,6 @@
 const { isDirty } = require('../../helpers/custom')
 const { replyJson, constructErrorResponse } = require('../helpers')
-const { funcIfSame } = require('../../helpers/request')
+const { funcIfSame, requestIfSame } = require('../../helpers/request')
 
 module.exports = (server) => {
   return {
@@ -10,10 +10,8 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async ListCloseContact(request, reply) {
-      server.methods.services.closeContacts.index(
-        request.query,
-        request.auth.credentials.user,
-        (err, result) => { replyJson(err, result, reply)}
+      return await requestIfSame(server, 'closeContacts', 'index',
+        request, reply
       )
     },
     /**
@@ -22,9 +20,8 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async ListCloseContactCase(request, reply) {
-      server.methods.services.closeContacts.getByCase(
-        request.params.caseId,
-        (err, result) => { replyJson(err, result, reply) }
+      return await funcIfSame(server, 'closeContacts', 'getByCase',
+        request, 'caseId', reply
       )
     },
     /**
@@ -59,7 +56,9 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async DetailCloseContact(request, reply) {
-      await funcIfSame(server, 'closeContacts', 'show', request, 'closeContactId', reply)
+      return await funcIfSame(server, 'closeContacts', 'show',
+        request, 'closeContactId', reply
+      )
     },
     /**
      * PUT /api/close-contacts/{closeContactId}
@@ -115,10 +114,7 @@ module.exports = (server) => {
       server.methods.services.closeContacts.v2.getByCase(
         request.pre.cases,
         (err, result) => {
-          if (err) return reply(constructErrorResponse(err)).code(422)
-          return reply(
-            constructCloseContactResponse(result, request)
-          ).code(200)
+          replyJson(err, result, reply)
         })
     },
     /**
@@ -133,11 +129,7 @@ module.exports = (server) => {
         request.auth.credentials.user,
         request.payload,
         (err, result) => {
-          if (err) return reply(constructErrorResponse(err)).code(422)
-
-          return reply(
-            constructCloseContactResponse(result, request)
-          ).code(200)
+          replyJson(err, result, reply)
         })
     },
     /**
@@ -157,11 +149,7 @@ module.exports = (server) => {
         server.methods.services.histories.createIfChanged(
           Object.assign(payload, { case: id }),
           (err, result) => {
-            if (err) return reply(constructErrorResponse(err)).code(422)
-
-            return reply(
-              constructCloseContactResponse(result, request)
-            ).code(200)
+            replyJson(err, result, reply)
           })
       })
     },
