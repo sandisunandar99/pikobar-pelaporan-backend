@@ -4,8 +4,8 @@ const { dateFilter } = require('../filter/date')
 
 const converts = { $convert:{ input: '$age', to: 'int' } }
 
-const paramGroup = (group, value) => {
-  return {
+const paramGroup = (match, group, value) => {
+  return match,{
     $group: {
       _id: group,
       zero_ten: sumBetweenFunc({ $eq: ["$gender", value] }, converts, -1, 11),
@@ -26,15 +26,16 @@ const conditionAge = async (query, user) => {
   const search = await searching(query, user)
   const filter = filterSplit(query, 'test_tools', 'final_result', 'tool_tester')
   const filterDate = dateFilter(query, 'test_date')
-  const conditions = [{
+  const match = {
     $match: {
       $and: [search, { ...filter, ...filterDate }]
     }
-  },
+  }
+  const conditions = [ match,
   {
     '$facet': {
-      'male': [paramGroup('male', 'L')],
-      'female': [paramGroup('female', 'P')]
+      'male': [paramGroup(match, 'male', 'L')],
+      'female': [paramGroup(match, 'female', 'P')]
     }
   },
   {
