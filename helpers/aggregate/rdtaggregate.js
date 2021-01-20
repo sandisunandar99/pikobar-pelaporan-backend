@@ -50,7 +50,7 @@ const filteredArr = (data) => {
 const monthProject = (month, condition) => {
   return {
       $cond: {
-      if: { $gt: [{ $size:month}, 1] },
+      if: { $gt: [{ $size:month}, 0] },
       then: month,
       else: validationDataMonth()[condition]
     }

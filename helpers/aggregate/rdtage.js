@@ -8,7 +8,7 @@ const paramGroup = (group, value) => {
   return {
     $group: {
       _id: group,
-      zero_ten: sumBetweenFunc({ $eq: ["$gender", value] }, converts, 0, 11),
+      zero_ten: sumBetweenFunc({ $eq: ["$gender", value] }, converts, -1, 11),
       ten_twenty: sumBetweenFunc({ $eq: ["$gender", value] }, converts, 11, 21),
       twenty_thirty: sumBetweenFunc({ $eq: ["$gender", value] }, converts, 21, 31),
       thirty_forty: sumBetweenFunc({ $eq: ["$gender", value] }, converts, 31, 41),

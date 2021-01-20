@@ -28,17 +28,17 @@ spec:
             - containerPort: 80
           readinessProbe:
             tcpSocket:
-              port: 80
+              port: 3333
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: 80
+              port: 3333
             initialDelaySeconds: 15
             periodSeconds: 20
           resources:
             requests:
-              memory: "64Mi"
+              memory: "256Mi"
               cpu: "50m"
             limits:
               memory: "2048Mi"
