@@ -4,6 +4,7 @@ const findGlobal = async (Schema, id_case, select) => {
   return await Schema.find({ _id: id_case })
     .select([select])
     .sort({ updatedAt: -1 })
+    .lean()
 }
 
 const deleteGlobal = async (Schema, column, id) => {
