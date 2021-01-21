@@ -105,12 +105,30 @@ async function ListRdt (query, user, callback) {
   }).catch(err => callback(err, null))
 }
 
+const loopFilter = (i) => {
+const { CRITERIA } = require('../helpers/constant')
+  if (i.target === CRITERIA.CLOSE){
+    i.target = CRITERIA.CLOSE_ID
+  }
+  if (i.target === CRITERIA.SUS){
+    i.target = CRITERIA.SUS_ID
+  }
+  if (i.target === CRITERIA.PROB){
+    i.target = CRITERIA.PROB_ID
+  }
+  if (i.target === CRITERIA.CONF){
+    i.target = CRITERIA.CONF_ID
+  }
+  return i
+}
+
 function getRdtById (id, callback) {
   Rdt.findOne({_id: id})
     .populate('author')
     .exec()
     .then(rdt => {
-        return callback(null, rdt)
+      const manipulate = loopFilter(rdt)
+      return callback(null, manipulate)
     })
     .catch(err => callback(err, null));
 }
