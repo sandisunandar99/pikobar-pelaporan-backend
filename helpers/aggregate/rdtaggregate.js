@@ -57,30 +57,18 @@ const monthProject = (month, condition) => {
   }
 }
 
-let filteringDate
-const date = new Date()
-const getYear = date.getFullYear()
-const defaultDate = {
-  test_date: {
-    "$gte": `${getYear}-01-01T00:00:00.000Z`,
-    "$lt": `${getYear}-12-31T23:59:59.000Z`
-  }
-}
-
 const conditionSummary = async (query, user) => {
   const search = await searching(query, user)
   const filter = filterSplit(query, 'test_tools', 'final_result', 'tool_tester')
   const filterDate = dateFilter(query, 'test_date')
-  if (Object.keys(filterDate).length){
-    filteringDate = filterDate
-  } else {
-    filteringDate = defaultDate
+  const match = {
+    $match: { $and: [search, { ...filter, ...filterDate } ] }
   }
-  const match = { $match: { $and: [search, { ...filter, ...filteringDate } ] } }
   const conditions = [
   {
     '$facet': {
-      'month': byMonth(match), 'month_rdt': byMonthRdt(match, 'RDT'),
+      'month': byMonth(match),
+      'month_rdt': byMonthRdt(match, 'RDT'),
       'month_pcr': byMonthPcr(match, 'PCR')
     }
   },
