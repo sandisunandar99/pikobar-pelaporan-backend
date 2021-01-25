@@ -45,14 +45,6 @@ const field = {
   }
 }
 
-// const date = new Date()
-// const getYear = date.getFullYear()
-// {
-//   createdAt: {
-//     "$gte": new Date(`${getYear}-01-01`).setHours(00, 00, 00),
-//     "$lt": new Date(`${getYear}-12-31`).setHours(23, 59, 59)
-//   }
-// }
 const byMonth = (match) => {
   const params = [ match,
     {
