@@ -138,12 +138,13 @@ const validateDistrictCode = async (recordError, code) => {
 }
 
 const validateFinalResult = (recordError, final_result) => {
+  const { patientStatus } = require('../../custom')
   const errField = lang['final_result']
-  const message = `Kriteria dengan nama ${final_result} tidak sesuai dengan ketentuan, harap diperbaiki terlebih dahulu sesuai ketentuan`
+  const message = `Kriteria dengan nama ${patientStatus(final_result)} tidak sesuai dengan ketentuan, harap diperbaiki terlebih dahulu sesuai ketentuan`
   if (!Array.isArray(recordError[errField])) {
     recordError[errField] = []
   }
-  recordError[errField].push(`\"${errField}"\ '${final_result}' ${message}`)
+  recordError[errField].push(`\"${errField}"\ '${patientStatus(final_result)}' ${message}`)
 
   return recordError
 }
