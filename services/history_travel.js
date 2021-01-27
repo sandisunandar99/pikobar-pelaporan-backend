@@ -4,19 +4,18 @@ const ObjectId = require('mongodb').ObjectID
 const createTravel = async (payload, id_case, callback) => {
   try {
     const set = { 'travelling_history_before_sick_14_days': true }
+    const addToSet = {
+      'travelling_history': {
+        "travelling_type": payload.travelling_type,
+        "travelling_visited": payload.travelling_visited,
+        "travelling_city": payload.travelling_city,
+        "travelling_date": payload.travelling_date,
+        "travelling_arrive": payload.travelling_arrive
+      }
+    }
     const inserted = await Travel.updateOne(
       { "_id": ObjectId(id_case) },
-      { $set: set ,
-        $addToSet: {
-          'travelling_history': {
-            "travelling_type": payload.travelling_type,
-            "travelling_visited": payload.travelling_visited,
-            "travelling_city": payload.travelling_city,
-            "travelling_date": payload.travelling_date,
-            "travelling_arrive": payload.travelling_arrive
-          }
-        }
-      }, { new: true })
+      { $set: set , $addToSet: addToSet }, { new: true })
     callback(null, inserted)
   } catch (error) {
     callback(error, null)
