@@ -1,9 +1,9 @@
 const PublicPlace = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
+const { loopsDynamicColumn } = require('../utils')
 
 const createPublicPlace = async (payload, id_case, callback) => {
-  const { loopsDynamicColumn } = require('../utils')
   try {
     const column = [
       'public_place_category', 'public_place_name' , 'public_place_address',
