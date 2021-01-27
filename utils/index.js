@@ -1,3 +1,4 @@
 module.exports = {
-  ...require('./sql')
+  ...require('./sql'),
+  ...require('./column')
 }

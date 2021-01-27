@@ -2,16 +2,15 @@ const Travel = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 
 const createTravel = async (payload, id_case, callback) => {
+  const { loopsDynamicColumn } = require('../utils')
   try {
     const set = { 'travelling_history_before_sick_14_days': true }
+    const column = [
+      'travelling_type', 'travelling_visited' , 'travelling_city',
+      'travelling_date', 'travelling_arrive'
+    ]
     const addToSet = {
-      'travelling_history': {
-        "travelling_type": payload.travelling_type,
-        "travelling_visited": payload.travelling_visited,
-        "travelling_city": payload.travelling_city,
-        "travelling_date": payload.travelling_date,
-        "travelling_arrive": payload.travelling_arrive
-      }
+      'travelling_history': loopsDynamicColumn(column, payload)
     }
     const inserted = await Travel.updateOne(
       { "_id": ObjectId(id_case) },
