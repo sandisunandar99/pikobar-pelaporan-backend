@@ -44,7 +44,7 @@ const getDistrictCity = async (request, callback) => {
 }
 
 const getSubDistrict = async (city_code, request, callback) => {
-  var params = new Object();
+  let params = {}
   params.kemendagri_kabupaten_kode = city_code;
 
   if (request.kecamatan_kode) {
