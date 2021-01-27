@@ -78,8 +78,8 @@ const getVillage = async (kecamatan_code, request, callback) => {
     params.kemendagri_desa_kode = request.desa_kode
   }
 
+  const sort = { kemendagri_desa_nama: 'asc' }
   try {
-    const sort = { kemendagri_desa_nama: 'asc' }
     await findWithSort(Village, params, sort, callback)
   } catch (error) {
     callback(error, null)
