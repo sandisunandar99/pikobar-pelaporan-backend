@@ -4,6 +4,7 @@ const Village = require('../models/Village')
 const Unit = require('../models/Unit')
 const Lab = require('../models/Lab')
 const Province = require('../models/Province')
+const { findWithSort } = require('../utils/index')
 
 const sameCondition = async (schema, condition, sort) => {
   return await schema.find(condition).sort(sort)
@@ -35,16 +36,16 @@ const getDistrictCity = async (request, callback) => {
     params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
   }
 
+  const sort = { kemendagri_kabupaten_nama: 'asc' }
   try {
-    const res = await Districtcity.find(params).sort({ kemendagri_kabupaten_nama: 'asc' })
-    callback(null, res.map(res => res.toJSONFor()))
+    await findWithSort(Districtcity, params, sort, callback)
   } catch (error) {
     callback(error, null)
   }
 }
 
 const getSubDistrict = async (city_code, request, callback) => {
-  var params = new Object();
+  let params = {}
   params.kemendagri_kabupaten_kode = city_code;
 
   if (request.kecamatan_kode) {
@@ -52,8 +53,8 @@ const getSubDistrict = async (city_code, request, callback) => {
   }
 
   try {
-    const resSub = await SubDistrict.find(params).sort({ kemendagri_kecamatan_nama: 'asc' })
-    callback(null, resSub.map(resSub => resSub.toJSONFor()))
+    const sort = { kemendagri_kecamatan_nama: 'asc' }
+    await findWithSort(SubDistrict, params, sort, callback)
   } catch (error) {
     callback(error, null)
   }
@@ -77,9 +78,9 @@ const getVillage = async (kecamatan_code, request, callback) => {
     params.kemendagri_desa_kode = request.desa_kode
   }
 
+  const sort = { kemendagri_desa_nama: 'asc' }
   try {
-    const res = await Village.find(params).sort({ kemendagri_desa_nama: 'asc' })
-    callback(null, res.map(res => res.toJSONFor()))
+    await findWithSort(Village, params, sort, callback)
   } catch (error) {
     callback(error, null)
   }
