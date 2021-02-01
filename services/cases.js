@@ -219,51 +219,22 @@ async function getCaseSummary(query, user, callback) {
 async function getCaseSummaryVerification (query, user, callback) {
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
   const caseAuthors = await thisUnitCaseAuthors(user)
-
-  let searching = Check.countByRole(user,caseAuthors);
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      searching.address_district_code = query.address_district_code;
-    }
-  }
-
-  if(query.address_village_code){
-    searching.address_village_code = query.address_village_code;
-  }
-
-  if(query.address_subdistrict_code){
-    searching.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  var aggStatus = [
-    { $match: {
+  const searchByRole = Check.countByRole(user,caseAuthors);
+  const filterSearch = await Filter.filterCase(user, query)
+  const searching = {...searchByRole, ...filterSearch}
+  var aggStatus = [{ $match: {
       $and: [  searching, { delete_status: { $ne: 'deleted' } } ]
     }},
-    {
-      $group: { _id: "$verified_status", total: {$sum: 1}}
-    }
+    { $group: { _id: "$verified_status", total: { $sum: 1 }} }
   ];
 
-  let result =  {
-    'PENDING': 0,
-    'DECLINED': 0,
-    'VERIFIED': 0
-  }
-
+  let result =  { 'PENDING': 0, 'DECLINED': 0, 'VERIFIED': 0 }
   Case.aggregate(aggStatus).exec().then(async item => {
-
       item.forEach(function(item){
-        if (item['_id'] == 'pending') {
-          result.PENDING = item['total']
-        }
-        if (item['_id'] == 'declined') {
-          result.DECLINED = item['total']
-        }
-        if (item['_id'] == 'verified') {
-          result.VERIFIED = item['total']
-        }
+        if (item['_id'] == 'pending') result.PENDING = item['total']
+        if (item['_id'] == 'declined') result.DECLINED = item['total']
+        if (item['_id'] == 'verified') result.VERIFIED = item['total']
       })
-
       return callback(null, result)
     })
     .catch(err => callback(err, null))
