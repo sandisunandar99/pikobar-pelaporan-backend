@@ -1,15 +1,6 @@
 const { replyHelper, replyJson } = require('../helpers')
 const { generateExcell } = require('../../helpers/export')
 const { queryIfSame, funcIfSame, requestIfSame } = require('../../helpers/request')
-function constructCasesResponse(cases) {
-  let jsonCases = {
-    status: 200,
-    message: "Success",
-    data: cases
-  }
-
-  return jsonCases
-}
 
 module.exports = (server) => {
 
