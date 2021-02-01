@@ -1,15 +1,17 @@
 const replyHelper = require('../helpers')
 const { generateExcell } = require('../../helpers/export')
+const { queryIfSame, funcIfSame, requestIfSame } = require('../../helpers/request')
+function constructCasesResponse(cases) {
+  let jsonCases = {
+    status: 200,
+    message: "Success",
+    data: cases
+  }
+  
+  return jsonCases
+}
+
 module.exports = (server) => {
-    function constructCasesResponse(cases) {
-        let jsonCases = {
-            status: 200,
-            message: "Success",
-            data: cases
-        }
-        // return survey
-        return jsonCases
-    }
 
     return {
         /**
@@ -54,13 +56,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseDetail(request, reply) {
-            let id = request.params.id
-            server.methods.services.cases.getById(id, (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
+          await funcIfSame(server, 'cases', 'getById', request, 'id', reply)
         },
         /**
          * GET /api/cases/{id}/history
@@ -68,15 +64,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseHistory(request, reply) {
-            server.methods.services.histories.getByCase(
-                request.params.id,
-                (err, districs) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCasesResponse(districs, request)
-                    ).code(200)
-                }
-            )
+          await funcIfSame(server, 'histories', 'getByCase', request, 'id', reply)
         },
         /**
          * GET /api/cases/{id}/last-history
@@ -84,15 +72,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseHistoryLast(request, reply) {
-            server.methods.services.histories.getLastHistoryByIdCase(
-                request.params.id,
-                (err, districs) => {
-                    if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                    return reply(
-                        constructCasesResponse(districs, request)
-                    ).code(200)
-                }
-            )
+          await funcIfSame(server, 'histories', 'getLastHistoryByIdCase', request, 'id', reply)
         },
         /**
          * GET /api/cases/summary
@@ -100,15 +80,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseSummary(request, reply) {
-            server.methods.services.cases.getSummary(
-                request.query,
-                request.auth.credentials.user,
-                (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
+          await requestIfSame(server, 'cases', 'getSummary', request, reply)
         },
         /**
          * GET /api/cases/summary-by-district
@@ -130,15 +102,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseSummaryFinal(request, reply) {
-            server.methods.services.cases.GetSummaryFinal(
-                request.query,
-                request.auth.credentials.user,
-                (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
+          await requestIfSame(server, 'cases', 'GetSummaryFinal', request, reply)
         },
         /**
          * PUT /api/cases/{id}
@@ -197,14 +161,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetIdCase(request, reply){
-            server.methods.services.cases.getIdCase(
-                request.query,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(result,request)
-                ).code(200)
-            })
+          await queryIfSame(server, 'cases', 'getIdCase', request, reply)
         },
         /**
          * GET /api/cases-by-nik/{nik}
@@ -212,13 +169,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseDetailByNik(request, reply) {
-            let nik = request.params.nik
-            server.methods.services.cases.getByNik(nik, (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
+          await funcIfSame(server, 'cases', 'getByNik', request, 'nik', reply)
         },
         /**
          * GET /api/cases-healthcheck
@@ -226,14 +177,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async HealthCheck(request, reply) {
-            server.methods.services.cases.healthcheck(
-                request.query,
-                (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
+          await queryIfSame(server, 'cases', 'healthcheck', request, reply)
         },
         /**
          * GET /api/cases/{id}/verifications
@@ -241,14 +185,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseVerifications(request, reply){
-            server.methods.services.casesVerifications.get(
-                request.params.id,
-                (err, result) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(result, request)
-                ).code(200)
-            })
+          await funcIfSame(server, 'casesVerifications', 'get', request, 'id', reply)
         },
         /**
          * PUT /api/cases/{id}/verifications
@@ -278,15 +215,7 @@ module.exports = (server) => {
          * @param {*} reply
          */
         async GetCaseSummaryVerification(request, reply) {
-            server.methods.services.cases.getSummaryVerification(
-                request.query,
-                request.auth.credentials.user,
-                (err, item) => {
-                if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-                return reply(
-                    constructCasesResponse(item, request)
-                ).code(200)
-            })
+          await requestIfSame(server, 'cases', 'getSummaryVerification', request, reply)
         }
     }
 }
