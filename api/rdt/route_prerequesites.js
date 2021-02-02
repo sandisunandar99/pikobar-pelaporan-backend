@@ -3,7 +3,6 @@ const { conditionPreReq } = require('../../utils/conditional')
 const {extractToJson} = require('../../helpers/rdt/sheet')
 const {requestFileError, isAnotherImportProcessIsRunning} = require('../../helpers/cases/sheet/helper')
 const {validation} = require('../../helpers/rdt/sheet/validation')
-const request = require('request')
 
 const validationBeforeInput = server => {
   return {
