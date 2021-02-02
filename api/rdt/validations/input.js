@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const { validateOptions, HeadersPayLoad } = require('../../validations')
 const _ = require('lodash')
+const {requiredIf} = require('../../v2/cases/validations/input')
 
 // --------------------------------------------------
 //    Schema - Input Validations
@@ -66,16 +67,8 @@ const RdtsheetRequest = Joi.object().options({ abortEarly: false }).keys({
   swab_to: Joi.number().required(),
   test_date: Joi.date().required(),
   test_note: Joi.string().allow('',null),
-  note_nik: Joi.string().when('nik',{
-    is: Joi.valid(['', '-', null]),
-    then: Joi.required(),
-    otherwise: Joi.allow('', null),
-  }),
-  note_phone_number: Joi.string().when('phone_number', {
-    is: Joi.valid(['', '-', null]),
-    then: Joi.required(),
-    otherwise: Joi.allow('', null),
-  }),
+  note_nik: Joi.string().when('nik', requiredIf(['', '-', null])),
+  note_phone_number: Joi.string().when('phone_number', requiredIf(['', '-', null])),
   }).unknown()
 
 module.exports = {
