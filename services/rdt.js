@@ -20,6 +20,33 @@ const DistrictCity = mongoose.model('Districtcity')
 const Check = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url');
+const serviceName = {
+  ListRdt : 'services.rdt.list',
+  getRdtById : 'services.rdt.getById',
+  GetRdtHistoryByRdtId : 'services.rdt.getHistoriesByRdtId',
+  createRdt: 'services.rdt.create',
+  createRdtMultiple : 'services.rdt.createMultiple',
+  updateRdt: 'services.rdt.update',
+  softDeleteRdt: 'services.rdt.softDeleteRdt',
+  getCountRdtCode : 'services.rdt.getCountRdtCode',
+  GetRdtSummaryByCities : 'services.rdt.GetRdtSummaryByCities',
+  GetRdtSummaryResultByCities: 'services.rdt.GetRdtSummaryResultByCities',
+  GetRdtSummaryResultListByCities : 'services.rdt.GetRdtSummaryResultListByCities',
+  GetRdtFaskesSummaryByCities : 'services.rdt.GetRdtFaskesSummaryByCities',
+  getCodeDinkes :  'services.rdt.getCodeDinkes',
+  getCountByDistrict :  'services.rdt.getCountByDistrict',
+  getCaseByidcase :  'services.rdt.getCaseByidcase',
+  FormSelectIdCase :  'services.rdt.FormSelectIdCase',
+  getDatafromExternal :  'services.rdt.getDatafromExternal',
+  FormSelectIdCaseDetail :  'services.rdt.FormSelectIdCaseDetail',
+  getRegisteredUser :  'services.rdt.getRegisteredUser',
+  seacrhFromExternal :  'services.rdt.seacrhFromExternal',
+  getRegisteredFromExternal :  'services.rdt.getRegisteredFromExternal',
+  seacrhFromInternal :  'services.rdt.seacrhFromInternal',
+  sendMessagesSMS :  'services.rdt.sendMessagesSMS',
+  sendMessagesWA :  'services.rdt.sendMessagesWA',
+  getLocationTest :  'services.rdt.getLocationTest',
+}
 
 
 
@@ -1080,105 +1107,30 @@ function sendMessagesWA(rdt) {
 
 
 module.exports = [
-  {
-    name: 'services.rdt.list',
-    method: ListRdt
-  },
-  {
-    name: 'services.rdt.getById',
-    method: getRdtById
-  },
-  {
-    name: 'services.rdt.getHistoriesByRdtId',
-    method: GetRdtHistoryByRdtId
-  },
-  {
-    name: 'services.rdt.create',
-    method: createRdt
-  },
-  {
-    name: 'services.rdt.createMultiple',
-    method: createRdtMultiple
-  },
-  {
-    name: 'services.rdt.update',
-    method: updateRdt
-  },
-  {
-    name: 'services.rdt.softDeleteRdt',
-    method: softDeleteRdt
-  },
-  {
-    name: 'services.rdt.getCountRdtCode',
-    method: getCountRdtCode
-  },
-  {
-    name: 'services.rdt.GetRdtSummaryByCities',
-    method: GetRdtSummaryByCities
-  },
-  {
-    name: 'services.rdt.GetRdtSummaryResultByCities',
-    method: GetRdtSummaryResultByCities
-  },
-  {
-    name: 'services.rdt.GetRdtSummaryResultListByCities',
-    method: GetRdtSummaryResultListByCities
-  },
-  {
-    name: 'services.rdt.GetRdtFaskesSummaryByCities',
-    method: GetRdtFaskesSummaryByCities
-  },
-  {
-    name: 'services.rdt.getCodeDinkes',
-    method: getCodeDinkes
-  },
-  {
-    name: 'services.rdt.getCountByDistrict',
-    method: getCountByDistrict
-  },
-  {
-    name: 'services.rdt.getCaseByidcase',
-    method: getCaseByidcase
-  },
-  {
-    name: 'services.rdt.FormSelectIdCase',
-    method: FormSelectIdCase
-  },
-  {
-    name: 'services.rdt.getDatafromExternal',
-    method: getDatafromExternal
-  },
-  {
-    name: 'services.rdt.FormSelectIdCaseDetail',
-    method: FormSelectIdCaseDetail
-  },
-  {
-    name: 'services.rdt.getRegisteredUser',
-    method: getRegisteredUser
-  },
-  {
-    name: 'services.rdt.seacrhFromExternal',
-    method: seacrhFromExternal
-  },
-  {
-    name: 'services.rdt.getRegisteredFromExternal',
-    method: getRegisteredFromExternal
-  },
-  {
-    name: 'services.rdt.seacrhFromInternal',
-    method: seacrhFromInternal
-  },
-  {
-    name: 'services.rdt.sendMessagesSMS',
-    method: sendMessagesSMS
-  },
-  {
-    name: 'services.rdt.sendMessagesWA',
-    method: sendMessagesWA
-  },
-  {
-    name: 'services.rdt.getLocationTest',
-    method: getLocationTest
-  }
+  { name: serviceName.ListRdt, method: ListRdt },
+  { name: serviceName.getRdtById, method: getRdtById },
+  { name: serviceName.GetRdtHistoryByRdtId, method: GetRdtHistoryByRdtId },
+  { name: serviceName.createRdt, method: createRdt },
+  { name: serviceName.createRdtMultiple, method: createRdtMultiple },
+  { name: serviceName.updateRdt, method: updateRdt },
+  { name: serviceName.softDeleteRdt, method: softDeleteRdt },
+  { name: serviceName.getCountRdtCode, method: getCountRdtCode },
+  { name: serviceName.GetRdtSummaryByCities, method: GetRdtSummaryByCities },
+  { name: serviceName.GetRdtSummaryResultByCities, method: GetRdtSummaryResultByCities },
+  { name: serviceName.GetRdtSummaryResultListByCities, method: GetRdtSummaryResultListByCities },
+  { name: serviceName.GetRdtFaskesSummaryByCities, method: GetRdtFaskesSummaryByCities },
+  { name: serviceName.getCodeDinkes, method: getCodeDinkes },
+  { name: serviceName.getCountByDistrict, method: getCountByDistrict },
+  { name: serviceName.getCaseByidcase, method: getCaseByidcase },
+  { name: serviceName.FormSelectIdCase, method: FormSelectIdCase },
+  { name: serviceName.getDatafromExternal, method: getDatafromExternal },
+  { name: serviceName.FormSelectIdCaseDetail, method: FormSelectIdCaseDetail },
+  { name: serviceName.getRegisteredUser, method: getRegisteredUser },
+  { name: serviceName.seacrhFromExternal, method: seacrhFromExternal },
+  { name: serviceName.getRegisteredFromExternal, method: getRegisteredFromExternal },
+  { name: serviceName.seacrhFromInternal, method: seacrhFromInternal },
+  { name: serviceName.sendMessagesSMS, method: sendMessagesSMS },
+  { name: serviceName.sendMessagesWA, method: sendMessagesWA },
+  { name: serviceName.getLocationTest, method: getLocationTest  }
 ];
 
