@@ -219,7 +219,6 @@ module.exports ={
     getDataExternal,
     searchIdcasefromInternal,
     searchIdcasefromExternal,
-    validationBeforeInput,
     getRegisteredUserfromExternal,
     cekHistoryCases,
     createHistoryWhenPositif,

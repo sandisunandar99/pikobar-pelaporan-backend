@@ -11,7 +11,7 @@ module.exports = (server) =>{
     const countCasePendingByDistrict = require('./route_prerequesites').countCasePendingByDistrict(server)
     const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
     const getCasebyId = require('./route_prerequesites').getCasebyId(server)
-    const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
+    // const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
     const checkCaseIsExists = require('./route_prerequesites').checkCaseIsExists(server)
     const getDetailCase = require('./route_prerequesites').getDetailCase(server)
     const checkCaseIsAllowToDelete = require('./route_prerequesites').checkCaseIsAllowToDelete(server)
