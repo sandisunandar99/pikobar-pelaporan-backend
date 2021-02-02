@@ -3,6 +3,7 @@ const { conditionPreReq } = require('../../utils/conditional')
 const {extractToJson} = require('../../helpers/rdt/sheet')
 const {requestFileError, isAnotherImportProcessIsRunning} = require('../../helpers/cases/sheet/helper')
 const {validation} = require('../../helpers/rdt/sheet/validation')
+const request = require('request')
 
 const validationBeforeInput = server => {
   return {
@@ -170,20 +171,22 @@ const methodOneParam = (server, service, name, param, reply) => {
   })
 }
 
+const processImport = async (server, request, reply) => {
+  const file = await extractToJson(request)
+  if (requestFileError(file)) {
+      return reply(BadRequest(requestFileError(file))).code(400).takeover()
+  }
+  const err = await validation(file)
+  if (err.length) {
+    return reply(BadRequest(err)).code(400).takeover()
+  }
+  return reply(file)
+}
+
 const convertToJson = server => {
   return {
     method: async (request, reply) => {
-      const file = await extractToJson(request)
-      if (requestFileError(file)) {
-        return reply(BadRequest(requestFileError(file))).code(400).takeover()
-      }
-
-      const err = await validation(file)
-      if (err.length) {
-        return reply(BadRequest(err)).code(400).takeover()
-      }
-
-      return reply(file)
+      processImport(server, request, reply)
     },
     assign: 'convert_to_json'
   }
