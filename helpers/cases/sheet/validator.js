@@ -199,5 +199,6 @@ const transformErrorDescription = (desc) => {
 module.exports = {
   validate,
   translateLangId,
-  transformedErrorResponse
+  transformedErrorResponse,
+  transformedJoiErrors
 }
