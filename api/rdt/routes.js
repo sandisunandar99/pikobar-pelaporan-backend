@@ -1,3 +1,5 @@
+const constant = require('../../helpers/constant')
+
 module.exports = (server) => {
   const handlers = require('./handlers')
   const inputValidations = require('./validations/input')
@@ -23,19 +25,9 @@ module.exports = (server) => {
   const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
   const convertToJson = require('./route_prerequesites').convertToJson(server)
   const systemBusy = require('./route_prerequesites').systemBusy(server)
-  const importConfig = {
-    auth: 'jwt',
-    description: 'RDT import',
-    tags: ['api', 'rdt'],
-    payload: {
-      maxBytes: 1000 * 1000 * 25,
-      output: 'stream',
-      parse: true,
-      allow: 'multipart/form-data'
-    },
-    pre: [ convertToJson, systemBusy],
-  }
 
+  const importConfigRdt = require('../../helpers/importconfig')
+  importConfigRdt.config.pre = [ convertToJson, systemBusy]
 
   const route = (method, path, validates, pre, callback) => {
     return {
@@ -56,7 +48,7 @@ module.exports = (server) => {
     return {
       method: method,
       path: path,
-      config: importConfig,
+      config: importConfigRdt.config,
       handler: handlers[callback](server),
     }
   }
