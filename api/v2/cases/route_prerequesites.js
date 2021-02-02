@@ -1,4 +1,4 @@
-const replyHelper = require('../../helpers')
+const {replyHelper, BadRequest} = require('../../helpers')
 const {
   validate,
   requestFileError,
@@ -8,15 +8,6 @@ const {
 const {
   isAnotherImportProcessIsRunning,
 } = require('../../../helpers/cases/sheet/helper')
-
-
-const BadRequest = (errors) => {
-  return {
-    status: 400,
-    message: 'Bad request.',
-    errors: errors,
-  }
-}
 
 const countCasesOutsideWestJava = server => {
   return {

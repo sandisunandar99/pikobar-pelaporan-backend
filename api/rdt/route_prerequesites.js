@@ -1,4 +1,4 @@
-const replyHelper = require('../helpers')
+const {replyHelper, BadRequest} = require('../helpers')
 const { conditionPreReq } = require('../../utils/conditional')
 const {extractToJson} = require('../../helpers/rdt/sheet')
 const {requestFileError, isAnotherImportProcessIsRunning} = require('../../helpers/cases/sheet/helper')
@@ -206,14 +206,6 @@ const systemBusy = server => {
       }).code(422).takeover()
     },
     assign: 'system_busy',
-  }
-}
-
-const BadRequest = (errors) => {
-  return {
-    status: 400,
-    message: 'Bad request.',
-    errors: errors,
   }
 }
 
