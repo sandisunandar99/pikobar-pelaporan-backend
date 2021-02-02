@@ -9,6 +9,11 @@ const DistrictCity = mongoose.model('Districtcity')
 require('../models/RdtHistory')
 const RdtHistory = mongoose.model('RdtHistory');
 const {rollback} = require('../helpers/custom')
+const serviceName = {
+  lastHistory :  'services.inject.lastHistory',
+  injectRdt :  'services.inject.injectRdt',
+  ImportRdt :  'services.inject.ImportRdt',
+}
 
 const lastHistory = async (query, callback) => {
   try {
@@ -166,17 +171,8 @@ const ImportRdt = async (request, callback) => {
 }
 
 module.exports = [
-  {
-    name: 'services.inject.lastHistory',
-    method: lastHistory
-  },
-  {
-    name: 'services.inject.injectRdt',
-    method: injectRdt
-  },
-  {
-    name: 'services.inject.ImportRdt',
-    method: ImportRdt
-  },
+  { name: serviceName.lastHistory, method: lastHistory },
+  { name: serviceName.injectRdt, method: injectRdt },
+  { name: serviceName.ImportRdt, method: ImportRdt },
 ];
 
