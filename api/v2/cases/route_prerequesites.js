@@ -6,7 +6,7 @@ const {
 } = require('../../../helpers/cases/sheet/index')
 
 const {
-  isAnotherImportProcessIsRunning,
+  isAnotherImportProcessIsRunning, checkWhosRunning
 } = require('../../../helpers/cases/sheet/helper')
 
 const countCasesOutsideWestJava = server => {
@@ -51,9 +51,9 @@ const sheetToJson = server => {
 const isImportBusy = server => {
   return {
     method: async (request, reply) => {
-      const res = await isAnotherImportProcessIsRunning(
-        require('../../../models/Case')
-      )
+
+      const schema =  await checkWhosRunning(request)
+      const res = await isAnotherImportProcessIsRunning(schema)
 
       if (!res) return reply(res)
 

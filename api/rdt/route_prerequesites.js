@@ -190,25 +190,6 @@ const convertToJson = server => {
   }
 }
 
-const systemBusy = server => {
-  return {
-    method: async (request, reply) => {
-      const res = await isAnotherImportProcessIsRunning(
-        require('../../models/Rdt')
-      )
-
-      if (!res) return reply(res)
-
-      return reply({
-        status: 422,
-        message: 'Proses import lainnya sedang berjalan, coba beberapa saat lagi!',
-        data: null
-      }).code(422).takeover()
-    },
-    assign: 'system_busy',
-  }
-}
-
 module.exports ={
   countRdtCode,
   getRdtbyId,
@@ -221,5 +202,5 @@ module.exports ={
   cekHistoryCases,
   createHistoryWhenPositif,
   convertToJson,
-  systemBusy
+  // systemBusy
 }
