@@ -173,18 +173,17 @@ const methodOneParam = (server, service, name, param, reply) => {
 const convertToJson = server => {
   return {
     method: async (request, reply) => {
-      const payload = await extractToJson(request)
-
-      if (requestFileError(payload)) {
-        return reply(BadRequest(requestFileError(payload))).code(400).takeover()
+      const file = await extractToJson(request)
+      if (requestFileError(file)) {
+        return reply(BadRequest(requestFileError(file))).code(400).takeover()
       }
 
-      const err = await validation(payload)
+      const err = await validation(file)
       if (err.length) {
         return reply(BadRequest(err)).code(400).takeover()
       }
 
-      return reply(payload)
+      return reply(file)
     },
     assign: 'convert_to_json'
   }
