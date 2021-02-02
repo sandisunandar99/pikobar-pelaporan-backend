@@ -171,22 +171,18 @@ const methodOneParam = (server, service, name, param, reply) => {
   })
 }
 
-const processImport = async (server, request, reply) => {
-  const file = await extractToJson(request)
-  if (requestFileError(file)) {
-      return reply(BadRequest(requestFileError(file))).code(400).takeover()
-  }
-  const err = await validation(file)
-  if (err.length) {
-    return reply(BadRequest(err)).code(400).takeover()
-  }
-  return reply(file)
-}
-
 const convertToJson = server => {
   return {
     method: async (request, reply) => {
-      processImport(server, request, reply)
+      const file = await extractToJson(request)
+      if (requestFileError(file)) {
+          return reply(BadRequest(requestFileError(file))).code(400).takeover()
+      }
+      const err = await validation(file)
+      if (err.length) {
+        return reply(BadRequest(err)).code(400).takeover()
+      }
+      return reply(file)
     },
     assign: 'convert_to_json'
   }
