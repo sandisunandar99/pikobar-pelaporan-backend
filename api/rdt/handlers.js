@@ -154,13 +154,8 @@ const sendMessage = (server) => {
 }
 
 const ImportRdt = (server) => {
-  return async (request, reply) => {
-    server.methods.services.inject.ImportRdt(
-      request,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
+  return async(request, reply) => {
+    await funcCreate(server, "inject", "ImportRdt", request, reply)
   }
 }
 
