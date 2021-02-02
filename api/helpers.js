@@ -109,9 +109,18 @@ const replyJson = (err, result, reply) => {
   ).code(200)
 }
 
+const BadRequest = (errors) => {
+  return {
+    status: 400,
+    message: 'Bad request.',
+    errors: errors,
+  }
+}
+
 module.exports = {
   constructErrorResponse,
   CommentReferenceError,
   successResponse,
-  replyJson, customResponse
+  replyJson, customResponse,
+  BadRequest
 }
