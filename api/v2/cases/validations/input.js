@@ -135,4 +135,5 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
 module.exports = {
   CaseSheetRequest,
   RequestPayload,
+  requiredIf
 }
