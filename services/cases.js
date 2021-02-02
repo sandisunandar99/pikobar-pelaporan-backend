@@ -188,51 +188,13 @@ function getIdCase (query,callback) {
   .catch(err => callback(err, null));
 }
 
-async function getCaseSummaryFinal (query, user, callback) {
-  let searching = Check.countByRole(user);
-
-  if(query.address_village_code){
-    searching.address_village_code = query.address_village_code;
-  }
-  if(query.address_subdistrict_code){
-    searching.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      searching.address_district_code = query.address_district_code;
-    }
-  }
-
-  const searchingPositif = {status:"POSITIF", final_result : { $in: [0,"",null] }}
-  const searchingSembuh = {status:"POSITIF",final_result:1}
-  const searchingMeninggal = {status:"POSITIF",final_result:2}
-
-  try {
-    const positif = await Case.find(Object.assign(searching,searchingPositif))
-    .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
-    const sembuh = await Case.find(Object.assign(searching,searchingSembuh))
-    .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
-    const meninggal = await Case.find(Object.assign(searching,searchingMeninggal))
-    .where("delete_status").ne("deleted").and({verified_status: 'verified'}).countDocuments()
-    const result =  {
-      "SEMBUH":sembuh,
-      "MENINGGAL":meninggal,
-      "POSITIF":positif
-    }
-    callback(null,result)
-  } catch (error) {
-    callback(error, null)
-  }
-}
-
 async function getCaseSummary(query, user, callback) {
   try {
     const caseAuthors = await thisUnitCaseAuthors(user)
     const scope = Check.countByRole(user, caseAuthors)
     const filter = await Filter.filterCase(user, query)
     const searching = Object.assign(scope, filter)
-
+    const { sumFuncNoMatch } = require('../helpers/aggregate/func')
     const conditions = [
       { $match: {
         $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
@@ -240,49 +202,12 @@ async function getCaseSummary(query, user, callback) {
       {
         $group: {
           _id: 'status',
-          confirmed: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ['$status', CRITERIA.CONF] },
-                  ]
-                }, 1, 0]
-            }
-          },
-          probable: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ['$status', CRITERIA.PROB] },
-                  ]
-                }, 1, 0]
-            }
-          },
-          suspect: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ['$status', CRITERIA.SUS] },
-                  ]
-                }, 1, 0]
-            }
-          },
-          closeContact: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $eq: ['$status', CRITERIA.CLOSE] },
-                  ]
-                }, 1, 0]
-            }
-          },
+          confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
+          probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
+          suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
+          closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
         },
-      },
-      { $project: { _id : 0 } },
+      },{ $project: { _id : 0 } },
     ]
     const result = await Case.aggregate(conditions)
     callback(null, result.shift())
@@ -294,51 +219,22 @@ async function getCaseSummary(query, user, callback) {
 async function getCaseSummaryVerification (query, user, callback) {
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
   const caseAuthors = await thisUnitCaseAuthors(user)
-
-  let searching = Check.countByRole(user,caseAuthors);
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      searching.address_district_code = query.address_district_code;
-    }
-  }
-
-  if(query.address_village_code){
-    searching.address_village_code = query.address_village_code;
-  }
-
-  if(query.address_subdistrict_code){
-    searching.address_subdistrict_code = query.address_subdistrict_code;
-  }
-
-  var aggStatus = [
-    { $match: {
+  const searchByRole = Check.countByRole(user,caseAuthors);
+  const filterSearch = await Filter.filterCase(user, query)
+  const searching = {...searchByRole, ...filterSearch}
+  var aggStatus = [{ $match: {
       $and: [  searching, { delete_status: { $ne: 'deleted' } } ]
     }},
-    {
-      $group: { _id: "$verified_status", total: {$sum: 1}}
-    }
+    { $group: { _id: "$verified_status", total: { $sum: 1 }} }
   ];
 
-  let result =  {
-    'PENDING': 0,
-    'DECLINED': 0,
-    'VERIFIED': 0
-  }
-
+  let result =  { 'PENDING': 0, 'DECLINED': 0, 'VERIFIED': 0 }
   Case.aggregate(aggStatus).exec().then(async item => {
-
       item.forEach(function(item){
-        if (item['_id'] == 'pending') {
-          result.PENDING = item['total']
-        }
-        if (item['_id'] == 'declined') {
-          result.DECLINED = item['total']
-        }
-        if (item['_id'] == 'verified') {
-          result.VERIFIED = item['total']
-        }
+        if (item['_id'] == 'pending') result.PENDING = item['total']
+        if (item['_id'] == 'declined') result.DECLINED = item['total']
+        if (item['_id'] == 'verified') result.VERIFIED = item['total']
       })
-
       return callback(null, result)
     })
     .catch(err => callback(err, null))
@@ -607,10 +503,6 @@ module.exports = [
   {
     name: 'services.cases.getSummary',
     method: getCaseSummary
-  },
-  {
-    name: 'services.cases.GetSummaryFinal',
-    method: getCaseSummaryFinal
   },
   {
     name: 'services.cases.getSummaryVerification',
