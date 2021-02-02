@@ -210,9 +210,16 @@ const systemBusy = server => {
 }
 
 module.exports ={
-  countRdtCode, getRdtbyId, getCasebyIdcase, getCodeDinkes,
-  countCaseByDistrict, checkIfDataNotNull, getDataExternal,
-  searchIdcasefromInternal, searchIdcasefromExternal, getRegisteredUserfromExternal,
-  cekHistoryCases, createHistoryWhenPositif, convertToJson,
+  countRdtCode,
+  getRdtbyId,
+  getCodeDinkes,
+  checkIfDataNotNull,
+  getDataExternal,
+  searchIdcasefromInternal,
+  searchIdcasefromExternal,
+  getRegisteredUserfromExternal,
+  cekHistoryCases,
+  createHistoryWhenPositif,
+  convertToJson,
   systemBusy
 }
