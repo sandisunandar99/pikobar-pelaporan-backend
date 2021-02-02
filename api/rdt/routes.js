@@ -24,7 +24,6 @@ module.exports = (server) => {
   const cekHistoryCases = require('./route_prerequesites').cekHistoryCases(server)
   const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
   const convertToJson = require('./route_prerequesites').convertToJson(server)
-  // const systemBusy = require('./route_prerequesites').systemBusy(server)
   const systemBusy = require('../v2/cases/route_prerequesites').isImportBusy(server)
 
   const importConfigRdt = require('../../helpers/importconfig')
