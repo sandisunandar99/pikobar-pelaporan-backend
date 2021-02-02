@@ -57,6 +57,16 @@ helpers.isAnotherImportProcessIsRunning = async (schema) => {
   return false
 }
 
+helpers.checkWhosRunning = async (request) => {
+  let schema
+  if (request.url.path === '/api/v2/cases-import') {
+    schema = require('../../../models/Case')
+  } else {
+     schema = require('../../../models/Rdt')
+  }
+  return schema
+}
+
 helpers.isTemplateVerified = (dataSheet) => {
 
   const verfiedTemplate = config.verified_template
