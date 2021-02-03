@@ -1,13 +1,11 @@
 const replyHelper = require('../helpers')
 const { validateLocation } = require('../../helpers/request')
 
-const handlerError = (err) => {
+const handlerErrorResult = (err, result, message, reply) => {
   if (err) {
     return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
   }
-}
 
-const handlerResult = (result, message) => {
   if (!result) {
     return reply({
       status: 422,
@@ -15,18 +13,17 @@ const handlerResult = (result, message) => {
       data: null
     }).code(422).takeover()
   }
+
+  return reply(result)
 }
 
 const getCasebyId = server => {
   return {
     method: (request, reply) => {
       const { caseId } = request.params
-      server.methods.services.cases
-        .getById(caseId, (err, result) => {
-          handlerError(err)
-          handlerResult(result, 'Invalid case id')
-          return reply(result)
-        })
+      server.methods.services.cases.getById(caseId, (err, result) =>
+        handlerErrorResult(err, result, 'Invalid case id', reply)
+      )
     },
     assign: 'cases'
   }
@@ -36,12 +33,9 @@ const getCloseContactbyId = server => {
   return {
     method: (request, reply) => {
       let id = request.params.closeContactId
-      server.methods.services.closeContacts
-        .show(id, (err, result) => {
-          handlerError(err)
-          handlerResult(result, 'Invalid close contact id')
-          return reply(result)
-        })
+      server.methods.services.closeContacts.show(id, (err, result) =>
+        handlerErrorResult(err, result, 'Invalid close contact id', reply)
+      )
     },
     assign: 'close_contact'
   }
