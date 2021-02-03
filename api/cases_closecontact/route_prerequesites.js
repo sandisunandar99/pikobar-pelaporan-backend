@@ -1,4 +1,4 @@
-const replyHelper = require('../helpers')
+const { handlerErrorResult } = require('../../helpers/request')
 
 const getById = (server, paramKey, errMsg) => {
   return (request, reply) => {
