@@ -1,3 +1,5 @@
+const { constructErrorResponse } = require('../../api/helpers')
+
 const validateLocation = (request, reply, message) => {
   const { address_district_code } = request.payload
   const { code_district_city } = request.auth.credentials.user
@@ -13,6 +15,22 @@ const validateLocation = (request, reply, message) => {
 
 }
 
+const handlerErrorResult = (err, result, message, reply) => {
+  if (err) {
+    return reply(constructErrorResponse(err)).code(422).takeover()
+  }
+
+  if (!result) {
+    return reply({
+      status: 422,
+      message,
+      data: null
+    }).code(422).takeover()
+  }
+
+  return reply(result)
+}
+
 module.exports = {
-  validateLocation
+  validateLocation, handlerErrorResult
 }

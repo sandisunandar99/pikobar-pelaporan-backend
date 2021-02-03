@@ -1,22 +1,4 @@
-const replyHelper = require('../helpers')
-const { validateLocation } = require('../../helpers/request')
-
-const handlerErrorResult = (err, result, message, reply) => {
-  if (err) {
-    return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-  }
-
-  if (!result) {
-    return reply({
-      status: 422,
-      message,
-      data: null
-    }).code(422).takeover()
-  }
-
-  return reply(result)
-}
-
+const { validateLocation, handlerErrorResult } = require('../../helpers/request')
 const getCasebyId = server => {
   return {
     method: (request, reply) => {

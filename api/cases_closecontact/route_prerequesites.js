@@ -4,19 +4,9 @@ const getById = (server, paramKey, errMsg) => {
   return (request, reply) => {
     const id = request.params[paramKey]
     if (!id) { return reply(true) }
-    server.methods.services.cases.getById(id, (err, result) => {
-      if (err) {
-        return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-      }
-      if (!result) {
-        return reply({
-          status: 422,
-          message: errMsg,
-          data: null,
-        }).code(422).takeover()
-      }
-      return reply(result)
-    })
+    server.methods.services.cases.getById(id, (err, result) =>
+      handlerErrorResult(err, result, errMsg, reply)
+    )
   }
 }
 
