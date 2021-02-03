@@ -1,19 +1,23 @@
 
-const tdBody = (textHeader, textBorder, diseases) => {
-  return [
-    { text: `${textHeader}`, border: [] },
-    { text: `: [${isTrue(textHeader.toLowerCase(), diseases)}] Ya   [${isFalse(textHeader.toLowerCase(), diseases)}] Tdk`, border: [] },
-    { text: `${textBorder}`, border: [] },
-    { text: `: [${isTrue(textBorder.toLowerCase(), diseases)}] Ya   [${isFalse(textBorder.toLowerCase(), diseases)}] Tdk`, border: [] },
-  ]
-}
-
 const isTrue = (value, diseases) => {
   return diseases.includes(value) ? '√' : '  '
 }
 
 const isFalse = (value, diseases) => {
   return !diseases.includes(value) ? '√' : '  '
+}
+
+const sameBorder = (textHeader, diseases) => {
+  return `: [${isTrue(textHeader.toLowerCase(), diseases)}] Ya   [${isFalse(textHeader.toLowerCase(), diseases)}] Tdk`
+}
+
+const tdBody = (textHeader, textBorder, diseases) => {
+  return [
+    { text: `${textHeader}`, border: [] },
+    { text:  sameBorder(textHeader, diseases), border: [] },
+    { text: `${textBorder}`, border: [] },
+    { text: `: [${isTrue(textBorder.toLowerCase(), diseases)}] Ya   [${isFalse(textBorder.toLowerCase(), diseases)}] Tdk`, border: [] },
+  ]
 }
 
 const render = (data) => {
