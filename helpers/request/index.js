@@ -68,5 +68,6 @@ const funcCreateDynamic = async (server, name, methods, request, req, otherReq, 
 
 module.exports = {
   funcIfSame, queryIfSame, queryParamSame, funcNoParam,
-  funcCreate, requestIfSame, funcCreateDynamic
+  funcCreate, requestIfSame, funcCreateDynamic,
+  ...require('./pre_request')
 }

@@ -1,11 +1,12 @@
 const replyHelper = require('../helpers')
+const { validateLocation } = require('../../helpers/request')
 
 const getCasebyId = server => {
     return {
         method: (request, reply) => {
-             let id = request.params.caseId
+             const { caseId } = request.params
              server.methods.services.cases
-                .getById(id, (err, result) => {
+                .getById(caseId, (err, result) => {
                     if (err) {
                         return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
                     }
@@ -47,18 +48,9 @@ const getCloseContactbyId = server => {
 }
 
 const districtInputScope = server => {
+    const message = 'Anda tidak dapat melakukan input Kontak Erat di luar wilayah anda.!'
     return {
-        method: (request, reply) => {
-            if (request.payload.address_district_code === request.auth.credentials.user.code_district_city) {
-                return reply(request.auth.credentials.user.code_district_city)
-            } else {
-                return reply({
-                    status: 422,
-                    message: 'Anda tidak dapat melakukan input Kontak Erat di luar wilayah anda.!',
-                    data: null
-                }).code(422).takeover()
-            }
-        },
+        method: (request, reply) => validateLocation(request, reply, message),
         assign: 'district_input_scope'
     }
 }
