@@ -6,6 +6,17 @@ const handlerError = (err) => {
     return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
   }
 }
+
+const handlerResult = (result, message) => {
+  if (!result) {
+    return reply({
+      status: 422,
+      message,
+      data: null
+    }).code(422).takeover()
+  }
+}
+
 const getCasebyId = server => {
   return {
     method: (request, reply) => {
@@ -13,13 +24,7 @@ const getCasebyId = server => {
       server.methods.services.cases
         .getById(caseId, (err, result) => {
           handlerError(err)
-          if (!result) {
-            return reply({
-              status: 422,
-              message: 'Invalid case id',
-              data: null
-            }).code(422).takeover()
-          }
+          handlerResult(result, 'Invalid case id')
           return reply(result)
         })
     },
@@ -33,16 +38,8 @@ const getCloseContactbyId = server => {
       let id = request.params.closeContactId
       server.methods.services.closeContacts
         .show(id, (err, result) => {
-          if (err) {
-            return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-          }
-          if (!result) {
-            return reply({
-              status: 422,
-              message: 'Invalid close contact id',
-              data: null
-            }).code(422).takeover()
-          }
+          handlerError(err)
+          handlerResult(result, 'Invalid close contact id')
           return reply(result)
         })
     },
