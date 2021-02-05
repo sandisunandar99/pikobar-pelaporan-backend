@@ -14,6 +14,27 @@ async function countSectionTop(query, user, callback) {
 async function countSummary(query, user, callback) {
   try {
     const resultCount = await sameCondition(query, user, summaryAggregate)
+    resultCount.map(res => {
+      res.summary.map(s => {
+        if (user.code_district_city === s.name[0].id){
+          s._id = s._id
+        } else {
+          s._id = `Diluar kota/kab ${s._id}`
+        }
+        return s
+      })
+
+      res.demographic.map(d => {
+        if (user.code_district_city === d.name[0].id){
+          d._id = d._id
+        } else {
+          d._id = `Diluar kota/kab ${d._id}`
+        }
+        return d
+      })
+
+      return res
+    })
     callback(null, resultCount)
   } catch (e) {
     callback(e, null)
