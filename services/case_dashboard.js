@@ -2,6 +2,30 @@ const Case = require('../models/Case')
 const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
 const { topAggregate }  = require('../helpers/aggregate/topaggregate')
 
+const mapingCondition = (user, obj) => {
+  if (user.code_district_city === obj.name[0].id){
+    obj._id = obj._id
+  } else {
+    obj._id = `Diluar kota/kab ${obj._id}`
+  }
+  return obj
+}
+
+const validationRole = (result, user) => {
+  const { ROLE } = require("../helpers/constant")
+  if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
+    return result
+  } else {
+    result.map(res => {
+      res.summary.map(s =>  mapingCondition(user, s))
+      res.demographic.map(d => mapingCondition(user, d))
+      return res
+    })
+  }
+
+  return result
+}
+
 async function countSectionTop(query, user, callback) {
   try {
     const resultCount = await sameCondition(query, user, topAggregate)
@@ -14,28 +38,8 @@ async function countSectionTop(query, user, callback) {
 async function countSummary(query, user, callback) {
   try {
     const resultCount = await sameCondition(query, user, summaryAggregate)
-    resultCount.map(res => {
-      res.summary.map(s => {
-        if (user.code_district_city === s.name[0].id){
-          s._id = s._id
-        } else {
-          s._id = `Diluar kota/kab ${s._id}`
-        }
-        return s
-      })
-
-      res.demographic.map(d => {
-        if (user.code_district_city === d.name[0].id){
-          d._id = d._id
-        } else {
-          d._id = `Diluar kota/kab ${d._id}`
-        }
-        return d
-      })
-
-      return res
-    })
-    callback(null, resultCount)
+    const result = validationRole(resultCount, user)
+    callback(null, result)
   } catch (e) {
     callback(e, null)
   }
