@@ -6,25 +6,13 @@ const { exportByRole } = require('../helpers/rolecheck')
 const { WHERE_GLOBAL, HISTORY_DEFAULT_SORT } = require('../helpers/constant')
 const { filterCase } = require('../helpers/filter/casefilter')
 const { condition, excellHistories } = require('../helpers/filter/historyfilter')
-const { villages } = require('../helpers/aggregate/func/lookup')
-
+const { conditionHistories } = require('../helpers/aggregate/histories')
+const services = 'services.histories'
 const setFlag = (id, status) => {
   return Case.updateOne(
     { _id: ObjectId(id) },
     { $set: { status_clinical: status } },
   )
-}
-
-const is_same = (a, b) => {
-  /* Method to compare equality between 2 object. support Date object,
-   * array, and generic object */
-  if (typeof a == 'undefined' || typeof b == 'undefined')
-    return false;
-  if (Array.isArray(a))
-    return JSON.stringify(a) == JSON.stringify(b);
-  if (typeof (a) == 'object')
-    return String(a) == String(b);
-  return a == b;
 }
 
 function ListHistory(callback) {
@@ -43,26 +31,7 @@ function getHistoryById(id, callback) {
 
 async function getHistoryByCase(id_case, callback) {
   try {
-    const aggQuery = [
-      { $match: { case: ObjectId(id_case), delete_status: { $ne: 'deleted' } } },
-      { ...villages },
-      {
-        $addFields: {
-          village: {
-            $cond: [{ $eq: [{ '$size': `$villages` }, 0] }, { $literal: {} }, { $arrayElemAt: ['$villages', 0] }]
-          }
-        }
-      },
-      {
-        $project: {
-          status: 1, final_result: 1, last_date_status_patient: 1, first_symptom_date: 1, diagnosis: 1, diseases: 1,
-          current_location_district: { '$ifNull': ['$village.kemendagri_desa_nama', ''] },
-          current_location_subdistrict: { '$ifNull': ['$village.kemendagri_kecamatan_nama', ''] },
-          current_location_village: { '$ifNull': ['$village.kemendagri_desa_nama', ''] },
-          current_location_type: 1, current_location_address: 1, createdAt: 1,
-        }
-      },
-    ]
+    const aggQuery = conditionHistories(ObjectId(id_case))
     const result = await History.aggregate(aggQuery).sort(HISTORY_DEFAULT_SORT)
     callback(null, result)
   } catch (e) { callback(e, null) }
@@ -72,8 +41,7 @@ function getLastHistoryByIdCase(id_case, callback) {
   History.find({ case: id_case }).where('delete_status').ne('deleted')
     .sort(HISTORY_DEFAULT_SORT).limit(1).exec()
     .then(item => {
-      let res = item
-      return callback(null, res)
+      return callback(null, item)
     }).catch(err => callback(err, null))
 }
 
@@ -86,12 +54,9 @@ function createHistory(payload, callback) {
 }
 
 // get latest history sort by last_date_status_patient
-function getLatestHistory(caseId) {
-  const latestHis = History.findOne({
-    case: ObjectId(caseId),
-    delete_status: { $ne: 'deleted' },
+async function getLatestHistory(caseId) {
+  return await History.findOne({ case: ObjectId(caseId), delete_status: { $ne: 'deleted' },
   }).sort(HISTORY_DEFAULT_SORT)
-  return latestHis
 }
 
 function createHistoryIfChanged(request, callback) {
@@ -111,7 +76,7 @@ function createHistoryIfChanged(request, callback) {
       let changed = false, changed_fields = [];
 
       for (var property in payload) {
-        if (new_history[property] != null && !is_same(new_history[property], old_history[property])) {
+        if (new_history[property] != null && !Helper.is_same(new_history[property], old_history[property])) {
           changed = true;
           changed_fields.push(property);
         }
@@ -178,7 +143,7 @@ function createHistoryFromInputTest(payload, callback) {
       let changed = false, changed_fields = [];
 
       for (var property in payload) {
-        if (new_history[property] != null && !is_same(new_history[property], old_history[property])) {
+        if (new_history[property] != null && !Helper.is_same(new_history[property], old_history[property])) {
           changed = true;
           changed_fields.push(property);
         }
@@ -284,52 +249,16 @@ async function deleteHistoryById(id, author, callback) {
 }
 
 module.exports = [
-  {
-    name: 'services.histories.list',
-    method: ListHistory
-  },
-  {
-    name: 'services.histories.getById',
-    method: getHistoryById
-  },
-  {
-    name: 'services.histories.getByCase',
-    method: getHistoryByCase
-  },
-  {
-    name: 'services.histories.getLastHistoryByIdCase',
-    method: getLastHistoryByIdCase
-  },
-  {
-    name: 'services.histories.create',
-    method: createHistory
-  },
-  {
-    name: 'services.histories.createIfChanged',
-    method: createHistoryIfChanged
-  },
-  {
-    name: 'services.histories.delete',
-    method: deleteHistory
-  },
-  {
-    name: 'services.histories.checkHistoryCasesBeforeInputTest',
-    method: checkHistoryCasesBeforeInputTest
-  },
-  {
-    name: 'services.histories.createHistoryFromInputTest',
-    method: createHistoryFromInputTest
-  },
-  {
-    name: 'services.histories.updateById',
-    method: updateHistoryById
-  },
-  {
-    name: 'services.histories.deleteById',
-    method: deleteHistoryById
-  },
-  {
-    name: 'services.histories.listHistoryExport',
-    method: listHistoryExport
-  },
+  { name: `${services}.list`, method: ListHistory },
+  { name: `${services}.getById`, method: getHistoryById },
+  { name: `${services}.getByCase`, method: getHistoryByCase },
+  { name: `${services}.getLastHistoryByIdCase`, method: getLastHistoryByIdCase },
+  { name: `${services}.create`, method: createHistory },
+  { name: `${services}.createIfChanged`, method: createHistoryIfChanged },
+  { name: `${services}.delete`, method: deleteHistory },
+  { name: `${services}.checkHistoryCasesBeforeInputTest`, method: checkHistoryCasesBeforeInputTest },
+  { name: `${services}.createHistoryFromInputTest`, method: createHistoryFromInputTest },
+  { name: `${services}.updateById`, method: updateHistoryById },
+  { name: `${services}.deleteById`, method: deleteHistoryById },
+  { name: `${services}.listHistoryExport`, method: listHistoryExport },
 ];
