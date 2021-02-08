@@ -14,82 +14,77 @@ const setFlag = (id, status) => {
   )
 }
 
-const is_same = (a,b) => {
+const is_same = (a, b) => {
   /* Method to compare equality between 2 object. support Date object,
    * array, and generic object */
   if (typeof a == 'undefined' || typeof b == 'undefined')
     return false;
   if (Array.isArray(a))
     return JSON.stringify(a) == JSON.stringify(b);
-  if (typeof(a) == 'object')
+  if (typeof (a) == 'object')
     return String(a) == String(b);
   return a == b;
 }
 
-function ListHistory (callback) {
-    History.find()
-        .sort({ createdAt: 'desc'})
-        .exec()
-        .then(item => {
-        let res = item.map(q => q.toJSONFor())
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null))
+function ListHistory(callback) {
+  History.find().sort({ createdAt: 'desc' }).exec()
+    .then(item => {
+      let res = item.map(q => q.toJSONFor())
+      return callback(null, res)
+    }).catch(err => callback(err, null))
 }
 
-function getHistoryById (id, callback) {
+function getHistoryById(id, callback) {
   History.findById(id).exec().then(item => {
     return callback(null, item.toJSONFor())
-  })
-  .catch(err => callback(err, null))
+  }).catch(err => callback(err, null))
 }
 
-async function getHistoryByCase (id_case, callback) {
-    try {
-      const aggQuery = [
-        { $match: { case: ObjectId(id_case), delete_status: { $ne: 'deleted' } } },
-        { $lookup: {
-            from: 'villages',
-            let: { code: '$current_location_village_code' },
-            pipeline: [{ $match: { $expr: { $eq: [ '$kemendagri_desa_kode', '$$code' ] } } }],
-            as: 'villages'
-        } },
-        { $addFields: {
-            village: {
-              $cond: [ { $eq: [ { '$size': `$villages` }, 0 ] }, { $literal: {} }, { $arrayElemAt: [ '$villages', 0 ] } ]
-            }
-        } },
-        { $project: {
-            status: 1, final_result: 1, last_date_status_patient: 1, first_symptom_date: 1, diagnosis: 1, diseases: 1,
-            current_location_district: { '$ifNull': [ '$village.kemendagri_desa_nama', '' ] },
-            current_location_subdistrict: { '$ifNull': [ '$village.kemendagri_kecamatan_nama', '' ] },
-            current_location_village: { '$ifNull': [ '$village.kemendagri_desa_nama', '' ] },
-            current_location_type: 1, current_location_address: 1, createdAt: 1,
-        } },
-      ]
-
-      const result = await History.aggregate(aggQuery).sort(HISTORY_DEFAULT_SORT)
-
-      callback(null, result)
-    } catch (e) { callback(e, null) }
+async function getHistoryByCase(id_case, callback) {
+  try {
+    const aggQuery = [
+      { $match: { case: ObjectId(id_case), delete_status: { $ne: 'deleted' } } },
+      {
+        $lookup: {
+          from: 'villages',
+          let: { code: '$current_location_village_code' },
+          pipeline: [{ $match: { $expr: { $eq: ['$kemendagri_desa_kode', '$$code'] } } }],
+          as: 'villages'
+        }
+      },
+      {
+        $addFields: {
+          village: {
+            $cond: [{ $eq: [{ '$size': `$villages` }, 0] }, { $literal: {} }, { $arrayElemAt: ['$villages', 0] }]
+          }
+        }
+      },
+      {
+        $project: {
+          status: 1, final_result: 1, last_date_status_patient: 1, first_symptom_date: 1, diagnosis: 1, diseases: 1,
+          current_location_district: { '$ifNull': ['$village.kemendagri_desa_nama', ''] },
+          current_location_subdistrict: { '$ifNull': ['$village.kemendagri_kecamatan_nama', ''] },
+          current_location_village: { '$ifNull': ['$village.kemendagri_desa_nama', ''] },
+          current_location_type: 1, current_location_address: 1, createdAt: 1,
+        }
+      },
+    ]
+    const result = await History.aggregate(aggQuery).sort(HISTORY_DEFAULT_SORT)
+    callback(null, result)
+  } catch (e) { callback(e, null) }
 }
 
-function getLastHistoryByIdCase (id_case, callback) {
-  History.find({ case: id_case})
-        .where('delete_status').ne('deleted')
-        .sort(HISTORY_DEFAULT_SORT)
-        .limit(1)
-        .exec()
-        .then(item => {
-        let res = item
-        return callback(null, res)
-    })
-    .catch(err => callback(err, null))
+function getLastHistoryByIdCase(id_case, callback) {
+  History.find({ case: id_case }).where('delete_status').ne('deleted')
+    .sort(HISTORY_DEFAULT_SORT).limit(1).exec()
+    .then(item => {
+      let res = item
+      return callback(null, res)
+    }).catch(err => callback(err, null))
 }
 
-function createHistory (payload, callback) {
+function createHistory(payload, callback) {
   let item = new History(payload);
-
   item.save((err, item) => {
     if (err) return callback(err, null);
     return callback(null, item);
@@ -102,11 +97,10 @@ function getLatestHistory(caseId) {
     case: ObjectId(caseId),
     delete_status: { $ne: 'deleted' },
   }).sort(HISTORY_DEFAULT_SORT)
-
   return latestHis
 }
 
-function createHistoryIfChanged (request, callback) {
+function createHistoryIfChanged(request, callback) {
   /* Create history only if new history and last_history of the related case
    * has difference. If the same would just return the old history. If there
    * are any difference, would create a new history, then update the related
@@ -120,29 +114,28 @@ function createHistoryIfChanged (request, callback) {
   Case.findById(payload.case).select("-close_contact_health_worker").exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
-      let changed = false, changed_fields=[];
+      let changed = false, changed_fields = [];
 
       for (var property in payload) {
-          if (new_history[property] != null && !is_same(new_history[property],  old_history[property])) {
-            changed = true;
-            changed_fields.push(property);
-          }
+        if (new_history[property] != null && !is_same(new_history[property], old_history[property])) {
+          changed = true;
+          changed_fields.push(property);
+        }
       }
 
       if (changed) {
-        new_history.save( async (err, item) => {
+        new_history.save(async (err, item) => {
           if (err) return callback(err, null);
-
           const latestHis = await getLatestHistory(payload.case)
 
           // update case
           let update_case = {
-              status: latestHis.status,
-              stage: latestHis.stage,
-              final_result: latestHis.final_result,
-              is_test_masif: latestHis.is_test_masif,
-              last_date_status_patient: latestHis.last_date_status_patient,
-              last_history: latestHis._id
+            status: latestHis.status,
+            stage: latestHis.stage,
+            final_result: latestHis.final_result,
+            is_test_masif: latestHis.is_test_masif,
+            last_date_status_patient: latestHis.last_date_status_patient,
+            last_history: latestHis._id
           }
 
           let objcase = Object.assign(case_obj, update_case)
@@ -155,53 +148,46 @@ function createHistoryIfChanged (request, callback) {
       } else
         // return old history if not changed
         return callback(null, old_history);
-    })
-    .then(async () => await setFlag(payload.case, 1))
-    .catch(err => callback(err, null))
-  })
-  .catch(err => callback(err, null))
-
+    }).then(async () => await setFlag(payload.case, 1)).catch(err => callback(err, null))
+  }).catch(err => callback(err, null))
 }
 
-function deleteHistory (id, callback) {
+function deleteHistory(id, callback) {
   //let item = getCaseById(id, callback);
-  History.findOne({ case: id}).exec().then(item => {
-
-      item.save((err, item) => {
-        if (err) return callback(err, null);
-        return callback(null, item);
-      });
-    })
-    .catch(err => callback(err, null))
+  History.findOne({ case: id }).exec().then(item => {
+    item.save((err, item) => {
+      if (err) return callback(err, null);
+      return callback(null, item);
+    });
+  }).catch(err => callback(err, null))
 }
 
 
 function checkHistoryCasesBeforeInputTest(payload, callback) {
-    Case.findOne({"id_case": new RegExp(payload.id_case, "i")}).exec().then(case_obj => {
-      History.findById(case_obj.last_history).exec().then(old_history => {
-        let assign = Object.assign(old_history, payload)
-
-        return callback(null, assign)
-      }).catch(err => callback(err, null))
+  Case.findOne({ "id_case": new RegExp(payload.id_case, "i") }).exec().then(case_obj => {
+    History.findById(case_obj.last_history).exec().then(old_history => {
+      let assign = Object.assign(old_history, payload)
+      return callback(null, assign)
     }).catch(err => callback(err, null))
+  }).catch(err => callback(err, null))
 }
 
 
-function createHistoryFromInputTest(payload, callback){
+function createHistoryFromInputTest(payload, callback) {
   delete payload._id
   // guarded field (cannot be filled)
-  Helper.deleteProps(['_id','last_changed', 'createdAt', 'updatedAt'], payload)
+  Helper.deleteProps(['_id', 'last_changed', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
-      let changed = false, changed_fields=[];
+      let changed = false, changed_fields = [];
 
       for (var property in payload) {
-          if (new_history[property] != null && !is_same(new_history[property],  old_history[property])) {
-            changed = true;
-            changed_fields.push(property);
-          }
+        if (new_history[property] != null && !is_same(new_history[property], old_history[property])) {
+          changed = true;
+          changed_fields.push(property);
+        }
       }
 
       if (changed) {
@@ -210,11 +196,11 @@ function createHistoryFromInputTest(payload, callback){
 
           // update case
           let update_case = {
-              status: payload.status,
-              stage: payload.stage,
-              final_result: payload.final_result,
-              is_test_masif: true,
-              last_history: item._id
+            status: payload.status,
+            stage: payload.stage,
+            final_result: payload.final_result,
+            is_test_masif: true,
+            last_history: item._id
           }
 
           let objcase = Object.assign(case_obj, update_case)
@@ -227,29 +213,21 @@ function createHistoryFromInputTest(payload, callback){
       } else
         // return old history if not changed
         return callback(null, old_history);
-    })
-    .catch(err => callback(err, null))
-  })
-  .catch(err => callback(err, null))
-
+    }).catch(err => callback(err, null))
+  }).catch(err => callback(err, null))
 }
 
-async function updateHistoryById (request, callback) {
+async function updateHistoryById(request, callback) {
   try {
     const id = request.params.id
     const payload = request.payload
     // guarded fields
     Helper.deleteProps(['_id', 'case'], payload)
-
     const res = await History.findByIdAndUpdate(id,
       { $set: payload },
       { new: true },
     )
-
-    if (!res) {
-      throw new Error('History not found!')
-    }
-
+    if (!res) throw new Error('History not found!')
     await setFlag(res.case, 1)
     callback(null, res)
   } catch (e) {
@@ -262,9 +240,9 @@ const listHistoryExport = async (query, user, callback) => {
   const filterRole = exportByRole({}, user, query)
   const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
   let search
-  if(query.search){
+  if (query.search) {
     let search_params = [
-      { id_case : new RegExp(query.search,"i") },
+      { id_case: new RegExp(query.search, "i") },
       { name: new RegExp(query.search, "i") },
     ];
     search = search_params
@@ -275,21 +253,21 @@ const listHistoryExport = async (query, user, callback) => {
   const where = condition(params, search, query)
   try {
     const resultHistory = await Case.aggregate(where).allowDiskUse(true)
-     // .allowDiskUse(true) for handler memory limit in aggregate
-    callback (null, resultHistory.map(cases => excellHistories(cases)))
+    // .allowDiskUse(true) for handler memory limit in aggregate
+    callback(null, resultHistory.map(cases => excellHistories(cases)))
   } catch (error) {
     callback(error, null)
   }
 }
 
 // soft delete (dont suudzon / its never destroy any document) (fitur baru ada di sprint 9)
-async function deleteHistoryById (id, author, callback) {
+async function deleteHistoryById(id, author, callback) {
   try {
     const historyToDelete = await History.findById(id)
 
     const histories = await History.find({
       case: ObjectId(historyToDelete.case), delete_status: { $ne: 'deleted' }
-    }).sort({ last_date_status_patient: 'desc', createdAt: 'desc'})
+    }).sort({ last_date_status_patient: 'desc', createdAt: 'desc' })
 
     if (histories.length <= 1) {
       throw new Error("Riwayat kasus hanya ada satu, tidak dapat dihapus!")
@@ -297,18 +275,19 @@ async function deleteHistoryById (id, author, callback) {
 
     const result = await History.updateOne({ _id: ObjectId(id) }, { $set: Helper.deletedSave({}, author) })
 
-
     // update if deleted history is a last history of case
     if (historyToDelete._id.toString() == histories[0]._id.toString()) {
       histories.shift()
       await Case.updateOne(
         { _id: ObjectId(historyToDelete.case) },
-        { $set: {
+        {
+          $set: {
             status: histories[0].status,
             final_result: histories[0].final_result,
             last_date_status_patient: histories[0].last_date_status_patient,
             last_history: ObjectId(histories[0]._id),
-        } },
+          }
+        },
       )
     }
 
