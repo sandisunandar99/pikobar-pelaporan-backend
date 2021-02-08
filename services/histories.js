@@ -14,6 +14,18 @@ const setFlag = (id, status) => {
   )
 }
 
+const is_same = (a,b) => {
+  /* Method to compare equality between 2 object. support Date object,
+   * array, and generic object */
+  if (typeof a == 'undefined' || typeof b == 'undefined')
+    return false;
+  if (Array.isArray(a))
+    return JSON.stringify(a) == JSON.stringify(b);
+  if (typeof(a) == 'object')
+    return String(a) == String(b);
+  return a == b;
+}
+
 function ListHistory (callback) {
     History.find()
         .sort({ createdAt: 'desc'})
@@ -110,18 +122,6 @@ function createHistoryIfChanged (request, callback) {
       let new_history = new History(payload);
       let changed = false, changed_fields=[];
 
-      function is_same(a,b) {
-        /* Method to compare equality between 2 object. support Date object,
-         * array, and generic object */
-        if (typeof a == 'undefined' || typeof b == 'undefined')
-          return false;
-        if (Array.isArray(a))
-          return JSON.stringify(a) == JSON.stringify(b);
-        if (typeof(a) == 'object')
-          return String(a) == String(b);
-        return a == b;
-      }
-
       for (var property in payload) {
           if (new_history[property] != null && !is_same(new_history[property],  old_history[property])) {
             changed = true;
@@ -197,25 +197,12 @@ function createHistoryFromInputTest(payload, callback){
       let new_history = new History(payload);
       let changed = false, changed_fields=[];
 
-      function is_same(a,b) {
-        /* Method to compare equality between 2 object. support Date object,
-         * array, and generic object */
-        if (typeof a == 'undefined' || typeof b == 'undefined')
-          return false;
-        if (Array.isArray(a))
-          return JSON.stringify(a) == JSON.stringify(b);
-        if (typeof(a) == 'object')
-          return String(a) == String(b);
-        return a == b;
-      }
-
       for (var property in payload) {
           if (new_history[property] != null && !is_same(new_history[property],  old_history[property])) {
             changed = true;
             changed_fields.push(property);
           }
       }
-
 
       if (changed) {
         new_history.save((err, item) => {
