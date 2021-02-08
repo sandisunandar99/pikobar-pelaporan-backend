@@ -7,6 +7,7 @@ const groupingCondition = (grouping, query, criteria) => {
   const params = {
     $group: {
       _id: grouping,
+      name : { $addToSet: { id : '$address_district_code' } },
       active: sumActive(column.status),
       sick_home: sumSick(column.status, "RUMAH"),
       sick_hospital: sumSick(column.status, ["RS", "OTHERS"]),
