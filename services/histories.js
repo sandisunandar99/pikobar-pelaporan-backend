@@ -6,6 +6,7 @@ const { exportByRole } = require('../helpers/rolecheck')
 const { WHERE_GLOBAL, HISTORY_DEFAULT_SORT } = require('../helpers/constant')
 const { filterCase } = require('../helpers/filter/casefilter')
 const { condition, excellHistories } = require('../helpers/filter/historyfilter')
+const { villages } = require('../helpers/aggregate/func/lookup')
 
 const setFlag = (id, status) => {
   return Case.updateOne(
@@ -44,14 +45,7 @@ async function getHistoryByCase(id_case, callback) {
   try {
     const aggQuery = [
       { $match: { case: ObjectId(id_case), delete_status: { $ne: 'deleted' } } },
-      {
-        $lookup: {
-          from: 'villages',
-          let: { code: '$current_location_village_code' },
-          pipeline: [{ $match: { $expr: { $eq: ['$kemendagri_desa_kode', '$$code'] } } }],
-          as: 'villages'
-        }
-      },
+      { ...villages },
       {
         $addFields: {
           village: {
@@ -264,7 +258,6 @@ const listHistoryExport = async (query, user, callback) => {
 async function deleteHistoryById(id, author, callback) {
   try {
     const historyToDelete = await History.findById(id)
-
     const histories = await History.find({
       case: ObjectId(historyToDelete.case), delete_status: { $ne: 'deleted' }
     }).sort({ last_date_status_patient: 'desc', createdAt: 'desc' })
@@ -274,7 +267,6 @@ async function deleteHistoryById(id, author, callback) {
     }
 
     const result = await History.updateOne({ _id: ObjectId(id) }, { $set: Helper.deletedSave({}, author) })
-
     // update if deleted history is a last history of case
     if (historyToDelete._id.toString() == histories[0]._id.toString()) {
       histories.shift()
