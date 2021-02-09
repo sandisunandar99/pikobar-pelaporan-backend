@@ -1,4 +1,4 @@
-const { replyHelper, replyJson } = require('../helpers')
+const { constructErrorResponse, replyJson } = require('../helpers')
 const { generateExcell } = require('../../helpers/export')
 const { queryIfSame, funcIfSame, requestIfSame } = require('../../helpers/request')
 
@@ -121,7 +121,7 @@ module.exports = (server) => {
       server.methods.services.cases.listCaseExport(
         query, user,
         (err, result) => {
-          if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+          if (err) return reply(constructErrorResponse(err)).code(422)
           const title = `Data-Kasus-`
           return generateExcell(result, title, fullName, reply)
         })
