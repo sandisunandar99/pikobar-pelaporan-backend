@@ -73,15 +73,7 @@ function createHistoryIfChanged(request, callback) {
   Case.findById(payload.case).select("-close_contact_health_worker").exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
-      let changed = false, changed_fields = [];
-
-      for (var property in payload) {
-        if (new_history[property] != null && !Helper.is_same(new_history[property], old_history[property])) {
-          changed = true;
-          changed_fields.push(property);
-        }
-      }
-
+      const changed = Helper.checkProperty(payload, new_history, old_history)
       if (changed) {
         new_history.save(async (err, item) => {
           if (err) return callback(err, null);
@@ -140,15 +132,7 @@ function createHistoryFromInputTest(payload, callback) {
   Case.findById(payload.case).exec().then(case_obj => {
     History.findById(case_obj.last_history).exec().then(old_history => {
       let new_history = new History(payload);
-      let changed = false, changed_fields = [];
-
-      for (var property in payload) {
-        if (new_history[property] != null && !Helper.is_same(new_history[property], old_history[property])) {
-          changed = true;
-          changed_fields.push(property);
-        }
-      }
-
+      const changed = Helper.checkProperty(payload, new_history, old_history)
       if (changed) {
         new_history.save((err, item) => {
           if (err) return callback(err, null);

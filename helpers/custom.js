@@ -229,10 +229,21 @@ const is_same = (a, b) => {
   return a == b;
 }
 
+const checkProperty = (payload, new_history, old_history) => {
+  let changed = false
+  for (let property in payload) {
+    if (new_history[property] != null && !is_same(new_history[property], old_history[property])) {
+      changed = true
+    }
+  }
+
+  return changed
+}
+
 module.exports = {
   setPwd, deletedSave, isObject, deleteProps, jsonParse,
   convertDate, isDirty, patientStatus, criteriaConvert, convertYesOrNO,
   convertIncome, convertPysichal, checkDiagnosis,
   checkDiseases, checkExistColumn, rollback, locationPatient, yesOrNoBool,
-  dateReplace, ucwords, is_same
+  dateReplace, ucwords, is_same, checkProperty
 }
