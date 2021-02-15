@@ -1,4 +1,6 @@
 module.exports = {
   ...require('./sql'),
-  ...require('./column')
+  ...require('./column'),
+  ...require('./select'),
+  ...require('./lookup')
 }
