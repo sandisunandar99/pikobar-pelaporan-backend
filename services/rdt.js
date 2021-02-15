@@ -63,14 +63,10 @@ async function ListRdt (query, user, callback) {
   if(query.test_address_district_code){
     params.test_address_district_code = query.test_address_district_code;
   }
-   if (user.role == "dinkesprov" || user.role == "superadmin") {
-     if (query.address_district_code) {
-       params.address_district_code = query.address_district_code;
-     }
-   }
-  if(user.role == "dinkeskota"){
-    // params.author = new ObjectId(user._id);
-    params.author_district_code = user.code_district_city;
+  if (user.role == "dinkesprov" || user.role == "superadmin") {
+    if (query.address_district_code) {
+      params.address_district_code = query.address_district_code;
+    }
   }
 
   if(query.start_date && query.end_date){
@@ -109,12 +105,30 @@ async function ListRdt (query, user, callback) {
   }).catch(err => callback(err, null))
 }
 
+const loopFilter = (i) => {
+const { CRITERIA } = require('../helpers/constant')
+  if (i.target === CRITERIA.CLOSE){
+    i.target = CRITERIA.CLOSE_ID
+  }
+  if (i.target === CRITERIA.SUS){
+    i.target = CRITERIA.SUS_ID
+  }
+  if (i.target === CRITERIA.PROB){
+    i.target = CRITERIA.PROB_ID
+  }
+  if (i.target === CRITERIA.CONF){
+    i.target = CRITERIA.CONF_ID
+  }
+  return i
+}
+
 function getRdtById (id, callback) {
   Rdt.findOne({_id: id})
     .populate('author')
     .exec()
     .then(rdt => {
-        return callback(null, rdt)
+      const manipulate = loopFilter(rdt)
+      return callback(null, manipulate)
     })
     .catch(err => callback(err, null));
 }
@@ -611,7 +625,7 @@ function createRdtMultiple(payload, author, pre, callback) {
 
 function updateRdt (request, author, callback) {
   const id = request.params.id
-  const payload = request.payload
+  let payload = request.payload
 
   delete payload._id
   // update Rdt
