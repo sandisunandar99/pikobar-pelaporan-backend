@@ -1,0 +1,194 @@
+def secretsProd = [
+  [path: 'kv-pelaporan-api/production/app', engineVersion: 2, secretValues: [
+    [envVar: 'NODE_ENV', vaultKey: 'NODE_ENV'],
+    [envVar: 'HOST', vaultKey: 'HOST'],
+    [envVar: 'PORT', vaultKey: 'PORT'],
+
+    [envVar: 'SECRET_KEY', vaultKey: 'SECRET_KEY'],
+
+    [envVar: 'MONGO_DB_URI', vaultKey: 'MONGO_DB_URI'],
+
+    [envVar: 'URL_PENDAFTARAN_COVID', vaultKey: 'URL_PENDAFTARAN_COVID'],
+    [envVar: 'URL_USER_PENDAFTARAN_COVID', vaultKey: 'URL_USER_PENDAFTARAN_COVID'],
+
+
+    [envVar: 'SMS_URL_SERVER', vaultKey: 'SMS_URL_SERVER'],
+    [envVar: 'SMS_USERNAME', vaultKey: 'SMS_USERNAME'],
+    [envVar: 'SMS_KEY', vaultKey: 'SMS_KEY'],
+
+    [envVar: 'WA_URL', vaultKey: 'WA_URL'],
+    [envVar: 'WA_USER', vaultKey: 'WA_USER'],
+    [envVar: 'WA_TOKEN', vaultKey: 'WA_TOKEN'],
+
+    [envVar: 'SENTRY_DSN', vaultKey: 'SENTRY_DSN'],
+
+    [envVar: 'APP_CONVERT', vaultKey: 'APP_CONVERT'],
+
+    [envVar: 'FIREBASE_DEBUG', vaultKey: 'FIREBASE_DEBUG'],
+    [envVar: 'FIREBASE_PROJECT_ID', vaultKey: 'FIREBASE_PROJECT_ID'],
+    [envVar: 'FIREBASE_PRIVATE_KEY_ID', vaultKey: 'FIREBASE_PRIVATE_KEY_ID'],
+    [envVar: 'FIREBASE_PRIVATE_KEY', vaultKey: 'FIREBASE_PRIVATE_KEY'],
+
+    [envVar: 'FIREBASE_CLIENT_EMAIL', vaultKey: 'FIREBASE_CLIENT_EMAIL'],
+    [envVar: 'FIREBASE_CLIENT_ID', vaultKey: 'FIREBASE_CLIENT_ID'],
+    [envVar: 'FIREBASE_CLIENT_X509_CERT_URL', vaultKey: 'FIREBASE_CLIENT_X509_CERT_URL'],
+    [envVar: 'FIREBASE_DATABASE_URL', vaultKey: 'FIREBASE_DATABASE_URL']]],
+
+]
+
+def configuration = [vaultUrl: 'https://vault.jacloud.digitalservice.id/',  vaultCredentialId: 'approle-pelaporan', engineVersion: 2]
+
+pipeline {
+
+    agent any
+
+    environment {
+        appName = 'api-pelaporan-production'
+        PROJECT_REGISTRY ='pelaporan-pikobar'
+        VERSION = "${BUILD_TAG}"
+        URL_REGISTRY = "${URL_REGISTRY_JACLOUD}"
+
+        KUBECONFIG_PELAPORAN_STAGING = "${KUBECONFIG_PELAPORAN_STAGING}"
+        CLIENT_KEY_PELAPORAN_STAGING = "${CLIENT_KEY_PELAPORAN_STAGING}"
+        CLUSTER_NAME_JACLOUD = "k8s-jacloud001-JDS-RANCHER-NODE-03"        
+    }
+
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+
+     triggers {
+                githubPush()
+     }
+
+    stages{
+
+        stage('stage build pelaporan api production'){
+
+            steps {
+
+                withVault([configuration: configuration, vaultSecrets: secretsProd]) { 
+                        
+                        sh 'echo $VERSION > version.txt'
+                        sh 'docker build --tag $appName:$VERSION -f Dockerfile.release . --no-cache'
+                    }
+                stash includes: 'version.txt', name: 'version'
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'version.txt', fingerprint: true
+                    cleanWs()
+                }
+            }
+        }
+
+        stage('push to registry pelaporan jabarcloud'){
+
+            steps {
+                script {
+                    withDockerRegistry([credentialsId: 'a9661b24-dad7-4eaf-a9e2-b59f474c81fa', url: "https://${URL_REGISTRY}"]) {
+                    // code block
+                    unstash 'version'
+                    sh 'cat version.txt'
+                    sh 'export REGISTRY_HTTP_RELATIVEURLS=true \
+                        && docker tag $appName:$VERSION $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION \
+                        && docker push $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION \
+                        && docker rmi $appName:$VERSION \
+                        && docker rmi $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION'
+                        }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'version.txt', fingerprint: true
+                    cleanWs()
+                }
+            }
+        }
+
+         stage ('deploy to kubernetes jabarcloud'){
+            agent {
+                docker { 
+                    image 'dtzar/helm-kubectl:3.3.1'
+                    args '-u root'
+                }
+            }
+
+            steps {
+                    // deploy kubernetes cluster production
+                    withVault([configuration: configuration, vaultSecrets: secretsProd]) {   
+         
+                        sh 'sed -i "s/%VERSION%/${VERSION}/g" kubernetes/production/deployment-pelaporan-api.yaml'
+                        sh 'sed -i "s/%HOST%/${HOST}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PORT%/${PORT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SECRET_KEY%/${SECRET_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%MONGO_DB_URI%/${MONGO_DB_URI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%URL_PENDAFTARAN_COVID%/${URL_PENDAFTARAN_COVID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%URL_USER_PENDAFTARAN_COVID%/${URL_USER_PENDAFTARAN_COVID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%SMS_URL_SERVER%/${SMS_URL_SERVER}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SMS_USERNAME%/${SMS_USERNAME}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%WA_URL%/${WA_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%WA_USER%/${WA_USER}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%SENTRY_DSN%/${SENTRY_DSN}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%APP_CONVERT%/${APP_CONVERT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+    
+                        sh 'sed -i "s/%FIREBASE_PROJECT_ID%/${FIREBASE_PROJECT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_EMAIL%/${FIREBASE_CLIENT_EMAIL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_ID%/${FIREBASE_CLIENT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_CLIENT_X509_CERT_URL%/${FIREBASE_CLIENT_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_DATABASE_URL%/${FIREBASE_DATABASE_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY%/${FIREBASE_PRIVATE_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+             
+                        sh 'sed -i "s/%SMS_KEY%/${SMS_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%WA_TOKEN%/${WA_TOKEN}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        sh 'sed -i "s/%FIREBASE_PRIVATE_KEY_ID%/${FIREBASE_PRIVATE_KEY_ID}/g" kubernetes/production/secret-pelaporan-api.yaml'
+                        
+
+
+                        sh '''
+                            set +x
+                            echo $KUBECONFIG_PELAPORAN_STAGING | base64 -d > kubeconfig
+                            export KUBECONFIG=./kubeconfig
+                            echo $CLIENT_KEY_PELAPORAN_STAGING | base64 -d > client.key
+                            set -x
+                            kubectl config set-credentials pelaporan-dev --client-key=client.key --embed-certs=true
+                            kubectl config set-cluster $CLUSTER_NAME_JACLOUD --insecure-skip-tls-verify=true
+
+                            kubectl apply -f kubernetes/production/deployment-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/service-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/configmap-pelaporan-api.yaml --dry-run=client --validate
+                            kubectl apply -f kubernetes/production/secret-pelaporan-api.yaml --dry-run=client --validate
+
+                            kubectl apply -f kubernetes/production/deployment-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/configmap-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/secret-pelaporan-api.yaml
+                            kubectl apply -f kubernetes/production/service-pelaporan-api.yaml
+                            kubectl get pods --namespace pikobar-pelaporan
+                        '''
+                    }
+              }
+
+              post {
+                  always{
+                    cleanWs()
+                  }
+              }
+        }
+
+
+
+        
+    } 
+
+}

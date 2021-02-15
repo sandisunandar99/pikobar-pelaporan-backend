@@ -1,6 +1,16 @@
 const inputValidations = require('./validations/input');
 const outputValidations = require('./validations/output');
 
+const filterConfig = (validation, output, description, role) => {
+  return {
+      auth: 'jwt',
+      validate: inputValidations[validation],
+      response: outputValidations[output],
+      description: description,
+      tags: ['api', 'users'],
+      pre: role
+    }
+}
 
 module.exports = (server) => {
   const handlers = require('./handlers')(server)
@@ -112,16 +122,12 @@ module.exports = (server) => {
     {
       method: 'PUT',
       path: '/users/change-password',
-      config: {
-        auth: 'jwt',
-        validate: inputValidations.UpdatePayload,
-        response: outputValidations.AuthOnPutOutputValidationConfig,
-        description: 'Update me in user',
-        tags: ['api', 'users'],
-        pre: [
-          CheckRoleUpdate
-        ]
-      },
+      config: filterConfig(
+        'UpdatePayload',
+        'AuthOnPutOutputValidationConfig',
+        'Update me in user',
+        [ CheckRoleUpdate ]
+      ),
       handler: handlers.updateMe
     },
     // Soft delete user
@@ -156,16 +162,12 @@ module.exports = (server) => {
     {
       method: 'POST',
       path: '/users',
-      config: {
-        auth: 'jwt',
-        validate: inputValidations.RegisterPayload,
-        response: outputValidations.AuthOnRegisterOutputValidationConfig,
-        description: 'Add user',
-        tags: ['api', 'users'],
-        pre: [
-          CheckRoleCreate
-        ]
-      },
+      config: filterConfig(
+        'RegisterPayload',
+        'AuthOnRegisterOutputValidationConfig',
+        'Add user',
+        [ CheckRoleCreate ]
+      ),
       handler: handlers.registerUser
     },
     // Login
