@@ -1,6 +1,3 @@
-const fs = require('fs')
-
-
 const createInfoClinics = (payload) => {
   console.log("serviceeeeeeeeeeeeeeee");
   const data = JSON.parse(payload)
