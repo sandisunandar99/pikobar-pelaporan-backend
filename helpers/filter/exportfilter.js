@@ -18,8 +18,8 @@ const excellOutput = (this_) => {
 }
 
 const sqlCondition = (params, search, query) => {
-  const limit = parseInt(query.limit)
-  const page = parseInt(query.page)
+  const limit = parseInt(query.limit) || 100
+  const page = parseInt(query.page) || 1
   let searching = Object.keys(search).length == 0 ? [search] : search
   let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...createdAt, ...params }
