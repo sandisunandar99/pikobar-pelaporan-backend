@@ -28,6 +28,7 @@
     "jawa barat"
   ],
   "dependencies": {
+    "@google-cloud/pubsub": "^2.9.0",
     "@sentry/node": "^5.15.5",
     "ajv": "^6.12.2",
     "ajv-keywords": "^3.5.0",
