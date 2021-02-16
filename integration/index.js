@@ -2,7 +2,7 @@ const schedule = require('node-schedule')
 
 const register = (server, options, next) => {
   schedule.scheduleJob("*/1 * * * *", function() {
-    console.log('This runs every 1 minutes')
+    console.log('PUBSUB runs every 1 minutes')
     const { PubSub } = require('@google-cloud/pubsub');
     const pubsubClient = new PubSub()
     const subscriptionName = process.env.SUBSCRIPTION_NAME
@@ -37,6 +37,8 @@ const register = (server, options, next) => {
     }
 
   });
+
+  return next()
 }
 
 register.attributes = {
