@@ -105,14 +105,4 @@ const manifest = {
   ]
 };
 
-
-if (!process.env.PRODUCTION) {
-  manifest.registrations.push({
-    "plugin": {
-      "register": "blipp",
-      "options": {}
-    }
-  });
-}
-
 module.exports = manifest;
