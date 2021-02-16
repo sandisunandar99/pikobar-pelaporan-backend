@@ -11,16 +11,18 @@ const register = (server, options, next) => {
 
     try {
       const subscriber = pubsubClient.subscription(subscriptionName)
-      const msgHandler = message => {
-        console.log(`Received message ${message.id}:`);
-        console.log(`\tData: ${message.data}`);
-        console.log(`\tAttributes: ${message.attributes}`);
+      const msgHandler = (message) => {
+        // console.log(`Received message ${message.id}:`);
+        // console.log(`\tData: ${message.data}`);
+        // console.log(`\tAttributes: ${message.attributes}`);
         msgCount += 1;
 
         /**
          * TODO: create function service for get data from pub sub
          * code create here
          */
+        const data = Buffer.from(message.data, 'base64').toString()
+        server.methods.services.integration.createInfoClinics(data)
 
         message.ack();
       }
