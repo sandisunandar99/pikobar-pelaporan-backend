@@ -28,7 +28,7 @@ const condition = (params, search, query) => {
       }
     },
     { ...casesHistory }, { ...author },
-    { $sort: { "id_case": 1} },
+    { $sort: { "id_case": 1} },{ $limit : 2000 },
     {
       $project: {
         histories: {

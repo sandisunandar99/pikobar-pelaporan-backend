@@ -30,6 +30,7 @@ const sqlCondition = (params, search, query) => {
     },
     { ...author }, { ...histories },
     { $sort: { "history_list._id": -1, "cases._id": -1 } },
+    { $limit : 2000 },
     { $unwind: '$author_list' },
     { $unwind: '$history_list' },
     {
