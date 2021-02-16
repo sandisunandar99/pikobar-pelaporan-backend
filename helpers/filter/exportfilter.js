@@ -18,6 +18,8 @@ const excellOutput = (this_) => {
 }
 
 const sqlCondition = (params, search, query) => {
+  const limit = parseInt(query.limit)
+  const page = parseInt(query.page)
   let searching = Object.keys(search).length == 0 ? [search] : search
   let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...createdAt, ...params }
@@ -30,8 +32,8 @@ const sqlCondition = (params, search, query) => {
     },
     { ...author }, { ...histories },
     { $sort: { "history_list._id": -1, "cases._id": -1 } },
-    { $unwind: '$author_list' },
-    { $unwind: '$history_list' },
+    { $unwind: '$author_list' },{ $unwind: '$history_list' },
+    { $skip: (limit * page) - limit }, { $limit: limit},
     {
       "$project": {
         ...columnInfo,
