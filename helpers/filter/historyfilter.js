@@ -17,18 +17,15 @@ const excellHistories = (this_) => {
 }
 
 const condition = (params, search, query) => {
+  const limit = parseInt(query.limit)
+  const page = parseInt(query.page)
   let searching = Object.keys(search).length == 0 ? [search] : search
   // let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...params }
   return [
-    {
-      $match: {
-        $and: [andParam],
-        $or: searching
-      }
-    },
+    { $match: { $and: [andParam], $or: searching } },
     { ...casesHistory }, { ...author },
-    { $sort: { "id_case": 1} },
+    { $sort: { "id_case": 1} }, { $skip: (limit * page) - limit }, { $limit: limit},
     {
       $project: {
         histories: {
