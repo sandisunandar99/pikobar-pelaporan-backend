@@ -4,15 +4,6 @@ const manifest = require('./config/manifest');
 const config = require('./config/config')
 const Sentry = require("@sentry/node")
 
-if (!process.env.PRODUCTION) {
-  manifest.registrations.push({
-    "plugin": {
-      "register": "blipp",
-      "options": {}
-    }
-  });
-}
-
 Glue.compose(manifest, { relativeTo: __dirname }, (err, server) => {
   if (err) {
     console.log('server.register err:', err);
