@@ -25,7 +25,7 @@ const condition = (params, search, query) => {
   return [
     { $match: { $and: [andParam], $or: searching } },
     { ...casesHistory }, { ...author },
-    { $sort: { "id_case": 1} }, { $skip: (limit * page) - limit }, { $limit: limit},
+    { $sort: { "histories._id": -1} }, { $skip: (limit * page) - limit }, { $limit: limit},
     {
       $project: {
         histories: {
@@ -40,6 +40,7 @@ const condition = (params, search, query) => {
     },
     { $replaceRoot: { newRoot: "$histories" } }
   ]
+
 }
 
 module.exports = {
