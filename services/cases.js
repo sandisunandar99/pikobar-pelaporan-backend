@@ -146,7 +146,7 @@ const listCaseExport = async (query, user, callback) => {
   params.last_history = { $exists: true, $ne: null }
   const condition = sqlCondition(params, search, query)
   try {
-    const resultExport = await Case.aggregate(condition)
+    const resultExport = await Case.aggregate(condition).allowDiskUse(true)
     callback (null, resultExport.map(cases => excellOutput(cases)))
   } catch (error) {
     callback(error, null)
