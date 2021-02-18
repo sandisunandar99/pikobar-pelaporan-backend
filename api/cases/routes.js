@@ -112,22 +112,6 @@ module.exports = (server) =>{
             },
             handler: handlers.GetCaseSummary
         },
-
-        // Get case's summary of last status
-        {
-            method: 'GET',
-            path: '/cases-summary-final',
-            config: {
-                auth: 'jwt',
-                description: 'Get cases summary of final result',
-                tags: ['api', 'cases'],
-                pre: [
-                    CheckRoleView
-                ]
-            },
-            handler: handlers.GetCaseSummaryFinal
-        },
-
         // Get case's summary of last status
         {
             method: 'GET',

@@ -7,6 +7,7 @@ const groupingCondition = (grouping, query, criteria) => {
   const params = {
     $group: {
       _id: grouping,
+      name : { $addToSet: { id : '$address_district_code' } },
       active: sumActive(column.status),
       sick_home: sumSick(column.status, "RUMAH"),
       sick_hospital: sumSick(column.status, ["RS", "OTHERS"]),
@@ -49,7 +50,7 @@ const byMonth = (match) => {
   const params = [ match,
     {
       "$group": {
-        "_id": { $month: '$createdAt' },
+        "_id": { $month: '$test_date' },
         "rdt": {
           $sum: {
             $cond: [{ $and: [{ $eq: ["$tool_tester", "RDT"] }] }, 1, 0]
@@ -73,13 +74,13 @@ const filterEquivalent = (status, result) => {
   return sumFuncNoMatch(filter)
 }
 
-const month = { $month: '$createdAt' }
+const month = { $month: '$test_date' }
 
 const byMonthRdt = (match, status) => {
   const params = [ match,
     {
       '$group': {
-        '_id': { $month: '$createdAt' },
+        '_id': { $month: '$test_date' },
         'reaktif': filterEquivalent(status, 'REAKTIF'),
         'non_reaktif': filterEquivalent(status, 'NON REAKTIF'),
         'inkonkuslif': filterEquivalent(status, 'INKONKLUSIF')

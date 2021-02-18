@@ -5,6 +5,7 @@ const demographicCondition = (grouping, query, criteria) => {
   const paramsDemographic = {
     $group: {
       _id: grouping,
+      name : { $addToSet: { id : '$address_district_code' } },
       wni: sumFunc(query_state,"$nationality", "WNI"),
       wna: sumFunc(query_state, "$nationality", "WNA"),
       male: sumFunc(query_state, "$gender", "L"),

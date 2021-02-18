@@ -1,21 +1,21 @@
 const PublicPlace = require('../models/Case')
 const ObjectId = require('mongodb').ObjectID
 const { findGlobal, deleteGlobal } = require('../helpers/global/crud')
+const { dynamicColumnCreate } = require('../utils')
 
 const createPublicPlace = async (payload, id_case, callback) => {
   try {
+    const column = [
+      'public_place_category', 'public_place_name' , 'public_place_address',
+      'public_place_date_visited', 'public_place_duration_visited'
+    ]
+    const addToSet = {
+      'visited_public_place': dynamicColumnCreate(column, payload)
+    }
     const inserted = await PublicPlace.updateOne(
       { "_id": ObjectId(id_case) },
       { $set: { 'has_visited_public_place': true },
-        $addToSet: {
-          "visited_public_place": {
-            "public_place_category": payload.public_place_category,
-            "public_place_name": payload.public_place_name,
-            "public_place_address": payload.public_place_address,
-            "public_place_date_visited": payload.public_place_date_visited,
-            "public_place_duration_visited": payload.public_place_duration_visited
-          }
-        }
+        $addToSet: addToSet
       }, { new: true })
     callback(null, inserted)
   } catch (error) {

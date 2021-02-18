@@ -60,6 +60,7 @@ const requiredIf = (value) => {
     otherwise: Joi.allow('', null),
   }
 }
+
 const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   interviewers_name: Joi.string().allow('', null),
   interviewers_phone_number: Joi.string().allow('', null),
@@ -125,7 +126,10 @@ const CaseSheetRequest = Joi.object().options({ abortEarly: false }).keys({
   smoking: Joi.number().allow('', null),
   consume_alcohol: Joi.number().allow('', null),
   status: Joi.string().required().valid(enumCriterian),
-  final_result: Joi.string().required().valid(enumFinalResult),
+  // final_result: Joi.string().required().valid(enumFinalResult),
+  final_result: Joi.string().required()
+  .when('status', { is: Joi.valid(CRITERIA.CONF, CRITERIA.PROB), then: Joi.valid('1', '2', '4')})
+  .when('status', { is: Joi.valid(CRITERIA.CLOSE, CRITERIA.SUS), then: Joi.valid('3', '5')}),
   last_date_status_patient: Joi.date().allow('', null).error(() => invalidDate('last_date_status_patient')),
   transmission_type: Joi.number().when('status', requiredIf([CRITERIA.CONF])),
   cluster_type: Joi.number().when('status', requiredIf([CRITERIA.CONF])),
