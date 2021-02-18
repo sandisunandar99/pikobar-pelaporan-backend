@@ -53,14 +53,15 @@ const exportHistory = (server) => {
     } = request
     server.methods.services.histories.listHistoryExport(
       query, request.auth.credentials.user, (err, result) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        const jsonXls = json2xls(result);
-        const fileName = `Data-Riwayat-Info-Klinis-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
-        fs.writeFileSync(fileName, jsonXls, 'binary');
-        const xlsx = fs.readFileSync(fileName)
-        reply(xlsx)
-          .header('Content-Disposition', 'attachment; filename=' + fileName);
-        return fs.unlinkSync(fileName);
+        // if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        // const jsonXls = json2xls(result);
+        // const fileName = `Data-Riwayat-Info-Klinis-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
+        // fs.writeFileSync(fileName, jsonXls, 'binary');
+        // const xlsx = fs.readFileSync(fileName)
+        // reply(xlsx)
+        //   .header('Content-Disposition', 'attachment; filename=' + fileName);
+        // return fs.unlinkSync(fileName);
+        replyJson(err, result, reply)
       })
   }
 }
