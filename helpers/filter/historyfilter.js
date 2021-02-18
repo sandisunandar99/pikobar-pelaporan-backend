@@ -22,29 +22,10 @@ const condition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
   // let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...params }
-  console.log(JSON.stringify([
-    { $match: { $and: [andParam], $or: searching } },
-    { ...casesHistory }, { ...author },
-    { $sort: { "histories._id": -1, "histories.updatedAt": -1, "histories.last_date_status_patient":-1 } },
-    { $skip: (limit * page) - limit }, { $limit: limit},
-    {
-      $project: {
-        histories: {
-          ...columnInfo,
-        ...columnIdentityClinic,
-        ...columnAuthor
-        }
-      }
-    },
-    {
-      $unwind: "$histories"
-    },
-    { $replaceRoot: { newRoot: "$histories" } }
-  ]));
   return [
     { $match: { $and: [andParam], $or: searching } },
     { ...casesHistory }, { ...author },
-    { $sort: { "histories.updatedAt": -1, "histories.last_date_status_patient":-1 } },
+    { $sort: { "histories._id": -1, "histories.updatedAt": -1, "histories.last_date_status_patient":-1 } },
     { $skip: (limit * page) - limit }, { $limit: limit},
     {
       $project: {
