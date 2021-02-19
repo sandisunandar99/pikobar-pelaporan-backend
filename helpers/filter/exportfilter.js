@@ -4,6 +4,7 @@ const { histories, author } = require("../export/cases/lookup")
 const { sectionIdentity, sectionInfo, sectionClinic } = require("../export/cases/column")
 const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/select_column")
 const { checkExistColumn } = require("../../helpers/custom")
+const { sortCondition } = require("../../utils")
 
 const excellOutput = (this_) => {
   return {
@@ -23,13 +24,7 @@ const sqlCondition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
   let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...createdAt, ...params }
-  let sort = { updatedAt: -1 };
-  if (query.sort && query.sort.split) {
-    let splits = query.sort.split(':')
-    sort.last_date_status_patient = splits[1] === 'desc' ? -1 : 1
-    sort[splits[0]] = splits[1] === 'desc' ? -1 : 1
-  }
-  console.log(sort);
+  let sort = sortCondition(query)
   return [
     {
       $match: {
