@@ -23,6 +23,13 @@ const sqlCondition = (params, search, query) => {
   let searching = Object.keys(search).length == 0 ? [search] : search
   let createdAt = dateFilter(query, "createdAt")
   let andParam = { ...createdAt, ...params }
+  let sort = { updatedAt: -1 };
+  if (query.sort && query.sort.split) {
+    let splits = query.sort.split(':')
+    sort.last_date_status_patient = splits[1] === 'desc' ? -1 : 1
+    sort[splits[0]] = splits[1] === 'desc' ? -1 : 1
+  }
+  console.log(sort);
   return [
     {
       $match: {
@@ -31,7 +38,7 @@ const sqlCondition = (params, search, query) => {
       }
     },
     { ...author }, { ...histories },
-    { $sort: { "history_list._id": -1, "cases._id": -1 } },
+    { $sort: sort },
     { $unwind: '$author_list' },{ $unwind: '$history_list' },
     { $skip: (limit * page) - limit }, { $limit: limit},
     {
