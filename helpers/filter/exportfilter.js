@@ -21,10 +21,10 @@ const excellOutput = (this_) => {
 const sqlCondition = (params, search, query) => {
   const limit = parseInt(query.limit) || 100
   const page = parseInt(query.page) || 1
-  let searching = Object.keys(search).length == 0 ? [search] : search
-  let createdAt = dateFilter(query, "createdAt")
-  let andParam = { ...createdAt, ...params }
-  let sort = sortCondition(query)
+  const searching = Object.keys(search).length == 0 ? [search] : search
+  const createdAt = dateFilter(query, "createdAt")
+  const andParam = { ...createdAt, ...params }
+  const sort = sortCondition(query)
   return [
     {
       $match: {
