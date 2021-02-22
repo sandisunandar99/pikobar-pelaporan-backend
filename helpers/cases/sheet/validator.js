@@ -54,6 +54,18 @@ const concatErrorsOnSpecificFIeld = (fieldErrors, fieldName) => {
   return desc
 }
 
+const validateEnum = (res) => {
+  if (
+    res === `"Status pasien terakhir" must be one of [1, 2, 4]`
+    ||
+    res === `"Status pasien terakhir" must be one of [3, 5]`
+  ) {
+    res = 'Status Pasien Terakhir tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan'
+  }
+
+  return res
+}
+
 const transformFieldErrors = (errors, index) => {
   const rowErrors = []
 
@@ -61,9 +73,9 @@ const transformFieldErrors = (errors, index) => {
     const fieldErrors = errors[index][error] || {}
 
     for (let fieldName in fieldErrors) {
-      const desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
+      let desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
       const transformedFieldErrors = {}
-
+      desc = validateEnum(desc)
       transformedFieldErrors.columnName = fieldName
       transformedFieldErrors.description = desc
       rowErrors.push(transformedFieldErrors)
@@ -137,18 +149,18 @@ const validateDistrictCode = async (recordError, code) => {
   return recordError
 }
 
-const validateFinalResult = (recordError, final_result) => {
-  const { patientStatus } = require('../../custom')
-  const errField = lang['final_result']
-  const message = `Status Pasien Terakhir '${patientStatus(final_result)}' tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan`
-  if (!Array.isArray(recordError[errField])) {
-    recordError[errField] = []
-  }
-  recordError[errField].pop()
-  recordError[errField].push(`${message}`)
+// const validateFinalResult = (recordError, final_result) => {
+//   const { patientStatus } = require('../../custom')
+//   const errField = lang['final_result']
+//   const message = `Status Pasien Terakhir '${patientStatus(final_result)}' tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan`
+//   if (!Array.isArray(recordError[errField])) {
+//     recordError[errField] = []
+//   }
+//   recordError[errField].pop()
+//   recordError[errField].push(`${message}`)
 
-  return recordError
-}
+//   return recordError
+// }
 
 const validate = async (payload) => {
   const errors = {}
@@ -171,7 +183,7 @@ const validate = async (payload) => {
     recordError = validateDuplicateNikReqPayload(recordError, reqDuplicateNik, payload, nik)
 
     // validate final result request payload
-    recordError = validateFinalResult(recordError, final_result)
+    // recordError = validateFinalResult(recordError, final_result)
 
     if (Object.keys(recordError).length) {
       recordErrors.push(recordError)
