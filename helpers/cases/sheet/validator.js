@@ -54,6 +54,18 @@ const concatErrorsOnSpecificFIeld = (fieldErrors, fieldName) => {
   return desc
 }
 
+const validateEnum = (res) => {
+  if (
+    res === `"Status pasien terakhir" must be one of [1, 2, 4]`
+    ||
+    res === `"Status pasien terakhir" must be one of [3, 5]`
+  ) {
+    res = 'Status Pasien Terakhir tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan'
+  }
+
+  return res
+}
+
 const transformFieldErrors = (errors, index) => {
   const rowErrors = []
 
@@ -63,15 +75,7 @@ const transformFieldErrors = (errors, index) => {
     for (let fieldName in fieldErrors) {
       let desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
       const transformedFieldErrors = {}
-
-      if (
-        desc === `"Status pasien terakhir" must be one of [1, 2, 4]`
-        ||
-        desc === `"Status pasien terakhir" must be one of [3, 5]`
-      ) {
-        desc = 'Status Pasien Terakhir tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan'
-      }
-
+      desc = validateEnum(desc)
       transformedFieldErrors.columnName = fieldName
       transformedFieldErrors.description = desc
       rowErrors.push(transformedFieldErrors)
