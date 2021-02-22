@@ -1,7 +1,11 @@
-const createInfoClinics = (payload) => {
-  console.log("serviceeeeeeeeeeeeeeee");
+const {findUserCases} = require('../helpers/integration')
+
+const createInfoClinics = async (payload) => {
   const data = JSON.parse(payload)
-  console.log(data);
+
+  //check data by nik or phone number
+  const patient = await findUserCases(data);
+  console.log(patient);
 
 }
 
