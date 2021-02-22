@@ -3,6 +3,7 @@ const { dateFilter } = require("../filter/date")
 const { casesHistory, author } = require("../export/cases/lookup")
 const { columnIdentityClinic, columnInfo, columnAuthor } = require("../export/cases/select_column")
 const { combineInfo, sectionOthers } = require("../export/histories/column")
+const { sortCondition } = require("../../utils")
 
 const excellHistories = (this_) => {
   const mapingColumn = {
@@ -17,18 +18,17 @@ const excellHistories = (this_) => {
 }
 
 const condition = (params, search, query) => {
-  let searching = Object.keys(search).length == 0 ? [search] : search
+  const limit = parseInt(query.limit) || 100
+  const page = parseInt(query.page) || 1
+  const searching = Object.keys(search).length == 0 ? [search] : search
+  const sort = sortCondition(query)
   // let createdAt = dateFilter(query, "createdAt")
-  let andParam = { ...params }
+  const andParam = { ...params }
   return [
-    {
-      $match: {
-        $and: [andParam],
-        $or: searching
-      }
-    },
+    { $match: { $and: [andParam], $or: searching } },
     { ...casesHistory }, { ...author },
-    { $sort: { "id_case": 1} },
+    { $sort: sort },
+    { $skip: (limit * page) - limit }, { $limit: limit},
     {
       $project: {
         histories: {

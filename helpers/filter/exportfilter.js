@@ -4,6 +4,7 @@ const { histories, author } = require("../export/cases/lookup")
 const { sectionIdentity, sectionInfo, sectionClinic } = require("../export/cases/column")
 const { columnIdentity, columnInfo, columnAuthor } = require("../export/cases/select_column")
 const { checkExistColumn } = require("../../helpers/custom")
+const { sortCondition } = require("../../utils")
 
 const excellOutput = (this_) => {
   return {
@@ -18,9 +19,12 @@ const excellOutput = (this_) => {
 }
 
 const sqlCondition = (params, search, query) => {
-  let searching = Object.keys(search).length == 0 ? [search] : search
-  let createdAt = dateFilter(query, "createdAt")
-  let andParam = { ...createdAt, ...params }
+  const limit = parseInt(query.limit) || 100
+  const page = parseInt(query.page) || 1
+  const searching = Object.keys(search).length == 0 ? [search] : search
+  const createdAt = dateFilter(query, "createdAt")
+  const andParam = { ...createdAt, ...params }
+  const sort = sortCondition(query)
   return [
     {
       $match: {
@@ -29,9 +33,9 @@ const sqlCondition = (params, search, query) => {
       }
     },
     { ...author }, { ...histories },
-    { $sort: { "history_list._id": -1, "cases._id": -1 } },
-    { $unwind: '$author_list' },
-    { $unwind: '$history_list' },
+    { $sort: sort },
+    { $unwind: '$author_list' },{ $unwind: '$history_list' },
+    { $skip: (limit * page) - limit }, { $limit: limit},
     {
       "$project": {
         ...columnInfo,
