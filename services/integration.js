@@ -1,7 +1,7 @@
 const createInfoClinics = (payload) => {
   console.log("serviceeeeeeeeeeeeeeee");
   const data = JSON.parse(payload)
-  console.log(data.user.nik);
+  console.log(data);
 
 }
 

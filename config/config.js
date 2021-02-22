@@ -45,12 +45,5 @@ conf.firebase = {
   debug: process.env.FIREBASE_DEBUG === 'true'
 };
 
-conf.pubSub = {
-  credentials: {
-    client_email: process.env.CLIENT_EMAIL,
-    private_key: Buffer.from(process.env.PRIVATE_KEY, 'base64').toString(),
-  }
-}
-
 
 module.exports = conf;
