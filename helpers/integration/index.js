@@ -13,7 +13,7 @@ const findUserCases = async(data) => {
 }
 
 
-const payloadDiagnosis = (data, patient) =>{
+const splitPayload1 = (data, patient) =>{
   return {
     last_date_status_patient: "2021-02-19",
     there_are_symptoms: true,
@@ -30,12 +30,6 @@ const payloadDiagnosis = (data, patient) =>{
     physical_check_height: 167,
     physical_check_weight: 75,
     status: "CLOSECONTACT",
-    stage: "",
-    final_result: "5",
-    is_other_diagnosisr_respiratory_disease: false,
-    pysichal_activity: 0,
-    smoking: 2,
-    consume_alcohol: 2,
     other_diagnosis: "",
     other_diagnosisr_respiratory_disease: "",
     last_changed: "2021-02-18T03:03:40.398Z",
@@ -44,40 +38,52 @@ const payloadDiagnosis = (data, patient) =>{
   }
 }
 
-const payloadGeneral = (data, patient) =>{
+const splitPayload2 = (patient) =>{
   return {
-     "case": "602dd69fd38a440036a50794",
-    "history_tracing": [],
-    "is_went_abroad": false,
-    "visited_country": "",
-    "return_date": null,
-    "is_went_other_city": false,
-    "visited_city": "",
-    "is_patient_address_same": true,
-    "is_contact_with_positive": false,
-    "history_notes": "",
-    "report_source": "",
-    "current_location_type": "RUMAH",
-    "current_hospital_id": null,
-    "current_location_address": "jl. simatupang",
-    "current_location_district_code": "32.73",
-    "current_location_subdistrict_code": "32.73.20",
-    "current_location_village_code": "32.73.20.1001",
-    "other_notes": "",
-    "current_hospital_type": null,
-    "current_location_province_code": "32",
-    "address_district_code": "32.73",
-    "address_subdistrict_code": "32.73.20",
-    "address_village_code": "32.73.20.1001",
-    "address_village_name": "Antapani Kulon",
-    "address_street": "asd"
+    case: "602dd69fd38a440036a50794",
+    history_tracing: [],
+    is_went_abroad: false,
+    visited_country: "",
+    return_date: null,
+    is_went_other_city: false,
+    visited_city: "",
+    is_patient_address_same: true,
+    is_contact_with_positive: false,
+    history_notes: "",
+    report_source: "",
+     stage: "",
+    final_result: "5",
+    is_other_diagnosisr_respiratory_disease: false,
+    pysichal_activity: 0,
+    smoking: 2,
+    consume_alcohol: 2,
+  }
+}
+
+const splitPayload3 = (patient) => {
+  return {
+    current_location_type: "RUMAH",
+    current_hospital_id: null,
+    current_location_address: "jl. simatupang",
+    current_location_district_code: "32.73",
+    current_location_subdistrict_code: "32.73.20",
+    current_location_village_code: "32.73.20.1001",
+    other_notes: "",
+    current_hospital_type: null,
+    current_location_province_code: "32",
+    address_district_code: "32.73",
+    address_subdistrict_code: "32.73.20",
+    address_village_code: "32.73.20.1001",
+    address_village_name: "Antapani Kulon",
+    address_street: "asd"
   }
 }
 
 const transformDataPayload = (data, patient) => {
   const transform = {
-    ...payloadDiagnosis(data, patient),
-    ...payloadGeneral(patient)
+    ...splitPayload1(data, patient),
+    ...splitPayload2(patient),
+    ...splitPayload3(patient)
   }
 
   console.log(transform);
