@@ -61,8 +61,16 @@ const transformFieldErrors = (errors, index) => {
     const fieldErrors = errors[index][error] || {}
 
     for (let fieldName in fieldErrors) {
-      const desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
+      let desc = concatErrorsOnSpecificFIeld(fieldErrors, fieldName)
       const transformedFieldErrors = {}
+
+      if (
+        desc === `"Status pasien terakhir" must be one of [1, 2, 4]`
+        ||
+        desc === `"Status pasien terakhir" must be one of [3, 5]`
+      ) {
+        desc = 'Status Pasien Terakhir tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan'
+      }
 
       transformedFieldErrors.columnName = fieldName
       transformedFieldErrors.description = desc
@@ -137,18 +145,18 @@ const validateDistrictCode = async (recordError, code) => {
   return recordError
 }
 
-const validateFinalResult = (recordError, final_result) => {
-  const { patientStatus } = require('../../custom')
-  const errField = lang['final_result']
-  const message = `Status Pasien Terakhir '${patientStatus(final_result)}' tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan`
-  if (!Array.isArray(recordError[errField])) {
-    recordError[errField] = []
-  }
-  recordError[errField].pop()
-  recordError[errField].push(`${message}`)
+// const validateFinalResult = (recordError, final_result) => {
+//   const { patientStatus } = require('../../custom')
+//   const errField = lang['final_result']
+//   const message = `Status Pasien Terakhir '${patientStatus(final_result)}' tidak sesuai dengan ketentuan, harap diperbaiki sesuai dengan kententuan yang telah diberikan`
+//   if (!Array.isArray(recordError[errField])) {
+//     recordError[errField] = []
+//   }
+//   recordError[errField].pop()
+//   recordError[errField].push(`${message}`)
 
-  return recordError
-}
+//   return recordError
+// }
 
 const validate = async (payload) => {
   const errors = {}
@@ -171,7 +179,7 @@ const validate = async (payload) => {
     recordError = validateDuplicateNikReqPayload(recordError, reqDuplicateNik, payload, nik)
 
     // validate final result request payload
-    recordError = validateFinalResult(recordError, final_result)
+    // recordError = validateFinalResult(recordError, final_result)
 
     if (Object.keys(recordError).length) {
       recordErrors.push(recordError)
