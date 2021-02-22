@@ -12,18 +12,42 @@ const findUserCases = async(data) => {
   return (cases.length > 0 ? cases : null)
 }
 
-const transformDataPayload = (data, patient) => {
-  const transform = {
-    "case": "602dd69fd38a440036a50794",
-    "status": "CLOSECONTACT",
-    "stage": "",
-    "final_result": "5",
-    "there_are_symptoms": true,
-    "last_date_status_patient": "2021-02-19",
-    "diagnosis": ["Demam", "Sakit Tenggorokan"],
-    "diagnosis_other": "gejala lain-lain",
+
+const payloadDiagnosis = (data, patient) =>{
+  return {
+    last_date_status_patient: "2021-02-19",
+    there_are_symptoms: true,
+    first_symptom_date: "2021-02-19",
+    diagnosis: ["Demam", "Sakit Tenggorokan"],
+    diagnosis_ards: 2,
+    diagnosis_covid: 2,
+    diagnosis_pneumonia: 2,
+    diagnosis_other: "gejala lain-lain",
+    physical_check_temperature: 35,
+    physical_check_blood_pressure: 98,
+    physical_check_pulse: 88,
+    physical_check_respiration: 80,
+    physical_check_height: 167,
+    physical_check_weight: 75,
+    status: "CLOSECONTACT",
+    stage: "",
+    final_result: "5",
+    is_other_diagnosisr_respiratory_disease: false,
+    pysichal_activity: 0,
+    smoking: 2,
+    consume_alcohol: 2,
+    other_diagnosis: "",
+    other_diagnosisr_respiratory_disease: "",
+    last_changed: "2021-02-18T03:03:40.398Z",
+    diseases: ["Hipertensi"],
+    diseases_other: "penyerta-lain2",
+  }
+}
+
+const payloadGeneral = (data, patient) =>{
+  return {
+     "case": "602dd69fd38a440036a50794",
     "history_tracing": [],
-    "first_symptom_date": "2021-02-19",
     "is_went_abroad": false,
     "visited_country": "",
     "return_date": null,
@@ -31,8 +55,6 @@ const transformDataPayload = (data, patient) => {
     "visited_city": "",
     "is_patient_address_same": true,
     "is_contact_with_positive": false,
-    "diseases": ["Hipertensi"],
-    "diseases_other": "penyerta-lain2",
     "history_notes": "",
     "report_source": "",
     "current_location_type": "RUMAH",
@@ -44,22 +66,6 @@ const transformDataPayload = (data, patient) => {
     "other_notes": "",
     "current_hospital_type": null,
     "current_location_province_code": "32",
-    "diagnosis_ards": 2,
-    "diagnosis_covid": 2,
-    "diagnosis_pneumonia": 2,
-    "is_other_diagnosisr_respiratory_disease": false,
-    "pysichal_activity": 0,
-    "smoking": 2,
-    "consume_alcohol": 2,
-    "physical_check_temperature": 35,
-    "physical_check_blood_pressure": 98,
-    "physical_check_pulse": 88,
-    "physical_check_respiration": 80,
-    "physical_check_height": 167,
-    "physical_check_weight": 75,
-    "other_diagnosis": "",
-    "other_diagnosisr_respiratory_disease": "",
-    "last_changed": "2021-02-18T03:03:40.398Z",
     "address_district_code": "32.73",
     "address_subdistrict_code": "32.73.20",
     "address_village_code": "32.73.20.1001",
@@ -68,7 +74,16 @@ const transformDataPayload = (data, patient) => {
   }
 }
 
+const transformDataPayload = (data, patient) => {
+  const transform = {
+    ...payloadDiagnosis(data, patient),
+    ...payloadGeneral(patient)
+  }
+
+  console.log(transform);
+}
+
 module.exports = {
-  findUserCases
+  findUserCases, transformDataPayload
 }
 

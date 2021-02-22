@@ -1,4 +1,4 @@
-const {findUserCases} = require('../helpers/integration')
+const {findUserCases, transformDataPayload} = require('../helpers/integration')
 
 const createInfoClinics = async (payload) => {
   const data = JSON.parse(payload)
