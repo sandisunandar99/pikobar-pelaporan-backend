@@ -51,7 +51,7 @@ const splitPayload2 = (patient) =>{
     is_contact_with_positive: false,
     history_notes: "",
     report_source: "",
-     stage: "",
+    stage: "",
     final_result: "5",
     is_other_diagnosisr_respiratory_disease: false,
     pysichal_activity: 0,
