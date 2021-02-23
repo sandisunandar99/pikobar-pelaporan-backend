@@ -17,7 +17,7 @@ const register = (server, options, next) => {
           const data = Buffer.from(message.data, 'base64').toString()
           let payload = await server.methods.services.integration.createInfoClinics(data)
 
-          await server.methods.services.histories.createIfChanged({payload}, (err, result) => {return true})
+          await server.methods.services.histories.createIfChanged({payload}, (err, result) => {return result})
 
           message.ack();
 
