@@ -1,13 +1,13 @@
 const schedule = require('node-schedule')
+const { PubSub } = require('@google-cloud/pubsub')
+const pubsubClient = new PubSub()
+const subscriptionName = process.env.SUBSCRIPTION_NAME
+const timeout = 60
+let msgCount = 0
 
 const register = (server, options, next) => {
   schedule.scheduleJob("*/1 * * * *", function() {
     console.log('Worker Google Pub/Sub runs every 1 minutes')
-    const { PubSub } = require('@google-cloud/pubsub')
-    const pubsubClient = new PubSub()
-    const subscriptionName = process.env.SUBSCRIPTION_NAME
-    const timeout = 60
-    let msgCount = 0
 
     try {
       const subscriber = pubsubClient.subscription(subscriptionName)
