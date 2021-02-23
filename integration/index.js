@@ -1,4 +1,5 @@
 const schedule = require('node-schedule')
+const {replyJson} = require('../api/helpers')
 
 const register = (server, options, next) => {
   schedule.scheduleJob("*/1 * * * *", function() {
