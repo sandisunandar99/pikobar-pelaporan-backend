@@ -23,7 +23,7 @@ const statusPikobar = (status)=> {
       nameStatus = PUBSUB.CONFIRMED
       break;
     case "PDP":
-      nameStatus = PUBSUB.SUSPECT
+      nameStatus = PUBSUB.PDP
       break;
     case "ODP":
       nameStatus = PUBSUB.ODP
