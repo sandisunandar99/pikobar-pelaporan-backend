@@ -1,4 +1,5 @@
 const schedule = require('node-schedule')
+const {replyJson} = require('../api/helpers')
 
 const register = (server, options, next) => {
   schedule.scheduleJob("*/1 * * * *", function() {
@@ -11,7 +12,7 @@ const register = (server, options, next) => {
 
     try {
       const subscriber = pubsubClient.subscription(subscriptionName)
-      const msgHandler = (message) => {
+      const msgHandler = async (message, request) => {
         // console.log(`Received message ${message.id}:`);
         // console.log(`\tData: ${message.data}`);
         // console.log(`\tAttributes: ${message.attributes}`);
@@ -21,10 +22,19 @@ const register = (server, options, next) => {
          * TODO: create function service for get data from pub sub
          * code create here
          */
-        const data = Buffer.from(message.data, 'base64').toString()
-        server.methods.services.integration.createInfoClinics(data)
+        try {
+          const data = Buffer.from(message.data, 'base64').toString()
+          let payload = await server.methods.services.integration.createInfoClinics(data)
 
-        message.ack();
+          await server.methods.services.histories.createIfChanged({payload}, (err, result)=>{
+            console.log(result);
+          })
+
+          message.ack();
+        } catch (error) {
+          console.log(error);
+        }
+
       }
 
       subscriber.on('message', msgHandler)

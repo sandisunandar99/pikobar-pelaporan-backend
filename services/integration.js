@@ -9,8 +9,9 @@ const createInfoClinics = async (payload) => {
     // transform payload with last data case patient
     const transData = transformDataPayload(data, ...patient)
 
+    return transData
   } catch (error) {
-
+    return error
   }
 
 }
