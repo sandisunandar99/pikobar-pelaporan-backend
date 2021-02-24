@@ -6,7 +6,7 @@ const createInfoClinics = async (payload) => {
     //check data by nik or phone number
     const patient = await findUserCases(data)
     // transform payload with last data case patient
-    const transData = transformDataPayload(data, ...patient)
+    const transData = await transformDataPayload(data, ...patient)
 
     return transData
   } catch (error) {

@@ -12,14 +12,14 @@ const register = (server, options, next) => {
     try {
       const subscriber = pubsubClient.subscription(subscriptionName)
       const msgHandler = async (message) => {
-        msgCount += 1;
-        try {
-          const data = Buffer.from(message.data, 'base64').toString()
-          let payload = await server.methods.services.integration.createInfoClinics(data)
-          await server.methods.services.histories.createIfChanged({payload}, (err, result) => {return result})
+          msgCount += 1;
+          try {
+            const data = Buffer.from(message.data, 'base64').toString()
+            let payload = await server.methods.services.integration.createInfoClinics(data)
+            await server.methods.services.histories.createIfChanged({payload}, (err, result)=> console.log(result))
 
-          message.ack();
-        } catch (error) {console.log(error)}
+            message.ack();
+          } catch (error) {console.log(error)}
       }
 
       subscriber.on('message', msgHandler)
