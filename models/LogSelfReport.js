@@ -5,6 +5,6 @@ const LogSelfReport = new mongoose.Schema({
    name: String,
    nik: String,
    phone_number: String
-})
+},{ timestamps:true})
 
 module.exports = mongoose.model('LogSelfReport', LogSelfReport)
