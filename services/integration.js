@@ -13,7 +13,8 @@ const createInfoClinics = async (payload) => {
         user_id : data.user_id,
         name : data.user.name,
         nik : data.user.nik,
-        phone_number : data.user.phone_number
+        phone_number : data.user.phone_number,
+        user_has_found : null
       }
 
       let logPub = new LogSelfReport(dataPub)

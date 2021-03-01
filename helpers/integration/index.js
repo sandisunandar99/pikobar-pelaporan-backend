@@ -1,4 +1,5 @@
 const Case = require('../../models/Case')
+const LogSelfReport = require('../../models/LogSelfReport')
 const {PUBSUB} = require('../constant')
 
 const findUserCases = async(data) => {
@@ -109,7 +110,17 @@ const splitPayload3 = (patient) => {
   return Obj
 }
 
+const userHasFound = async (data) =>{
+  const date = new Date().toISOString()
+  await LogSelfReport.updateOne(
+    {$or: [{nik: data.user.nik}, {phone_number: data.user.phone_number}]},
+    {$set: {user_has_found: date}}
+  )
+  return null
+}
+
 const transformDataPayload = (data, patient) => {
+  userHasFound(data)
   const transform = {
     ...splitPayload1(data, patient),
     ...splitPayload2(patient),
