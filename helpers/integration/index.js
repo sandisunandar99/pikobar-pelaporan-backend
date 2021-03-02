@@ -112,10 +112,14 @@ const splitPayload3 = (patient) => {
 
 const userHasFound = async (data) =>{
   const date = new Date().toISOString()
-  await LogSelfReport.updateOne(
-    {$or: [{nik: data.user.nik}, {phone_number: data.user.phone_number}]},
-    {$set: {user_has_found: date}}
-  )
+  const check  = await LogSelfReport.findOne({nik: data.user.nik}).or({phone_number: data.user.phone_number})
+
+  if (check.user_has_found === null) {
+    await LogSelfReport.updateOne(
+      {$or: [{nik: data.user.nik}, {phone_number: data.user.phone_number}]},
+      {$set: {user_has_found: date}}
+    )
+  }
   return null
 }
 
