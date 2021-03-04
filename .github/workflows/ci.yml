@@ -4,8 +4,6 @@
 name: API Pikobar Pelaporan Covid-19
 
 on:
-  push:
-    branches: [ development ]
   pull_request:
     branches: [ development ]
 
