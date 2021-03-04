@@ -13,7 +13,7 @@ module.exports = (server) => {
   const CheckCaseIsAllowToTransfer = require('./route_prerequesites').CheckCaseIsAllowToTransfer(server)
   const CheckIsTransferActionIsAllow = require('./route_prerequesites').CheckIsTransferActionIsAllow(server)
   const CheckCredentialUnitIsExist = require('./route_prerequesites').CheckCredentialUnitIsExist(server)
-
+  const { routeWithPreOld } = require('../../helpers/routes')
   const sameConfig = (description, valdiate, pre, method) => {
     return {
       config: {
@@ -47,19 +47,7 @@ module.exports = (server) => {
         ], 'CreateCaseAndTransfer'
       )
     },
-    {
-      method: 'GET',
-      path: '/cases/{id}/transfers',
-      config: {
-        auth: 'jwt',
-        description: 'Get case transfers',
-        tags: ['api', 'cases.transfers'],
-        pre: [
-          CheckRoleView,
-        ]
-      },
-      handler: handlers.GetCaseTransfers
-    },
+    routeWithPreOld(server, 'GET', '/cases/{id}/transfers', 'cases_transfers', CheckRoleView, 'GetCaseTransfers'),
     {
       method: 'POST',
       path: '/cases/{id}/transfers',
