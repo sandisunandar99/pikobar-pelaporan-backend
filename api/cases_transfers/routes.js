@@ -39,21 +39,13 @@ module.exports = (server) => {
     {
       method: 'POST',
       path: '/cases-transfer',
-      config: {
-        auth: 'jwt',
-        description: 'create new cases transfer',
-        tags: ['api', 'cases'],
-        validate: inputValidations.RequestPayload,
-        pre: [
-          CheckRoleCreate,
-          CheckCredentialUnitIsExist,
-          checkCaseIsExists,
-          validationBeforeInput,
-          countCaseByDistrict,
-          countCasePendingByDistrict
-        ]
-      },
-      handler: handlers.CreateCaseAndTransfer
+      ...sameConfig(
+        'create new cases transfer', 'RequestPayload',
+        [ CheckRoleCreate, CheckCredentialUnitIsExist,
+          checkCaseIsExists, validationBeforeInput,
+          countCaseByDistrict, countCasePendingByDistrict
+        ], 'CreateCaseAndTransfer'
+      )
     },
     {
       method: 'GET',
@@ -71,56 +63,34 @@ module.exports = (server) => {
     {
       method: 'POST',
       path: '/cases/{id}/transfers',
-      config: {
-        auth: 'jwt',
-        description: 'Create case transfers',
-        tags: ['api', 'cases.transfers'],
-        validate: inputValidations.CaseTransferPayloadValidations,
-        pre: [
-          CheckRoleCreate,
-          CheckCredentialUnitIsExist,
-          getCasebyId,
-          CheckCaseIsAllowToTransfer,
-        ]
-      },
-      handler: handlers.CreateCaseTransfer
+      ...sameConfig(
+        'create new cases transfer by id case', 'CaseTransferPayloadValidations',
+        [ CheckRoleCreate, CheckCredentialUnitIsExist,
+          getCasebyId, CheckCaseIsAllowToTransfer
+        ], 'CreateCaseTransfer'
+      )
     },
     {
       method: 'POST',
       path: '/cases/{id}/transfers/{transferId}/revise',
-      config: {
-        auth: 'jwt',
-        description: 'update cases transfer',
-        tags: ['api', 'cases'],
-        validate: inputValidations.RequestPayload,
-        pre: [
-          CheckRoleUpdate,
-          CheckCredentialUnitIsExist,
-          CheckIsTransferActionIsAllow,
-          countCaseByDistrict,
-          countCasePendingByDistrict,
-          getTransferCasebyId,
+      ...sameConfig(
+        'update cases transfer', 'RequestPayload',
+        [ CheckRoleUpdate, CheckCredentialUnitIsExist,
+          CheckIsTransferActionIsAllow, countCaseByDistrict,
+          countCasePendingByDistrict, getTransferCasebyId,
           getCasebyId,
-        ]
-      },
-      handler: handlers.UpdateCaseAndTransfer
+        ], 'UpdateCaseAndTransfer'
+      ),
     },
     {
       method: 'POST',
       path: '/cases/{id}/transfers/{transferId}/{action}',
-      config: {
-        auth: 'jwt',
-        description: 'Create case transfers',
-        tags: ['api', 'cases.transfers'],
-        validate: inputValidations.CaseTransferActPayloadValidations,
-        pre: [
-          CheckRoleCreate,
-          CheckCredentialUnitIsExist,
-          CheckIsTransferActionIsAllow,
-          getTransferCasebyId
-        ]
-      },
-      handler: handlers.ProcessCaseTransfer
+      ...sameConfig(
+        'Create case transfers', 'CaseTransferActPayloadValidations',
+        [ CheckRoleCreate, CheckCredentialUnitIsExist,
+          CheckIsTransferActionIsAllow, getTransferCasebyId,
+        ], 'ProcessCaseTransfer'
+      )
     },
     {
       method: 'GET',
