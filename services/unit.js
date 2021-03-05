@@ -12,7 +12,7 @@ const listUnit = async (query, callback) => {
     const result = await Unit.find(params).or(search_params)
                         .where('delete_status').ne('deleted')
                         .sort(sorts).lean()
-    callback(null, result)
+    callback(null, { "itemsList": result })
   } catch (error) {
     callback(error, null)
   }
