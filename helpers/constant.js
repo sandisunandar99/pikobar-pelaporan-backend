@@ -198,5 +198,13 @@ module.exports = {
   },MONTH:{
     EN: ['January','February','March','April','May','June','July',
     'August','September','October','November','December']
+  },
+  QUEUE:{
+    CASE: 'queue-export-cases',
+    HISTORY: 'queue-export-histories'
+  },
+  JOB:{
+    CASE: 'job-export-cases',
+    HISTORY: 'job-export-histories'
   }
 }

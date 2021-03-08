@@ -3,6 +3,7 @@ const service = 'services.queue'
 const { createQueue } = require('../helpers/queue')
 const { createJobQueue } = require('../helpers/job')
 const { jobCaseExport, jobHistoryExport } = require('../helpers/job/export_xlsx')
+const { QUEUE, JOB } = require('../helpers/constant')
 
 const mapingResult = (result) => {
   const data = {}
@@ -26,31 +27,17 @@ const sameCondition = async (queue, job, callback) => {
 }
 
 const caseExport = async (query, user, callback) => {
-  const nameQueue = 'queue-export-cases'
-  const nameJob = 'job-export-cases'
   const message = `Data Kasus Pikobar Pelaporan : ${user.fullname}`
 
-  await sameCondition(nameQueue, nameJob, callback)
-
-  try {
-    createJobQueue(nameQueue, query, user, jobCaseExport, message, 1)
-  } catch (error) {
-    return error
-  }
+  await sameCondition(QUEUE.CASE, JOB.CASE, callback)
+  createJobQueue(QUEUE.CASE, query, user, jobCaseExport, message, 1)
 }
 
 const historyExport = async (query, user, callback) => {
-  const nameQueue = 'queue-export-histories'
-  const nameJob = 'job-export-histories'
   const message = `Data Riwayat Kasus Pikobar Pelaporan : ${user.fullname}`
 
-  await sameCondition(nameQueue, nameJob, callback)
-
-  try {
-    createJobQueue(nameQueue, query, user, jobHistoryExport, message, 1)
-  } catch (error) {
-    return error
-  }
+  await sameCondition(QUEUE.HISTORY, JOB.HISTORY, callback)
+  createJobQueue(QUEUE.HISTORY, query, user, jobHistoryExport, message, 1)
 }
 
 module.exports = [
