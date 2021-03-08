@@ -12,9 +12,9 @@ const generateExcell = (data, title, fullName, reply) => {
   return fs.unlinkSync(fileName)
 }
 
-const generateExcellPath = (data, title, fullName) => {
+const generateExcellPath = (data, title, fullName, pathFolder) => {
   const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
-  const path = `./tmp/cases/${fileName}`
+  const path = `./tmp/${pathFolder}/${fileName}`
   const jsonXls = json2xls(data)
   fs.writeFileSync(path, jsonXls, 'binary')
 

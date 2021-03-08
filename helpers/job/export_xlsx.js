@@ -7,7 +7,7 @@ const { searchExport } = require('../../helpers/filter/search')
 const { sqlHistoriesExport, excellHistories } = require('../filter/historyfilter')
 const { generateExcellPath } = require('../export')
 
-const sameCondition = async (query, user, method, allow, mapingData) => {
+const sameCondition = async (query, user, method, allow, mapingData, name, path) => {
   try {
     // condition filter
     const filter = await filterCase(user, query)
@@ -24,26 +24,26 @@ const sameCondition = async (query, user, method, allow, mapingData) => {
 
     const fullName = user.fullname.replace(/\s/g, '-')
 
-    return generateExcellPath(mapingArray, 'Data-Kasus', fullName)
+    return generateExcellPath(mapingArray, name, fullName, path)
   } catch (error) {
     return error
   }
 }
 
 const jobCaseExport = async (query, user) => {
-  return await sameCondition(query, user, sqlCaseExport, false, excellOutput)
+  return await sameCondition(
+    query, user, sqlCaseExport, false, excellOutput,
+    'Data-Kasus', 'cases'
+  )
 }
 
-// const historyExport = async (query, user, callback) => {
-//   const filter = await filterCase(user, query)
-//   const filterRole = exportByRole({}, user, query)
-//   const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
-//   const search = searchExport(query)
-//   params.last_history = { $exists: true, $ne: null }
-//   const where = sqlHistoriesExport(params, search, query)
-//   await sameCondition(Case, where, excellHistories, callback)
-// }
+const jobHistoryExport = async (query, user) => {
+  return await sameCondition(
+    query, user, sqlHistoriesExport, true, excellHistories,
+    'Data-Riawayat-Kasus', 'histories'
+  )
+}
 
 module.exports = {
-  jobCaseExport
+  jobCaseExport, jobHistoryExport
 }

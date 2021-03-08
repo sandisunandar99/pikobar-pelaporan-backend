@@ -8,6 +8,10 @@ clientConfig.on("error", function (err) {
   console.log("Error " + err);
 });
 
+clientConfig.on("connect", function (err) {
+  console.log("redis server is connected");
+});
+
 module.exports = {
   clientConfig
 }
