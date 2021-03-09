@@ -141,6 +141,18 @@ module.exports = (server) => {
       })
     },
     /**
+     * POST /api/users/multiple-insert
+     * @param {*} request
+     * @param {*} reply
+     */
+    async createMultipleUser(request, reply) {
+      let payload = request.payload
+      server.methods.services.users.createMultiple(payload, (err, user) => {
+      // TODO: Better error response
+        replyJson(err, user, reply)
+      })
+    },
+    /**
      * POST /api/users/login
      * @param {*} request
      * @param {*} reply

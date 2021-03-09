@@ -100,6 +100,21 @@ const createUser = async (payload, callback) => {
   }
 }
 
+const createMultipleUser = async(payload, callback) => {
+    let countSave = []
+    try {
+      for (let i = 0; i < payload.length; i++) {
+        const element = payload[i];
+        await createUser(element, (err, res)=> {
+          countSave.push({id: res._id})
+        })
+      }
+      callback (null, {"user inserted ":countSave.length})
+    } catch (error) {
+      callback (error, null)
+    }
+}
+
 const updateUser = (user, payload, callback) => {
   let passwords = user.setPassword(payload.password)
   let users = {
@@ -220,6 +235,10 @@ module.exports = [
   {
     name: "services.users.create",
     method: createUser,
+  },
+  {
+    name: "services.users.createMultiple",
+    method: createMultipleUser,
   },
   {
     name: "services.users.update",

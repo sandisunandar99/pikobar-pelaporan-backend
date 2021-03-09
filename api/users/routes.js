@@ -158,6 +158,19 @@ module.exports = (server) => {
       },
       handler: handlers.updateUsers
     },
+    {
+      method: 'POST',
+      path: '/users/multiple-insert',
+      config: {
+        auth: 'jwt',
+        description: 'insert multiple user',
+        tags: ['api', 'users'],
+        pre: [
+          CheckRoleCreate
+        ]
+      },
+      handler: handlers.createMultipleUser
+    },
     // Register
     {
       method: 'POST',
