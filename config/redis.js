@@ -10,9 +10,4 @@ clientConfig.on("error", function (err) {
 
 module.exports = {
   clientConfig
-<<<<<<< HEAD
 }
-=======
-}
-
->>>>>>> development
