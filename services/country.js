@@ -5,7 +5,7 @@ const getCountryList = (callback) => {
   const path = require("path");
   try {
     const obj = JSON.parse(fs.readFileSync(path.join("helpers", "listcountry.json"), "utf8"));
-    const expireTime = 480 * 60 * 1000 // 8 hours expire
+    const expireTime = 1440 * 60 * 1000 // 24 hours expire
     setCacheRedis('country', obj, expireTime, callback)
   } catch (error) {
     callback(error, null)
