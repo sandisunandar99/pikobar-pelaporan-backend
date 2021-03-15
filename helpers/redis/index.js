@@ -19,6 +19,16 @@ const setCacheRedis = (key, data, expireTime, callback) => {
   }
 }
 
+const deleteCacheRedis = (key) => {
+  try {
+    clientConfig.del(key, function (err, reply) {
+      console.log(`Deleted Redis key : ${key}`, reply)
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
-  setCacheRedis
+  setCacheRedis, deleteCacheRedis
 }
