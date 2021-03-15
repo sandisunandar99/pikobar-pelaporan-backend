@@ -46,11 +46,18 @@ conf.firebase = {
 };
 
 conf.pubsub = {
-    projectId: process.env.GCP_PROJ_ID,
+    projectId: process.env.PUBSUB_PROJECT_ID,
     credentials: {
-        client_email : process.env.CLIENT_EMAIL,
-        private_key : process.env.PRIVATE_KEY.replace(/\\n/gm, '\n'),
-        // private_key : Buffer.from(process.env.PRIVATE_KEY, 'base64').toString(),
+      type: "service_account",
+      project_id : process.env.PUBSUB_PROJECT_ID,
+      private_key_id : process.env.PUBSUB_PRIVATE_KEY_ID,
+      private_key : process.env.PUBSUB_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+      client_email : process.env.PUBSUB_CLIENT_EMAIL,
+      client_id : process.env.PUBSUB_CLIENT_ID,
+      auth_uri : process.env.PUBSUB_AUTH_URI,
+      token_uri : process.env.PUBSUB_TOKEN_URI,
+      auth_provider_x509_cert_url : process.env.PUBSUB_AUTH_PROVIDER_X509_CERT_URL,
+      client_x509_cert_url : process.env.PUBSUB_CLIENT_X509_CERT_URL
     }
 }
 
