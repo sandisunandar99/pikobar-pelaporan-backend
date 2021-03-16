@@ -15,4 +15,3 @@ clientConfig.on("connect", function (err) {
 module.exports = {
   clientConfig
 }
-
