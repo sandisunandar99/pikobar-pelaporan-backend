@@ -1,4 +1,6 @@
+const {} = require('mongoose')
 const Case = require('../../models/Case')
+const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PUBSUB} = require('../constant')
 
@@ -43,7 +45,7 @@ const splitPayload1 = (data, patient) =>{
   const Obj = {
     last_date_status_patient: data.last_date_status_patient,
     diagnosis: data.symptoms,
-    status: statusPikobar(data.user.health_status),
+    status: patient.status,
     there_are_symptoms: patient.there_are_symptoms,
     first_symptom_date: patient.first_symptom_date,
     diagnosis_ards: patient.diagnosis_ards,
@@ -128,13 +130,30 @@ const userHasFound = async (data) =>{
   return null
 }
 
+const ifActionEdit = async (data, patient, transform) =>{
+  const ENUM_ACTION_EDIT = "edit"
+  if (data.action === ENUM_ACTION_EDIT) {
+    await History.findByIdAndUpdate(patient.last_history,
+      { $set: transform },
+      { new: true },
+    )
+    return true
+  } else {
+    return false
+  }
+
+}
+
 const transformDataPayload = (data, patient) => {
   userHasFound(data)
+
   const transform = {
     ...splitPayload1(data, patient),
     ...splitPayload2(patient),
     ...splitPayload3(patient)
   }
+
+  ifActionEdit(data, patient, transform)
 
   return transform
 }
