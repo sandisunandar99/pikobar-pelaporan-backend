@@ -1,7 +1,10 @@
 const schedule = require('node-schedule')
 const { PubSub } = require('@google-cloud/pubsub')
-const pubsubClient = new PubSub()
+const { pubsub } = require('../config/config')
+const credential = pubsub.credentials
+const projectId = process.env.GCP_PROJ_ID
 const subscriptionName = process.env.SUBSCRIPTION_NAME
+const pubsubClient = new PubSub(pubsub)
 const timeout = 60
 let msgCount = 0
 
@@ -16,7 +19,7 @@ const register = (server, options, next) => {
           try {
             const data = Buffer.from(message.data, 'base64').toString()
             let payload = await server.methods.services.integration.createInfoClinics(data)
-            await server.methods.services.histories.createIfChanged({payload}, (err, result)=> {})
+            await server.methods.services.histories.createIfChanged({payload}, (err, result)=> {console.log(`Data Sent.. ID : ${message.id}`);})
 
             message.ack();
           } catch (error) {console.log(error)}
