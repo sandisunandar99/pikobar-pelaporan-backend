@@ -4,12 +4,12 @@ const clientConfig = redis.createClient({
   port: process.env.REDIS_PORT
 })
 
-clientConfig.on("error", function (err) {
-  console.log("Error " + err);
+clientConfig.on("connect", function () {
+  console.log("Redis Connected");
 });
 
-clientConfig.on("connect", function (err) {
-  console.log("redis server is connected");
+clientConfig.on("error", function (err) {
+  console.log("Error " + err);
 });
 
 module.exports = {
