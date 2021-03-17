@@ -27,6 +27,7 @@ const register = (server, options, next) => {
     require('./Specimen'),
     require('./UserDevice'),
     require('./LogSelfReport')
+    require('./LogQueue')
 
     server.app.db = {
       link: db.db,
@@ -46,6 +47,7 @@ const register = (server, options, next) => {
       Specimen: db.model('Specimen'),
       UserDevice: db.model('UserDevice'),
       LogSelfReport: db.model('LogSelfReport'),
+      LogQueue: db.model('LogQueue'),
     };
 
     return next();
