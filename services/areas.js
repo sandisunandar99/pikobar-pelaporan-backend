@@ -25,7 +25,6 @@ const getDistrictCity = async (request, callback) => {
   if (request.kemendagri_provinsi_nama) {
     params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
   }
-  const sort = { kemendagri_kabupaten_nama: 'asc' }
   const key = `district-city-${params.rs_jabar}`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
   try {
@@ -34,9 +33,10 @@ const getDistrictCity = async (request, callback) => {
         callback(null, JSON.parse(result))
         console.info('redis source district-city')
       }else{
-        const res = await Districtcity.find(params).sort(sort)
-        clientConfig.setex(key, expireTime, JSON.stringify(res)) // set redis key
-        callback(null, res)
+        const res = await Districtcity.find(params).sort({ kemendagri_kabupaten_nama: 'asc' })
+        const resMap = res.map(res => res.toJSONFor())
+        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
+        callback(null, resMap)
         console.info('api source district-city')
       }
     })
