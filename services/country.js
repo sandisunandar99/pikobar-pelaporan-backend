@@ -12,7 +12,7 @@ const getCountryList = (callback) => {
         console.info('redis source')
       }else{
         const obj = JSON.parse(fs.readFileSync(path.join("helpers", "listcountry.json"), "utf8"));
-        clientConfig.setex(key, expireTime, JSON.stringify(obj)) // set redis key
+        clientConfig.setex('country', expireTime, JSON.stringify(obj)) // set redis key
         callback(null, obj)
         console.info('api source')
       }
