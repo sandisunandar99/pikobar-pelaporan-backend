@@ -103,11 +103,9 @@ const getHospital = async (query, callback) => {
   if (query.search) {
     params.name = new RegExp(query.search, "i")
   }
-
   if (query.city_code) {
     params.kemendagri_kabupaten_kode = query.city_code
   }
-
   if (query.rs_jabar) {
     params.rs_jabar = query.rs_jabar === 'true'
   }
