@@ -98,18 +98,12 @@ const getVillageDetail = async (desa_kode, callback) => {
 }
 
 const getHospital = async (query, callback) => {
-  var params = new Object();
-
-  if (query.search) {
-    params.name = new RegExp(query.search, "i")
-  }
-  if (query.city_code) {
-    params.kemendagri_kabupaten_kode = query.city_code
-  }
+  let params = new Object()
+  if (query.search) params.name = new RegExp(query.search, "i")
+  if (query.city_code) params.kemendagri_kabupaten_kode = query.city_code
   if (query.rs_jabar) {
     params.rs_jabar = query.rs_jabar === 'true'
   }
-
   try {
     const expireTime = 1440 * 60 * 1000 // 24 hours expire
     clientConfig.get(`hospital-${params.rs_jabar}`, async (err, result) => {
