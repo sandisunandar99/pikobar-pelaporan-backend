@@ -5,7 +5,7 @@ const Unit = require('../models/Unit')
 const Lab = require('../models/Lab')
 const Province = require('../models/Province')
 const { findWithSort } = require('../utils/index')
-
+const { clientConfig } = require('../config/redis')
 const sameCondition = async (schema, condition, sort) => {
   return await schema.find(condition).sort(sort)
 }
@@ -98,23 +98,26 @@ const getVillageDetail = async (desa_kode, callback) => {
 }
 
 const getHospital = async (query, callback) => {
-  var params = new Object();
-
-  if (query.search) {
-    params.name = new RegExp(query.search, "i")
-  }
-
-  if (query.city_code) {
-    params.kemendagri_kabupaten_kode = query.city_code
-  }
-
+  let params = new Object()
+  if (query.search) params.name = new RegExp(query.search, "i")
+  if (query.city_code) params.kemendagri_kabupaten_kode = query.city_code
   if (query.rs_jabar) {
     params.rs_jabar = query.rs_jabar === 'true'
   }
-
   try {
-    const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
-    callback(null, res)
+    const expireTime = 1440 * 60 * 1000 // 24 hours expire
+    clientConfig.get(`hospital-${params.rs_jabar}`, async (err, result) => {
+      if(result){
+        const resultJSON = JSON.parse(result)
+        callback(null, resultJSON)
+        console.info('redis source')
+      }else{
+        const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
+        clientConfig.setex(`hospital-${params.rs_jabar}`, expireTime, JSON.stringify(res)) // set redis key
+        callback(null, res)
+        console.info('api source')
+      }
+    })
   } catch (error) {
     callback(error, null)
   }
