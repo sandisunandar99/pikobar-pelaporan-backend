@@ -25,7 +25,7 @@ const getDistrictCity = async (request, callback) => {
   if (request.kemendagri_provinsi_nama) {
     params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
   }
-  const key = `district-city-${params.rs_jabar}`
+  const key = `district-city`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
   try {
     clientConfig.get(key, async (err, result) => {
