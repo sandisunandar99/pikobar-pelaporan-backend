@@ -16,7 +16,6 @@ module.exports = (server) => {
       await funcNoParam(server, "country", "getMenuList", reply)
     },
     async clearCache(request, reply) {
-      console.log(request.query.key);
       clientConfig.del(request.query.key, function (err, result) {
         replyJson(err, result, reply)
       });
