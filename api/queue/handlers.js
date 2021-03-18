@@ -34,6 +34,19 @@ const historyExport = (server) => {
   )
 }
 
+/**
+  *
+  *
+  * @param {*} server
+  * @param {*} request
+  * @param {*} reply
+*/
+const jobStatus = (server) => {
+  return async(request, reply) => await sameExportCondition(
+    server, request, reply, 'jobStatus',
+  )
+}
+
 module.exports = {
-  caseExport, historyExport
+  caseExport, historyExport, jobStatus
 }

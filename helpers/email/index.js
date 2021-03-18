@@ -24,20 +24,19 @@ smtpTrans.verify(function(error, success) {
 });
 
 //Specify what the email will look like
-const optionsWithAttachment = (subject, attachments) => {
+const optionsWithAttachment = (subject, attachments, email) => {
 	return {
     from: process.env.GMAIL_USER,
-	  to: process.env.EXAMPLE_USER,
+	  to: email,
 	  subject, attachments
   }
 }
 
-const sendEmailWithAttachment = (subject, attachments, user, path) => {
-  smtpTrans.sendMail(optionsWithAttachment(subject, attachments), (err, res)=>{
+const sendEmailWithAttachment = (subject, attachments, email, path) => {
+  smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email), (err, res)=>{
     if(err) {
-      console.log(err)
+      console.error(err)
     } else {
-      console.log(`data send to user : ${user.fullname}`);
       fs.unlinkSync(path)
     }
   })

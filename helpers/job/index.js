@@ -13,15 +13,14 @@ const createJobQueue = (nameQueue, query, user, method, message, time) => {
   jobQueue.process(async (job, done) => {
     setTimeout(() => {
       console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
-      job.reportProgress(10)
+      job.reportProgress(5)
     }, 1500)
 
     const timer = setInterval( async () => {
-      clearInterval(timer)
+      job.reportProgress(10)
       const resultJob = await method(query, user)
       console.log(`🧾 Success : Queue name ${nameQueue} ${job.id} ready sending to user : ${user.fullname}`)
-      job.reportProgress(100)
-      done()
+      job.reportProgress(80)
 
       // notify job and attempt to send the mail
       const options = [{
@@ -31,7 +30,10 @@ const createJobQueue = (nameQueue, query, user, method, message, time) => {
         contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       }]
 
-      sendEmailWithAttachment(message, options, user, resultJob.path)
+      // sendEmailWithAttachment(message, options, query.email, resultJob.path)
+      clearInterval(timer)
+      job.reportProgress(100)
+      done()
     }, time * 60 * 1000)
   })
 }

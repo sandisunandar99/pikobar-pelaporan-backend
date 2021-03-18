@@ -8,6 +8,9 @@ module.exports = (server, route) => {
     ),route(
       server, 'GET', '/queue/histories',
       'queue', CheckRoleView, 'historyExport'
+    ),route(
+      server, 'GET', '/queue/status',
+      'queue', CheckRoleView, 'jobStatus'
     )
   ]
 }
