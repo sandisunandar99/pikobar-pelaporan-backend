@@ -78,10 +78,21 @@ const getVillage = async (kecamatan_code, request, callback) => {
   if (request.desa_kode) {
     params.kemendagri_desa_kode = request.desa_kode
   }
-
-  const sort = { kemendagri_desa_nama: 'asc' }
+  const key = `village-${kecamatan_code}`
+  const expireTime = 1440 * 60 * 1000 // 24 hours expire
   try {
-    await findWithSort(Village, params, sort, callback)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const res = await Village.find(params).sort({ kemendagri_desa_nama: 'asc' })
+        const resMap = res.map(res => res.toJSONFor())
+        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
+        callback(null, resMap)
+        console.info(`api source ${key}`)
+      }
+    })
   } catch (error) {
     callback(error, null)
   }
