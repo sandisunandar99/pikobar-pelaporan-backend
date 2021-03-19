@@ -20,6 +20,7 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
   try {
     const uniqueBatchId = require('uuid').v4()
     const result = await createQueue(queue, job, uniqueBatchId)
+    //save user status here
     const data = mapingResult(result)
     callback (null, data)
 

@@ -31,9 +31,9 @@ const createJobQueue = (nameQueue, query, user, method, message, time) => {
       }]
 
       // sendEmailWithAttachment(message, options, query.email, resultJob.path)
-      clearInterval(timer)
       job.reportProgress(100)
       done()
+      clearInterval(timer)
     }, time * 60 * 1000)
   })
 }
