@@ -1,17 +1,19 @@
 const nodemailer = require('nodemailer')
+const { SUBJECT_NAME, TEXT_EMAIL } = require('../constant')
+const { updateLogJob } = require('../job/log')
 const fs = require('fs')
-//Instantiate the SMTP server
+
+//Initial the SMTP server
 const smtpTrans = nodemailer.createTransport({
-	host: process.env.HOST_EMAIL,
+	host: process.env.EMAIL_HOST,
 	port: process.env.EMAIL_PORT,
 	secure: true,
 	auth: {
-		user: process.env.GMAIL_USER,
-		pass: process.env.GMAIL_PASS
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASS
 	},
-	tls: {
-		rejectUnauthorized: false
-	}
+  sender: SUBJECT_NAME,
+	tls: true
 })
 
 // verify connection configuration
@@ -26,18 +28,27 @@ smtpTrans.verify(function(error, success) {
 //Specify what the email will look like
 const optionsWithAttachment = (subject, attachments, email) => {
 	return {
-    from: process.env.GMAIL_USER,
+    from: process.env.EMAIL_FROM,
 	  to: email,
-	  subject, attachments
+	  subject, attachments,
+    text: TEXT_EMAIL
   }
 }
 
-const sendEmailWithAttachment = (subject, attachments, email, path) => {
-  smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email), (err, res)=>{
+const sendEmailWithAttachment = (subject, attachments, email, path, jobId) => {
+  smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email), async (err, res) => {
+    const param = {
+      job_status: null, job_progress: 100,
+      type: 'email', message: null
+    }
     if(err) {
-      console.error(err)
+      param.job_status = 'Failed'
+      param.message = err.toString()
+      await updateLogJob(jobId, param)
     } else {
       fs.unlinkSync(path)
+      param.job_status = 'Done'
+      await updateLogJob(jobId, param)
     }
   })
 }

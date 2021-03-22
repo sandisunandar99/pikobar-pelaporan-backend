@@ -14,11 +14,11 @@ const generateExcell = (data, title, fullName, reply) => {
 }
 
 const generateExcellPath = async (data, title, fullName, pathFolder, jobId) => {
-  const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
+  const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}-${jobId}.xlsx`
   const path = `./tmp/${pathFolder}/${fileName}`
   const jsonXls = json2xls(data)
   fs.writeFileSync(path, jsonXls, 'binary')
-  await updateLogJob(jobId, {file_name: `${jobId}-${fileName}`})
+  await updateLogJob(jobId, {file_name: fileName})
   return { filename: fileName, path, data: jsonXls }
 }
 

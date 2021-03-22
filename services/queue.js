@@ -29,7 +29,7 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
     callback (null, data)
 
     const message = `Data${name}Kasus Pikobar Pelaporan : ${user.fullname}`
-    createJobQueue(queue, query, user, method, message, time)
+    await createJobQueue(queue, query, user, method, message, time)
   } catch (error) {
     callback(error, null)
   }
