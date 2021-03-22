@@ -2,6 +2,7 @@ const Queue = require('bee-queue')
 const fs = require('fs')
 const { sendEmailWithAttachment } = require('../email')
 const options = {
+  activateDelayedJobs: true,
   redis: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
