@@ -1,6 +1,7 @@
 const Queue = require('bee-queue')
 const fs = require('fs')
 const { sendEmailWithAttachment } = require('../email')
+const { updateLogJob } = require('./log')
 const options = {
   activateDelayedJobs: true,
   redis: {
@@ -14,12 +15,11 @@ const createJobQueue = (nameQueue, query, user, method, message, time) => {
   jobQueue.process(async (job, done) => {
     setTimeout(() => {
       console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
-      job.reportProgress(5)
     }, 1500)
 
     const timer = setInterval( async () => {
-      job.reportProgress(10)
-      const resultJob = await method(query, user)
+      updateLogJob(job.id, { job_progress: 55 })
+      const resultJob = await method(query, user, job.id)
       console.log(`🧾 Success : Queue name ${nameQueue} ${job.id} ready sending to user : ${user.fullname}`)
       job.reportProgress(80)
 
@@ -32,7 +32,7 @@ const createJobQueue = (nameQueue, query, user, method, message, time) => {
       }]
 
       // sendEmailWithAttachment(message, options, query.email, resultJob.path)
-      job.reportProgress(100)
+      updateLogJob(job.id, { job_progress: 100 })
       done()
       clearInterval(timer)
     }, time * 60 * 1000)

@@ -13,16 +13,6 @@ const createQueue = async (nameQueue, nameJob, batchId) => {
   return initialQueue.createJob(nameJob).setId(batchId).save()
 }
 
-const getJobStatus = async (nameQueue, jobId) => {
-  const jobQueue = new Queue(nameQueue, options)
-  const getJob = await jobQueue.getJob(jobId)
-  return {
-    progress: getJob.progress,
-    status: getJob.status
-  }
-}
-
-
 module.exports = {
-  createQueue, getJobStatus
+  createQueue
 }

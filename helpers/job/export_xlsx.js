@@ -7,7 +7,7 @@ const { searchExport } = require('../../helpers/filter/search')
 const { sqlHistoriesExport, excellHistories } = require('../filter/historyfilter')
 const { generateExcellPath } = require('../export')
 
-const sameCondition = async (query, user, method, allow, mapingData, name, path) => {
+const sameCondition = async (query, user, method, allow, mapingData, name, path, jobId) => {
   try {
     // condition filter
     const filter = await filterCase(user, query)
@@ -24,23 +24,23 @@ const sameCondition = async (query, user, method, allow, mapingData, name, path)
 
     const fullName = user.fullname.replace(/\s/g, '-')
 
-    return generateExcellPath(mapingArray, name, fullName, path)
+    return await generateExcellPath(mapingArray, name, fullName, path, jobId)
   } catch (error) {
     return error
   }
 }
 
-const jobCaseExport = async (query, user) => {
+const jobCaseExport = async (query, user, jobId) => {
   return await sameCondition(
     query, user, sqlCaseExport, false, excellOutput,
-    'Data-Kasus', 'cases'
+    'Data-Kasus', 'cases', jobId
   )
 }
 
 const jobHistoryExport = async (query, user) => {
   return await sameCondition(
     query, user, sqlHistoriesExport, true, excellHistories,
-    'Data-Riawayat-Kasus', 'histories'
+    'Data-Riawayat-Kasus', 'histories', jobId
   )
 }
 

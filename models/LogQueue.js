@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose')
 
 const LogQueueSchema = new mongoose.Schema({
@@ -8,10 +7,11 @@ const LogQueueSchema = new mongoose.Schema({
   },
   job_name: { type: String, default: null, index : true },
   job_status: { type: String, index: true, default: null },
-  name_queue: { type: String, index: true, default: null },
+  job_progress: { type: Number, index: true, default: null },
+  queue_name: { type: String, index: true, default: null },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
   email: { type: String, index: true, default: null },
-  status: { type: String, index: true, default: null },
+  file_name: { type: String, index: true, default: null },
 }, { timestamps:true })
 
 module.exports = mongoose.model('LogQueue', LogQueueSchema)

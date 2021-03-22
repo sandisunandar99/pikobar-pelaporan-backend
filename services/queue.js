@@ -1,9 +1,11 @@
 
 const service = 'services.queue'
-const { createQueue, getJobStatus } = require('../helpers/queue')
+const { createQueue } = require('../helpers/queue')
 const { createJobQueue } = require('../helpers/job')
+const { createLogJob } = require('../helpers/job/log')
 const { jobCaseExport, jobHistoryExport } = require('../helpers/job/export_xlsx')
 const { QUEUE, JOB } = require('../helpers/constant')
+const User = require('../models/User')
 
 const mapingResult = (result) => {
   const data = {}
@@ -20,7 +22,9 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
   try {
     const uniqueBatchId = require('uuid').v4()
     const result = await createQueue(queue, job, uniqueBatchId)
-    //save user status here
+    //save user and status job
+    await createLogJob(uniqueBatchId, job, queue, query, user)
+    await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
     const data = mapingResult(result)
     callback (null, data)
 
@@ -43,12 +47,7 @@ const historyExport = async (query, callback) => {
   )
 }
 
-const jobStatus = async (query, user, callback) => {
-  callback(null, await getJobStatus(query.name, query.jobid))
-}
-
 module.exports = [
   { name: `${service}.queuCase`, method: caseExport },
   { name: `${service}.queuHistory`, method: historyExport },
-  { name: `${service}.jobStatus`, method: jobStatus },
 ]

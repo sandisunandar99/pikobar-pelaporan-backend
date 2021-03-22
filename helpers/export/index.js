@@ -1,5 +1,6 @@
 const json2xls = require('json2xls')
 const moment = require('moment')
+const { updateLogJob } = require('../job/log')
 const fs = require('fs')
 
 const generateExcell = (data, title, fullName, reply) => {
@@ -12,12 +13,12 @@ const generateExcell = (data, title, fullName, reply) => {
   return fs.unlinkSync(fileName)
 }
 
-const generateExcellPath = (data, title, fullName, pathFolder) => {
+const generateExcellPath = async (data, title, fullName, pathFolder, jobId) => {
   const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}.xlsx`
   const path = `./tmp/${pathFolder}/${fileName}`
   const jsonXls = json2xls(data)
   fs.writeFileSync(path, jsonXls, 'binary')
-
+  await updateLogJob(jobId, {file_name: `${jobId}-${fileName}`})
   return { filename: fileName, path, data: jsonXls }
 }
 
