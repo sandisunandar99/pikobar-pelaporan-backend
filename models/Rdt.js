@@ -25,7 +25,7 @@ const RdtSchema = new mongoose.Schema({
     note_phone_number: {type: String},
 
     birth_date : {type : String},
-    age : {type : String},
+    age : {type : Number},
 
     nationality: {type:String},
     nationality_name: {type: String},
