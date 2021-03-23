@@ -2,7 +2,8 @@ const { searching, filterSplit } = require('./func/filter')
 const { sumBetweenFunc } = require('./func')
 const { dateFilter } = require('../filter/date')
 
-const converts = { $convert:{ input: '$age', to: 'int' } }
+// const converts = { $convert:{ input: '$age', to: 'double' } }
+const converts = '$age'
 
 const paramGroup = (match, group, value) => {
   return match,{
