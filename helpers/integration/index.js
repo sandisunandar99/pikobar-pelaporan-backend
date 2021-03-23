@@ -1,3 +1,4 @@
+const { object } = require('joi')
 const {} = require('mongoose')
 const Case = require('../../models/Case')
 const History = require('../../models/History')
@@ -6,8 +7,15 @@ const {PUBSUB} = require('../constant')
 
 const findUserCases = async(data) => {
   const user = data.user
+  let filter = {}
+  if (user.nik === "" || user.nik === null || user.nik === undefined){
+    filter = {phone_number: user.phone_number}
+  }else{
+    filter = {nik: user.nik}
+  }
+
   const cases = await Case.aggregate([
-    { $match :{ $or :[{nik: user.nik},{phone_number: user.phone_number}]}},
+    { $match : filter },
     { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
     { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},
     { $project : {histories: 0}},
@@ -69,6 +77,8 @@ const splitPayload1 = (data, patient) =>{
 
 const splitPayload2 = (patient) =>{
   let Obj = {
+    nik:patient.case,
+    phone_number:patient.phone_number,
     case : patient.case,
     history_tracing : patient.history_tracing,
     is_went_abroad : patient.is_went_abroad,
