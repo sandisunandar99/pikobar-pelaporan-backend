@@ -59,14 +59,10 @@ const historyExport = async (query, user, callback) => {
 const listExport = async (query, user, callback) => {
   try {
     let params = {}
-    let searchParam
+    let searchParam = [{}]
     if (query.status) params.job_status = query.status
     if(query.date) setDate('createdAt', query.date, query.date)
-    if(query.search){
-      searchParam = [ { file_name : new RegExp(query.search,"i") }]
-    } else {
-      searchParam = [{}]
-    }
+    if(query.search) searchParam = [ { file_name : new RegExp(query.search,"i") }]
     const where = filterLogQueue(user, query)
     const condition = { ...params, ...where }
     const page = parseInt(query.page) || 1
