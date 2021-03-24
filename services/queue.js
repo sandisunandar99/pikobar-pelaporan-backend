@@ -15,6 +15,8 @@ const { setDate } = require('../helpers/filter/date')
 const select = [
   'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
 ]
+let param = {}
+let searchParam = [{}]
 
 const mapingResult = (result) => {
   const data = {}
@@ -58,13 +60,11 @@ const historyExport = async (query, user, callback) => {
 
 const listExport = async (query, user, callback) => {
   try {
-    let params = {}
-    let searchParam = [{}]
-    if (query.status) params.job_status = query.status
-    if(query.date) setDate('createdAt', query.date, query.date)
+    if (query.status) param.job_status = query.status
+    if(query.date) param.createdAt = setDate('createdAt', query.date, query.date).createdAt
     if(query.search) searchParam = [ { file_name : new RegExp(query.search,"i") }]
     const where = filterLogQueue(user, query)
-    const condition = { ...params, ...where }
+    const condition = { ...param, ...where }
     const page = parseInt(query.page) || 1
     const limit = parseInt(query.limit) || 100
     const result = await LogQueue.find(condition)
