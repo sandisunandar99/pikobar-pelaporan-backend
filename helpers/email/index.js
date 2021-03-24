@@ -35,22 +35,26 @@ const optionsWithAttachment = (subject, attachments, email) => {
   }
 }
 
+const condition = async (err, path, jobId) => {
+  const param = {
+    job_status: null, job_progress: 100,
+    type: 'email', message: null
+  }
+  if(err) {
+    param.job_status = 'Error'
+    param.message = err.toString()
+    await updateLogJob(jobId, param)
+  } else {
+    if(path) fs.unlinkSync(path)
+    param.job_status = 'Sent'
+    param.message = 'Email Sent'
+    await updateLogJob(jobId, param)
+  }
+}
+
 const sendEmailWithAttachment = (subject, attachments, email, path, jobId) => {
   smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email), async (err, res) => {
-    const param = {
-      job_status: null, job_progress: 100,
-      type: 'email', message: null
-    }
-    if(err) {
-      param.job_status = 'Error'
-      param.message = err.toString()
-      await updateLogJob(jobId, param)
-    } else {
-      if(path) fs.unlinkSync(path)
-      param.job_status = 'Sent'
-      param.message = 'Email Sent'
-      await updateLogJob(jobId, param)
-    }
+    await condition(err, path, jobId)
   })
 }
 

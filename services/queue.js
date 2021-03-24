@@ -11,6 +11,7 @@ const { filterLogQueue } = require('../helpers/filter/log')
 const { jsonPagination } = require('../utils')
 const { readFileFromBucket } = require('../config/aws')
 const { sendEmailWithAttachment } = require('../helpers/email')
+const { setDate } = require('../helpers/filter/date')
 const select = [
   'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
 ]
@@ -60,16 +61,9 @@ const listExport = async (query, user, callback) => {
     let params = {}
     let searchParam
     if (query.status) params.job_status = query.status
-    if(query.date){
-      params.createdAt = {
-        "$gte": new Date(new Date(query.date)).setHours(00, 00, 00),
-        "$lt": new Date(new Date(query.date)).setHours(23, 59, 59)
-      }
-    }
+    if(query.date) setDate('createdAt', query.date, query.date)
     if(query.search){
-      searchParam = [
-        { file_name : new RegExp(query.search,"i") },
-      ];
+      searchParam = [ { file_name : new RegExp(query.search,"i") }]
     } else {
       searchParam = [{}]
     }
@@ -78,21 +72,11 @@ const listExport = async (query, user, callback) => {
     const page = parseInt(query.page) || 1
     const limit = parseInt(query.limit) || 100
     const result = await LogQueue.find(condition)
-    .or(searchParam)
-    .select(select)
-    .sort({ '_id' : -1 })
-    .limit(limit)
-    .skip((limit * page) - limit)
-    .lean()
+    .or(searchParam).select(select).sort({ '_id' : -1 })
+    .limit(limit).skip((limit * page) - limit).lean()
     const count = await LogQueue.estimatedDocumentCount()
     const countPerPage = Math.ceil(count / limit)
-    const dataMapping = {
-      result,
-      page: page,
-      countPerPage,
-      count,
-      limit: limit
-    }
+    const dataMapping = { result, page, countPerPage, count, limit }
     callback(null, jsonPagination('history', dataMapping))
   } catch (error) {
     callback(error, nul)
@@ -151,6 +135,5 @@ module.exports = [
   { name: `${service}.queuHistory`, method: historyExport },
   { name: `${service}.listExport`, method: listExport },
   { name: `${service}.resendFile`, method: resendFile },
-  { name: `${service}.cancelJob`, method: cancelJob },
   { name: `${service}.historyEmail`, method: historyEmail },
 ]

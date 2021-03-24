@@ -74,9 +74,9 @@ const resendFile = (server) => {
   * @param {*} request
   * @param {*} reply
 */
-const cancelJob = (server) => {
-  return async(request, reply) => await sameBodyCondition(server, request, reply, 'cancelJob')
-}
+// const cancelJob = (server) => {
+//   return async(request, reply) => await sameBodyCondition(server, request, reply, 'cancelJob')
+// }
 
 /**
   *
@@ -90,5 +90,5 @@ const historyEmail = (server) => {
 }
 
 module.exports = {
-  caseExport, historyExport, listExport, resendFile, cancelJob, historyEmail
+  caseExport, historyExport, listExport, resendFile, historyEmail
 }

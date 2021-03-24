@@ -16,9 +16,6 @@ module.exports = (server, route) => {
       server, 'PUT', '/queue/{jobid}',
       'queue', CheckRoleCreate, 'resendFile'
     ),route(
-      server, 'DELETE', '/queue/{jobid}',
-      'queue', CheckRoleCreate, 'cancelJob'
-    ),route(
       server, 'GET', '/queue/list-email/{jobid}',
       'queue', CheckRoleCreate, 'historyEmail'
     )
