@@ -11,7 +11,6 @@ const { filterLogQueue } = require('../helpers/filter/log')
 const { jsonPagination } = require('../utils')
 const { readFileFromBucket } = require('../config/aws')
 const { sendEmailWithAttachment } = require('../helpers/email')
-const { setDate } = require('../helpers/filter/date')
 const select = [
   'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
 ]
@@ -60,14 +59,10 @@ const historyExport = async (query, user, callback) => {
 
 const listExport = async (query, user, callback) => {
   try {
-    if (query.status) param.job_status = query.status
-    if(query.date) param.createdAt = setDate('createdAt', query.date, query.date).createdAt
     if(query.search) searchParam = [ { file_name : new RegExp(query.search,"i") }]
-    const where = filterLogQueue(user, query)
-    const condition = { ...param, ...where }
     const page = parseInt(query.page) || 1
     const limit = parseInt(query.limit) || 100
-    const result = await LogQueue.find(condition)
+    const result = await LogQueue.find(filterLogQueue(user, query))
     .or(searchParam).select(select).sort({ '_id' : -1 })
     .limit(limit).skip((limit * page) - limit).lean()
     const count = await LogQueue.estimatedDocumentCount()
