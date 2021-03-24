@@ -15,6 +15,12 @@ const LogQueueSchema = new mongoose.Schema({
   path: { type: String, index: true, default: null },
   type: { type: String, index: true, default: null },
   message: { type: String, index: true, default: null },
+  history: [{
+    email: { type: String, index: true, default: null },
+    sendAt: { type: Date, index: true, default: Date.now} ,
+    status: { type: String, index: true, default: null },
+    message: { type: String, index: true, default: null }
+  }],
 }, { timestamps:true })
 
 module.exports = mongoose.model('LogQueue', LogQueueSchema)

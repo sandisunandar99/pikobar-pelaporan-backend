@@ -2,7 +2,7 @@
 const service = 'services.queue'
 const { createQueue, cancelQueue } = require('../helpers/queue')
 const { createJobQueue } = require('../helpers/job')
-const { createLogJob, updateLogJob } = require('../helpers/job/log')
+const { createLogJob, updateLogJob, createHistoryEmail } = require('../helpers/job/log')
 const { jobCaseExport, jobHistoryExport } = require('../helpers/job/export_xlsx')
 const { QUEUE, JOB } = require('../helpers/constant')
 const User = require('../models/User')
@@ -12,10 +12,8 @@ const { jsonPagination } = require('../utils')
 const { readFileFromBucket } = require('../config/aws')
 const { sendEmailWithAttachment } = require('../helpers/email')
 const select = [
-  'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name', 'path',
-  'queue_name'
+  'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
 ]
-const uniqueBatchId = require('uuid').v4()
 
 const mapingResult = (result) => {
   const data = {}
@@ -47,22 +45,40 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
 
 const caseExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 10, callback
+    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 1, callback
   )
 }
 
 const historyExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 10, callback
+    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 1, callback
   )
 }
 
 const listExport = async (query, user, callback) => {
   try {
+    let params = {}
+    let searchParam
+    if (query.status) params.job_status = query.status
+    if(query.date){
+      params.createdAt = {
+        "$gte": new Date(new Date(query.date)).setHours(00, 00, 00),
+        "$lt": new Date(new Date(query.date)).setHours(23, 59, 59)
+      }
+    }
+    if(query.search){
+      searchParam = [
+        { file_name : new RegExp(query.search,"i") },
+      ];
+    } else {
+      searchParam = [{}]
+    }
     const where = filterLogQueue(user, query)
-    const page = query.page || 1
-    const limit = query.limit || 100
-    const result = await LogQueue.find(where)
+    const condition = { ...params, ...where }
+    const page = parseInt(query.page) || 1
+    const limit = parseInt(query.limit) || 100
+    const result = await LogQueue.find(condition)
+    .or(searchParam)
     .select(select)
     .sort({ '_id' : -1 })
     .limit(limit)
@@ -83,7 +99,7 @@ const listExport = async (query, user, callback) => {
   }
 }
 
-const resendFile = async (payload, user, callback) => {
+const resendFile = async (params, payload, user, callback) => {
   try {
     let bucketName
     if(payload.name === JOB.CASE){
@@ -97,11 +113,10 @@ const resendFile = async (payload, user, callback) => {
       content: getFile.Body,
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     }]
-    await createLogJob(100, uniqueBatchId, payload.name, payload.queue_name, payload, user)
-    await User.findByIdAndUpdate(user.id, { $set: { email: payload.email } })
     sendEmailWithAttachment(
-      "Data Kasus Pikobar Pelaporan", options, payload.email, '', uniqueBatchId
+      "Data Kasus Pikobar Pelaporan", options, payload.email, '', params.jobid
     )
+    await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)
   } catch (error) {
     callback(error, null)
@@ -118,10 +133,24 @@ const cancelJob = async (query, payload, callback) => {
   }
 }
 
+const historyEmail = async (params, payload, user, callback) => {
+  try {
+    const result = await LogQueue.find({ job_id: params.jobid })
+    .select(['history'])
+    .sort({ updatedAt: -1 })
+    .lean()
+    callback(null, result.shift())
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
+
 module.exports = [
   { name: `${service}.queuCase`, method: caseExport },
   { name: `${service}.queuHistory`, method: historyExport },
   { name: `${service}.listExport`, method: listExport },
   { name: `${service}.resendFile`, method: resendFile },
   { name: `${service}.cancelJob`, method: cancelJob },
+  { name: `${service}.historyEmail`, method: historyEmail },
 ]

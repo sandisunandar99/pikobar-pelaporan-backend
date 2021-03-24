@@ -42,12 +42,12 @@ const sendEmailWithAttachment = (subject, attachments, email, path, jobId) => {
       type: 'email', message: null
     }
     if(err) {
-      param.job_status = 'Failed'
+      param.job_status = 'Error'
       param.message = err.toString()
       await updateLogJob(jobId, param)
     } else {
       if(path) fs.unlinkSync(path)
-      param.job_status = 'Done'
+      param.job_status = 'Sent'
       param.message = 'Email Sent'
       await updateLogJob(jobId, param)
     }

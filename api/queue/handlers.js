@@ -8,6 +8,15 @@ const sameExportCondition = async (server, request, reply, method) => {
     (err, result) => replyJson(err, result, reply)
   )
 }
+
+const sameBodyCondition = async (server, request, reply, method) => {
+  const { params, payload } = request
+  const { user } = request.auth.credentials
+  return await server.methods.services.queue[method](
+    params, payload, user,
+    (err, result) => replyJson(err, result, reply)
+  )
+}
 /**
   *
   *
@@ -55,13 +64,7 @@ const listExport = (server) => {
   * @param {*} reply
 */
 const resendFile = (server) => {
-  return async(request, reply) => {
-    await server.methods.services.queue.resendFile(
-      request.payload,
-      request.auth.credentials.user,
-      (err, result) => replyJson(err, result, reply)
-    )
-  }
+  return async(request, reply) => await sameBodyCondition(server, request, reply, 'resendFile')
 }
 
 /**
@@ -72,16 +75,20 @@ const resendFile = (server) => {
   * @param {*} reply
 */
 const cancelJob = (server) => {
-  return async(request, reply) => {
-    await server.methods.services.queue.cancelJob(
-      request.query,
-      request.payload,
-      request.auth.credentials.user,
-      (err, result) => replyJson(err, result, reply)
-    )
-  }
+  return async(request, reply) => await sameBodyCondition(server, request, reply, 'cancelJob')
+}
+
+/**
+  *
+  *
+  * @param {*} server
+  * @param {*} request
+  * @param {*} reply
+*/
+const historyEmail = (server) => {
+  return async(request, reply) => await sameBodyCondition(server, request, reply, 'historyEmail')
 }
 
 module.exports = {
-  caseExport, historyExport, listExport, resendFile, cancelJob
+  caseExport, historyExport, listExport, resendFile, cancelJob, historyEmail
 }

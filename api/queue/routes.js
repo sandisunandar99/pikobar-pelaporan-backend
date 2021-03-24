@@ -13,11 +13,14 @@ module.exports = (server, route) => {
       server, 'GET', '/queue',
       'queue', CheckRoleView, 'listExport'
     ),route(
-      server, 'POST', '/queue',
+      server, 'PUT', '/queue/{jobid}',
       'queue', CheckRoleCreate, 'resendFile'
     ),route(
-      server, 'PUT', '/queue/{jobid}',
+      server, 'DELETE', '/queue/{jobid}',
       'queue', CheckRoleCreate, 'cancelJob'
+    ),route(
+      server, 'GET', '/queue/list-email/{jobid}',
+      'queue', CheckRoleCreate, 'historyEmail'
     )
   ]
 }
