@@ -41,12 +41,47 @@ const historyExport = (server) => {
   * @param {*} request
   * @param {*} reply
 */
-const jobStatus = (server) => {
+const listExport = (server) => {
   return async(request, reply) => await sameExportCondition(
-    server, request, reply, 'jobStatus',
+    server, request, reply, 'listExport',
   )
 }
 
+/**
+  *
+  *
+  * @param {*} server
+  * @param {*} request
+  * @param {*} reply
+*/
+const resendFile = (server) => {
+  return async(request, reply) => {
+    await server.methods.services.queue.resendFile(
+      request.payload,
+      request.auth.credentials.user,
+      (err, result) => replyJson(err, result, reply)
+    )
+  }
+}
+
+/**
+  *
+  *
+  * @param {*} server
+  * @param {*} request
+  * @param {*} reply
+*/
+const cancelJob = (server) => {
+  return async(request, reply) => {
+    await server.methods.services.queue.cancelJob(
+      request.query,
+      request.payload,
+      request.auth.credentials.user,
+      (err, result) => replyJson(err, result, reply)
+    )
+  }
+}
+
 module.exports = {
-  caseExport, historyExport, jobStatus
+  caseExport, historyExport, listExport, resendFile, cancelJob
 }

@@ -37,7 +37,7 @@ const jobCaseExport = async (query, user, jobId) => {
   )
 }
 
-const jobHistoryExport = async (query, user) => {
+const jobHistoryExport = async (query, user, jobId) => {
   return await sameCondition(
     query, user, sqlHistoriesExport, true, excellHistories,
     'Data-Riawayat-Kasus', 'histories', jobId

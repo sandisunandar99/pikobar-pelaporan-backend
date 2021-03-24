@@ -1,14 +1,16 @@
 const LogQueue = require('../../models/LogQueue')
 
-const createLogJob = async (job_id, job_name, queue_name, query, user) => {
+const createLogJob = async (progress, job_id, job_name, queue_name, query, user) => {
   const body = {
     job_id: job_id,
     job_name: job_name,
     job_status: 'Sending',
-    job_progress: 10,
+    job_progress: progress,
     queue_name: queue_name,
     author: user.id,
     email: query.email,
+    file_name: query.file_name || null,
+    path: query.path || null,
   }
   try {
     return await LogQueue.create(body)

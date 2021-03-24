@@ -13,6 +13,15 @@ const createQueue = async (nameQueue, nameJob, batchId) => {
   return initialQueue.createJob(nameJob).setId(batchId).save()
 }
 
+const cancelQueue = async (nameQueue, jobId) => {
+  const initialQueue = new Queue(nameQueue, options)
+  try {
+    return await initialQueue.removeJob(jobId)
+  } catch (error) {
+    return error
+  }
+}
+
 module.exports = {
-  createQueue
+  createQueue, cancelQueue
 }

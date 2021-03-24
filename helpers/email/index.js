@@ -46,8 +46,9 @@ const sendEmailWithAttachment = (subject, attachments, email, path, jobId) => {
       param.message = err.toString()
       await updateLogJob(jobId, param)
     } else {
-      fs.unlinkSync(path)
+      if(path) fs.unlinkSync(path)
       param.job_status = 'Done'
+      param.message = 'Email Sent'
       await updateLogJob(jobId, param)
     }
   })

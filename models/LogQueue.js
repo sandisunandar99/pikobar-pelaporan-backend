@@ -12,6 +12,7 @@ const LogQueueSchema = new mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
   email: { type: String, index: true, default: null },
   file_name: { type: String, index: true, default: null },
+  path: { type: String, index: true, default: null },
   type: { type: String, index: true, default: null },
   message: { type: String, index: true, default: null },
 }, { timestamps:true })
