@@ -7,13 +7,12 @@ const fs = require('fs')
 const smtpTrans = nodemailer.createTransport({
 	host: process.env.EMAIL_HOST,
 	port: process.env.EMAIL_PORT,
-	secure: true,
 	auth: {
 		user: process.env.EMAIL_USER,
 		pass: process.env.EMAIL_PASS
 	},
   sender: SUBJECT_NAME,
-	tls: true
+  secureConnection: true
 })
 
 // verify connection configuration
