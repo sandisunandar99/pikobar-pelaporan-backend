@@ -1,18 +1,18 @@
 const { replyJson } = require('../helpers')
 
-const sameExportCondition = async (server, request, reply, method) => {
+const sameExportCondition = (server, request, reply, method) => {
   const query = request.query
   const { user } = request.auth.credentials
-  return await server.methods.services.queue[method](
+  return server.methods.services.queue[method](
     query, user,
     (err, result) => replyJson(err, result, reply)
   )
 }
 
-const sameBodyCondition = async (server, request, reply, method) => {
+const sameBodyCondition = (server, request, reply, method) => {
   const { params, payload } = request
   const { user } = request.auth.credentials
-  return await server.methods.services.queue[method](
+  return server.methods.services.queue[method](
     params, payload, user,
     (err, result) => replyJson(err, result, reply)
   )
