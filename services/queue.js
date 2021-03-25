@@ -1,4 +1,3 @@
-
 const service = 'services.queue'
 const { createQueue, cancelQueue } = require('../helpers/queue')
 const { createJobQueue } = require('../helpers/job')
