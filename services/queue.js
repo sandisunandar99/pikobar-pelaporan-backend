@@ -47,13 +47,13 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
 
 const caseExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 1, callback
+    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 10, callback
   )
 }
 
 const historyExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 1, callback
+    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 10, callback
   )
 }
 
