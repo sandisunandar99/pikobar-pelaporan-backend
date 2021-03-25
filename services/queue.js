@@ -13,7 +13,6 @@ const { sendEmailWithAttachment } = require('../helpers/email')
 const select = [
   'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
 ]
-let param = {}
 let searchParam = [{}]
 
 const mapingResult = (result) => {
