@@ -34,10 +34,11 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
     await createLogJob(10, batchId, job, queue, query, user)
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
     const data = mapingResult(result)
-    callback (null, data)
 
     const message = `Data${name}Kasus Pikobar Pelaporan : ${user.fullname}`
     await createJobQueue(queue, query, user, method, message, time)
+
+    callback (null, data)
   } catch (error) {
     callback(error, null)
   }
