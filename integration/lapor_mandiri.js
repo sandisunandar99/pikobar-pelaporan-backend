@@ -3,8 +3,9 @@ const {PubSub} = require('@google-cloud/pubsub')
 const {pubsub} = require('../config/config')
 const laporMandiriSub = process.env.SUBSCRIPTION_NAME
 const pubsubClient = new PubSub(pubsub)
-const timeout = 60
+const {setTimeOut} = require('../helpers/integration/timeout')
 let msgCount = 0
+
 module.exports = (server) => {
   schedule.scheduleJob("*/1 * * * *", function () {
     console.log('Worker Pikobar Lapor Mandiri runs every 1 minutes')
@@ -25,10 +26,7 @@ module.exports = (server) => {
       }
 
       subscriber.on('message', msgHandler)
-      setTimeout(() => {
-        subscriber.removeListener('message', msgHandler);
-        console.log(`${msgCount} message(s) received.`);
-      }, timeout * 1000);
+      setTimeOut(laporMandiriSub, msgHandler)
 
     } catch (error) {
       console.log(`ERROR PUBSUB: ${error}`);

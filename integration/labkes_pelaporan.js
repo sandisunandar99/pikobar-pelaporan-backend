@@ -3,7 +3,7 @@ const { PubSub } = require('@google-cloud/pubsub')
 const { pubsub } = require('../config/config')
 const labkesPelaporanSub = process.env.SUBSCRIPTION_NAME2
 const pubsubClient = new PubSub(pubsub)
-const timeout = 60
+const {setTimeOut} = require('../helpers/integration/timeout')
 let msgCount = 0
 
 module.exports = (server) => {
@@ -23,10 +23,7 @@ module.exports = (server) => {
       }
 
       subscriber.on('message', msgHandler)
-      setTimeout(() => {
-            subscriber.removeListener('message', msgHandler);
-            console.log(`${msgCount} message(s) received.`);
-      }, timeout * 1000);
+      setTimeOut(labkesPelaporanSub, msgHandler)
 
     } catch (error) {
       console.log(`ERROR PUBSUB: ${error}`);
