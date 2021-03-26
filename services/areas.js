@@ -16,7 +16,7 @@ const condition = (kecamatan_kode) => {
   }
 }
 
-const cacheList = (key, expireTime, schema, sort, params, callback) => {
+const cacheList = (key, expireTime, schema, sort, params, callback, jsonFor=true) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
@@ -24,7 +24,12 @@ const cacheList = (key, expireTime, schema, sort, params, callback) => {
         return callback(null, JSON.parse(result))
       }else{
         const res = await schema.find(params).sort(sort)
-        const resMap = res.map(res => res.toJSONFor())
+        let resMap
+        if(jsonFor) {
+          resMap = res.map(res => res.toJSONFor())
+        } else {
+          resMap = res
+        }
         clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
         console.info(`api source ${key}`)
         return callback(null, resMap)
@@ -103,7 +108,7 @@ const getHospital = async (query, callback) => {
   const expireTime = 2 * 60 * 1000 // 2 minute expire
   const key = `hospital-${params.rs_jabar}`
   const filter = Object.assign(params, { unit_type: 'rumahsakit' })
-  cacheList(key, expireTime, Unit, { _id: -1 }, filter, callback)
+  cacheList(key, expireTime, Unit, { _id: -1 }, filter, callback, false)
 }
 
 const mergeHospitalLab = async (query, callback) => {
