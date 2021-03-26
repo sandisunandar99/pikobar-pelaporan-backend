@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {findUserCases, transformDataPayload} = require('../helpers/integration')
+const {findUserCases, transformDataPayload, splitCodeAddr} = require('../helpers/integration')
 require('../models/LogSelfReport')
 const LogSelfReport = mongoose.model('LogSelfReport')
 
@@ -31,11 +31,19 @@ const createInfoClinics = async (payload) => {
 
 }
 
-
+const createOrUpdateCase = async (payload) => {
+  const data = JSON.parse(payload)
+  const splitCode = await splitCodeAddr(data)
+  console.log("service split data");
+}
 
 module.exports = [
   {
     name: 'services.integration.createInfoClinics',
     method: createInfoClinics
+  },
+  {
+    name: 'services.integration.createOrUpdateCase',
+    method: createOrUpdateCase
   }
 ]
