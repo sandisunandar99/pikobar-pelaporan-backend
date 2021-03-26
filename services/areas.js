@@ -24,12 +24,7 @@ const cacheList = (key, expireTime, schema, sort, params, callback, jsonFor=true
         return callback(null, JSON.parse(result))
       }else{
         const res = await schema.find(params).sort(sort)
-        let resMap
-        if(jsonFor) {
-          resMap = res.map(res => res.toJSONFor())
-        } else {
-          resMap = res
-        }
+        const resMap = jsonFor ? res.map(res => res.toJSONFor()) : res
         clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
         console.info(`api source ${key}`)
         return callback(null, resMap)
