@@ -17,22 +17,18 @@ const condition = (kecamatan_kode) => {
 }
 
 const cacheList = (data, schema, params, callback, jsonFor=true) => {
-  try {
-    clientConfig.get(data.key, async (err, result) => {
-      if(result){
-        console.info(`redis source ${data.key}`)
-        return callback(null, JSON.parse(result))
-      }else{
-        const res = await schema.find(params).sort(data.sort)
-        const resMap = jsonFor ? res.map(res => res.toJSONFor()) : res
-        clientConfig.setex(key, data.expireTime, JSON.stringify(resMap)) // set redis key
-        console.info(`api source ${data.key}`)
-        return callback(null, resMap)
-      }
-    })
-  } catch (error) {
-    return callback(error, null)
-  }
+  clientConfig.get(data.key, async (err, result) => {
+    if(result){
+      console.info(`redis source ${data.key}`)
+      return callback(null, JSON.parse(result))
+    }else{
+      const res = await schema.find(params).sort(data.sort)
+      const resMap = jsonFor ? res.map(res => res.toJSONFor()) : res
+      clientConfig.setex(key, data.expireTime, JSON.stringify(resMap)) // set redis key
+      console.info(`api source ${data.key}`)
+      return callback(null, resMap)
+    }
+  })
 }
 
 const getDistrictCity = async (request, callback) => {
