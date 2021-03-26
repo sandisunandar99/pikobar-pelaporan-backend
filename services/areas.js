@@ -5,7 +5,7 @@ const Unit = require('../models/Unit')
 const Lab = require('../models/Lab')
 const Province = require('../models/Province')
 const { findWithSort } = require('../utils/index')
-
+const { clientConfig } = require('../config/redis')
 const sameCondition = async (schema, condition, sort) => {
   return await schema.find(condition).sort(sort)
 }
@@ -18,27 +18,28 @@ const condition = (kecamatan_kode) => {
 }
 
 const getDistrictCity = async (request, callback) => {
-  let params = new Object();
-
-  if (request.kota_kode) {
-    params.kemendagri_kabupaten_kode = request.kota_kode;
-  }
-
-  if (request.provice_code) {
-    params.kemendagri_provinsi_kode = request.provice_code
-  }
-
-  if (!request.status) {
-    params.kemendagri_provinsi_kode = '32'
-  }
-
+  let params = new Object()
+  if (request.kota_kode) params.kemendagri_kabupaten_kode = request.kota_kode
+  if (request.provice_code) params.kemendagri_provinsi_kode = request.provice_code
+  if (!request.status) params.kemendagri_provinsi_kode = '32'
   if (request.kemendagri_provinsi_nama) {
     params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
   }
-
-  const sort = { kemendagri_kabupaten_nama: 'asc' }
+  const key = `district-city`
+  const expireTime = 1440 * 60 * 1000 // 24 hours expire
   try {
-    await findWithSort(Districtcity, params, sort, callback)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info('redis source district-city')
+      }else{
+        const res = await Districtcity.find(params).sort({ kemendagri_kabupaten_nama: 'asc' })
+        const resMap = res.map(res => res.toJSONFor())
+        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
+        callback(null, resMap)
+        console.info('api source district-city')
+      }
+    })
   } catch (error) {
     callback(error, null)
   }
@@ -77,10 +78,21 @@ const getVillage = async (kecamatan_code, request, callback) => {
   if (request.desa_kode) {
     params.kemendagri_desa_kode = request.desa_kode
   }
-
-  const sort = { kemendagri_desa_nama: 'asc' }
+  const key = `village-${kecamatan_code}`
+  const expireTime = 1440 * 60 * 1000 // 24 hours expire
   try {
-    await findWithSort(Village, params, sort, callback)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const res = await Village.find(params).sort({ kemendagri_desa_nama: 'asc' })
+        const resMap = res.map(res => res.toJSONFor())
+        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
+        callback(null, resMap)
+        console.info(`api source ${key}`)
+      }
+    })
   } catch (error) {
     callback(error, null)
   }
@@ -98,23 +110,27 @@ const getVillageDetail = async (desa_kode, callback) => {
 }
 
 const getHospital = async (query, callback) => {
-  var params = new Object();
-
-  if (query.search) {
-    params.name = new RegExp(query.search, "i")
-  }
-
-  if (query.city_code) {
-    params.kemendagri_kabupaten_kode = query.city_code
-  }
-
+  let params = new Object()
+  if (query.search) params.name = new RegExp(query.search, "i")
+  if (query.city_code) params.kemendagri_kabupaten_kode = query.city_code
   if (query.rs_jabar) {
     params.rs_jabar = query.rs_jabar === 'true'
   }
-
   try {
-    const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
-    callback(null, res)
+    const expireTime = 1440 * 60 * 1000 // 24 hours expire
+    const key = `hospital-${params.rs_jabar}`
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        const resultJSON = JSON.parse(result)
+        callback(null, resultJSON)
+        console.info(`redis source ${key}`)
+      }else{
+        const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
+        clientConfig.setex(key, expireTime, JSON.stringify(res)) // set redis key
+        callback(null, res)
+        console.info(`api source ${key}`)
+      }
+    })
   } catch (error) {
     callback(error, null)
   }
