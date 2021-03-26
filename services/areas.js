@@ -16,9 +16,23 @@ const condition = (kecamatan_kode) => {
   }
 }
 
-const infoRedis = (key, result, callback) => {
-  console.info(`redis source ${key}`)
-  return callback(null, JSON.parse(result))
+const cacheList = (key, expireTime, schema, sort, params, callback) => {
+  try {
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        console.info(`redis source ${key}`)
+        return callback(null, JSON.parse(result))
+      }else{
+        const res = await schema.find(params).sort(sort)
+        const resMap = res.map(res => res.toJSONFor())
+        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
+        console.info(`api source ${key}`)
+        return callback(null, resMap)
+      }
+    })
+  } catch (error) {
+    return callback(error, null)
+  }
 }
 
 const getDistrictCity = async (request, callback) => {
@@ -31,21 +45,8 @@ const getDistrictCity = async (request, callback) => {
   }
   const key = `district-city`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
-  try {
-    clientConfig.get(key, async (err, result) => {
-      if(result){
-        infoRedis(key, result, callback)
-      }else{
-        const res = await Districtcity.find(params).sort({ kemendagri_kabupaten_nama: 'asc' })
-        const resMap = res.map(res => res.toJSONFor())
-        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
-        callback(null, resMap)
-        console.info('api source district-city')
-      }
-    })
-  } catch (error) {
-    callback(error, null)
-  }
+  const sort = { kemendagri_kabupaten_nama: 'asc' }
+  cacheList(key, expireTime, Districtcity, sort, params, callback)
 }
 
 const getSubDistrict = async (cityCode, request, callback) => {
@@ -54,21 +55,8 @@ const getSubDistrict = async (cityCode, request, callback) => {
   if (request.kecamatan_kode) params.kemendagri_kecamatan_kode = request.kecamatan_kode
   const key = `sub-district-${cityCode}`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
-  try {
-    clientConfig.get(key, async (err, result) => {
-      if(result){
-        infoRedis(key, result, callback)
-      }else{
-        const res = await SubDistrict.find(params).sort({ kemendagri_kecamatan_nama: 'asc' })
-        const resMap = res.map(res => res.toJSONFor())
-        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
-        callback(null, resMap)
-        console.info(`api source ${key}`)
-      }
-    })
-  } catch (error) {
-    callback(error, null)
-  }
+  const sort = { kemendagri_kecamatan_nama: 'asc' }
+  cacheList(key, expireTime, SubDistrict, sort, params, callback)
 }
 
 const getSubDistrictDetail = async (kecamatan_kode, callback) => {
@@ -90,21 +78,8 @@ const getVillage = async (kecamatan_code, request, callback) => {
   }
   const key = `village-${kecamatan_code}`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
-  try {
-    clientConfig.get(key, async (err, result) => {
-      if(result){
-        infoRedis(key, result, callback)
-      }else{
-        const res = await Village.find(params).sort({ kemendagri_desa_nama: 'asc' })
-        const resMap = res.map(res => res.toJSONFor())
-        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
-        callback(null, resMap)
-        console.info(`api source ${key}`)
-      }
-    })
-  } catch (error) {
-    callback(error, null)
-  }
+  const sort = { kemendagri_desa_nama: 'asc' }
+  cacheList(key, expireTime, Village, sort, params, callback)
 }
 
 const getVillageDetail = async (desa_kode, callback) => {
@@ -125,22 +100,10 @@ const getHospital = async (query, callback) => {
   if (query.rs_jabar) {
     params.rs_jabar = query.rs_jabar === 'true'
   }
-  try {
-    const expireTime = 2 * 60 * 1000 // 2 minute expire
-    const key = `hospital-${params.rs_jabar}`
-    clientConfig.get(key, async (err, result) => {
-      if(result){
-        infoRedis(key, result, callback)
-      }else{
-        const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
-        clientConfig.setex(key, expireTime, JSON.stringify(res)) // set redis key
-        callback(null, res)
-        console.info(`api source ${key}`)
-      }
-    })
-  } catch (error) {
-    callback(error, null)
-  }
+  const expireTime = 2 * 60 * 1000 // 2 minute expire
+  const key = `hospital-${params.rs_jabar}`
+  const filter = Object.assign(params, { unit_type: 'rumahsakit' })
+  cacheList(key, expireTime, Unit, { _id: -1 }, filter, callback)
 }
 
 const mergeHospitalLab = async (query, callback) => {
