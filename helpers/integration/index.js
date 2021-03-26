@@ -1,3 +1,4 @@
+const { object } = require('joi')
 const {} = require('mongoose')
 const Case = require('../../models/Case')
 const History = require('../../models/History')
@@ -169,23 +170,41 @@ const transformDataPayload = (data, patient) => {
 
 const splitCodeAddr = (data) => {
 
-  let split_district = (data.address_district_code).toString()
-  let split_district_1 = split_district.substring(0,2)
-  let split_district_2 = split_district.substring(2,4)
+  let address_district_code = "32.00"
+  if (data.address_district_code) {
+    let split_district = (data.address_district_code).toString()
+    let split_district_1 = split_district.substring(0,2)
+    let split_district_2 = split_district.substring(2,4)
+    address_district_code = split_district_1.concat(".",split_district_2)
+  }
 
-  let split_subdistrict = (data.address_subdistrict_code).toString()
-  let split_subdistrict1 = split_subdistrict.substring(0,2)
-  let split_subdistrict2 = split_subdistrict.substring(2,4)
-  let split_subdistrict3 = split_subdistrict.substring(4,7)
+  let address_subdistrict_code = "32.00.00"
+  if (data.address_subdistrict_code) {
+    let split_subdistrict = (data.address_subdistrict_code).toString()
+    let split_subdistrict1 = split_subdistrict.substring(0,2)
+    let split_subdistrict2 = split_subdistrict.substring(2,4)
+    let split_subdistrict3 = split_subdistrict.substring(4,7)
+    address_subdistrict_code = split_subdistrict1.concat(".",split_subdistrict2,".",split_subdistrict3)
+  }
 
-  let split_village = (data.address_village_code)
+  let address_village_code = "32.00.00.0000"
+  if (data.address_village_code) {
+    let split_village = (data.address_village_code).toString()
+    let split_village1 = split_village.substring(0,2)
+    let split_village2 = split_village.substring(2,4)
+    let split_village3 = split_village.substring(4,6)
+    let split_village4 = split_village.substring(6,11)
+    address_village_code = split_village1.concat(".",split_village2,".",split_village3,".",split_village4)
+  }
 
+  const code = {
+    address_district_code: address_district_code,
+    address_subdistrict_code: address_subdistrict_code,
+    address_village_code: address_village_code
+  }
 
-  let address_district_code = split_district_1.concat(".",split_district_2)
-  let address_subdistrict_code = split_subdistrict1.concat(".",split_subdistrict2,".",split_subdistrict3)
-  let address_village_code
-
-  return null
+  data = Object.assign(data, code)
+  return data
 }
 
 
