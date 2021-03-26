@@ -4,7 +4,6 @@ const {pubsub} = require('../config/config')
 const laporMandiriSub = process.env.SUBSCRIPTION_NAME
 const pubsubClient = new PubSub(pubsub)
 const {setTimeOut} = require('../helpers/integration/timeout')
-let msgCount = 0
 
 module.exports = (server) => {
   schedule.scheduleJob("*/1 * * * *", function () {
@@ -13,7 +12,6 @@ module.exports = (server) => {
     try {
       const subscriber = pubsubClient.subscription(laporMandiriSub)
       const msgHandler = async (message) => {
-        msgCount += 1;
         try {
           const data = Buffer.from(message.data, 'base64').toString()
           let payload = await server.methods.services.integration.createInfoClinics(data)

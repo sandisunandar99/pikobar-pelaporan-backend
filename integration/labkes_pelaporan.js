@@ -4,7 +4,7 @@ const { pubsub } = require('../config/config')
 const labkesPelaporanSub = process.env.SUBSCRIPTION_NAME2
 const pubsubClient = new PubSub(pubsub)
 const {setTimeOut} = require('../helpers/integration/timeout')
-let msgCount = 0
+const {getCountBasedOnDistrict} = require('../helpers/cases/global')
 
 module.exports = (server) => {
   schedule.scheduleJob("*/1 * * * *", function() {
@@ -13,10 +13,11 @@ module.exports = (server) => {
     try {
       const subscriber = pubsubClient.subscription(labkesPelaporanSub)
       const msgHandler = async (message) => {
-          msgCount += 1;
           try {
             const data = Buffer.from(message.data, 'base64').toString()
-            console.log(data);
+            let payload = await server.methods.services.integration.createOrUpdateCase(data)
+            // const services = server.methods.services
+            // const pre = await getCountBasedOnDistrict (services)
 
             message.ack();
           } catch (error) {console.log(error)}
