@@ -45,17 +45,25 @@ const getDistrictCity = async (request, callback) => {
   }
 }
 
-const getSubDistrict = async (city_code, request, callback) => {
+const getSubDistrict = async (cityCode, request, callback) => {
   let params = {}
-  params.kemendagri_kabupaten_kode = city_code;
-
-  if (request.kecamatan_kode) {
-    params.kemendagri_kecamatan_kode = request.kecamatan_kode
-  }
-
+  params.kemendagri_kabupaten_kode = cityCode
+  if (request.kecamatan_kode) params.kemendagri_kecamatan_kode = request.kecamatan_kode
+  const key = `sub-district-${cityCode}`
+  const expireTime = 1440 * 60 * 1000 // 24 hours expire
   try {
-    const sort = { kemendagri_kecamatan_nama: 'asc' }
-    await findWithSort(SubDistrict, params, sort, callback)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const res = await SubDistrict.find(params).sort({ kemendagri_kecamatan_nama: 'asc' })
+        const resMap = res.map(res => res.toJSONFor())
+        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
+        callback(null, resMap)
+        console.info(`api source ${key}`)
+      }
+    })
   } catch (error) {
     callback(error, null)
   }
@@ -117,7 +125,7 @@ const getHospital = async (query, callback) => {
     params.rs_jabar = query.rs_jabar === 'true'
   }
   try {
-    const expireTime = 1440 * 60 * 1000 // 24 hours expire
+    const expireTime = 2 * 60 * 1000 // 2 minute expire
     const key = `hospital-${params.rs_jabar}`
     clientConfig.get(key, async (err, result) => {
       if(result){
