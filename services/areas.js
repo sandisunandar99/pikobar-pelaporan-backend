@@ -16,17 +16,17 @@ const condition = (kecamatan_kode) => {
   }
 }
 
-const cacheList = (key, expireTime, schema, sort, params, callback, jsonFor=true) => {
+const cacheList = (data, schema, params, callback, jsonFor=true) => {
   try {
-    clientConfig.get(key, async (err, result) => {
+    clientConfig.get(data.key, async (err, result) => {
       if(result){
-        console.info(`redis source ${key}`)
+        console.info(`redis source ${data.key}`)
         return callback(null, JSON.parse(result))
       }else{
-        const res = await schema.find(params).sort(sort)
+        const res = await schema.find(params).sort(data.sort)
         const resMap = jsonFor ? res.map(res => res.toJSONFor()) : res
-        clientConfig.setex(key, expireTime, JSON.stringify(resMap)) // set redis key
-        console.info(`api source ${key}`)
+        clientConfig.setex(key, data.expireTime, JSON.stringify(resMap)) // set redis key
+        console.info(`api source ${data.key}`)
         return callback(null, resMap)
       }
     })
@@ -46,7 +46,8 @@ const getDistrictCity = async (request, callback) => {
   const key = `district-city`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
   const sort = { kemendagri_kabupaten_nama: 'asc' }
-  cacheList(key, expireTime, Districtcity, sort, params, callback)
+  const defineKey = { key, expireTime, sort }
+  cacheList(defineKey, Districtcity, params, callback)
 }
 
 const getSubDistrict = async (cityCode, request, callback) => {
@@ -56,7 +57,8 @@ const getSubDistrict = async (cityCode, request, callback) => {
   const key = `sub-district-${cityCode}`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
   const sort = { kemendagri_kecamatan_nama: 'asc' }
-  cacheList(key, expireTime, SubDistrict, sort, params, callback)
+  const defineKey = { key, expireTime, sort }
+  cacheList(defineKey, SubDistrict, params, callback)
 }
 
 const getSubDistrictDetail = async (kecamatan_kode, callback) => {
@@ -79,7 +81,8 @@ const getVillage = async (kecamatan_code, request, callback) => {
   const key = `village-${kecamatan_code}`
   const expireTime = 1440 * 60 * 1000 // 24 hours expire
   const sort = { kemendagri_desa_nama: 'asc' }
-  cacheList(key, expireTime, Village, sort, params, callback)
+  const defineKey = { key, expireTime, sort }
+  cacheList(defineKey, Village, params, callback)
 }
 
 const getVillageDetail = async (desa_kode, callback) => {
@@ -103,7 +106,8 @@ const getHospital = async (query, callback) => {
   const expireTime = 2 * 60 * 1000 // 2 minute expire
   const key = `hospital-${params.rs_jabar}`
   const filter = Object.assign(params, { unit_type: 'rumahsakit' })
-  cacheList(key, expireTime, Unit, { _id: -1 }, filter, callback, false)
+  const defineKey = { key, expireTime, sort: { _id: -1 } }
+  cacheList(defineKey, Unit, filter, callback, false)
 }
 
 const mergeHospitalLab = async (query, callback) => {
