@@ -16,6 +16,11 @@ const condition = (kecamatan_kode) => {
   }
 }
 
+const infoRedis = (key, result, callback) => {
+  console.info(`redis source ${key}`)
+  return callback(null, JSON.parse(result))
+}
+
 const getDistrictCity = async (request, callback) => {
   let params = new Object()
   if (request.kota_kode) params.kemendagri_kabupaten_kode = request.kota_kode
@@ -29,8 +34,7 @@ const getDistrictCity = async (request, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info('redis source district-city')
+        infoRedis(key, result, callback)
       }else{
         const res = await Districtcity.find(params).sort({ kemendagri_kabupaten_nama: 'asc' })
         const resMap = res.map(res => res.toJSONFor())
@@ -53,8 +57,7 @@ const getSubDistrict = async (cityCode, request, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        infoRedis(key, result, callback)
       }else{
         const res = await SubDistrict.find(params).sort({ kemendagri_kecamatan_nama: 'asc' })
         const resMap = res.map(res => res.toJSONFor())
@@ -90,8 +93,7 @@ const getVillage = async (kecamatan_code, request, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        infoRedis(key, result, callback)
       }else{
         const res = await Village.find(params).sort({ kemendagri_desa_nama: 'asc' })
         const resMap = res.map(res => res.toJSONFor())
@@ -128,9 +130,7 @@ const getHospital = async (query, callback) => {
     const key = `hospital-${params.rs_jabar}`
     clientConfig.get(key, async (err, result) => {
       if(result){
-        const resultJSON = JSON.parse(result)
-        callback(null, resultJSON)
-        console.info(`redis source ${key}`)
+        infoRedis(key, result, callback)
       }else{
         const res = await Unit.find(Object.assign(params, { unit_type: 'rumahsakit' }))
         clientConfig.setex(key, expireTime, JSON.stringify(res)) // set redis key
