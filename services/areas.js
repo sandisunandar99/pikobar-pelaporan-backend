@@ -4,7 +4,6 @@ const Village = require('../models/Village')
 const Unit = require('../models/Unit')
 const Lab = require('../models/Lab')
 const Province = require('../models/Province')
-const { findWithSort } = require('../utils/index')
 const { clientConfig } = require('../config/redis')
 const sameCondition = async (schema, condition, sort) => {
   return await schema.find(condition).sort(sort)
