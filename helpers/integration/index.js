@@ -169,32 +169,22 @@ const transformDataPayload = (data, patient) => {
 }
 
 const splitCodeAddr = (data) => {
-
   let address_district_code = "32.00"
   if (data.address_district_code) {
     let split_district = (data.address_district_code).toString()
-    let split_district_1 = split_district.substring(0,2)
-    let split_district_2 = split_district.substring(2,4)
-    address_district_code = split_district_1.concat(".",split_district_2)
+    address_district_code = (split_district.substring(0,2)).concat(".",split_district.substring(2,4))
   }
 
   let address_subdistrict_code = "32.00.00"
   if (data.address_subdistrict_code) {
     let split_subdistrict = (data.address_subdistrict_code).toString()
-    let split_subdistrict1 = split_subdistrict.substring(0,2)
-    let split_subdistrict2 = split_subdistrict.substring(2,4)
-    let split_subdistrict3 = split_subdistrict.substring(4,7)
-    address_subdistrict_code = split_subdistrict1.concat(".",split_subdistrict2,".",split_subdistrict3)
+    address_subdistrict_code = (split_subdistrict.substring(0,2)).concat(".",split_subdistrict.substring(2,4),".",split_subdistrict.substring(4,7))
   }
 
   let address_village_code = "32.00.00.0000"
   if (data.address_village_code) {
     let split_village = (data.address_village_code).toString()
-    let split_village1 = split_village.substring(0,2)
-    let split_village2 = split_village.substring(2,4)
-    let split_village3 = split_village.substring(4,6)
-    let split_village4 = split_village.substring(6,11)
-    address_village_code = split_village1.concat(".",split_village2,".",split_village3,".",split_village4)
+    address_village_code = (split_village.substring(0,2)).concat(".",split_village.substring(2,4),".",split_village.substring(4,6),".",split_village.substring(6,11))
   }
 
   const code = {
@@ -204,6 +194,7 @@ const splitCodeAddr = (data) => {
   }
 
   data = Object.assign(data, code)
+  console.log(data);
   return data
 }
 
@@ -211,4 +202,3 @@ const splitCodeAddr = (data) => {
 module.exports = {
   findUserCases, transformDataPayload, splitCodeAddr
 }
-
