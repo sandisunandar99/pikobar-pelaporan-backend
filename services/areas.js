@@ -16,6 +16,11 @@ const condition = (kecamatan_kode) => {
   }
 }
 
+const mapingData = async (schema, params, data, jsonFor) => {
+  const res = await schema.find(params).sort(data.sort)
+  return jsonFor ? res.map(res => res.toJSONFor()) : res
+}
+
 const cacheList = (data, schema, params, callback, jsonFor=true) => {
   try {
     clientConfig.get(data.key, async (err, result) => {
@@ -23,11 +28,10 @@ const cacheList = (data, schema, params, callback, jsonFor=true) => {
         console.info(`redis source ${data.key}`)
         return callback(null, JSON.parse(result))
       }else{
-        const res = await schema.find(params).sort(data.sort)
-        const resMap = jsonFor ? res.map(res => res.toJSONFor()) : res
-        clientConfig.setex(data.key, data.expireTime, JSON.stringify(resMap)) // set redis key
+        const res = await mapingData(schema, params, data, jsonFor)
+        clientConfig.setex(data.key, data.expireTime, JSON.stringify(res)) // set redis key
         console.info(`api source ${data.key}`)
-        return callback(null, resMap)
+        return callback(null, res)
       }
     })
   } catch (error) {
