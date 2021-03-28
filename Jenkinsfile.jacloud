@@ -39,7 +39,7 @@ def secretsProd = [
 
 ]
 
-def configuration = [vaultUrl: 'https://vault.jacloud.digitalservice.id/',  vaultCredentialId: 'approle-pelaporan', engineVersion: 2]
+def configuration = [vaultUrl: "${VAULT_JABAR_CLOUD}",  vaultCredentialId: 'approle-pelaporan', engineVersion: 2]
 
 pipeline {
 
@@ -50,6 +50,8 @@ pipeline {
         PROJECT_REGISTRY ='pelaporan-pikobar'
         VERSION = "${BUILD_TAG}"
         URL_REGISTRY = "${URL_REGISTRY_JACLOUD}"
+
+        VAULT_JABAR_CLOUD = "${VAULT_JABAR_CLOUD}"
 
         KUBECONFIG_PELAPORAN_STAGING = "${KUBECONFIG_PELAPORAN_STAGING}"
         CLIENT_KEY_PELAPORAN_STAGING = "${CLIENT_KEY_PELAPORAN_STAGING}"
