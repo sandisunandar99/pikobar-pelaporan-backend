@@ -186,6 +186,6 @@ const splitCasePayload5 = (payloadLabkes) => {
 }
 
 module.exports = {
-  payloadLabkes1, payloadLabkes2, payloadLabkes3,
+  mergerPayloadlabkes,
   splitCasePayload1, splitCasePayload2, splitCasePayload3, splitCasePayload4, splitCasePayload5,
 }
