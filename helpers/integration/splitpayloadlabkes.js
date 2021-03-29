@@ -49,9 +49,9 @@ const payloadLabkes3 = (payloadLabkes) => {
 
 const mergerPayloadlabkes = (payloadLabkes) => {
   const Merge = {
-    ...splitPayload1(payloadLabkes),
-    ...splitPayload2(payloadLabkes),
-    ...splitPayload3(payloadLabkes),
+    ...payloadLabkes1(payloadLabkes),
+    ...payloadLabkes2(payloadLabkes),
+    ...payloadLabkes3(payloadLabkes),
   }
   return Merge
 }
