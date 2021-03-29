@@ -17,7 +17,7 @@ const payloadLabkes1 = (payloadLabkes) => {
 }
 const payloadLabkes2 = (payloadLabkes) => {
   const Obj = {
-     address_street: payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi",
+    address_street: payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi",
     address_district_code: payloadLabkes.address_district_code,
     address_district_name: payloadLabkes.address_district_name ? payloadLabkes.address_district_name : "None",
     address_subdistrict_code: payloadLabkes.address_subdistrict_code,
@@ -176,12 +176,6 @@ const splitCasePayload5 = (payloadLabkes) => {
 }
 
 module.exports = {
-  payloadLabkes1,
-  payloadLabkes2,
-  payloadLabkes3,
-  splitCasePayload1,
-  splitCasePayload2,
-  splitCasePayload3,
-  splitCasePayload4,
-  splitCasePayload5,
+  payloadLabkes1, payloadLabkes2, payloadLabkes3,
+  splitCasePayload1, splitCasePayload2, splitCasePayload3, splitCasePayload4, splitCasePayload5,
 }
