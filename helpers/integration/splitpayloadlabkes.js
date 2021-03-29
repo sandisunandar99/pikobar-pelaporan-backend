@@ -56,8 +56,7 @@ const mergerPayloadlabkes = (payloadLabkes) => {
   return Merge
 }
 
-
-const splitCasePayload1 = (payloadLabkes) => {
+const splitCasePayload1 = () => {
   const Obj = {
     physical_check_temperature: "",
     physical_check_blood_pressure: "",
@@ -82,7 +81,7 @@ const splitCasePayload1 = (payloadLabkes) => {
   return Obj
 }
 
-const splitCasePayload2 = (payloadLabkes) => {
+const splitCasePayload2 = () => {
   const Obj = {
     id_case_national: "",
     id_case_related: "",
@@ -108,7 +107,7 @@ const splitCasePayload2 = (payloadLabkes) => {
   return Obj
 }
 
-const splitCasePayload3 = (payloadLabkes) => {
+const splitCasePayload3 = () => {
   const Obj = {
     first_symptom_date: "",
     history_tracing: [],
@@ -134,7 +133,7 @@ const splitCasePayload3 = (payloadLabkes) => {
   return Obj
 }
 
-const splitCasePayload4 = (payloadLabkes) => {
+const splitCasePayload4 = () => {
   const Obj = {
     serum_check: false,
     sputum_check: false,
@@ -160,7 +159,7 @@ const splitCasePayload4 = (payloadLabkes) => {
   return Obj
 }
 
-const splitCasePayload5 = (payloadLabkes) => {
+const splitCasePayload5 = () => {
   const Obj = {
     name_close_contact: "",
     id_close_contact: "",
@@ -185,7 +184,18 @@ const splitCasePayload5 = (payloadLabkes) => {
   return Obj
 }
 
+const mergeSplitPayload = () => {
+  const Merge = {
+    ...splitCasePayload1(),
+    ...splitCasePayload2(),
+    ...splitCasePayload3(),
+    ...splitCasePayload4(),
+    ...splitCasePayload5(),
+  }
+  return Merge
+}
+
 module.exports = {
   mergerPayloadlabkes,
-  splitCasePayload1, splitCasePayload2, splitCasePayload3, splitCasePayload4, splitCasePayload5,
+  mergeSplitPayload,
 }

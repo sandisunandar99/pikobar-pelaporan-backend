@@ -4,8 +4,7 @@ const Case = require('../../models/Case')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
-const {mergerPayloadlabkes, splitCasePayload1, splitCasePayload2, splitCasePayload3,
-splitCasePayload4, splitCasePayload5} = require('./splitpayloadlabkes')
+const {mergerPayloadlabkes, mergeSplitPayload} = require('./splitpayloadlabkes')
 const {PUBSUB} = require('../constant')
 
 const findUserCases = async(data) => {
@@ -128,12 +127,9 @@ const splitCodeAddr = (data) => {
 const transformDataCase = (data) => {
   const groupingpayload = {
     ...mergerPayloadlabkes(data),
-    ...splitCasePayload1(data),
-    ...splitCasePayload2(data),
-    ...splitCasePayload3(data),
-    ...splitCasePayload4(data),
-    ...splitCasePayload5(data),
+    ...mergeSplitPayload()
   }
+  console.log(groupingpayload);
   return groupingpayload
 }
 
