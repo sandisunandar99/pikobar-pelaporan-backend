@@ -3,8 +3,9 @@ const {} = require('mongoose')
 const Case = require('../../models/Case')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
-const {splitPayload1, splitPayload2, splitPayload3,
-        splitCasePayload } = require('./splitpayload')
+const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
+const {payloadLabkes, payloadLabkes2, splitCasePayload1, splitCasePayload2, splitCasePayload3,
+splitCasePayload4, splitCasePayload5} = require('./splitpayloadlabkes')
 const {PUBSUB} = require('../constant')
 
 const findUserCases = async(data) => {
@@ -48,17 +49,6 @@ const statusPikobar = (status)=> {
   return nameStatus
 }
 
-const changePayloadLaporMandri = (data) => {
-  const date = new Date()
-  data.last_date_status_patient = date.toISOString()
-
-  const Obj = {
-    last_date_status_patient: data.last_date_status_patient,
-    diagnosis: data.symptoms,
-  }
-  return Obj
-}
-
 const userHasFound = async (data) =>{
   const date = new Date().toISOString()
   try {
@@ -95,7 +85,7 @@ const transformDataPayload = (data, patient) => {
   userHasFound(data)
 
   const transform = {
-    ...changePayloadLaporMandri(data),
+    ...PayloadLaporMandri(data),
     ...splitPayload1(patient),
     ...splitPayload2(patient),
     ...splitPayload3(patient)
@@ -136,7 +126,16 @@ const splitCodeAddr = (data) => {
 }
 
 const transformDataCase = (data) => {
-  splitCasePayload(data)
+  const groupingpayload = {
+    ...payloadLabkes(data),
+    ...payloadLabkes2(data),
+    ...splitCasePayload1(data),
+    ...splitCasePayload2(data),
+    ...splitCasePayload3(data),
+    ...splitCasePayload4(data),
+    ...splitCasePayload5(data),
+  }
+  return groupingpayload
 }
 
 module.exports = {
