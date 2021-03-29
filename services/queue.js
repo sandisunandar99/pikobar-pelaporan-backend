@@ -1,4 +1,3 @@
-
 const service = 'services.queue'
 const { createQueue, cancelQueue } = require('../helpers/queue')
 const { createJobQueue } = require('../helpers/job')
@@ -14,7 +13,6 @@ const { sendEmailWithAttachment } = require('../helpers/email')
 const select = [
   'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
 ]
-let param = {}
 let searchParam = [{}]
 
 const mapingResult = (result) => {
@@ -36,10 +34,11 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
     await createLogJob(10, batchId, job, queue, query, user)
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
     const data = mapingResult(result)
-    callback (null, data)
 
     const message = `Data${name}Kasus Pikobar Pelaporan : ${user.fullname}`
     await createJobQueue(queue, query, user, method, message, time)
+
+    callback (null, data)
   } catch (error) {
     callback(error, null)
   }
