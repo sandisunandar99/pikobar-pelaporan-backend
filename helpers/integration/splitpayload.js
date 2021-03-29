@@ -234,6 +234,11 @@ const splitCasePayload = (payloadLabkes) => {
 
 
 module.exports = {
-  PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3,
-  payloadLabkes, payloadLabkes2, splitCasePayload
+  PayloadLaporMandri,
+  splitPayload1,
+  splitPayload2,
+  splitPayload3,
+  payloadLabkes,
+  payloadLabkes2,
+  splitCasePayload
 }
