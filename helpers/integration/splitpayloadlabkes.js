@@ -1,5 +1,5 @@
 const date = new Date()
-const payloadLabkes = (payloadLabkes) => {
+const payloadLabkes1 = (payloadLabkes) => {
   const Obj = {
     name: payloadLabkes.name,
     nik: payloadLabkes.nik,
@@ -10,7 +10,14 @@ const payloadLabkes = (payloadLabkes) => {
     monthsOld: payloadLabkes.monthsOld,
     gender: payloadLabkes.gender,
     phone_number: payloadLabkes.phone_number,
-    address_street: payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi",
+    nationality: payloadLabkes.nationality,
+    place_of_birth: payloadLabkes.place_of_birth,
+  }
+  return Obj
+}
+const payloadLabkes2 = (payloadLabkes) => {
+  const Obj = {
+     address_street: payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi",
     address_district_code: payloadLabkes.address_district_code,
     address_district_name: payloadLabkes.address_district_name ? payloadLabkes.address_district_name : "None",
     address_subdistrict_code: payloadLabkes.address_subdistrict_code,
@@ -19,12 +26,10 @@ const payloadLabkes = (payloadLabkes) => {
     address_village_name: payloadLabkes.address_village_name ? payloadLabkes.address_village_name: "None",
     rt: payloadLabkes.rt? payloadLabkes.rt : "0",
     rw: payloadLabkes.rw? payloadLabkes.rw : "0",
-    nationality: payloadLabkes.nationality,
-    place_of_birth: payloadLabkes.place_of_birth,
   }
   return Obj
 }
-const payloadLabkes2 = (payloadLabkes) => {
+const payloadLabkes3 = (payloadLabkes) => {
   const Obj = {
     current_location_type: "RUMAH",
     current_hospital_id: null,
@@ -171,8 +176,9 @@ const splitCasePayload5 = (payloadLabkes) => {
 }
 
 module.exports = {
-  payloadLabkes,
+  payloadLabkes1,
   payloadLabkes2,
+  payloadLabkes3,
   splitCasePayload1,
   splitCasePayload2,
   splitCasePayload3,
