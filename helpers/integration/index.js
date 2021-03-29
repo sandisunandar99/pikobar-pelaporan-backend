@@ -124,6 +124,34 @@ const splitCodeAddr = (data) => {
   return data
 }
 
+const splitNameAddr = (data) => {
+  const name_address_street = "Belum disi"
+  if (data.address_street) {
+    name_address_street = data.address_street
+  }
+  const name_district = "None"
+  if (data.address_district_name) {
+    name_district = data.address_district_name
+  }
+  const name_subdistrict = "None"
+  if (data.address_subdistrict_name) {
+    name_subdistrict = data.address_subdistrict_name
+  }
+  const name_village = "None"
+  if (data.address_village_name) {
+    name_village = data.address_village_name
+  }
+
+  const name = {
+    address_street: name_address_street,
+    address_district_name: name_district,
+    address_subdistrict_name: name_subdistrict,
+    address_village_name: name_village
+  }
+  data = Object.assign(data, name)
+  return data
+}
+
 const transformDataCase = (data) => {
   const groupingpayload = {
     ...mergerPayloadlabkes(data),
@@ -134,5 +162,5 @@ const transformDataCase = (data) => {
 }
 
 module.exports = {
-  findUserCases, transformDataPayload, splitCodeAddr, transformDataCase
+  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase
 }

@@ -16,30 +16,14 @@ const payloadLabkes1 = (payloadLabkes) => {
   return Obj
 }
 const payloadLabkes2 = (payloadLabkes) => {
-  const name_address_street = "Belum disi"
-  if (payloadLabkes.address_street) {
-    name_address_street = payloadLabkes.address_street
-  }
-  const name_district = "None"
-  if (payloadLabkes.address_district_name) {
-    name_district = payloadLabkes.address_district_name
-  }
-  const name_subdistrict = "None"
-  if (payloadLabkes.address_subdistrict_name) {
-    name_subdistrict = payloadLabkes.address_subdistrict_name
-  }
-  const name_village = "None"
-  if (payloadLabkes.address_village_name) {
-    name_village = payloadLabkes.address_village_name
-  }
   const Obj = {
-    address_street:name_address_street,
+    address_street:payloadLabkes.address_street,
     address_district_code: payloadLabkes.address_district_code,
-    address_district_name: name_district,
+    address_district_name: payloadLabkes.address_district_name,
     address_subdistrict_code: payloadLabkes.address_subdistrict_code,
-    address_subdistrict_name: name_subdistrict,
+    address_subdistrict_name: payloadLabkes.address_subdistrict_name,
     address_village_code: payloadLabkes.address_village_code,
-    address_village_name: name_village,
+    address_village_name: payloadLabkes.address_village_name,
     rt: payloadLabkes.rt? payloadLabkes.rt : "0",
     rw: payloadLabkes.rw? payloadLabkes.rw : "0",
   }
@@ -51,11 +35,11 @@ const payloadLabkes3 = (payloadLabkes) => {
     current_hospital_id: null,
     is_patient_address_same: true,
     last_date_status_patient: payloadLabkes.last_date_status_patient ? payloadLabkes.last_date_status_patient: date.toISOString(),
-    current_location_address: payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi",
+    current_location_address: payloadLabkes.address_street,
     current_location_district_code: payloadLabkes.address_district_code,
     current_location_subdistrict_code: payloadLabkes.address_subdistrict_code,
     current_location_village_code: payloadLabkes.address_village_code,
-    current_location_village_name: payloadLabkes.address_village_name ? payloadLabkes.address_village_name: "None",
+    current_location_village_name: payloadLabkes.address_village_name,
     latitude: "",
     longitude: "",
     input_source: "integrasi labkes",
