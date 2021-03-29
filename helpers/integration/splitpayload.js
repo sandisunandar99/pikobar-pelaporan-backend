@@ -1,5 +1,6 @@
+ const date = new Date()
+
 const PayloadLaporMandri = (data) => {
-  const date = new Date()
   data.last_date_status_patient = date.toISOString()
 
   const Obj = {
@@ -107,12 +108,11 @@ const payloadLabkes = (payloadLabkes) => {
 }
 
 const payloadLabkes2 = (payloadLabkes) => {
-  const date = new Date().toISOString()
   const Obj = {
     current_location_type: "RUMAH",
     current_hospital_id: null,
     is_patient_address_same: true,
-    last_date_status_patient: payloadLabkes.last_date_status_patient ? payloadLabkes.last_date_status_patient: date,
+    last_date_status_patient: payloadLabkes.last_date_status_patient ? payloadLabkes.last_date_status_patient: date.toISOString(),
     current_location_address: payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi",
     current_location_district_code: payloadLabkes.address_district_code,
     current_location_subdistrict_code: payloadLabkes.address_subdistrict_code,
