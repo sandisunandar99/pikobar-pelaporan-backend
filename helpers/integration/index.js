@@ -108,36 +108,27 @@ const transformDataPayload = (data, patient) => {
 
 const splitCodeAddr = (data) => {
   let address_district_code = "32.00"
-  let address_district_name = "None"
   if (data.address_district_code) {
     let split_district = (data.address_district_code).toString()
     address_district_code = (split_district.substring(0,2)).concat(".",split_district.substring(2,4))
-    address_district_name = data.address_district_name
   }
 
   let address_subdistrict_code = "32.00.00"
-  let address_subdistrict_name = "None"
   if (data.address_subdistrict_code) {
     let split_subdistrict = (data.address_subdistrict_code).toString()
     address_subdistrict_code = (split_subdistrict.substring(0,2)).concat(".",split_subdistrict.substring(2,4),".",split_subdistrict.substring(4,7))
-    address_subdistrict_name = data.address_subdistrict_name
   }
 
   let address_village_code = "32.00.00.0000"
-  let address_village_name = "None"
   if (data.address_village_code) {
     let split_village = (data.address_village_code).toString()
     address_village_code = (split_village.substring(0,2)).concat(".",split_village.substring(2,4),".",split_village.substring(4,6),".",split_village.substring(6,11))
-    address_village_name = data.address_village_name
   }
 
   const code = {
     address_district_code: address_district_code,
-    address_district_name: address_district_name,
     address_subdistrict_code: address_subdistrict_code,
-    address_subdistrict_name: address_subdistrict_name,
     address_village_code: address_village_code,
-    address_village_name: address_village_name
   }
 
   data = Object.assign(data, code)
