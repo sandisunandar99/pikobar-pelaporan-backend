@@ -16,11 +16,22 @@ const payloadLabkes1 = (payloadLabkes) => {
   return Obj
 }
 const payloadLabkes2 = (payloadLabkes) => {
-  const name_address_street = payloadLabkes.address_street ? payloadLabkes.address_street : "Belum disi"
-  const name_district = payloadLabkes.address_district_name ? payloadLabkes.address_district_name : "None"
-  const name_subdistrict = payloadLabkes.address_subdistrict_name ? payloadLabkes.address_subdistrict_name : "None"
-  const name_village = payloadLabkes.address_village_name ? payloadLabkes.address_village_name: "None"
-
+  const name_address_street = "Belum disi"
+  if (payloadLabkes.address_street) {
+    name_address_street = payloadLabkes.address_street
+  }
+  const name_district = "None"
+  if (payloadLabkes.address_district_name) {
+    name_district = payloadLabkes.address_district_name
+  }
+  const name_subdistrict = "None"
+  if (payloadLabkes.address_subdistrict_name) {
+    name_subdistrict = payloadLabkes.address_subdistrict_name
+  }
+  const name_village = "None"
+  if (payloadLabkes.address_village_name) {
+    name_village = payloadLabkes.address_village_name
+  }
   const Obj = {
     address_street:name_address_street,
     address_district_code: payloadLabkes.address_district_code,
