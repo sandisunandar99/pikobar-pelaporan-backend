@@ -4,7 +4,7 @@ const Case = require('../../models/Case')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
-const {payloadLabkes, payloadLabkes2, splitCasePayload1, splitCasePayload2, splitCasePayload3,
+const {mergerPayloadlabkes, splitCasePayload1, splitCasePayload2, splitCasePayload3,
 splitCasePayload4, splitCasePayload5} = require('./splitpayloadlabkes')
 const {PUBSUB} = require('../constant')
 
@@ -127,8 +127,7 @@ const splitCodeAddr = (data) => {
 
 const transformDataCase = (data) => {
   const groupingpayload = {
-    ...payloadLabkes(data),
-    ...payloadLabkes2(data),
+    ...mergerPayloadlabkes(data),
     ...splitCasePayload1(data),
     ...splitCasePayload2(data),
     ...splitCasePayload3(data),

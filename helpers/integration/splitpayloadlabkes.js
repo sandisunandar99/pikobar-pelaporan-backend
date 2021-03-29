@@ -47,6 +47,16 @@ const payloadLabkes3 = (payloadLabkes) => {
   return Obj
 }
 
+const mergerPayloadlabkes = (payloadLabkes) => {
+  const Merge = {
+    ...splitPayload1(payloadLabkes),
+    ...splitPayload2(payloadLabkes),
+    ...splitPayload3(payloadLabkes),
+  }
+  return Merge
+}
+
+
 const splitCasePayload1 = (payloadLabkes) => {
   const Obj = {
     physical_check_temperature: "",
