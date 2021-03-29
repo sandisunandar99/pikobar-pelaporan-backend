@@ -10,10 +10,10 @@ const {PUBSUB} = require('../constant')
 const findUserCases = async(data) => {
   const user = data.user
   let filter = {}
-  if (user.nik === "" || user.nik === null || user.nik === undefined){
-    filter = {phone_number: user.phone_number}
-  }else{
+  if (user.nik){
     filter = {nik: user.nik}
+  }else{
+    filter = {phone_number: user.phone_number}
   }
 
   const cases = await Case.aggregate([
