@@ -125,19 +125,19 @@ const splitCodeAddr = (data) => {
 }
 
 const splitNameAddr = (data) => {
-  const name_address_street = "Belum disi"
+  let name_address_street = "Belum disi"
   if (data.address_street) {
     name_address_street = data.address_street
   }
-  const name_district = "None"
+  let name_district = "None"
   if (data.address_district_name) {
     name_district = data.address_district_name
   }
-  const name_subdistrict = "None"
+  let name_subdistrict = "None"
   if (data.address_subdistrict_name) {
     name_subdistrict = data.address_subdistrict_name
   }
-  const name_village = "None"
+  let name_village = "None"
   if (data.address_village_name) {
     name_village = data.address_village_name
   }
@@ -157,7 +157,6 @@ const transformDataCase = (data) => {
     ...mergerPayloadlabkes(data),
     ...mergeSplitPayload()
   }
-  console.log(groupingpayload);
   return groupingpayload
 }
 
