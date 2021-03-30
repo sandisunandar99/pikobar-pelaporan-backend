@@ -12,4 +12,4 @@ COPY . .
 EXPOSE 3333
 
 #ENTRYPOINT [ "nodemon","--max-old-space-size=4096","server.js" ]
-ENTRYPOINT [ "npm" ,"prod"]
+ENTRYPOINT ["npm" ,"start","-s"]
