@@ -8,9 +8,10 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "npm-run-all --parallel start:server",
+    "start": "npm-run-all --parallel start:prod",
+    "dev": "npm-run-all --parallel start:server",
     "start:server": "nodemon --max-old-space-size=2048 server.js",
-    "prod": "node --max-old-space-size=2048 server.js",
+    "start:prod": "node --max-old-space-size=2048 server.js",
     "test": "DEBUG=true mocha --timeout 30000 --exit",
     "coverage": "nyc npm run test"
   },
@@ -39,6 +40,7 @@
     "chai-http": "^4.3.0",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
+    "double-ended-queue": "*",
     "fast-csv": "^4.3.6",
     "firebase-admin": "^8.12.1",
     "glob": "^7.1.6",
