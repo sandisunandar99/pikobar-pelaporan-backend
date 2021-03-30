@@ -1,6 +1,6 @@
-const { object } = require('joi')
-const {} = require('mongoose')
+const ObjectId = require('mongoose').Types.ObjectId
 const Case = require('../../models/Case')
+const User = require('../../models/User')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
@@ -24,6 +24,30 @@ const findUserCases = async(data) => {
     { $limit: (1)}
   ])
   return (cases.length > 0 ? cases : null)
+}
+
+const checkOwnerData = async(data) => {
+  let filter = {}
+  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
+  if(data.id_fasyankes_pelaporan){
+    filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
+  }else{
+    if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
+      filter = {
+        code_district_city: data.address_district_code,
+        address_subdistrict_code: data.address_subdistrict_code
+      }
+    } else {
+      filter = {
+        code_district_city: data.address_district_code,
+      }
+    }
+  }
+  const users = await User.find({
+     role: 'faskes',
+     ...filter
+  }).sort({last_login: -1})
+  return users[0]
 }
 
 const statusPikobar = (status)=> {
@@ -161,5 +185,5 @@ const transformDataCase = (data) => {
 }
 
 module.exports = {
-  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase
+  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData
 }
