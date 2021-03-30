@@ -9,7 +9,8 @@
   "main": "server.js",
   "scripts": {
     "start": "npm-run-all --parallel start:server",
-    "start:server": "nodemon --max-old-space-size=2048 --legacy-watch server.js",
+    "start:server": "nodemon --max-old-space-size=2048 server.js",
+    "prod": "node --max-old-space-size=2048 server.js",
     "test": "DEBUG=true mocha --timeout 30000 --exit",
     "coverage": "nyc npm run test"
   },
@@ -66,7 +67,6 @@
     "redis": "^3.0.2",
     "request": "^2.88.2",
     "slug": "^2.1.1",
-    "redis": "^3.0.2",
     "url-crypt": "^1.2.1"
   },
   "devDependencies": {
