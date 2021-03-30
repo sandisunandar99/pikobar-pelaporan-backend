@@ -17,7 +17,7 @@ const findUserCases = async(data) => {
     { $match : {$and: [
       filter,
       {verified_status: "verified"},
-      {status: {$ne : "deleted"}}
+      {delete_status: {$ne : "deleted"}}
     ]} },
     { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
     { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},
