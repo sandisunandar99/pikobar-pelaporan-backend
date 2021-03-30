@@ -9,6 +9,7 @@
   "main": "server.js",
   "scripts": {
     "start": "npm-run-all --parallel start:prod",
+    "dev": "npm-run-all --parallel start:server",
     "start:server": "nodemon --max-old-space-size=2048 server.js",
     "start:prod": "node --max-old-space-size=2048 server.js",
     "test": "DEBUG=true mocha --timeout 30000 --exit",
