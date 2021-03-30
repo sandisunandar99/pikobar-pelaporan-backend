@@ -61,7 +61,7 @@ const integrationCreateCase = async (services, payload, author) => {
       (err, res) => {
         if (err) throw new Error
         //TODO: tambhakan notif disni
-        notify('CreateCaseIntegrationLabkes', res, author)
+        // notify('CreateCaseIntegrationLabkes', res, author)
         return res
     })
   } catch (error) {
