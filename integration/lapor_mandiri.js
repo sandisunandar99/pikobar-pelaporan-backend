@@ -1,7 +1,7 @@
 const schedule = require('node-schedule')
 const {PubSub} = require('@google-cloud/pubsub')
 const {pubsub} = require('../config/config')
-const laporMandiriSub = process.env.SUBSCRIPTION_NAME
+const laporMandiriSub = process.env.SUBSCRIPTION_NAME_LAPORMANDIRI
 const pubsubClient = new PubSub(pubsub)
 const {setTimeOut} = require('../helpers/integration/timeout')
 
