@@ -7,14 +7,14 @@ const {
   aggCaseDailyReport
 } = require('../helpers/reports/handler')
 const { clientConfig } = require('../config/redis')
+const formatDate = 'YYYY-MM-DD'
 
 async function dailyReport(query, user, callback) {
   const date = query.date ? new Date(query.date) : undefined
   const dates = {
-    aDay: moment(date).format('YYYY-MM-DD'),
-    aDueDay: moment(date).add(1, 'days').format('YYYY-MM-DD'),
-    aWeek: moment(date).subtract(1, 'weeks').add(1, 'days').format('YYYY-MM-DD'),
-    aMonth: moment(date).subtract(1, 'months').add(1, 'days').format('YYYY-MM-DD')
+    aDay: moment(date).format(formatDate), aDueDay: moment(date).add(1, 'days').format(formatDate),
+    aWeek: moment(date).subtract(1, 'weeks').add(1, 'days').format(formatDate),
+    aMonth: moment(date).subtract(1, 'months').add(1, 'days').format(formatDate)
   }
   const searching = { ...Check.countByRole(user), ...await filterCase(user, query) }
   const aggQueryCase = aggCaseDailyReport(searching, dates)
@@ -33,9 +33,7 @@ async function dailyReport(query, user, callback) {
         callback(null, res)
       }
     })
-  } catch (error) {
-    callback(error, null)
-  }
+  } catch (error) { callback(error, null) }
 }
 
 module.exports = [
