@@ -6,6 +6,7 @@ module.exports = {
     ACT_SYSTEM_UPDATES: 'system-updates',
   },
   EVENT_TYPE: {
+    EVT_INTEGRATION_LABKES: 'CreateCaseIntegrationLabkes',
     EVT_CASE_CREATED: 'CaseCreated',
     EVT_CASE_REVISED: 'CasePending',
     EVT_CASE_VERIFIED: 'CaseVerified',

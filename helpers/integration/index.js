@@ -1,7 +1,10 @@
-const {} = require('mongoose')
+const ObjectId = require('mongoose').Types.ObjectId
 const Case = require('../../models/Case')
+const User = require('../../models/User')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
+const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
+const {mergerPayloadlabkes, mergeSplitPayload} = require('./splitpayloadlabkes')
 const {PUBSUB} = require('../constant')
 
 const findUserCases = async(data) => {
@@ -27,6 +30,30 @@ const findUserCases = async(data) => {
   return (cases.length > 0 ? cases : null)
 }
 
+const checkOwnerData = async(data) => {
+  let filter = {}
+  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
+  if(data.id_fasyankes_pelaporan){
+    filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
+  }else{
+    if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
+      filter = {
+        code_district_city: data.address_district_code,
+        address_subdistrict_code: data.address_subdistrict_code
+      }
+    } else {
+      filter = {
+        code_district_city: data.address_district_code,
+      }
+    }
+  }
+  const users = await User.find({
+     role: 'faskes',
+     ...filter
+  }).sort({last_login: -1})
+  return users[0]
+}
+
 const statusPikobar = (status)=> {
   let nameStatus = ""
   switch (status) {
@@ -47,82 +74,6 @@ const statusPikobar = (status)=> {
       break;
   }
   return nameStatus
-}
-
-const splitPayload1 = (data, patient) =>{
-  const date = new Date()
-  data.last_date_status_patient = date.toISOString()
-
-  const Obj = {
-    last_date_status_patient: data.last_date_status_patient,
-    diagnosis: data.symptoms,
-    status: patient.status,
-    there_are_symptoms: patient.there_are_symptoms,
-    first_symptom_date: patient.first_symptom_date,
-    diagnosis_ards: patient.diagnosis_ards,
-    diagnosis_covid: patient.diagnosis_covid,
-    diagnosis_pneumonia: patient.diagnosis_pneumonia,
-    diagnosis_other: patient.diagnosis_other,
-    physical_check_temperature: patient.physical_check_temperature,
-    physical_check_blood_pressure: patient.physical_check_blood_pressure,
-    physical_check_pulse: patient.physical_check_pulse,
-    physical_check_respiration: patient.physical_check_respiration,
-    physical_check_height: patient.physical_check_height,
-    physical_check_weight: patient.physical_check_weight,
-    other_diagnosis: patient.other_diagnosis,
-    other_diagnosisr_respiratory_disease: patient.other_diagnosisr_respiratory_disease,
-    last_changed: patient.last_changed,
-    diseases: patient.diseases,
-    diseases_other: patient.diseases_other,
-  }
-  return Obj
-}
-
-const splitPayload2 = (patient) =>{
-  let Obj = {
-    nik:patient.case,
-    phone_number:patient.phone_number,
-    case : patient.case,
-    history_tracing : patient.history_tracing,
-    is_went_abroad : patient.is_went_abroad,
-    visited_country : patient.visited_country,
-    return_date : patient.return_date,
-    is_went_other_city : patient.is_went_other_city,
-    visited_city : patient.visited_city,
-    is_patient_address_same : patient.is_patient_address_same,
-    is_contact_with_positive : patient.is_contact_with_positive,
-    history_notes : patient.history_notes,
-    report_source : patient.report_source,
-    stage : patient.stage,
-    final_result : patient.final_result,
-    is_other_diagnosisr_respiratory_disease : patient.is_other_diagnosisr_respiratory_disease,
-    pysichal_activity : patient.pysichal_activity,
-    smoking : patient.smoking,
-    consume_alcohol : patient.consume_alcohol
-  }
-
-  return Obj
-}
-
-const splitPayload3 = (patient) => {
-  let Obj =  {
-    current_location_type : patient.current_location_type,
-    current_hospital_id : patient.current_hospital_id,
-    current_location_address : patient.current_location_address,
-    current_location_district_code : patient.current_location_district_code,
-    current_location_subdistrict_code : patient.current_location_subdistrict_code,
-    current_location_village_code : patient.current_location_village_code,
-    other_notes : patient.other_notes,
-    current_hospital_type : patient.current_hospital_type,
-    current_location_province_code : patient.current_location_province_code,
-    address_district_code : patient.address_district_code,
-    address_subdistrict_code : patient.address_subdistrict_code,
-    address_village_code : patient.address_village_code,
-    address_village_name : patient.address_village_name,
-    address_street : patient.address_street,
-  }
-
-  return Obj
 }
 
 const userHasFound = async (data) =>{
@@ -161,7 +112,8 @@ const transformDataPayload = (data, patient) => {
   userHasFound(data)
 
   const transform = {
-    ...splitPayload1(data, patient),
+    ...PayloadLaporMandri(data),
+    ...splitPayload1(patient),
     ...splitPayload2(patient),
     ...splitPayload3(patient)
   }
@@ -171,7 +123,71 @@ const transformDataPayload = (data, patient) => {
   return transform
 }
 
-module.exports = {
-  findUserCases, transformDataPayload
+const splitCodeAddr = (data) => {
+  let address_district_code = "32.00"
+  if (data.address_district_code) {
+    let split_district = (data.address_district_code).toString()
+    address_district_code = (split_district.substring(0,2)).concat(".",split_district.substring(2,4))
+  }
+
+  let address_subdistrict_code = "32.00.00"
+  if (data.address_subdistrict_code) {
+    let split_subdistrict = (data.address_subdistrict_code).toString()
+    address_subdistrict_code = (split_subdistrict.substring(0,2)).concat(".",split_subdistrict.substring(2,4),".",split_subdistrict.substring(4,7))
+  }
+
+  let address_village_code = "32.00.00.0000"
+  if (data.address_village_code) {
+    let split_village = (data.address_village_code).toString()
+    address_village_code = (split_village.substring(0,2)).concat(".",split_village.substring(2,4),".",split_village.substring(4,6),".",split_village.substring(6,11))
+  }
+
+  const code = {
+    address_district_code: address_district_code,
+    address_subdistrict_code: address_subdistrict_code,
+    address_village_code: address_village_code,
+  }
+
+  data = Object.assign(data, code)
+  return data
 }
 
+const splitNameAddr = (data) => {
+  let name_address_street = "Belum disi"
+  if (data.address_street) {
+    name_address_street = data.address_street
+  }
+  let name_district = "None"
+  if (data.address_district_name) {
+    name_district = data.address_district_name
+  }
+  let name_subdistrict = "None"
+  if (data.address_subdistrict_name) {
+    name_subdistrict = data.address_subdistrict_name
+  }
+  let name_village = "None"
+  if (data.address_village_name) {
+    name_village = data.address_village_name
+  }
+
+  const name = {
+    address_street: name_address_street,
+    address_district_name: name_district,
+    address_subdistrict_name: name_subdistrict,
+    address_village_name: name_village
+  }
+  data = Object.assign(data, name)
+  return data
+}
+
+const transformDataCase = (data) => {
+  const groupingpayload = {
+    ...mergerPayloadlabkes(data),
+    ...mergeSplitPayload()
+  }
+  return groupingpayload
+}
+
+module.exports = {
+  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData
+}

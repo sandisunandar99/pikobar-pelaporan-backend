@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
-const {findUserCases, transformDataPayload} = require('../helpers/integration')
+const {findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData} = require('../helpers/integration')
+const {notify} = require('../helpers/notification')
 require('../models/LogSelfReport')
 const LogSelfReport = mongoose.model('LogSelfReport')
+const {getCountBasedOnDistrict} = require('../helpers/cases/global')
 
 const createInfoClinics = async (payload) => {
   const data = JSON.parse(payload)
@@ -31,11 +33,54 @@ const createInfoClinics = async (payload) => {
 
 }
 
+const createOrUpdateCase = async (payload, services) => {
+  const data = JSON.parse(payload)
+  const splitCode = await splitCodeAddr(data)
+  const splitName = await splitNameAddr(splitCode)
+  const author = await checkOwnerData(splitCode)
+  const transformData= await transformDataCase(splitName)
+  const checkUser = {user: {
+    nik : transformData.nik,
+    phone_number: transformData.phone_number
+  }}
+  const findUserData = await findUserCases(checkUser)
+  let result = {}
+  if(findUserData){
+    result = await integrationUpdateCase(findUserData)
+  }else{
+    result = await integrationCreateCase(services, transformData, author)
+  }
+  return result
+}
+
+const integrationCreateCase = async (services, payload, author) => {
+  try {
+    const pre = await getCountBasedOnDistrict(services, payload.address_district_code)
+    await services.v2.cases.create(
+      pre, payload, author,
+      (err, res) => {
+        if (err) throw new Error
+        //TODO: tambhakan notif disni
+        // notify('CreateCaseIntegrationLabkes', res, author)
+        return res
+    })
+  } catch (error) {
+    if (error) throw new Error
+  }
+}
+
+const integrationUpdateCase = (payload) => {
+  console.log("data updateeeeeeee");
+}
 
 
 module.exports = [
   {
     name: 'services.integration.createInfoClinics',
     method: createInfoClinics
+  },
+  {
+    name: 'services.integration.createOrUpdateCase',
+    method: createOrUpdateCase
   }
 ]
