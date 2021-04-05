@@ -9,11 +9,13 @@ const {PUBSUB} = require('../constant')
 
 const findUserCases = async(data) => {
   const user = data.user
+  const IDN_CODE_NUMBER = '+62'
+  let phone_number = user.phone_number
   let filter = {}
   if (user.nik){
     filter = {nik: user.nik}
   }else{
-    filter = {phone_number: user.phone_number}
+    filter = {phone_number: phone_number.replace(IDN_CODE_NUMBER, '0')}
   }
 
   const cases = await Case.aggregate([
