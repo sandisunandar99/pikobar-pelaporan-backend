@@ -27,7 +27,7 @@ module.exports = (server) => {
       setTimeOut(laporMandiriSub, msgHandler)
 
     } catch (error) {
-      console.log(`ERROR PUBSUB: ${error}`);
+      console.log(`ERROR PUBSUB PIKOBAR: ${error}`);
     }
   });
 }

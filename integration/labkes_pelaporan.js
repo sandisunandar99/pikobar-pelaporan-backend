@@ -25,7 +25,7 @@ module.exports = (server) => {
       setTimeOut(labkesPelaporanSub, msgHandler)
 
     } catch (error) {
-      console.log(`ERROR PUBSUB: ${error}`);
+      console.log(`ERROR PUBSUB PELAPORAN LABKES: ${error}`);
     }
   });
 }
