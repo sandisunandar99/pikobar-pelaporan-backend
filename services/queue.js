@@ -11,7 +11,7 @@ const { jsonPagination } = require('../utils')
 const { readFileFromBucket } = require('../config/aws')
 const { sendEmailWithAttachment } = require('../helpers/email')
 const select = [
-  'email','createdAt', 'job_id', 'job_status', 'job_progress', 'file_name'
+  'email','createdAt', 'job_id', 'job_name', 'job_status', 'job_progress', 'file_name'
 ]
 let searchParam = [{}]
 
