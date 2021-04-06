@@ -195,7 +195,23 @@ const mergeSplitPayload = () => {
   return Merge
 }
 
+const payloadInspectionSupport = (data) =>{
+  const Obj = {
+    inspection_type: "pcr",
+    specimens_type: "swab_naso_orofaring",
+    inspection_date: data.inspection_date,
+    inspection_location: "",
+    is_other_location: false,
+    other_inspection_location: "lainnya",
+    get_specimens_to: data.get_specimens_to,
+    inspection_result: data.inspection_result
+  }
+  return Obj
+}
+
+
 module.exports = {
   mergerPayloadlabkes,
   mergeSplitPayload,
+  payloadInspectionSupport
 }
