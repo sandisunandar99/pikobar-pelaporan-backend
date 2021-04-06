@@ -135,16 +135,8 @@ const listCaseExport = async (query, user, callback) => {
   const filter = await Filter.filterCase(user, query)
   const filterRole = Check.exportByRole({}, user, query)
   const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
-  let search
-  if(query.search){
-    let search_params = [
-      { id_case : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
-    ];
-    search = search_params
-  } else {
-    search = {}
-  }
+  const { searchExport } = require('../helpers/filter/search')
+  const search = searchExport(query)
   params.last_history = { $exists: true, $ne: null }
   const condition = sqlCondition(params, search, query)
   try {

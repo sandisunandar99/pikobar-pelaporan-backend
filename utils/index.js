@@ -3,5 +3,6 @@ module.exports = {
   ...require('./column'),
   ...require('./select'),
   ...require('./lookup'),
-  ...require('./sort')
+  ...require('./sort'),
+  ...require('./pagination')
 }
