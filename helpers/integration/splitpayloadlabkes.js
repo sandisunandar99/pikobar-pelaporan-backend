@@ -1,4 +1,6 @@
 const date = new Date()
+const {INSPECTION_TYPES, SPECIMEN_TYPES} = require('../constant')
+
 const payloadLabkes1 = (payloadLabkes) => {
   const Obj = {
     name: payloadLabkes.name,
@@ -197,8 +199,8 @@ const mergeSplitPayload = () => {
 
 const payloadInspectionSupport = (data) =>{
   const Obj = {
-    inspection_type: "pcr",
-    specimens_type: "swab_naso_orofaring",
+    inspection_type: INSPECTION_TYPES.PCR,
+    specimens_type: SPECIMEN_TYPES.SWAB_NASO_OROF,
     inspection_date: data.inspection_date,
     inspection_location: "",
     is_other_location: false,
