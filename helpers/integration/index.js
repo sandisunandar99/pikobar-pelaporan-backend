@@ -11,15 +11,13 @@ const findUserCases = async(data) => {
   const user = data.user
   const IDN_CODE_NUMBER = '+62'
   let phone_number = user.phone_number
-  let filter = {}
-  if (user.nik){
-    filter = {nik: user.nik}
-  }else{
-    filter = {phone_number: phone_number.replace(IDN_CODE_NUMBER, '0')}
-  }
-
+  let filter_nik = user.nik ? user.nik : phone_number.replace(IDN_CODE_NUMBER, '0')
+  let filter_phone = user.phone_number ? phone_number.replace(IDN_CODE_NUMBER, '0') : user.nik
   const cases = await Case.aggregate([
-    { $match : {$and: [filter, {delete_status: {$ne: 'deleted'}},{verified_status: 'verified'}]} },
+    { $match : {
+      $and: [{verified_status: "verified"},{delete_status: {$ne : "deleted"}} ],
+      $or: [{nik: filter_nik}, {phone_number: filter_phone}]
+    } },
     { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
     { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},
     { $project : {histories: 0}},
