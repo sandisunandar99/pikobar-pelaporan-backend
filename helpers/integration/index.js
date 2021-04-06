@@ -19,7 +19,7 @@ const findUserCases = async(data) => {
   }
 
   const cases = await Case.aggregate([
-    { $match : filter },
+    { $match : {$and: [filter, {delete_status: {$ne: 'deleted'}},{verified_status: 'verified'}]} },
     { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
     { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},
     { $project : {histories: 0}},
