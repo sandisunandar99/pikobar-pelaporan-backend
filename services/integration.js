@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const {findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData} = require('../helpers/integration')
+const {payloadInspectionSupport} = require('../helpers/integration/splitpayloadlabkes')
 const {notify} = require('../helpers/notification')
 require('../models/LogSelfReport')
 const LogSelfReport = mongoose.model('LogSelfReport')
@@ -46,7 +47,7 @@ const createOrUpdateCase = async (payload, services) => {
   const findUserData = await findUserCases(checkUser)
   let result = {}
   if(findUserData){
-    result = await integrationUpdateCase(findUserData)
+    result = await integrationUpdateCase(services,...findUserData, data)
   }else{
     result = await integrationCreateCase(services, transformData, author)
   }
@@ -69,8 +70,17 @@ const integrationCreateCase = async (services, payload, author) => {
   }
 }
 
-const integrationUpdateCase = (payload) => {
-  console.log("data updateeeeeeee");
+const integrationUpdateCase = async(services, payload, payloadLabkes) => {
+  const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
+  const id_case = payload._id
+  await services.inspection_support.create(inspectionSupportPayload, id_case,
+    (err, res)=> {
+     if (err) throw new Error
+        //TODO: tambhakan notif disni
+        // notify('CreateCaseIntegrationLabkes', res, author)
+        console.log(res);
+        return res
+  })
 }
 
 
