@@ -105,7 +105,7 @@ async function createCasesVerification (services, callback) {
       const verification = new CaseVerification(verificationPayload)
 
       await verification.save()
-      await doUpdateEmbeddedClosecontactDoc(item.id_case, idCase, Case)
+      await doUpdateEmbeddedClosecontactDoc(item.id_case, payload.id_case, Case)
     }
     callback(null, true)
   } catch (error) {
