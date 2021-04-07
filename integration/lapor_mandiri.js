@@ -13,8 +13,8 @@ module.exports = (server) => {
       const subscriber = pubsubClient.subscription(laporMandiriSub)
       const msgHandler = async (message) => {
         const data = Buffer.from(message.data, 'base64').toString()
-        let payload = await server.methods.services.integration.createInfoClinics(data)
-        await server.methods.services.histories.createIfChanged({payload}, (err, result) => { console.log(`Data Pikobar Reveived.. ID : ${message.id} ---- ERR: ${err}`)})
+        const services = server.methods.services
+        await server.methods.services.integration.createInfoClinics(data, services, (err, res)=>{console.log(`Data Pikobar Reveived.. ID : ${message.id} ---- ERR: ${err}`)})
         message.ack();
       }
 
