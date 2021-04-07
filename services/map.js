@@ -1,15 +1,31 @@
 const Case = require('../models/Case')
 const { aggregateCondition } = require('../helpers/aggregate/mapaggregate')
 const { patientStatus } = require('../helpers/custom')
+const { ROLE } = require('../helpers/constant')
+const { clientConfig } = require('../config/redis')
 
 const listMap = async (query, user, callback) => {
+  const expireTime = 15 * 60 * 1000 // 15 minute expire
+  let key
+  if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
+    key = `list-map-${user.username}`
+  }else{
+    key = `list-map-${user.code_district_city}`
+  }
   try {
-    const aggregateWhere = await aggregateCondition(user, query)
-    const result = await Case.aggregate(aggregateWhere)
-    result.map(res => {
-      res.final_result = patientStatus(res.final_result)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const aggregateWhere = await aggregateCondition(user, query)
+        const result = await Case.aggregate(aggregateWhere)
+        result.map(res => res.final_result = patientStatus(res.final_result))
+        clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
+        callback(null, result)
+        console.info(`api source ${key}`)
+      }
     })
-    callback(null, result)
   } catch (error) {
     callback(error, null)
   }
