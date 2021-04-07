@@ -9,6 +9,8 @@ const setTimeOut = (subscribe, msgHandler) => {
    setTimeout(() => {
         subscriber.removeListener('message', msgHandler);
     }, timeout * 1000);
+
+    return null
 }
 
 module.exports = {
