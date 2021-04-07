@@ -34,24 +34,28 @@ const createInfoClinics = async (payload) => {
 
 }
 
-const createOrUpdateCase = async (payload, services) => {
-  const data = JSON.parse(payload)
-  const splitCode = await splitCodeAddr(data)
-  const splitName = await splitNameAddr(splitCode)
-  const author = await checkOwnerData(splitCode)
-  const transformData= await transformDataCase(splitName)
-  const checkUser = {user: {
-    nik : transformData.nik,
-    phone_number: transformData.phone_number
-  }}
-  const findUserData = await findUserCases(checkUser)
-  let result = {}
-  if(findUserData){
-    result = await integrationUpdateCase(services,...findUserData, data)
-  }else{
-    result = await integrationCreateCase(services, transformData, author)
+const createOrUpdateCase = async (payload, services, callback) => {
+  try {
+    const data = JSON.parse(payload)
+    const splitCode = await splitCodeAddr(data)
+    const splitName = await splitNameAddr(splitCode)
+    const author = await checkOwnerData(splitCode)
+    const transformData= await transformDataCase(splitName)
+    const checkUser = {user: {
+      nik : transformData.nik,
+      phone_number: transformData.phone_number
+    }}
+    const findUserData = await findUserCases(checkUser)
+    let result = {}
+    if(findUserData){
+      result = await integrationUpdateCase(services,...findUserData, data)
+    }else{
+      result = await integrationCreateCase(services, transformData, author)
+    }
+    return callback(null, result)
+  } catch (error) {
+    return callback(error, null)
   }
-  return result
 }
 
 const integrationCreateCase = async (services, payload, author) => {

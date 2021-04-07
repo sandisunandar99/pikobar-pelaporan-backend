@@ -12,17 +12,20 @@ module.exports = (server) => {
     try {
       const subscriber = pubsubClient.subscription(labkesPelaporanSub)
       const msgHandler = async (message) => {
-          try {
-            const data = Buffer.from(message.data, 'base64').toString()
-            const services = server.methods.services
-            let payload = await server.methods.services.integration.createOrUpdateCase(data, services)
-
-            message.ack();
-          } catch (error) {console.log(error)}
+        const data = Buffer.from(message.data, 'base64').toString()
+        const services = server.methods.services
+        await server.methods.services.integration.createOrUpdateCase(data, services, (err, res)=>{console.log(`Data Labkes Received.. ID : ${message.id} ---- ERR: ${err}`)})
+        message.ack();
       }
 
+      const errorHandler = (error) => {
+        console.error(`ERROR: ${error}`);
+        throw error;
+      }
+
+      subscriber.on('error', errorHandler)
       subscriber.on('message', msgHandler)
-      setTimeOut(labkesPelaporanSub, msgHandler)
+      setTimeOut(labkesPelaporanSub, msgHandler, errorHandler)
 
     } catch (error) {
       console.log(`ERROR PUBSUB PELAPORAN LABKES: ${error}`);

@@ -12,19 +12,20 @@ module.exports = (server) => {
     try {
       const subscriber = pubsubClient.subscription(laporMandiriSub)
       const msgHandler = async (message) => {
-        try {
-          const data = Buffer.from(message.data, 'base64').toString()
-          let payload = await server.methods.services.integration.createInfoClinics(data)
-          await server.methods.services.histories.createIfChanged({payload}, (err, result) => { console.log(`Data Sent.. ID : ${message.id} ---- ERR: ${err}`)})
-
-          message.ack();
-        } catch (error) {
-          console.log(error)
-        }
+        const data = Buffer.from(message.data, 'base64').toString()
+        let payload = await server.methods.services.integration.createInfoClinics(data)
+        await server.methods.services.histories.createIfChanged({payload}, (err, result) => { console.log(`Data Pikobar Reveived.. ID : ${message.id} ---- ERR: ${err}`)})
+        message.ack();
       }
 
+      const errorHandler = (error) => {
+        console.error(`ERROR: ${error}`);
+        throw error;
+      }
+
+      subscriber.on('error', errorHandler)
       subscriber.on('message', msgHandler)
-      setTimeOut(laporMandiriSub, msgHandler)
+      setTimeOut(laporMandiriSub, msgHandler, errorHandler)
 
     } catch (error) {
       console.log(`ERROR PUBSUB PIKOBAR: ${error}`);
