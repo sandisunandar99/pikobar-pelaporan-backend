@@ -3,10 +3,11 @@ const {pubsub} = require('../../config/config')
 const pubsubClient = new PubSub(pubsub)
 const timeout = 60//milidetik
 
-const setTimeOut = (subscribe, msgHandler) => {
+const setTimeOut = (subscribe, msgHandler, errorHandler) => {
   const subscriber = pubsubClient.subscription(subscribe)
 
    setTimeout(() => {
+        subscriber.removeListener('error', errorHandler);
         subscriber.removeListener('message', msgHandler);
     }, timeout * 1000);
 
