@@ -84,10 +84,11 @@ async function createCasesVerification (services, callback) {
         verified_comment: 'Automatically verified by the system'
       }
 
+      let idCase
       if (item.id_case.substr(0,3) === 'pre') {
         // get requirement doc to generate id case
         const pre = await getCountBasedOnDistrict(services, item.address_district_code)
-        const idCase = Validate.generateIdCase({role: ROLE.KOTAKAB}, pre, item)
+        idCase = Validate.generateIdCase({role: ROLE.KOTAKAB}, pre, item)
         payload.id_case = idCase
       }
 
@@ -105,7 +106,7 @@ async function createCasesVerification (services, callback) {
       const verification = new CaseVerification(verificationPayload)
 
       await verification.save()
-      await doUpdateEmbeddedClosecontactDoc(item.id_case, payload.id_case, Case)
+      await doUpdateEmbeddedClosecontactDoc(item.id_case, idCase, Case)
     }
     callback(null, true)
   } catch (error) {
