@@ -1,4 +1,6 @@
 const date = new Date()
+const {INSPECTION_TYPES, SPECIMEN_TYPES} = require('../constant')
+
 const payloadLabkes1 = (payloadLabkes) => {
   const Obj = {
     name: payloadLabkes.name,
@@ -195,7 +197,23 @@ const mergeSplitPayload = () => {
   return Merge
 }
 
+const payloadInspectionSupport = (data) =>{
+  const Obj = {
+    inspection_type: INSPECTION_TYPES.PCR,
+    specimens_type: SPECIMEN_TYPES.SWAB_NASO_OROF,
+    inspection_date: data.inspection_date,
+    inspection_location: "",
+    is_other_location: false,
+    other_inspection_location: "lainnya",
+    get_specimens_to: data.get_specimens_to,
+    inspection_result: data.inspection_result
+  }
+  return Obj
+}
+
+
 module.exports = {
   mergerPayloadlabkes,
   mergeSplitPayload,
+  payloadInspectionSupport
 }
