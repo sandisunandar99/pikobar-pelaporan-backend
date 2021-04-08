@@ -6,9 +6,9 @@ require('../models/LogSelfReport')
 const LogSelfReport = mongoose.model('LogSelfReport')
 const {getCountBasedOnDistrict} = require('../helpers/cases/global')
 
-const createInfoClinics = async (payload) => {
-  const data = JSON.parse(payload)
+const createInfoClinics = async (payload, services, callback) => {
   try {
+    const data = JSON.parse(payload)
     //check data by nik or phone number
     const patient = await findUserCases(data)
     if (patient === null){
@@ -19,42 +19,57 @@ const createInfoClinics = async (payload) => {
         phone_number : data.user.phone_number,
         user_has_found : null
       }
-
+      // save log if user not found when insert lapor mandiri
       let logPub = new LogSelfReport(dataPub)
       await logPub.save()
     }
-
     // transform payload with last data case patient
     const transData = await transformDataPayload(data, ...patient)
-
-    return transData
+    const result = await integrationPikobarSelfReport(services, transData)
+     return callback(null, result)
   } catch (error) {
-    return error
+    return callback(error, null)
   }
-
 }
 
-const createOrUpdateCase = async (payload, services) => {
-  const data = JSON.parse(payload)
-  const splitCode = await splitCodeAddr(data)
-  const splitName = await splitNameAddr(splitCode)
-  const author = await checkOwnerData(splitCode)
-  const transformData= await transformDataCase(splitName)
-  const checkUser = {user: {
-    nik : transformData.nik,
-    phone_number: transformData.phone_number
-  }}
-  const findUserData = await findUserCases(checkUser)
-  let result = {}
-  if(findUserData){
-    result = await integrationUpdateCase(services,...findUserData, data)
-  }else{
-    result = await integrationCreateCase(services, transformData, author)
+const integrationPikobarSelfReport = async(services, payload) =>{
+  try {
+    await services.histories.createIfChanged({payload}, (err, res) =>{
+      if (err) throw new Error
+      return res
+    })
+  } catch (error) {
+    if (error) throw new Error
   }
-  return result
 }
 
-const integrationCreateCase = async (services, payload, author) => {
+
+
+const createOrUpdateCase = async (payload, services, callback) => {
+  try {
+    const data = JSON.parse(payload)
+    const splitCode = await splitCodeAddr(data)
+    const splitName = await splitNameAddr(splitCode)
+    const author = await checkOwnerData(splitCode)
+    const transformData= await transformDataCase(splitName)
+    const checkUser = {user: {
+      nik : transformData.nik,
+      phone_number: transformData.phone_number
+    }}
+    const findUserData = await findUserCases(checkUser)
+    let result = {}
+    if(findUserData){
+      result = await integrationLabkesUpdateCase(services,...findUserData, data)
+    }else{
+      result = await integrationLabkesCreateCase(services, transformData, author)
+    }
+    return callback(null, result)
+  } catch (error) {
+    return callback(error, null)
+  }
+}
+
+const integrationLabkesCreateCase = async (services, payload, author) => {
   try {
     const pre = await getCountBasedOnDistrict(services, payload.address_district_code)
     await services.v2.cases.create(
@@ -70,7 +85,7 @@ const integrationCreateCase = async (services, payload, author) => {
   }
 }
 
-const integrationUpdateCase = async(services, payload, payloadLabkes) => {
+const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
   const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
   const id_case = payload._id
   await services.inspection_support.create(inspectionSupportPayload, id_case,
