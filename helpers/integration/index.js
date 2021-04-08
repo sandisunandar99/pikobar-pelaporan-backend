@@ -10,9 +10,9 @@ const {PUBSUB} = require('../constant')
 const findUserCases = async(data) => {
   const user = data.user
   const IDN_CODE_NUMBER = '+62'
-  let phone_number = user.phone_number
-  let filter_nik = user.nik ? user.nik : phone_number.replace(IDN_CODE_NUMBER, '0')
-  let filter_phone = user.phone_number ? phone_number.replace(IDN_CODE_NUMBER, '0') : user.nik
+  let phone_number = user.phone_number ? (user.phone_number).replace(IDN_CODE_NUMBER, '0') : user.phone_number
+  let filter_nik = user.nik ? user.nik : phone_number
+  let filter_phone = user.phone_number ? phone_number : user.nik
   const cases = await Case.aggregate([
     { $match : {
       $and: [{verified_status: "verified"},{delete_status: {$ne : "deleted"}} ],
