@@ -28,9 +28,7 @@ const listMap = async (query, user, callback) => {
         console.info(`api source ${key}`)
       }
     })
-  } catch (error) {
-    callback(error, null)
-  }
+  } catch (error) { callback(error, null) }
 }
 
 

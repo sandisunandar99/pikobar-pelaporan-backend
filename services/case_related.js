@@ -175,7 +175,9 @@ const getByCaseRelated = async (id_case, callback) => {
       res.final_result = patientStatus(res)
     })
     callback(null, result)
-  } catch (error) { callback(error, null) }
+  } catch (error) {
+    callback(error, null)
+  }
 }
 
 const sync = async (services, callback) => {
