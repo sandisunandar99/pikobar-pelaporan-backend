@@ -156,9 +156,9 @@ const listCaseRelated = async (query, user, callback) => {
   if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
     key = `related-map-${user.username}-${user.code_district_city}`
   }else if([ROLE.KOTAKAB].includes(user.role)){
-    key = `related-map-${user.code_district_city}`
+    key = `related-map-${user.username}-${user.code_district_city}`
   }else{
-    key = `related-map-${user.username}-${user.id}`
+    key = `related-map-${user.id}-${user.code_district_city}`
   }
   try {
     clientConfig.get(key, async (err, result) => {
