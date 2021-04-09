@@ -10,9 +10,9 @@ const listMap = async (query, user, callback) => {
   if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
     key = `list-map-${user.username}`
   }else if([ROLE.KOTAKAB].includes(user.role)){
-    key = `list-map-${user.code_district_city}`
+    key = `list-map-${user.username}-${user.code_district_city}`
   }else{
-    key = `list-map-${user.username}-${user.id}`
+    key = `list-map-${user.id}-${user.code_district_city}`
   }
   try {
     clientConfig.get(key, async (err, result) => {
