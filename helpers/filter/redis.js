@@ -1,14 +1,21 @@
-const keyDashboard = (query, user, time, key) => {
-  const { ROLE } = require('../helpers/constant')
-  const expireTime = time * 60 * 1000 // 15 minute expire
+const validateQuery = (user, query, unique, nameOne, nameTwo) => {
   let key
-  if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
-    key = `${key}${user.username}`
-  }else if([ROLE.KOTAKAB].includes(user.role)){
-    key = `${key}${user.username}-${user.code_district_city}`
-  }else{
-    key = `${key}${user.id}-${user.code_district_city}`
+  if(query[nameOne]) {
+    key = `${unique}-${user.username}-${query[nameOne]}`
+  } else if (query[nameOne] && query[nameTwo]) {
+    key = `${unique}-${user.username}-${query[nameOne]}-${query[nameTwo]}`
+  } else {
+    key = `${unique}-${user.username}-${user.code_district_city}`
   }
+
+  return key
+}
+
+const keyDashboard = (query, user, time, keys) => {
+  const expireTime = time * 60 * 1000 // expire time in milisecond
+  const key = validateQuery(
+    user, query, keys, 'address_subdistrict_code', 'address_village_code'
+  )
 
   return { key, expireTime }
 }

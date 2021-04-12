@@ -1,6 +1,7 @@
 const Case = require('../models/Case')
 const { summaryAggregate }  = require('../helpers/aggregate/summaryaggregate')
 const { topAggregate }  = require('../helpers/aggregate/topaggregate')
+const { clientConfig } = require('../config/redis')
 
 const mapingCondition = (user, obj) => {
   if (user.code_district_city === obj.name[0].id){
@@ -27,11 +28,23 @@ const validationRole = (result, user) => {
 }
 
 async function countSectionTop(query, user, callback) {
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 15 minute expire
+  const { key, expireTime } = keyDashboard(query, user, 15, 'summary-dashboard-criteria')
   try {
-    const resultCount = await sameCondition(query, user, topAggregate)
-    callback(null, resultCount)
-  } catch (e) {
-    callback(`error in ${e}`, null)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const row = await sameCondition(query, user, topAggregate)
+        clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
+        callback(null, row)
+        console.info(`api source ${key}`)
+      }
+    })
+  } catch (error) {
+    callback(error, null)
   }
 }
 
