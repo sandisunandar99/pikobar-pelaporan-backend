@@ -36,6 +36,8 @@ const integrationPikobarSelfReport = async(services, payload) =>{
   try {
     await services.histories.createIfChanged({payload}, (err, res) =>{
       if (err) throw new Error
+
+      console.log(`SUCESS UPDATED FROM PIKOBAR : ${res._id}`)
       return res
     })
   } catch (error) {
@@ -78,6 +80,7 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
         if (err) throw new Error
         //TODO: tambhakan notif disni
         // notify('CreateCaseIntegrationLabkes', res, author)
+        console.log(`SUCESS SAVED FROM LABKES : ${res._id}`)
         return res
     })
   } catch (error) {
@@ -94,6 +97,7 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
       if (err) throw new Error
           //TODO: tambhakan notif disni
           // notify('CreateCaseIntegrationLabkes', res, author)
+          console.log(`SUCESS UPDATED FROM LABKES : ${res._id}`)
           return res
     })
   } catch (error) {
