@@ -81,20 +81,25 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
         return res
     })
   } catch (error) {
-    if (error) throw new Error
+    return error
   }
 }
 
 const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
-  const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
-  const id_case = payload._id
-  await services.inspection_support.create(inspectionSupportPayload, id_case,
-    (err, res)=> {
-     if (err) throw new Error
-        //TODO: tambhakan notif disni
-        // notify('CreateCaseIntegrationLabkes', res, author)
-        return res
-  })
+  try {
+    const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
+    const id_case = payload._id
+    await services.inspection_support.create(inspectionSupportPayload, id_case,
+      (err, res)=> {
+      if (err) throw new Error
+          //TODO: tambhakan notif disni
+          // notify('CreateCaseIntegrationLabkes', res, author)
+          return res
+    })
+  } catch (error) {
+    return error
+  }
+
 }
 
 
