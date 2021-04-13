@@ -16,10 +16,13 @@ const render = (data) => {
     return symptoms.includes('suhu tubuh >= 38 °c')
   }
 
+  const firstSymptomDate = data.last_history.first_symptom_date
+  const dateSymptom = firstSymptomDate ? moment(firstSymptomDate).format('YYYY/MM/DD') : "-"
+
   return [
     [
       { text: `Tanggal pertama kali timbul gejala (onset)`, /* border: [] */ },
-      { text: `: ${moment(data.last_history.first_symptom_date).format('YYYY/MM/DD')}`, /* border: [] */ },
+      { text: `: ${dateSymptom}`, /* border: [] */ },
       { text: ``, /* border: [] */ },
       { text: ``, /* border: [] */ },
     ],
