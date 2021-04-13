@@ -26,6 +26,9 @@ const tdBody = (symptoms, textHeader, textBorder) => {
 
 const render = (data) => {
   const symptoms = data.last_history.diagnosis.map(s => s.toLowerCase())
+  const firstSymptomDate = data.last_history.first_symptom_date
+  const dateSymptom = firstSymptomDate ? moment(firstSymptomDate).format('YYYY/MM/DD') : "-"
+
   return [
     [
       { text: `Tanggal pertama kali timbul gejala (onset)`, /* border: [] */ },
