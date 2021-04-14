@@ -36,6 +36,8 @@ const integrationPikobarSelfReport = async(services, payload) =>{
   try {
     await services.histories.createIfChanged({payload}, (err, res) =>{
       if (err) throw new Error
+
+      console.log(`SUCESS UPDATED FROM PIKOBAR : ${res._id}`)
       return res
     })
   } catch (error) {
@@ -78,23 +80,30 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
         if (err) throw new Error
         //TODO: tambhakan notif disni
         // notify('CreateCaseIntegrationLabkes', res, author)
+        console.log(`SUCESS SAVED FROM LABKES : ${res._id}`)
         return res
     })
   } catch (error) {
-    if (error) throw new Error
+    return error
   }
 }
 
 const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
-  const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
-  const id_case = payload._id
-  await services.inspection_support.create(inspectionSupportPayload, id_case,
-    (err, res)=> {
-     if (err) throw new Error
-        //TODO: tambhakan notif disni
-        // notify('CreateCaseIntegrationLabkes', res, author)
-        return res
-  })
+  try {
+    const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
+    const id_case = payload._id
+    await services.inspection_support.create(inspectionSupportPayload, id_case,
+      (err, res)=> {
+      if (err) throw new Error
+          //TODO: tambhakan notif disni
+          // notify('CreateCaseIntegrationLabkes', res, author)
+          console.log(`SUCESS UPDATED FROM LABKES : ${res._id}`)
+          return res
+    })
+  } catch (error) {
+    return error
+  }
+
 }
 
 
