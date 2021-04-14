@@ -112,7 +112,8 @@ UserSchema.methods.JSONCase = function () {
 }
 
 UserSchema.post('findOneAndUpdate', function(error, doc, next) {
-  if (error.name === 'MongoError' && error.code === 11000) {
+  const { MONGO } = require('../helpers/constant')
+  if (error.name === 'MongoError' && error.code === MONGO.DUPLICATE_CODE_ERR) {
     const email = error.keyValue.email
     next(new Error(`Email ${email} telah digunakan, silahkan ubah alamat email anda!`))
   } else {
