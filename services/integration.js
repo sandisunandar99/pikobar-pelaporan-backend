@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData} = require('../helpers/integration')
+const {findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData, alternativeOwnerData} = require('../helpers/integration')
 const {payloadInspectionSupport} = require('../helpers/integration/splitpayloadlabkes')
 const {notify} = require('../helpers/notification')
 require('../models/LogSelfReport')
@@ -52,7 +52,9 @@ const createOrUpdateCase = async (payload, services, callback) => {
     const data = JSON.parse(payload)
     const splitCode = await splitCodeAddr(data)
     const splitName = await splitNameAddr(splitCode)
-    const author = await checkOwnerData(splitCode)
+    const checkAuthor = await checkOwnerData(splitCode)
+    const alternativeAuthor = await alternativeOwnerData(splitCode)
+    const author = checkAuthor ? checkAuthor : alternativeAuthor
     const transformData= await transformDataCase(splitName)
     const checkUser = {user: {
       nik : transformData.nik,
@@ -73,7 +75,6 @@ const createOrUpdateCase = async (payload, services, callback) => {
 
 const integrationLabkesCreateCase = async (services, payload, author) => {
   try {
-    console.log(payload);
     const pre = await getCountBasedOnDistrict(services, payload.address_district_code)
     await services.v2.cases.create(
       pre, payload, author,
@@ -81,7 +82,7 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
         if (err) throw new Error
         //TODO: tambhakan notif disni
         // notify('CreateCaseIntegrationLabkes', res, author)
-        console.log(`SUCESS SAVED FROM LABKES : ${res}`)
+        console.log(`SUCESS SAVED FROM LABKES : ${res._id}`)
         return res
     })
   } catch (error) {
