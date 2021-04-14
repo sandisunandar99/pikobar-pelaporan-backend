@@ -1,9 +1,25 @@
-const validateQuery = (user, query, unique, nameOne, nameTwo) => {
-  let key
-  if(query[nameOne]) {
-    key = `${unique}-${user.username}-${query[nameOne]}`
-  } else if (query[nameOne] && query[nameTwo]) {
-    key = `${unique}-${user.username}-${query[nameOne]}-${query[nameTwo]}`
+/**
+ *
+ *
+ * @param {*} user
+ * @param {*} query
+ * @param {*} unique
+ * @return {string}
+ */
+ const validateQueryDashboard = (user, query, unique) => {
+  const parseQuery = JSON.stringify(query) // parse query string nodejs to string
+  const toJson = JSON.parse(parseQuery) // parse string to object
+  let str = [] // define array
+
+  // loop for set to new arrray
+  for (let prop in toJson) {
+    str.push(toJson[prop])
+  }
+
+  const joinStr = str.join('-') // convert array to string with '-'
+
+  if(query) {
+    key = `${unique}-${user.username}-${joinStr}`
   } else {
     key = `${unique}-${user.username}-${user.code_district_city}`
   }
@@ -11,11 +27,20 @@ const validateQuery = (user, query, unique, nameOne, nameTwo) => {
   return key
 }
 
+/**
+ *
+ *
+ * @param {*} query
+ * @param {*} user
+ * @param {*} time
+ * @param {*} keys
+ * @return {}
+ */
 const keyDashboard = (query, user, time, keys) => {
-  const expireTime = time * 60 * 1000 // expire time in milisecond
-  const key = validateQuery(
-    user, query, keys, 'address_subdistrict_code', 'address_village_code'
-  )
+  const expireTime = time * 60 // rules 1 minute = 60 seconds
+
+  /** @type {*} */
+  const key = validateQueryDashboard(user, query, keys)
 
   return { key, expireTime }
 }
