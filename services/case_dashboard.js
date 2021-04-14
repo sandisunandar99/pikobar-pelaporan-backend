@@ -30,7 +30,7 @@ const validationRole = (result, user) => {
 async function countSectionTop(query, user, callback) {
   const { keyDashboard } = require('../helpers/filter/redis')
   // 15 minute expire
-  const { key, expireTime } = keyDashboard(query, user, 15, 'summary-dashboard-criteria')
+  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-dashboard-criteria')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){

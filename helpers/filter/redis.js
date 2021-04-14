@@ -1,9 +1,16 @@
-const validateQuery = (user, query, unique, nameOne, nameTwo) => {
-  let key
-  if(query[nameOne]) {
-    key = `${unique}-${user.username}-${query[nameOne]}`
-  } else if (query[nameOne] && query[nameTwo]) {
-    key = `${unique}-${user.username}-${query[nameOne]}-${query[nameTwo]}`
+const validateQueryDashboard = (user, query, unique) => {
+  const parseQuery = JSON.stringify(query)
+  const toJson = JSON.parse(parseQuery)
+  let str = []
+
+  for (let prop in toJson) {
+    str.push(toJson[prop])
+  }
+
+  const joinStr = str.join('-')
+
+  if(query) {
+    key = `${unique}-${user.username}-${joinStr}`
   } else {
     key = `${unique}-${user.username}-${user.code_district_city}`
   }
@@ -13,9 +20,7 @@ const validateQuery = (user, query, unique, nameOne, nameTwo) => {
 
 const keyDashboard = (query, user, time, keys) => {
   const expireTime = time * 60 // rules 1 minute = 60 seconds
-  const key = validateQuery(
-    user, query, keys, 'address_subdistrict_code', 'address_village_code'
-  )
+  const key = validateQueryDashboard(user, query, keys)
 
   return { key, expireTime }
 }
