@@ -26,22 +26,26 @@ const findUserCases = async(data) => {
   return (cases.length > 0 ? cases : null)
 }
 
+const filterOwnerData = (data) =>{
+  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
+  if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
+    return {
+      code_district_city: data.address_district_code,
+      address_subdistrict_code: data.address_subdistrict_code
+    }
+  } else {
+    return {
+      code_district_city: data.address_district_code,
+    }
+  }
+}
+
 const checkOwnerData = async(data) => {
   let filter = {}
-  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
   if(data.id_fasyankes_pelaporan){
     filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
   }else{
-    if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
-      filter = {
-        code_district_city: data.address_district_code,
-        address_subdistrict_code: data.address_subdistrict_code
-      }
-    } else {
-      filter = {
-        code_district_city: data.address_district_code,
-      }
-    }
+    filter = filterOwnerData(data)
   }
   const users = await User.find({
      role: 'faskes',
@@ -51,20 +55,7 @@ const checkOwnerData = async(data) => {
 }
 
 const alternativeOwnerData = async(data) => {
-  let filter = {}
-  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
-
-  if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
-    filter = {
-      code_district_city: data.address_district_code,
-      address_subdistrict_code: data.address_subdistrict_code
-    }
-  } else {
-    filter = {
-      code_district_city: data.address_district_code,
-    }
-  }
-
+  let filter = filterOwnerData(data)
   const users = await User.find({
      role: 'faskes',
      ...filter
