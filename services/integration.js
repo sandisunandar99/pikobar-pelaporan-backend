@@ -73,6 +73,7 @@ const createOrUpdateCase = async (payload, services, callback) => {
 
 const integrationLabkesCreateCase = async (services, payload, author) => {
   try {
+    console.log(payload);
     const pre = await getCountBasedOnDistrict(services, payload.address_district_code)
     await services.v2.cases.create(
       pre, payload, author,
@@ -80,7 +81,7 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
         if (err) throw new Error
         //TODO: tambhakan notif disni
         // notify('CreateCaseIntegrationLabkes', res, author)
-        console.log(`SUCESS SAVED FROM LABKES : ${res._id}`)
+        console.log(`SUCESS SAVED FROM LABKES : ${res}`)
         return res
     })
   } catch (error) {
