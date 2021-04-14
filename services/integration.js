@@ -45,8 +45,8 @@ const integrationPikobarSelfReport = async(services, payload) =>{
   }
 }
 
-
-
+//TODO: tambhakan notif disni
+// notify('CreateCaseIntegrationLabkes', res, author)
 const createOrUpdateCase = async (payload, services, callback) => {
   try {
     const data = JSON.parse(payload)
@@ -80,8 +80,7 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
       pre, payload, author,
       (err, res) => {
         if (err) throw new Error
-        //TODO: tambhakan notif disni
-        // notify('CreateCaseIntegrationLabkes', res, author)
+
         console.log(`LABKES CREATED : ${res._id}`)
         return res
     })
@@ -96,11 +95,10 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
     const id_case = payload._id
     await services.inspection_support.create(inspectionSupportPayload, id_case,
       (err, res)=> {
-      if (err) throw new Error
-          //TODO: tambhakan notif disni
-          // notify('CreateCaseIntegrationLabkes', res, author)
-          console.log(`LABKES UPDATED : ${res._id}`)
-          return res
+        if (err) throw new Error
+
+        console.log(`LABKES UPDATED : ${res._id}`)
+        return res
     })
   } catch (error) {
     return error
