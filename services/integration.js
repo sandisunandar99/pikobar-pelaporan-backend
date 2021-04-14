@@ -37,7 +37,7 @@ const integrationPikobarSelfReport = async(services, payload) =>{
     await services.histories.createIfChanged({payload}, (err, res) =>{
       if (err) throw new Error
 
-      console.log(`SUCESS UPDATED FROM PIKOBAR : ${res._id}`)
+      console.log(`PIKOBAR UPDATED : ${res._id}`)
       return res
     })
   } catch (error) {
