@@ -209,5 +209,7 @@ module.exports = {
   JOB:{
     CASE: 'job-export-cases',
     HISTORY: 'job-export-histories'
+  },MONGO : {
+    DUPLICATE_CODE_ERR : 11000
   }
 }
