@@ -5,6 +5,7 @@ const {notify} = require('../helpers/notification')
 require('../models/LogSelfReport')
 const LogSelfReport = mongoose.model('LogSelfReport')
 const {getCountBasedOnDistrict} = require('../helpers/cases/global')
+const STR_LABKES = "FROM LABKES"
 
 const createInfoClinics = async (payload, services, callback) => {
   try {
@@ -82,7 +83,7 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
         if (err) throw new Error
         //TODO: tambhakan notif disni
         // notify('CreateCaseIntegrationLabkes', res, author)
-        console.log(`SUCESS SAVED FROM LABKES : ${res._id}`)
+        console.log(`SUCESS SAVED ${STR_LABKES} : ${res._id}`)
         return res
     })
   } catch (error) {
@@ -99,7 +100,7 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
       if (err) throw new Error
           //TODO: tambhakan notif disni
           // notify('CreateCaseIntegrationLabkes', res, author)
-          console.log(`SUCESS UPDATED FROM LABKES : ${res._id}`)
+          console.log(`SUCESS UPDATED ${STR_LABKES} : ${res._id}`)
           return res
     })
   } catch (error) {
