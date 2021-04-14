@@ -50,6 +50,28 @@ const checkOwnerData = async(data) => {
   return users[0]
 }
 
+const alternativeOwnerData = async(data) => {
+  let filter = {}
+  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
+
+  if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
+    filter = {
+      code_district_city: data.address_district_code,
+      address_subdistrict_code: data.address_subdistrict_code
+    }
+  } else {
+    filter = {
+      code_district_city: data.address_district_code,
+    }
+  }
+
+  const users = await User.find({
+     role: 'faskes',
+     ...filter
+  }).sort({last_login: -1})
+  return users[0]
+}
+
 const statusPikobar = (status)=> {
   let nameStatus = ""
   switch (status) {
@@ -185,5 +207,5 @@ const transformDataCase = (data) => {
 }
 
 module.exports = {
-  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData
+  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData, alternativeOwnerData
 }
