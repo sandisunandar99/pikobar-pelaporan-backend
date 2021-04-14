@@ -37,6 +37,8 @@ const validateQueryDashboard = (user, query, unique) => {
  * @return {}
  */
 const keyDashboard = (query, user, time, keys) => {
+  const expireTime = time * 60 // rules 1 minute = 60 seconds
+
   /** @type {*} */
   const key = validateQueryDashboard(user, query, keys)
 
