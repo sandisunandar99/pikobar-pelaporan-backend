@@ -12,7 +12,7 @@ const validateQuery = (user, query, unique, nameOne, nameTwo) => {
 }
 
 const keyDashboard = (query, user, time, keys) => {
-  const expireTime = time * 60 * 1000 // expire time in milisecond
+  const expireTime = time * 60 // rules 1 minute = 60 seconds
   const key = validateQuery(
     user, query, keys, 'address_subdistrict_code', 'address_village_code'
   )
