@@ -49,23 +49,47 @@ async function countSectionTop(query, user, callback) {
 }
 
 async function countSummary(query, user, callback) {
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 10 minute expire
+  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-case')
   try {
-    const resultCount = await sameCondition(query, user, summaryAggregate)
-    const result = validationRole(resultCount, user)
-    callback(null, result)
-  } catch (e) {
-    callback(e, null)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const condition = await sameCondition(query, user, summaryAggregate)
+        const row = validationRole(condition, user)
+        clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
+        callback(null, row)
+        console.info(`api source ${key}`)
+      }
+    })
+  } catch (error) {
+    callback(error, null)
   }
 }
 
 async function countVisualization(query, user, callback) {
   const { visualizationAggregate }  = require('../helpers/aggregate/visualizationaggregate')
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 10 minute expire
+  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-visualization')
   try {
-    const condition = await visualizationAggregate(query, user)
-    const resultCount = await Case.aggregate(condition)
-    callback(null, resultCount)
-  } catch (e) {
-    callback(e, null)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const condition = await visualizationAggregate(query, user)
+        const row = await Case.aggregate(condition)
+        clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
+        callback(null, row)
+        console.info(`api source ${key}`)
+      }
+    })
+  } catch (error) {
+    callback(error, null)
   }
 }
 
