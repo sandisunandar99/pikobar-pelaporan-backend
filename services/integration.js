@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const {findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData, alternativeOwnerData} = require('../helpers/integration')
+const {findUserCases} = require('../helpers/integration/findusercases')
+const {transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData, alternativeOwnerData} = require('../helpers/integration')
 const {payloadInspectionSupport} = require('../helpers/integration/splitpayloadlabkes')
 const {notify} = require('../helpers/notification')
 require('../models/LogSelfReport')
