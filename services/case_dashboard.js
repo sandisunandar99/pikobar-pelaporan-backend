@@ -49,12 +49,24 @@ async function countSectionTop(query, user, callback) {
 }
 
 async function countSummary(query, user, callback) {
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 10 minute expire
+  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-case')
   try {
-    const resultCount = await sameCondition(query, user, summaryAggregate)
-    const result = validationRole(resultCount, user)
-    callback(null, result)
-  } catch (e) {
-    callback(e, null)
+    clientConfig.get(key, async (err, result) => {
+      if(result){
+        callback(null, JSON.parse(result))
+        console.info(`redis source ${key}`)
+      }else{
+        const condition = await sameCondition(query, user, summaryAggregate)
+        const row = validationRole(condition, user)
+        clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
+        callback(null, row)
+        console.info(`api source ${key}`)
+      }
+    })
+  } catch (error) {
+    callback(error, null)
   }
 }
 
