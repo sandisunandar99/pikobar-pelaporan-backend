@@ -106,10 +106,10 @@ const resultIntegration = (err, res, str) =>{
       console.log(`PIKOBAR SUCCESS UPDATED ID : ${res.case}`);
       break;
     case "LABKES_CREATE":
-      console.log(`PIKOBAR SUCCESS CREATED ID : ${res._id}`);
+      console.log(`LABKES SUCCESS CREATED ID : ${res._id}`);
       break;
     case "LABKES_UPDATE":
-      console.log(`PIKOBAR SUCCESS UPDATED ID : ${res}`);
+      console.log(`LABKES SUCCESS UPDATED ID : ${res}`);
       break;
     default:
       console.log(`NOTHING TO UPDATE OR CREATE :( `);
