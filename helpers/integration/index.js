@@ -4,7 +4,7 @@ const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
 const {mergerPayloadlabkes, mergeSplitPayload} = require('./splitpayloadlabkes')
-const {PUBSUB} = require('../constant')
+const {PUBSUB, ROLE} = require('../constant')
 
 const filterOwnerData = (data) =>{
   const SET_DEFAULT_SUBDISTRICT = "32.00.00"
@@ -28,7 +28,7 @@ const checkOwnerData = async(data) => {
     filter = filterOwnerData(data)
   }
   const users = await User.find({
-     role: 'faskes',
+     role: ROLE.FASKES,
      ...filter
   }).sort({last_login: -1})
   return users[0]
@@ -37,7 +37,7 @@ const checkOwnerData = async(data) => {
 const alternativeOwnerData = async(data) => {
   let filter = filterOwnerData(data)
   const users = await User.find({
-     role: 'faskes',
+     role: ROLE.FASKES,
      ...filter
   }).sort({last_login: -1})
   return users[0]
