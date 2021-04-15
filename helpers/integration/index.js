@@ -1,53 +1,47 @@
 const ObjectId = require('mongoose').Types.ObjectId
-const Case = require('../../models/Case')
 const User = require('../../models/User')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
 const {mergerPayloadlabkes, mergeSplitPayload} = require('./splitpayloadlabkes')
-const {PUBSUB} = require('../constant')
+const {PUBSUB, ROLE} = require('../constant')
 
-const findUserCases = async(data) => {
-  const user = data.user
-  const IDN_CODE_NUMBER = '+62'
-  let phone_number = user.phone_number ? (user.phone_number).replace(IDN_CODE_NUMBER, '0') : user.phone_number
-  let filter_nik = user.nik ? user.nik : phone_number
-  let filter_phone = user.phone_number ? phone_number : user.nik
-  const cases = await Case.aggregate([
-    { $match : {
-      $and: [{verified_status: "verified"},{delete_status: {$ne : "deleted"}} ],
-      $or: [{nik: filter_nik}, {phone_number: filter_phone}]
-    } },
-    { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
-    { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},
-    { $project : {histories: 0}},
-    { $limit: (1)}
-  ])
-  return (cases.length > 0 ? cases : null)
+const filterOwnerData = (data) =>{
+  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
+  if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
+    return {
+      code_district_city: data.address_district_code,
+      address_subdistrict_code: data.address_subdistrict_code
+    }
+  } else {
+    return {
+      code_district_city: data.address_district_code,
+    }
+  }
 }
 
 const checkOwnerData = async(data) => {
   let filter = {}
-  const SET_DEFAULT_SUBDISTRICT = "32.00.00"
   if(data.id_fasyankes_pelaporan){
     filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
   }else{
-    if (data.address_subdistrict_code !== SET_DEFAULT_SUBDISTRICT) {
-      filter = {
-        code_district_city: data.address_district_code,
-        address_subdistrict_code: data.address_subdistrict_code
-      }
-    } else {
-      filter = {
-        code_district_city: data.address_district_code,
-      }
-    }
+    filter = filterOwnerData(data)
   }
-  const users = await User.find({
-     role: 'faskes',
+  const users = await queryOwnerData(filter)
+  return users[0]
+}
+
+const alternativeOwnerData = async(data) => {
+  let filter = filterOwnerData(data)
+  const users = await queryOwnerData(filter)
+  return users[0]
+}
+
+const queryOwnerData = async(filter) =>{
+  return await User.find({
+     role: ROLE.FASKES,
      ...filter
   }).sort({last_login: -1})
-  return users[0]
 }
 
 const statusPikobar = (status)=> {
@@ -185,5 +179,7 @@ const transformDataCase = (data) => {
 }
 
 module.exports = {
-  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData
+  transformDataPayload,
+  splitCodeAddr, splitNameAddr, transformDataCase,
+  checkOwnerData, alternativeOwnerData
 }

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const {findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData} = require('../helpers/integration')
+const {findUserCases} = require('../helpers/integration/findusercases')
+const {transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData, alternativeOwnerData} = require('../helpers/integration')
 const {payloadInspectionSupport} = require('../helpers/integration/splitpayloadlabkes')
 const {notify} = require('../helpers/notification')
 require('../models/LogSelfReport')
@@ -35,24 +36,21 @@ const createInfoClinics = async (payload, services, callback) => {
 const integrationPikobarSelfReport = async(services, payload) =>{
   try {
     await services.histories.createIfChanged({payload}, (err, res) =>{
-      if (err) throw new Error
-
-      console.log(`SUCESS UPDATED FROM PIKOBAR : ${res._id}`)
-      return res
+      return resultIntegration(err, res, "PIKOBAR_UPDATE");
     })
   } catch (error) {
     if (error) throw new Error
   }
 }
 
-
-
 const createOrUpdateCase = async (payload, services, callback) => {
   try {
     const data = JSON.parse(payload)
     const splitCode = await splitCodeAddr(data)
     const splitName = await splitNameAddr(splitCode)
-    const author = await checkOwnerData(splitCode)
+    const checkAuthor = await checkOwnerData(splitCode)
+    const alternativeAuthor = await alternativeOwnerData(splitCode)
+    const author = checkAuthor ? checkAuthor : alternativeAuthor
     const transformData= await transformDataCase(splitName)
     const checkUser = {user: {
       nik : transformData.nik,
@@ -77,11 +75,7 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
     await services.v2.cases.create(
       pre, payload, author,
       (err, res) => {
-        if (err) throw new Error
-        //TODO: tambhakan notif disni
-        // notify('CreateCaseIntegrationLabkes', res, author)
-        console.log(`SUCESS SAVED FROM LABKES : ${res._id}`)
-        return res
+        return resultIntegration(err, res, "LABKES_CREATE");
     })
   } catch (error) {
     return error
@@ -94,11 +88,7 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
     const id_case = payload._id
     await services.inspection_support.create(inspectionSupportPayload, id_case,
       (err, res)=> {
-      if (err) throw new Error
-          //TODO: tambhakan notif disni
-          // notify('CreateCaseIntegrationLabkes', res, author)
-          console.log(`SUCESS UPDATED FROM LABKES : ${res._id}`)
-          return res
+        return resultIntegration(err, res, "LABKES_UPDATE");
     })
   } catch (error) {
     return error
@@ -106,6 +96,28 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
 
 }
 
+//TODO: tambhakan notif disni
+// notify('CreateCaseIntegrationLabkes', res, author)
+const resultIntegration = (err, res, str) =>{
+  if (err) throw new Error
+
+  switch (str) {
+    case "PIKOBAR_UPDATE":
+      console.log(`PIKOBAR SUCCESS UPDATED ID : ${res.case}`);
+      break;
+    case "LABKES_CREATE":
+      console.log(`LABKES SUCCESS CREATED ID : ${res._id}`);
+      break;
+    case "LABKES_UPDATE":
+      console.log(`LABKES SUCCESS UPDATED ID : ${res}`);
+      break;
+    default:
+      console.log(`NOTHING TO UPDATE OR CREATE :( `);
+      break;
+  }
+
+  return res
+}
 
 module.exports = [
   {
