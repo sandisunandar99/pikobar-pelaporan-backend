@@ -27,20 +27,21 @@ const checkOwnerData = async(data) => {
   }else{
     filter = filterOwnerData(data)
   }
-  const users = await User.find({
-     role: ROLE.FASKES,
-     ...filter
-  }).sort({last_login: -1})
+  const users = await queryOwnerData(filter)
   return users[0]
 }
 
 const alternativeOwnerData = async(data) => {
   let filter = filterOwnerData(data)
-  const users = await User.find({
+  const users = await queryOwnerData(filter)
+  return users[0]
+}
+
+const queryOwnerData = async(filter) =>{
+  return await User.find({
      role: ROLE.FASKES,
      ...filter
   }).sort({last_login: -1})
-  return users[0]
 }
 
 const statusPikobar = (status)=> {
