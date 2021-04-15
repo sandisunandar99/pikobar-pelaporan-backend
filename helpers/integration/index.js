@@ -1,30 +1,10 @@
 const ObjectId = require('mongoose').Types.ObjectId
-const Case = require('../../models/Case')
 const User = require('../../models/User')
 const History = require('../../models/History')
 const LogSelfReport = require('../../models/LogSelfReport')
 const {PayloadLaporMandri, splitPayload1, splitPayload2, splitPayload3} = require('./splitpayloadpikobar')
 const {mergerPayloadlabkes, mergeSplitPayload} = require('./splitpayloadlabkes')
 const {PUBSUB} = require('../constant')
-
-const findUserCases = async(data) => {
-  const user = data.user
-  const IDN_CODE_NUMBER = '+62'
-  let phone_number = user.phone_number ? (user.phone_number).replace(IDN_CODE_NUMBER, '0') : user.phone_number
-  let filter_nik = user.nik ? user.nik : phone_number
-  let filter_phone = user.phone_number ? phone_number : user.nik
-  const cases = await Case.aggregate([
-    { $match : {
-      $and: [{verified_status: "verified"},{delete_status: {$ne : "deleted"}} ],
-      $or: [{nik: filter_nik}, {phone_number: filter_phone}]
-    } },
-    { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
-    { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},
-    { $project : {histories: 0}},
-    { $limit: (1)}
-  ])
-  return (cases.length > 0 ? cases : null)
-}
 
 const filterOwnerData = (data) =>{
   const SET_DEFAULT_SUBDISTRICT = "32.00.00"
@@ -198,5 +178,7 @@ const transformDataCase = (data) => {
 }
 
 module.exports = {
-  findUserCases, transformDataPayload, splitCodeAddr, splitNameAddr, transformDataCase, checkOwnerData, alternativeOwnerData
+  transformDataPayload,
+  splitCodeAddr, splitNameAddr, transformDataCase,
+  checkOwnerData, alternativeOwnerData
 }
