@@ -5,7 +5,7 @@ name: API Pikobar Pelaporan Covid-19
 
 on:
   pull_request:
-    branches: [ development ]
+    branches: [ development, master ]
 
 jobs:
   build:
