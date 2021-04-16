@@ -11,7 +11,9 @@ const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
 const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
 const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
+const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
+const { clientConfig } = require('../config/redis')
 
 async function ListCase (query, user, callback) {
 
@@ -133,16 +135,8 @@ const listCaseExport = async (query, user, callback) => {
   const filter = await Filter.filterCase(user, query)
   const filterRole = Check.exportByRole({}, user, query)
   const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
-  let search
-  if(query.search){
-    let search_params = [
-      { id_case : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
-    ];
-    search = search_params
-  } else {
-    search = {}
-  }
+  const { searchExport } = require('../helpers/filter/search')
+  const search = searchExport(query)
   params.last_history = { $exists: true, $ne: null }
   const condition = sqlCondition(params, search, query)
   try {
@@ -190,27 +184,36 @@ function getIdCase (query,callback) {
 
 async function getCaseSummary(query, user, callback) {
   try {
-    const caseAuthors = await thisUnitCaseAuthors(user)
-    const scope = Check.countByRole(user, caseAuthors)
-    const filter = await Filter.filterCase(user, query)
-    const searching = Object.assign(scope, filter)
-    const { sumFuncNoMatch } = require('../helpers/aggregate/func')
-    const conditions = [
-      { $match: {
-        $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
-      }},
-      {
-        $group: {
-          _id: 'status',
-          confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
-          probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
-          suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
-          closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
-        },
-      },{ $project: { _id : 0 } },
-    ]
-    const result = await Case.aggregate(conditions)
-    callback(null, result.shift())
+    clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
+      const caseAuthors = await thisUnitCaseAuthors(user)
+      const scope = Check.countByRole(user, caseAuthors)
+      const filter = await Filter.filterCase(user, query)
+      const searching = Object.assign(scope, filter)
+      const { sumFuncNoMatch } = require('../helpers/aggregate/func')
+      if(result){
+        const resultJSON = JSON.parse(result)
+        callback(null, resultJSON)
+      }else{
+        const conditions = [
+          { $match: {
+            $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+          }},
+          {
+            $group: {
+              _id: 'status',
+              confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
+              probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
+              suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
+              closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
+            },
+          },{ $project: { _id : 0 } },
+        ]
+        const result = await Case.aggregate(conditions)
+        const shiftResult = result.shift()
+        clientConfig.setex(`summary-cases-list-${user.username}`, 15 * 60 * 1000, JSON.stringify(shiftResult)) // set redis key
+        callback(null, shiftResult)
+      }
+    })
   } catch (e) {
     callback(e, null)
   }
@@ -231,9 +234,9 @@ async function getCaseSummaryVerification (query, user, callback) {
   let result =  { 'PENDING': 0, 'DECLINED': 0, 'VERIFIED': 0 }
   Case.aggregate(aggStatus).exec().then(async item => {
       item.forEach(function(item){
-        if (item['_id'] == 'pending') result.PENDING = item['total']
-        if (item['_id'] == 'declined') result.DECLINED = item['total']
-        if (item['_id'] == 'verified') result.VERIFIED = item['total']
+        summaryCondition(item, 'pending', result, 'PENDING')
+        summaryCondition(item, 'declined', result, 'DECLINED')
+        summaryCondition(item, 'verified', result, 'VERIFIED')
       })
       return callback(null, result)
     })
