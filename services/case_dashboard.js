@@ -20,6 +20,7 @@ const validationRole = (result, user) => {
     result.map(res => {
       res.summary.map(s =>  mapingCondition(user, s))
       res.demographic.map(d => mapingCondition(user, d))
+      res.date_version = new Date().toISOString()
       return res
     })
   }
@@ -38,6 +39,7 @@ async function countSectionTop(query, user, callback) {
         console.info(`redis source ${key}`)
       }else{
         const row = await sameCondition(query, user, topAggregate)
+        row.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
         callback(null, row)
         console.info(`api source ${key}`)
@@ -83,6 +85,7 @@ async function countVisualization(query, user, callback) {
       }else{
         const condition = await visualizationAggregate(query, user)
         const row = await Case.aggregate(condition)
+        row.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
         callback(null, row)
         console.info(`api source ${key}`)
