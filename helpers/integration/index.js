@@ -21,7 +21,12 @@ const filterOwnerData = (data) =>{
 }
 
 const checkOwnerData = async(data) => {
-  let filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
+  let filter = {}
+  if(data.id_fasyankes_pelaporan){
+    filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
+  }else{
+    filter = filterOwnerData(data)
+  }
   const users = await queryOwnerData(filter)
   return users[0]
 }
