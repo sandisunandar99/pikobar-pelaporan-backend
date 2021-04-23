@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json /app
 
-RUN npm install 
+RUN npm install
 #&& npm install -g nodemon
 
 COPY . .
@@ -12,4 +12,4 @@ COPY . .
 EXPOSE 3333
 
 #ENTRYPOINT [ "nodemon","--max-old-space-size=4096","server.js" ]
-ENTRYPOINT [ "npm" ,"start","-s"]
+ENTRYPOINT ["npm" ,"start","-s"]
