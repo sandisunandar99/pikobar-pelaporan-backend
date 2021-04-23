@@ -37,61 +37,13 @@ module.exports = (server) => {
       handler: handlers.getListUser
     },
     // Get user by id
-    {
-      method: 'GET',
-      path: '/users/{id}',
-      config: {
-        auth: 'jwt',
-        description: 'Get user by id',
-        tags: ['api', 'users'],
-         pre: [
-           CheckRoleView
-         ]
-      },
-      handler: handlers.getUserById
-    },
+    routeWithPreOld(server, 'GET', '/users/{id}', 'users', CheckRoleView, 'getUserById'),
     // Get user by username
-    {
-      method: 'GET',
-      path: '/users/username/{value}',
-      config: {
-        auth: 'jwt',
-        description: 'Get user by username',
-        tags: ['api', 'users'],
-          pre: [
-            CheckRoleView
-          ]
-      },
-      handler: handlers.getUserByUsername
-    },
+    routeWithPreOld(server, 'GET', '/users/username/{value}', 'users', CheckRoleView, 'getUserByUsername'),
     // Reset password by id
-    {
-      method: 'PUT',
-      path: '/users/reset/{id}',
-      config: {
-        auth: 'jwt',
-        description: 'Reset user by id',
-        tags: ['api', 'users'],
-         pre: [
-           CheckRoleUpdate
-         ]
-      },
-      handler: handlers.resetPassword
-    },
+    routeWithPreOld(server, 'PUT', '/users/reset/{id}', 'users', CheckRoleUpdate, 'resetPassword'),
     // Get user by email or username
-    {
-      method: 'GET',
-      path: '/users/check',
-      config: {
-        auth: 'jwt',
-        description: 'Get current info user',
-        tags: ['api', 'users'],
-        pre: [
-          CheckRoleView
-        ]
-      },
-      handler: handlers.checkUser
-    },
+    routeWithPreOld(server, 'GET', '/users/check', 'users', CheckRoleView, 'checkUser'),
     // Get current user
     {
       method: 'GET',

@@ -18,6 +18,7 @@ module.exports = {
     PENDING: 'pending',
     DECLINED: 'declined',
     VERIFIED: 'verified',
+    APPROVED: 'approve'
   },
   ROLE: {
     ADMIN: 'superadmin',
