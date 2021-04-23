@@ -12,6 +12,16 @@ const filterConfig = (validation, output, description, role) => {
     }
 }
 
+const filterConfigSame = (description) => {
+  return {
+      auth: 'jwt',
+      validate: inputValidations.GetCurrentPayload,
+      response: outputValidations.AuthOutputValidationConfig,
+      description: description,
+      tags: ['api', 'users']
+    }
+}
+
 module.exports = (server) => {
   const handlers = require('./handlers')(server)
   const { routeOldNoPre, routeWithPreOld } = require('../../helpers/routes')
@@ -48,26 +58,14 @@ module.exports = (server) => {
     {
       method: 'GET',
       path: '/users/info',
-      config: {
-        auth: 'jwt',
-        validate: inputValidations.GetCurrentPayload,
-        response: outputValidations.AuthOutputValidationConfig,
-        description: 'Get current info user',
-        tags: ['api', 'users'],
-      },
+      config: filterConfigSame('Get current info user'),
       handler: handlers.getCurrentUser
     },
     // Get faskes of current user
     {
       method: 'GET',
       path: '/users/faskes',
-      config: {
-        auth: 'jwt',
-        validate: inputValidations.GetCurrentPayload,
-        response: outputValidations.AuthOutputValidationConfig,
-        description: 'Get faskes data of current user',
-        tags: ['api', 'users'],
-      },
+      config: filterConfigSame('Get faskes data of current user'),
       handler: handlers.getFaskesOfCurrentUser
     },
     // Update user
@@ -83,33 +81,9 @@ module.exports = (server) => {
       handler: handlers.updateMe
     },
     // Soft delete user
-    {
-      method: 'DELETE',
-      path: '/users/{id}',
-      config: {
-        auth: 'jwt',
-        description: 'Soft delete user',
-        tags: ['api', 'users'],
-        pre: [
-          CheckRoleDelete
-        ]
-      },
-      handler: handlers.deleteUsers
-    },
+    routeWithPreOld(server, 'DELETE', '/users/{id}', 'users', CheckRoleDelete, 'deleteUsers'),
     // UPDATE user
-    {
-      method: 'PUT',
-      path: '/users/{id}',
-      config: {
-        auth: 'jwt',
-        description: 'update user',
-        tags: ['api', 'users'],
-        pre: [
-          CheckRoleUpdate
-        ]
-      },
-      handler: handlers.updateUsers
-    },
+    routeWithPreOld(server, 'PUT', '/users/{id}', 'users', CheckRoleUpdate, 'updateUsers'),
     // Register
     {
       method: 'POST',
