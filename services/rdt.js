@@ -1,108 +1,40 @@
-const mongoose = require('mongoose');
-
-require('../models/LocationTest')
-const LocationTest = mongoose.model('LocationTest')
-
-require('../models/Rdt');
-const Rdt = mongoose.model('Rdt');
-
-require('../models/Case')
-const Case = mongoose.model('Case');
-
-require('../models/RdtHistory')
-const RdtHistory = mongoose.model('RdtHistory');
-
-require('../models/User')
-const User = mongoose.model('User')
-
-require('../models/DistrictCity')
-const DistrictCity = mongoose.model('Districtcity')
-const Check = require('../helpers/rolecheck')
+const LocationTest = require('../models/LocationTest')
+const Rdt = require('../models/Rdt')
+const Case = require('../models/Case')
+const RdtHistory = require('../models/RdtHistory')
+const DistrictCity = require('../models/DistrictCity')
+const { listByRole, thisUnitCaseAuthors } = require('../helpers/rolecheck')
 const https = require('https')
-const url = require('url');
-
+const url = require('url')
+const { optionsLabel } = require('../helpers/paginate')
+const { filterRdt } = require('../helpers/filter/casefilter')
 
 async function ListRdt (query, user, callback) {
-
-  const myCustomLabels = {
-    totalDocs: 'itemCount',
-    docs: 'itemsList',
-    limit: 'perPage',
-    page: 'currentPage',
-    meta: '_meta'
-  };
-
-  const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
-
-  const options = {
-    page: query.page,
-    limit: query.limit,
-    populate: ( 'author'),
-    sort: sorts,
-    leanWithId: true,
-    customLabels: myCustomLabels
-  };
-
-  var params = new Object();
-
-  if(query.category){
-    params.category = query.category;
-  }
-  if(query.final_result){
-    params.final_result = query.final_result;
-  }
-  if(query.mechanism){
-    params.mechanism = query.mechanism;
-  }
-  if(query.test_method){
-    params.test_method = query.test_method;
-  }
-  if(query.tool_tester){
-    params.tool_tester = query.tool_tester;
-  }
-  if(query.test_address_district_code){
-    params.test_address_district_code = query.test_address_district_code;
-  }
-  if (user.role == "dinkesprov" || user.role == "superadmin") {
-    if (query.address_district_code) {
-      params.address_district_code = query.address_district_code;
+  try {
+    const sorts = (query.sort == "desc" ? {createdAt:"desc"} : query.sort)
+    const options = optionsLabel(query, sorts, (['author']))
+    const params = filterRdt(user, query)
+    const caseAuthors = await thisUnitCaseAuthors(user)
+    if (query.search) {
+      var search_params = [
+        { name: new RegExp(query.search, "i") },
+        { code_test: new RegExp(query.search, "i") },
+        { final_result: new RegExp(query.search, "i") },
+        { mechanism: new RegExp(query.search, "i") },
+        { test_method: new RegExp(query.search, "i") },
+      ];
+      var result_search = listByRole(user, params, search_params, Rdt, "status", caseAuthors)
+    } else {
+      var result_search = listByRole(user, params, null, Rdt, "status", caseAuthors)
     }
-  }
-
-  if(query.start_date && query.end_date){
-    params.test_date = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
-      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
+    const paginateResult = await Rdt.paginate(result_search, options)
+    const result = {
+      rdt: paginateResult.itemsList.map(rdt => rdt.toJSONFor()), _meta: paginateResult._meta
     }
+    callback(null, result)
+  } catch (err) {
+    callback(err, null)
   }
-
-  let caseAuthors = []
-  if (user.role === "faskes" && user.unit_id) {
-    delete params.author
-    caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
-    caseAuthors = caseAuthors.map(obj => obj._id)
-  }
-
-  if (query.search) {
-    var search_params = [
-      { name: new RegExp(query.search, "i") },
-      { code_test: new RegExp(query.search, "i") },
-      { final_result: new RegExp(query.search, "i") },
-      { mechanism: new RegExp(query.search, "i") },
-      { test_method: new RegExp(query.search, "i") },
-    ];
-    var result_search = Check.listByRole(user, params, search_params, Rdt, "status", caseAuthors)
-  } else {
-    var result_search = Check.listByRole(user, params, null, Rdt, "status", caseAuthors)
-  }
-
-  Rdt.paginate(result_search, options).then(function (results) {
-    let res = {
-      rdt: results.itemsList.map(rdt => rdt.toJSONFor()),
-      _meta: results._meta
-    }
-    return callback(null, res)
-  }).catch(err => callback(err, null))
 }
 
 const loopFilter = (i) => {
