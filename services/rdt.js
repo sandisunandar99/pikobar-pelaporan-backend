@@ -194,16 +194,15 @@ async function createRdt(query, payload, author, pre, callback) {
 
             let id_case = null
 
-            let code = {
-              code_test: code_test,
-              code_tool_tester: code_tool_tester,
-              id_case: id_case,
-              author_district_code: author.code_district_city,
-              author_district_name: author.name_district_city,
-              rdt_count: rdt_count,
-              pcr_count: pcr_count,
-              source_data: query.source_data
-            }
+            let code = { }
+            code.code_test = code_test
+            code.code_tool_tester = code_tool_tester
+            code.id_case = id_case
+            code.author_district_code = author.code_district_city
+            code.author_district_name = author.name_district_city
+            code.rdt_count = rdt_count
+            code.pcr_count = pcr_count
+            code.source_data = query.source_data
 
             let rdt = new Rdt(Object.assign(code, payload))
             rdt = Object.assign(rdt,{author})
