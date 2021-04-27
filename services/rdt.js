@@ -105,13 +105,10 @@ async function createRdt(query, payload, author, pre, callback) {
     let id_case = null
 
     let code = {
-      code_test: code_test,
-      code_tool_tester: code_tool_tester,
-      id_case: id_case,
+      code_test, code_tool_tester, id_case,
       author_district_code: author.code_district_city,
       author_district_name: author.name_district_city,
-      rdt_count: rdt_count,
-      pcr_count: pcr_count,
+      rdt_count, pcr_count,
       source_data: query.source_data
     }
 

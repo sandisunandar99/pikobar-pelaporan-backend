@@ -1,15 +1,20 @@
 const { setDate } = require('../filter/date')
 const { ROLE } = require('../constant')
-const filterCase = async (user, query) => {
-  const params = {};
-  // only provide when needed
-  if (query.author_district_code) {
-    params.author_district_code = query.author_district_code;
-  }
+
+const sameRoleFilter = (user, query) => {
+  const params = {}
   if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
     if (query.address_district_code) {
       params.address_district_code = query.address_district_code;
     }
+  }
+  return params
+}
+const filterCase = async (user, query) => {
+  const params = sameRoleFilter(user, query)
+  // only provide when needed
+  if (query.author_district_code) {
+    params.author_district_code = query.author_district_code;
   }
   if (query.address_village_code) {
     params.address_village_code = query.address_village_code;
@@ -28,7 +33,7 @@ const filterCase = async (user, query) => {
 }
 
 const filterRdt = (user, query) => {
-  const params = {}
+  const params = sameRoleFilter(user, query)
   if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
     if (query.address_district_code) params.address_district_code = query.address_district_code
   }
