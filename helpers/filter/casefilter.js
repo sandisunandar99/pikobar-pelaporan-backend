@@ -1,3 +1,4 @@
+const { setDate } = require('../filter/date')
 const filterCase = async (user, query) => {
   const params = {};
   // only provide when needed
@@ -38,12 +39,7 @@ const filterRdt = (user, query) => {
   if(query.test_method) params.test_method = query.test_method
   if(query.tool_tester) params.tool_tester = query.tool_tester
   if(query.test_address_district_code) params.test_address_district_code = query.test_address_district_code
-  if(query.start_date && query.end_date){
-    params.test_date = {
-      "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
-      "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
-    }
-  }
+  if(query.start_date && query.end_date) param.test_date = setDate('test_date', query.start_date, query.end_date).test_date
   return params
 }
 
