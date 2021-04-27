@@ -100,6 +100,11 @@ const customResponse = (status, message, result) => {
   return jsonOutput
 }
 
+const replyOnly = (err, result, reply) => {
+  if (err) return reply(constructErrorResponse(err)).code(422).takeover()
+  return reply(result)
+}
+
 const replyJson = (err, result, reply) => {
   if (err) return reply(constructErrorResponse(err)).code(422)
   return reply(
@@ -110,6 +115,6 @@ const replyJson = (err, result, reply) => {
 module.exports = {
   constructErrorResponse,
   CommentReferenceError,
-  successResponse,
+  successResponse, replyOnly,
   replyJson, customResponse
 }

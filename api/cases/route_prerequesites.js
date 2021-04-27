@@ -8,10 +8,7 @@ const sameRequest = (server, request, reply, name) => {
 
   server.methods.services.cases[name](
     request.payload.address_district_code,
-    (err, count) => {
-      if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
-      return reply(count)
-    }
+    (err, count) => replyHelper.replyOnly(err, count, reply)
   )
 }
 const validationBeforeInput = server => {
