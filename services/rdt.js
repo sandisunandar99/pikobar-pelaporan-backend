@@ -6,7 +6,7 @@ const DistrictCity = require('../models/DistrictCity')
 const { listByRole, thisUnitCaseAuthors } = require('../helpers/rolecheck')
 const https = require('https')
 const url = require('url')
-const { optionsLabel } = require('../helpers/paginate')
+const { optionsLabel, resultJson } = require('../helpers/paginate')
 const { filterRdt } = require('../helpers/filter/casefilter')
 
 async function ListRdt (query, user, callback) {
@@ -28,10 +28,7 @@ async function ListRdt (query, user, callback) {
       var result_search = listByRole(user, params, null, Rdt, "status", caseAuthors)
     }
     const paginateResult = await Rdt.paginate(result_search, options)
-    const result = {
-      rdt: paginateResult.itemsList.map(rdt => rdt.toJSONFor()), _meta: paginateResult._meta
-    }
-    callback(null, result)
+    callback(null, resultJson('rdt', paginateResult))
   } catch (err) {
     callback(err, null)
   }
