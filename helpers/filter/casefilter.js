@@ -4,9 +4,7 @@ const { ROLE } = require('../constant')
 const sameRoleFilter = (user, query) => {
   const params = {}
   if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
-    if (query.address_district_code) {
-      params.address_district_code = query.address_district_code;
-    }
+    if (query.address_district_code) params.address_district_code = query.address_district_code;
   }
   return params
 }
