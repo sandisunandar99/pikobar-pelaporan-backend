@@ -3,7 +3,7 @@ const { conditionPreReq } = require('../../utils/conditional')
 
 const sameRequest = (server, request, reply, name) => {
   if (request.route.method === 'put' && request.route.path === '/api/cases/{id}') {
-    if (!request.payload.address_district_code) return reply()
+    if (!request.payload.address_district_code) return reply(false)
   }
 
   server.methods.services.cases[name](
