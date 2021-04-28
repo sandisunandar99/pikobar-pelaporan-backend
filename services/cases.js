@@ -14,6 +14,7 @@ const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
 const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
 const { clientConfig } = require('../config/redis')
+const { resultJson } = require('../helpers/paginate')
 
 async function ListCase (query, user, callback) {
 
@@ -123,10 +124,7 @@ async function ListCase (query, user, callback) {
   }
 
   Case.paginate(result_search, options).then(function(results){
-      let res = {
-        cases: results.itemsList.map(cases => cases.toJSONFor()),
-        _meta: results._meta
-      }
+      let res = resultJson('cases', results)
       return callback(null, res)
   }).catch(err => callback(err, null))
 }

@@ -50,9 +50,7 @@ function isEqual(a, b) {
 }
 
 const isDirty = (oldData, newData) => {
-  if (!oldData) {
-    return true
-  }
+  if (!oldData) return true
 
   let result = false
   let changed_props = [];

@@ -151,15 +151,9 @@ const listQuery = async (query, user) => {
   }
 }
 const listCaseRelated = async (query, user, callback) => {
-  const expireTime = 15 * 60 * 1000 // 15 minute expire
-  let key
-  if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
-    key = `related-map-${user.username}-${user.code_district_city}`
-  }else if([ROLE.KOTAKAB].includes(user.role)){
-    key = `related-map-${user.username}-${user.code_district_city}`
-  }else{
-    key = `related-map-${user.id}-${user.code_district_city}`
-  }
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 10 minute expire
+  const { key, expireTime } = keyDashboard(query, user, 10, 'related-map')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
