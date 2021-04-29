@@ -44,12 +44,7 @@ const getCountRdt = async (code) => {
   try {
     const checkDistrictDinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code }).lean()
     const checkCodeTest = await Rdt.find({ address_district_code: code }).sort({ code_test: -1 }).lean()
-    let count = 1
-    if (checkCodeTest.length > 0) {
-      // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
-      let str = checkCodeTest[0].code_test
-      count = (Number(str.substring(10)) + 1)
-    }
+    let count = getLastRdtNumber(1, checkCodeTest, 10);
     return {
       prov_city_code: code,
       dinkes_code: checkDistrictDinkes.dinkes_kota_kode,

@@ -7,6 +7,7 @@ const { listByRole, thisUnitCaseAuthors } = require('../helpers/rolecheck')
 const https = require('https')
 const { optionsLabel, resultJson } = require('../helpers/paginate')
 const { filterRdt } = require('../helpers/filter/casefilter')
+const { getLastRdtNumber } = require('../helpers/rdt/custom')
 
 async function ListRdt (query, user, callback) {
   try {
@@ -359,14 +360,7 @@ function createRdtMultiple(payload, author, pre, callback) {
                   .sort({code_test: -1})
                   .exec()
                   .then(res =>{
-
-                      let count = 1;
-                      if (res.length > 0){
-                        // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
-                        let str = res[0].code_test
-                        count = (Number(str.substring(10)) + 1)
-                      }
-
+                      let count = getLastRdtNumber(1, res, 10);
                       let results = {
                         prov_city_code: code,
                         dinkes_code: dinkes.dinkes_kota_kode,
@@ -467,14 +461,7 @@ function getCountRdtCode(code,callback) {
     .sort({code_test: -1})
     .exec()
     .then(res =>{
-
-      let count = 1;
-      if (res.length > 0){
-        // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
-        let str = res[0].code_test
-        count = (Number(str.substring(10)) + 1)
-      }
-
+      let count = getLastRdtNumber(1, res, 10);
       let result = {
         prov_city_code: code,
         dinkes_code: dinkes.dinkes_kota_kode,
