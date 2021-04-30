@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "api/**/*.js"
+  ],
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "test"
+  ]
+}
