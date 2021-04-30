@@ -23,19 +23,19 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-  coverage:
-    needs: [ build ]
-    name: coverage
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@development
-    - uses: actions/setup-node@development
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: sudo npm install
-    - run: sudo npm install --save-dev jest
-    - uses: paambaati/codeclimate-action@v2.7.5
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORT_ID }}
-      with:
-        coverageCommand: sudo npm run test:coverage
+  # coverage:
+  #   needs: [ build ]
+  #   name: coverage
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@development
+  #   - uses: actions/setup-node@development
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
+  #   - run: sudo npm install
+  #   - run: sudo npm install --save-dev jest
+  #   - uses: paambaati/codeclimate-action@v2.7.5
+  #     env:
+  #       CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORT_ID }}
+  #     with:
+  #       coverageCommand: sudo npm run test:coverage
