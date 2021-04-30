@@ -69,7 +69,7 @@ const listExport = async (query, user, callback) => {
     const dataMapping = { result, page, countPerPage, count, limit }
     callback(null, jsonPagination('history', dataMapping))
   } catch (error) {
-    callback(error, nul)
+    callback(error, null)
   }
 }
 
