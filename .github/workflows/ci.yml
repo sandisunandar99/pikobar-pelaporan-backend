@@ -17,9 +17,9 @@ jobs:
         node-version: [10.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@development
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@development
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -28,8 +28,8 @@ jobs:
     name: coverage
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - uses: actions/checkout@development
+    - uses: actions/setup-node@development
       with:
         node-version: ${{ matrix.node-version }}
     - run: sudo npm install
