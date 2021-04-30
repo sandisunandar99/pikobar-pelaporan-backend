@@ -8,7 +8,7 @@ const findUserCases = async(data) => {
   const cases = await Case.aggregate([
     { $match : {
       $and: [{verified_status: "verified"},{delete_status: {$ne : "deleted"}} ],
-      $or: [{nik: filter_nik}, {phone_number: filter_phone}]
+      $or: [{phone_number: filter_phone}, {nik: filter_nik}]
     } },
     { $lookup :{from: "histories", localField: 'last_history', foreignField: '_id', as: 'histories' }},
     { $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$histories", 0 ] }, "$$ROOT" ] } }},

@@ -5,7 +5,6 @@ const pubsubClient = new PubSub(pubsub)
 const {setTimeOut} = require('../helpers/integration/timeout')
 
 module.exports = (server) => {
-  console.log('Worker Pikobar Lapor Mandiri runs every 1 minutes')
   try {
     const subscriber = pubsubClient.subscription(laporMandiriSub)
     const msgHandler = async (message) => {

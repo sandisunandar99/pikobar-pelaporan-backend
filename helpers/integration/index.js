@@ -34,13 +34,24 @@ const checkOwnerData = async(data) => {
 const alternativeOwnerData = async(data) => {
   let filter = filterOwnerData(data)
   const users = await queryOwnerData(filter)
-  return users[0]
+   if (users.length > 0 ) {
+    return users[0]
+  }
+  const alternative = await queryOwnerDataAlternatif(data)
+  return alternative[0]
 }
 
 const queryOwnerData = async(filter) =>{
   return await User.find({
      role: ROLE.FASKES,
      ...filter
+  }).sort({last_login: -1})
+}
+
+const queryOwnerDataAlternatif = async(data)=> {
+  return await User.find({
+     role: ROLE.FASKES,
+     code_district_city: data.address_district_code
   }).sort({last_login: -1})
 }
 
