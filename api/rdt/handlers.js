@@ -28,19 +28,6 @@ const CreateRdt = (server) => {
   }
 }
 
-const CreateRdtMultiple = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.createMultiple(
-      request.payload,
-      request.auth.credentials.user,
-      request.pre,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
-  }
-}
-
 const GetRdtDetail = (server) => {
   return async(request, reply) => {
     await funcIfSame(server, "rdt", "getById", request, "id", reply)
@@ -116,7 +103,6 @@ const formLocationTest = (server) => {
 module.exports = {
   ListRdt,
   CreateRdt,
-  CreateRdtMultiple,
   GetRdtDetail,
   GetRdtHistories,
   UpdateRdt,

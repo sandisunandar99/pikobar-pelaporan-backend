@@ -45,7 +45,6 @@ module.exports = (server) => {
     route('GET', '/rdt/list-registered-user', null, [getRegisteredUserfromExternal], 'GetListRegisteredUser'),
     route('GET', '/rdt/list-location-test', null, [], 'formLocationTest'),
     route('POST', '/rdt', null, [CheckRoleCreate, countRdtCode, getCodeDinkes, cekHistoryCases, createHistoryWhenPositif], 'CreateRdt'),
-    route('POST', '/rdt-multiple', null, [CheckRoleCreate], 'CreateRdtMultiple'),
     route('GET', '/rdt/{id}', null, [CheckRoleView], 'GetRdtDetail'),
     route('GET', '/rdt/{id}/histories', null, [CheckRoleView], 'GetRdtHistories'),
     route('PUT', '/rdt/{id}', null, [CheckRoleUpdate], 'UpdateRdt'),
