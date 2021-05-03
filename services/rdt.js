@@ -34,6 +34,10 @@ async function ListRdt (query, user, callback) {
   }
 }
 
+const urlTestMasif = (search, address_district_code) => {
+  return process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+}
+
 const loopFilter = (i) => {
 const { CRITERIA } = require('../helpers/constant')
   if (i.target === CRITERIA.CLOSE){
@@ -391,7 +395,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
 }
 
 function getDatafromExternal(address_district_code, search, callback) {
-  let Url = process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+  let Url = urlTestMasif(search, address_district_code)
    https.get(Url, (res) => {
      let data = '';
      // A chunk of data has been recieved.
@@ -430,7 +434,7 @@ function FormSelectIdCaseDetail(search_internal, search_external, callback) {
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
- let Url = process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+  let Url = urlTestMasif(search, address_district_code)
   https.get(Url, (res) => {
       let data = '';
       // A chunk of data has been recieved.
