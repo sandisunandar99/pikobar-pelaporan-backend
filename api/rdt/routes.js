@@ -50,11 +50,5 @@ module.exports = (server) => {
     route('GET', '/rdt/{id}/histories', null, [CheckRoleView], 'GetRdtHistories'),
     route('PUT', '/rdt/{id}', null, [CheckRoleUpdate], 'UpdateRdt'),
     route('DELETE', '/rdt/{id}', null, [CheckRoleDelete, getRdtbyId], 'DeleteRdt'),
-    route('GET', '/rdt/summary-by-cities', null, [], 'GetRdtSummaryByCities'),
-    route('GET', '/rdt/summary-result-by-cities', null, [CheckRoleView], 'GetRdtSummaryResultByCities'),
-    route('GET', '/rdt/summary-result-list-by-cities', null, [CheckRoleView], 'GetRdtSummaryResultListByCities'),
-    route('GET', '/rdt/faskes-summary-by-cities', null, [CheckRoleView], 'GetRdtFaskesSummaryByCities'),
-    route('POST', '/rdt/send-messages', null, [], 'sendMessage')
   ]
-
 }
