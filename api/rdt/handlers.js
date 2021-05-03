@@ -1,4 +1,4 @@
-const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
+const { funcIfSame, funcNoParam } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -79,7 +79,7 @@ const DeleteRdt = (server) => {
 
 const GetListIdCase = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.FormSelectIdCase(
+    server.methods.services.rdt_others.FormSelectIdCase(
       request.query,
       request.auth.credentials.user,
       request.pre.data_pendaftaran,
@@ -109,7 +109,7 @@ const GetListRegisteredUser = (server) => {
 
 const formLocationTest = (server) => {
   return async(request, reply) => {
-    await funcNoParam(server, "rdt", "getLocationTest", reply)
+    await funcNoParam(server, "rdt_others", "getLocationTest", reply)
   }
 }
 

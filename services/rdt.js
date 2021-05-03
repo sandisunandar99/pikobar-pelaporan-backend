@@ -1,4 +1,3 @@
-const LocationTest = require('../models/LocationTest')
 const Rdt = require('../models/Rdt')
 const Case = require('../models/Case')
 const RdtHistory = require('../models/RdtHistory')
@@ -7,7 +6,6 @@ const { listByRole, thisUnitCaseAuthors } = require('../helpers/rolecheck')
 const https = require('https')
 const { optionsLabel, resultJson } = require('../helpers/paginate')
 const { filterRdt } = require('../helpers/filter/casefilter')
-const { getLastRdtNumber } = require('../helpers/rdt/custom')
 
 async function ListRdt (query, user, callback) {
   try {
@@ -35,7 +33,7 @@ async function ListRdt (query, user, callback) {
 }
 
 const urlTestMasif = (search, address_district_code) => {
-  return process.env.URL_PENDAFTARAN_COVID + '&data_source=tesmasif' + '&mode=bykeyword' + '&keyword=' + search.toLowerCase() + '&address_district_code=' + address_district_code
+  return `${process.env.URL_PENDAFTARAN_COVID}&data_source=tesmasif&mode=bykeyword&keyword=${search.toLowerCase()}&address_district_code=${address_district_code}`
 }
 
 const loopFilter = (i) => {
@@ -284,48 +282,6 @@ function updateRdt (request, author, callback) {
   }).catch(err => callback(err, null))
 }
 
-function getCountRdtCode(code,callback) {
-  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-  .exec()
-  .then(dinkes =>{
-    Rdt.find({ address_district_code: code})
-    .sort({code_test: -1})
-    .exec()
-    .then(res =>{
-      let count = getLastRdtNumber(1, res, 10);
-      let result = {
-        prov_city_code: code,
-        dinkes_code: dinkes.dinkes_kota_kode,
-        count: count
-      }
-      return callback(null, result)
-    }).catch(err => callback(err, null))
-  })
-}
-
-function getCountByDistrict(code, callback) {
-  /* Get last number of current district id case order */
-  DistrictCity.findOne({ kemendagri_kabupaten_kode: code})
-  .exec()
-  .then(dinkes =>{
-    Case.find({ address_district_code: code})
-    .sort({id_case: -1})
-    .exec()
-    .then(res =>{
-      let count = 1;
-      if (res.length > 0)
-      // ambil 4 karakter terakhir yg merupakan nomor urut dari id_case
-      count = (Number(res[0].id_case.substring(12)));
-      let result = {
-        prov_city_code: code,
-        dinkes_code: dinkes.dinkes_kota_kode,
-        count_pasien: count
-      }
-      return callback(null, result)
-    }).catch(err => callback(err, null))
-  })
-}
-
 function softDeleteRdt(rdt, deletedBy, callback) {
   let date = new Date()
   let dates = {
@@ -367,31 +323,6 @@ function getCaseByidcase(idcase,callback) {
       return callback(null, null)
     }
   }).catch(err => callback(err, null))
-}
-
-function FormSelectIdCase(query, user, data_pendaftaran, callback) {
-  let params = new Object();
-
-  if (query.address_district_code) {
-    params.author_district_code = query.address_district_code;
-  }
-
-  Case.find(params)
-    // .and({
-    //   status: 'ODP'
-    // })
-    .where('delete_status')
-    .ne('deleted')
-    .or([{name: new RegExp(query.search, "i")},
-          {nik: new RegExp(query.search , "i")},
-          {phone_number: new RegExp(query.search , "i")}])
-    .exec()
-    .then(x => {
-      let res = x.map(res => res.JSONFormCase())
-      let concat = res.concat(data_pendaftaran)
-      return callback(null, concat)
-    })
-    .catch(err => callback(err, null))
 }
 
 function getDatafromExternal(address_district_code, search, callback) {
@@ -513,15 +444,6 @@ function getRegisteredFromExternal(query, callback) {
   });
 }
 
-async function getLocationTest(callback) {
-  try {
-    const result = await LocationTest.find({})
-    const mapingResult = result.map(x => x.toJSONFor())
-    callback(null, mapingResult)
-  } catch (error) {
-    callback(error, null)
-  }
-}
 
 module.exports = [
   {
@@ -549,24 +471,12 @@ module.exports = [
     method: softDeleteRdt
   },
   {
-    name: 'services.rdt.getCountRdtCode',
-    method: getCountRdtCode
-  },
-  {
     name: 'services.rdt.getCodeDinkes',
     method: getCodeDinkes
   },
   {
-    name: 'services.rdt.getCountByDistrict',
-    method: getCountByDistrict
-  },
-  {
     name: 'services.rdt.getCaseByidcase',
     method: getCaseByidcase
-  },
-  {
-    name: 'services.rdt.FormSelectIdCase',
-    method: FormSelectIdCase
   },
   {
     name: 'services.rdt.getDatafromExternal',
@@ -592,9 +502,5 @@ module.exports = [
     name: 'services.rdt.seacrhFromInternal',
     method: seacrhFromInternal
   },
-  {
-    name: 'services.rdt.getLocationTest',
-    method: getLocationTest
-  },
-];
+]
 

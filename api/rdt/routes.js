@@ -12,13 +12,10 @@ module.exports = (server) => {
   const getRdtbyId = require('./route_prerequesites').getRdtbyId(server)
   const getCodeDinkes = require('./route_prerequesites').getCodeDinkes(server)
   const checkIfDataNotNull = require('./route_prerequesites').checkIfDataNotNull(server)
-  const countCaseByDistrict = require('./route_prerequesites').countCaseByDistrict(server)
-  const getCasebyIdcase = require('./route_prerequesites').getCasebyIdcase(server)
   const getDataExternal = require('./route_prerequesites').getDataExternal(server)
   const searchIdcasefromExternal = require('./route_prerequesites').searchIdcasefromExternal(server)
   const searchIdcasefromInternal = require('./route_prerequesites').searchIdcasefromInternal(server)
   const getRegisteredUserfromExternal = require('./route_prerequesites').getRegisteredUserfromExternal(server)
-  const validationBeforeInput = require('./route_prerequesites').validationBeforeInput(server)
   const cekHistoryCases = require('./route_prerequesites').cekHistoryCases(server)
   const createHistoryWhenPositif = require('./route_prerequesites').createHistoryWhenPositif(server)
 

@@ -30,7 +30,8 @@ const register = (server, options, next) => {
     require('./search'),
     require('./cases_other'),
     require('./queue'),
-    require('./integration')
+    require('./integration'),
+    require('./rdt_others')
   );
   server.method(services)
   return next()
