@@ -2,6 +2,7 @@ const Rdt = require('../models/Rdt')
 const DistrictCity = require('../models/DistrictCity')
 const Case = require('../models/Case')
 const { getLastRdtNumber } = require('../helpers/rdt/custom')
+const { searchFilter } = require('../helpers/filter/search')
 const LocationTest = require('../models/LocationTest')
 
 function getCountRdtCode(code, callback) {
@@ -33,9 +34,7 @@ function FormSelectIdCase(query, user, data_pendaftaran, callback) {
   Case.find(params)
     .where('delete_status')
     .ne('deleted')
-    .or([{ name: new RegExp(query.search, "i") },
-    { nik: new RegExp(query.search, "i") },
-    { phone_number: new RegExp(query.search, "i") }])
+    .or(searchFilter(query.search, ['name','nik','phone_number']))
     .exec()
     .then(x => {
       let res = x.map(res => res.JSONFormCase())

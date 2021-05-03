@@ -28,19 +28,6 @@ const CreateRdt = (server) => {
   }
 }
 
-const CreateRdtMultiple = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.createMultiple(
-      request.payload,
-      request.auth.credentials.user,
-      request.pre,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
-  }
-}
-
 const GetRdtDetail = (server) => {
   return async(request, reply) => {
     await funcIfSame(server, "rdt", "getById", request, "id", reply)
@@ -101,12 +88,6 @@ const GetListIdCaseDetail = (server) => {
   }
 }
 
-const GetListRegisteredUser = (server) => {
-  return async(request, reply) => {
-    await funcCreate(server, "rdt", "getRegisteredUser", request, reply)
-  }
-}
-
 const formLocationTest = (server) => {
   return async(request, reply) => {
     await funcNoParam(server, "rdt_others", "getLocationTest", reply)
@@ -116,13 +97,11 @@ const formLocationTest = (server) => {
 module.exports = {
   ListRdt,
   CreateRdt,
-  CreateRdtMultiple,
   GetRdtDetail,
   GetRdtHistories,
   UpdateRdt,
   DeleteRdt,
   GetListIdCase,
   GetListIdCaseDetail,
-  GetListRegisteredUser,
   formLocationTest,
 }

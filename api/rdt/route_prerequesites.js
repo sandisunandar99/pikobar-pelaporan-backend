@@ -36,16 +36,6 @@ const getRdtbyId = server => {
   }
 }
 
-const getCasebyIdcase = server => {
-  return {
-    method: (request, reply) => {
-      const idcase = request.pre.rdt.id_case
-      methodOneParam(server, 'rdt', 'getCaseByidcase', idcase, reply)
-    },
-    assign: 'cases'
-  }
-}
-
 const getCodeDinkes = server => {
   return {
     method: (request, reply) => {
@@ -165,7 +155,6 @@ const sameCondition = (server, name, payloads, request, reply) => {
 module.exports = {
   countRdtCode,
   getRdtbyId,
-  getCasebyIdcase,
   getCodeDinkes,
   checkIfDataNotNull,
   getDataExternal,

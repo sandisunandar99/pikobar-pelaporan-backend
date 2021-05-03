@@ -309,22 +309,6 @@ function getCodeDinkes(code, callback) {
   })
 }
 
-function getCaseByidcase(idcase,callback) {
-  let param = {
-    id_case: new RegExp(idcase, "i"),
-    is_test_masif: true
-  }
-
-  Case.findOne(param).exec()
-  .then(cases => {
-    if (cases !== null) {
-      return callback(null, cases)
-    }else{
-      return callback(null, null)
-    }
-  }).catch(err => callback(err, null))
-}
-
 function getDatafromExternal(address_district_code, search, callback) {
   let Url = urlTestMasif(search, address_district_code)
    https.get(Url, (res) => {
@@ -411,11 +395,6 @@ async function seacrhFromInternal(query, callback) {
   }
 }
 
-function getRegisteredUser(request, callback) {
-  let search_external = request.pre.reg_user_external
-  return callback(null, search_external)
-}
-
 function getRegisteredFromExternal(query, callback) {
   let date = new Date()
   let years = date.getFullYear()
@@ -443,7 +422,6 @@ function getRegisteredFromExternal(query, callback) {
     console.log("Error: " + err.message);
   });
 }
-
 
 module.exports = [
   {
@@ -475,20 +453,12 @@ module.exports = [
     method: getCodeDinkes
   },
   {
-    name: 'services.rdt.getCaseByidcase',
-    method: getCaseByidcase
-  },
-  {
     name: 'services.rdt.getDatafromExternal',
     method: getDatafromExternal
   },
   {
     name: 'services.rdt.FormSelectIdCaseDetail',
     method: FormSelectIdCaseDetail
-  },
-  {
-    name: 'services.rdt.getRegisteredUser',
-    method: getRegisteredUser
   },
   {
     name: 'services.rdt.seacrhFromExternal',
