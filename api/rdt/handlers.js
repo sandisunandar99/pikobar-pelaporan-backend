@@ -80,7 +80,7 @@ const GetListIdCaseDetail = (server) => {
   return (request, reply) => {
     server.methods.services.rdt.FormSelectIdCaseDetail(
       request.pre.search_internal,
-      request.pre.search_external,
+      // request.pre.search_external,
       // request.auth.credentials.user,
       (err, result) => {
         replyJson(err, result, reply)

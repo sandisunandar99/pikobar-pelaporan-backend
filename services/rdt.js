@@ -340,12 +340,13 @@ function getDatafromExternal(address_district_code, search, callback) {
    });
 }
 
-function FormSelectIdCaseDetail(search_internal, search_external, callback) {
-    if (search_internal === null || search_internal=== undefined) {
-      return callback(null, search_external)
-    }else{
-      return callback(null, search_internal.JSONSeacrhOutput())
-    }
+function FormSelectIdCaseDetail(search_internal, callback) {
+    // if (search_internal === null || search_internal=== undefined) {
+    //   return callback(null, search_external)
+    // }else{
+    //   return callback(null, search_internal.JSONSeacrhOutput())
+    // }
+    return callback(null, search_internal.JSONSeacrhOutput())
 }
 
 function seacrhFromExternal(address_district_code, search, callback) {
