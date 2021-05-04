@@ -2,7 +2,7 @@ const date = new Date()
 const {INSPECTION_TYPES, SPECIMEN_TYPES} = require('../constant')
 
 
-const payloadLabkes1 = (payloadLabkes) => {
+const payloadLabkesOne = (payloadLabkes) => {
   const Obj = {
     name: payloadLabkes.name,
     nik: payloadLabkes.nik,
@@ -18,7 +18,7 @@ const payloadLabkes1 = (payloadLabkes) => {
   }
   return Obj
 }
-const payloadLabkes2 = (payloadLabkes) => {
+const payloadLabkesTwo = (payloadLabkes) => {
   const zeroRTRW = "0";
   const Obj = {
     address_street:payloadLabkes.address_street,
@@ -33,7 +33,7 @@ const payloadLabkes2 = (payloadLabkes) => {
   }
   return Obj
 }
-const payloadLabkes3 = (payloadLabkes) => {
+const payloadLabkesThree = (payloadLabkes) => {
   const Obj = {
     current_location_type: "RUMAH",
     current_hospital_id: null,
@@ -53,14 +53,14 @@ const payloadLabkes3 = (payloadLabkes) => {
 
 const mergerPayloadlabkes = (payloadLabkes) => {
   const Merge = {
-    ...payloadLabkes1(payloadLabkes),
-    ...payloadLabkes2(payloadLabkes),
-    ...payloadLabkes3(payloadLabkes),
+    ...payloadLabkesOne(payloadLabkes),
+    ...payloadLabkesTwo(payloadLabkes),
+    ...payloadLabkesThree(payloadLabkes),
   }
   return Merge
 }
 
-const splitCasePayload1 = () => {
+const splitCasePayloadOne = () => {
   const Obj = {
     physical_check_temperature: "",
     physical_check_blood_pressure: "",
@@ -85,7 +85,7 @@ const splitCasePayload1 = () => {
   return Obj
 }
 
-const splitCasePayload2 = () => {
+const splitCasePayloadTwo = () => {
   const Obj = {
     id_case_national: "",
     id_case_related: "",
@@ -111,7 +111,7 @@ const splitCasePayload2 = () => {
   return Obj
 }
 
-const splitCasePayload3 = () => {
+const splitCasePayloadThree = () => {
   const Obj = {
     first_symptom_date: "",
     history_tracing: [],
@@ -137,7 +137,7 @@ const splitCasePayload3 = () => {
   return Obj
 }
 
-const splitCasePayload4 = () => {
+const splitCasePayloadFour = () => {
   const Obj = {
     serum_check: false,
     sputum_check: false,
@@ -163,7 +163,7 @@ const splitCasePayload4 = () => {
   return Obj
 }
 
-const splitCasePayload5 = () => {
+const splitCasePayloadFive = () => {
   const Obj = {
     name_close_contact: "",
     id_close_contact: "",
@@ -190,11 +190,11 @@ const splitCasePayload5 = () => {
 
 const mergeSplitPayload = () => {
   const Merge = {
-    ...splitCasePayload1(),
-    ...splitCasePayload2(),
-    ...splitCasePayload3(),
-    ...splitCasePayload4(),
-    ...splitCasePayload5(),
+    ...splitCasePayloadOne(),
+    ...splitCasePayloadTwo(),
+    ...splitCasePayloadThree(),
+    ...splitCasePayloadFour(),
+    ...splitCasePayloadFive(),
   }
   return Merge
 }
