@@ -1,6 +1,7 @@
 const date = new Date()
 const {INSPECTION_TYPES, SPECIMEN_TYPES} = require('../constant')
 
+
 const payloadLabkes1 = (payloadLabkes) => {
   const Obj = {
     name: payloadLabkes.name,
@@ -18,6 +19,7 @@ const payloadLabkes1 = (payloadLabkes) => {
   return Obj
 }
 const payloadLabkes2 = (payloadLabkes) => {
+  const zeroRTRW = "0";
   const Obj = {
     address_street:payloadLabkes.address_street,
     address_district_code: payloadLabkes.address_district_code,
@@ -26,8 +28,8 @@ const payloadLabkes2 = (payloadLabkes) => {
     address_subdistrict_name: payloadLabkes.address_subdistrict_name,
     address_village_code: payloadLabkes.address_village_code,
     address_village_name: payloadLabkes.address_village_name,
-    rt: payloadLabkes.rt? payloadLabkes.rt : "0",
-    rw: payloadLabkes.rw? payloadLabkes.rw : "0",
+    rt: payloadLabkes.rt? payloadLabkes.rt : zeroRTRW,
+    rw: payloadLabkes.rw? payloadLabkes.rw : zeroRTRW,
   }
   return Obj
 }
