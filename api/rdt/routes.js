@@ -40,8 +40,8 @@ module.exports = (server) => {
 
   return [
     route('GET', '/rdt', inputValidations.RdtQueryValidations, [CheckRoleView, checkIfDataNotNull], 'ListRdt'),
-    route('GET', '/rdt/list-idcase', inputValidations.rdtSearchValidation, [getDataExternal], 'GetListIdCase'),
-    route('GET', '/rdt/list-idcase-detail', null, [searchIdcasefromInternal, searchIdcasefromExternal], 'GetListIdCaseDetail'),
+    route('GET', '/rdt/list-idcase', inputValidations.rdtSearchValidation, [], 'GetListIdCase'),
+    route('GET', '/rdt/list-idcase-detail', null, [searchIdcasefromInternal], 'GetListIdCaseDetail'),
     route('GET', '/rdt/list-registered-user', null, [getRegisteredUserfromExternal], 'GetListRegisteredUser'),
     route('GET', '/rdt/list-location-test', null, [], 'formLocationTest'),
     route('POST', '/rdt', null, [CheckRoleCreate, countRdtCode, getCodeDinkes, cekHistoryCases, createHistoryWhenPositif], 'CreateRdt'),
