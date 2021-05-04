@@ -12,7 +12,7 @@
     "dev": "npm-run-all --parallel start:server",
     "start:server": "nodemon --max-old-space-size=2048 server.js",
     "start:prod": "node --max-old-space-size=2048 server.js",
-    "test":"jest -i --colors --verbose --detectOpenHandles",
+    "test": "jest -i --colors --verbose --detectOpenHandles",
     "test:coverage": "jest --coverage"
   },
   "author": "Sandi Sunandar",
