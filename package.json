@@ -31,7 +31,7 @@
   ],
   "dependencies": {
     "@google-cloud/pubsub": "^2.9.0",
-    "@sentry/node": "^5.15.5",
+    "@sentry/node": "^6.3.5",
     "ajv": "^6.12.2",
     "ajv-keywords": "^3.5.0",
     "aws-sdk": "^2.869.0",
@@ -68,7 +68,7 @@
     "nodemailer": "^6.5.0",
     "nyc": "^15.1.0",
     "pdfmake": "^0.1.65",
-    "redis": "^3.0.2",
+    "redis": "^3.1.2",
     "request": "^2.88.2",
     "slug": "^2.1.1",
     "supertest": "^6.1.3",
