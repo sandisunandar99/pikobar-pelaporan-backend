@@ -8,7 +8,7 @@ const envKey = key => {
       host: '0.0.0.0',
       port: 3333,
     },
-    staging: {
+    local: {
       host: '0.0.0.0',
       port: 3333,
     },
