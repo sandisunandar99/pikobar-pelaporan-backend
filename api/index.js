@@ -7,8 +7,12 @@ const register = (server, options, next) => {
     // console.log('RESPONSE :', response);
     //console.log('RESPONSE_HEADER:', request.headers);
     //console.log('SERVER:', server.registrations);
+
     if (response.isBoom) {
-      // Sentry.captureException(response)
+
+      if (response.output.statusCode === 404 || response.output.statusCode === 500) {
+        Sentry.captureException(response)
+      }
 
       const reformated = {}
       reformated.status = response.output.statusCode
