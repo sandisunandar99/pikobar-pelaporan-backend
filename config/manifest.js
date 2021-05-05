@@ -1,14 +1,14 @@
 require('dotenv').config();
 
 const envKey = key => {
-  const env = process.env.NODE_ENV || 'development';
+  const env = process.env.NODE_ENV || 'local';
 
   const configuration = {
     development: {
       host: '0.0.0.0',
       port: 3333,
     },
-    staging: {
+    local: {
       host: '0.0.0.0',
       port: 3333,
     },
