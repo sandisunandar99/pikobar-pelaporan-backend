@@ -18,8 +18,6 @@ Glue.compose(manifest, { relativeTo: __dirname }, (err, server) => {
   }
 
   Sentry.init(config.sentry)
-  Sentry.Handlers.requestHandler()
-  Sentry.Handlers.errorHandler()
   server.start(() => {
     console.log('✅  Server is listening on ' + server.info.uri.toLowerCase());
   });
