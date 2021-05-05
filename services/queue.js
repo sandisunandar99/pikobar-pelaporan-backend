@@ -91,7 +91,7 @@ const resendFile = async (params, payload, user, callback) => {
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     }]
     sendEmailWithAttachment(
-      "Data Kasus Pikobar Pelaporan", options, payload.email, '', params.jobid
+      "Data Kasus Pikobar Pelaporan", options, payload.email, '', params.jobid,  payload.name,
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)
