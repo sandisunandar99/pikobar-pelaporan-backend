@@ -106,7 +106,7 @@ const resultIntegration = (err, res, str, author) =>{
       console.log(`PIKOBAR SUCCESS UPDATED ID : ${res.case}`);
       break;
     case "LABKES_CREATE":
-      console.log(author);
+      notify('CreateCaseIntegrationLabkes', res, author)
       console.log(`LABKES SUCCESS CREATED ID : ${res._id}`);
       break;
     case "LABKES_UPDATE":
