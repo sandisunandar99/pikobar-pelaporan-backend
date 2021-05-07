@@ -18,7 +18,6 @@ const mapingResult = (result) => {
   const data = {}
   data.jobId = result.id
   data.progress = result.progress
-  data.title = result.data
   data.timestamp = result.options.timestamp
   data.status = result.status
 
@@ -28,14 +27,14 @@ const mapingResult = (result) => {
 const sameCondition = async (query, user, queue, job, method, name, time, callback) => {
   try {
     const batchId = require('uuid').v4()
-    const result = await createQueue(queue, job, batchId)
+    const result = await createQueue(queue, { query, user }, batchId)
     //save user and status job
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
     await createLogJob(10, batchId, job, queue, query, user)
     const data = mapingResult(result)
 
     const message = `Data${name}Kasus Pikobar Pelaporan : ${user.fullname}`
-    await createJobQueue(queue, query, user, method, message, time)
+    await createJobQueue(queue, method, message, time)
 
     callback (null, data)
   } catch (error) {
@@ -45,13 +44,13 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
 
 const caseExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 10, callback
+    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 1, callback
   )
 }
 
 const historyExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 10, callback
+    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 1, callback
   )
 }
 
