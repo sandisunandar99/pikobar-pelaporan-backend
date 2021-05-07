@@ -13,7 +13,7 @@ const { sendEmailWithAttachment } = require('../helpers/email')
 const select = [
   'email','createdAt', 'job_id', 'job_name', 'job_status', 'job_progress', 'file_name'
 ]
-
+const message = `Data Kasus Dari Aplikasi Pikobar Pelaporan`
 const mapingResult = (result) => {
   const data = {}
   data.jobId = result.id
@@ -33,7 +33,6 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
     await createLogJob(10, batchId, job, queue, query, user)
     const data = mapingResult(result)
 
-    const message = `Data${name}Kasus Pikobar Pelaporan : ${user.fullname}`
     await createJobQueue(queue, method, message, time)
 
     callback (null, data)
@@ -89,7 +88,7 @@ const resendFile = async (params, payload, user, callback) => {
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     }]
     sendEmailWithAttachment(
-      "Data Kasus Pikobar Pelaporan", options, payload.email, '', params.jobid,  payload.name,
+      message, options, payload.email, '', params.jobid,  payload.name,
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)
