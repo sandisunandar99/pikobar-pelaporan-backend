@@ -31,6 +31,8 @@ const register = (server, options, next) => {
     require('./cases_other'),
     require('./integration'),
     require('./queue'),
+    require('./integration'),
+    require('./rdt_others')
   );
   server.method(services)
   return next()

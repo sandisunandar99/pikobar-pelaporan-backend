@@ -21,25 +21,9 @@ const countRdtCode = server => {
   return {
     method: (request, reply) => {
       const { address_district_code } = request.payload
-      methodOneParam(server, 'rdt', 'getCountRdtCode', address_district_code, reply)
+      methodOneParam(server, 'rdt_others', 'getCountRdtCode', address_district_code, reply)
     },
     assign: 'count_rdt'
-  }
-}
-
-const countCaseByDistrict = server => {
-  return {
-    method: (request, reply) => {
-      server.methods.services.rdt.getCountByDistrict(
-        request.payload.address_district_code,
-        (err, count) => {
-          if (err) {
-            return reply(replyHelper.constructErrorResponse(err)).takeover()
-          }
-          return reply(count)
-        })
-    },
-    assign: 'count_case'
   }
 }
 
@@ -49,16 +33,6 @@ const getRdtbyId = server => {
       methodOneParam(server, 'rdt', 'getById', request.params.id, reply)
     },
     assign: 'rdt'
-  }
-}
-
-const getCasebyIdcase = server => {
-  return {
-    method: (request, reply) => {
-      const idcase = request.pre.rdt.id_case
-      methodOneParam(server, 'rdt', 'getCaseByidcase', idcase, reply)
-    },
-    assign: 'cases'
   }
 }
 
@@ -181,9 +155,7 @@ const sameCondition = (server, name, payloads, request, reply) => {
 module.exports = {
   countRdtCode,
   getRdtbyId,
-  getCasebyIdcase,
   getCodeDinkes,
-  countCaseByDistrict,
   checkIfDataNotNull,
   getDataExternal,
   searchIdcasefromInternal,
