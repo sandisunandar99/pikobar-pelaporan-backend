@@ -35,7 +35,36 @@ def secretsProd = [
     [envVar: 'FIREBASE_CLIENT_EMAIL', vaultKey: 'FIREBASE_CLIENT_EMAIL'],
     [envVar: 'FIREBASE_CLIENT_ID', vaultKey: 'FIREBASE_CLIENT_ID'],
     [envVar: 'FIREBASE_CLIENT_X509_CERT_URL', vaultKey: 'FIREBASE_CLIENT_X509_CERT_URL'],
-    [envVar: 'FIREBASE_DATABASE_URL', vaultKey: 'FIREBASE_DATABASE_URL']]],
+    [envVar: 'FIREBASE_DATABASE_URL', vaultKey: 'FIREBASE_DATABASE_URL'],
+
+    [envVar: 'TOPIC_NAME_LAPORMANDIRI', vaultKey: 'TOPIC_NAME_LAPORMANDIRI'],
+    [envVar: 'SUBSCRIPTION_NAME_LAPORMANDIRI', vaultKey: 'SUBSCRIPTION_NAME_LAPORMANDIRI'],
+
+    [envVar: 'TOPIC_NAME_LABKESPELAPORAN', vaultKey: 'TOPIC_NAME_LABKESPELAPORAN'],
+    [envVar: 'SUBSCRIPTION_NAME_LABKESPELAPORAN', vaultKey: 'SUBSCRIPTION_NAME_LABKESPELAPORAN'],
+
+    [envVar: 'PUBSUB_PROJECT_ID', vaultKey: 'PUBSUB_PROJECT_ID'],
+    [envVar: 'PUBSUB_PRIVATE_KEY_ID', vaultKey: 'PUBSUB_PRIVATE_KEY_ID'],
+    [envVar: 'PUBSUB_PRIVATE_KEY', vaultKey: 'PUBSUB_PRIVATE_KEY'],
+    [envVar: 'PUBSUB_CLIENT_EMAIL', vaultKey: 'PUBSUB_CLIENT_EMAIL'],
+    [envVar: 'PUBSUB_CLIENT_ID', vaultKey: 'PUBSUB_CLIENT_ID'],
+    [envVar: 'PUBSUB_AUTH_URI', vaultKey: 'PUBSUB_AUTH_URI'],
+    [envVar: 'PUBSUB_TOKEN_URI', vaultKey: 'PUBSUB_TOKEN_URI'],
+    [envVar: 'PUBSUB_AUTH_PROVIDER_X509_CERT_URL', vaultKey: 'PUBSUB_AUTH_PROVIDER_X509_CERT_URL'],
+    [envVar: 'PUBSUB_CLIENT_X509_CERT_URL', vaultKey: 'PUBSUB_CLIENT_X509_CERT_URL'],
+   
+
+    [envVar: 'AWS_BUCKET_ID', vaultKey: 'AWS_BUCKET_ID'],
+    [envVar: 'AWS_SECRET_KEY', vaultKey: 'AWS_SECRET_KEY'],
+    [envVar: 'CASE_BUCKET_NAME', vaultKey: 'CASE_BUCKET_NAME'],
+    [envVar: 'HISTORY_BUCKET_NAME', vaultKey: 'HISTORY_BUCKET_NAME'],
+    [envVar: 'SIGNED_URL_METHOD', vaultKey: 'SIGNED_URL_METHOD'],
+
+    [envVar: 'EMAIL_HOST', vaultKey: 'EMAIL_HOST'],
+    [envVar: 'EMAIL_PORT', vaultKey: 'EMAIL_PORT'],
+    [envVar: 'EMAIL_USER', vaultKey: 'EMAIL_USER'],
+    [envVar: 'EMAIL_PASS', vaultKey: 'EMAIL_PASS'],
+    [envVar: 'EMAIL_FROM', vaultKey: 'EMAIL_FROM']]],
 
 ]
 
@@ -156,10 +185,40 @@ pipeline {
 
                         sh 'sed -i "s/%REDIS_HOST%/${REDIS_HOST}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%REDIS_PORT%/${REDIS_PORT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
-             
+
+                        sh 'sed -i "s/%TOPIC_NAME_LAPORMANDIRI%/${TOPIC_NAME_LAPORMANDIRI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SUBSCRIPTION_NAME_LAPORMANDIRI%/${SUBSCRIPTION_NAME_LAPORMANDIRI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%TOPIC_NAME_LABKESPELAPORAN%/${TOPIC_NAME_LABKESPELAPORAN}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SUBSCRIPTION_NAME_LABKESPELAPORAN%/${SUBSCRIPTION_NAME_LABKESPELAPORAN}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%PUBSUB_PROJECT_ID%/${PUBSUB_PROJECT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_PRIVATE_KEY_ID%/${PUBSUB_PRIVATE_KEY_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_PRIVATE_KEY%/${PUBSUB_PRIVATE_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_CLIENT_EMAIL%/${PUBSUB_CLIENT_EMAIL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_CLIENT_ID%/${PUBSUB_CLIENT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_AUTH_URI%/${PUBSUB_AUTH_URI/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_TOKEN_URI%/${PUBSUB_TOKEN_URI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_AUTH_PROVIDER_X509_CERT_URL%/${PUBSUB_AUTH_PROVIDER_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_CLIENT_X509_CERT_URL%/${PUBSUB_CLIENT_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%AWS_BUCKET_ID%/${AWS_BUCKET_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%AWS_SECRET_KEY%/${AWS_SECRET_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%CASE_BUCKET_NAME%/${CASE_BUCKET_NAME}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%HISTORY_BUCKET_NAME%/${HISTORY_BUCKET_NAME}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%SIGNED_URL_METHOD%/${SIGNED_URL_METHOD}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
+                        sh 'sed -i "s/%EMAIL_HOST%/${EMAIL_HOST}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%EMAIL_PORT%/${EMAIL_PORT}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%EMAIL_USER%/${EMAIL_USER}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%EMAIL_PASS%/${EMAIL_PASS}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%EMAIL_FROM%/${EMAIL_FROM}/g" kubernetes/production/configmap-pelaporan-api.yaml'
+
                         sh 'sed -i "s/%SMS_KEY%/${SMS_KEY}/g" kubernetes/production/secret-pelaporan-api.yaml'
                         sh 'sed -i "s/%WA_TOKEN%/${WA_TOKEN}/g" kubernetes/production/secret-pelaporan-api.yaml'
                         sh 'sed -i "s/%FIREBASE_PRIVATE_KEY_ID%/${FIREBASE_PRIVATE_KEY_ID}/g" kubernetes/production/secret-pelaporan-api.yaml'
+
+
                         
 
 
