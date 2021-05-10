@@ -197,7 +197,7 @@ pipeline {
                         sh 'sed -i "s/%PUBSUB_PRIVATE_KEY%/${PUBSUB_PRIVATE_KEY}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%PUBSUB_CLIENT_EMAIL%/${PUBSUB_CLIENT_EMAIL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%PUBSUB_CLIENT_ID%/${PUBSUB_CLIENT_ID}/g" kubernetes/production/configmap-pelaporan-api.yaml'
-                        sh 'sed -i "s/%PUBSUB_AUTH_URI%/${PUBSUB_AUTH_URI/g" kubernetes/production/configmap-pelaporan-api.yaml'
+                        sh 'sed -i "s/%PUBSUB_AUTH_URI%/${PUBSUB_AUTH_URI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%PUBSUB_TOKEN_URI%/${PUBSUB_TOKEN_URI}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%PUBSUB_AUTH_PROVIDER_X509_CERT_URL%/${PUBSUB_AUTH_PROVIDER_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
                         sh 'sed -i "s/%PUBSUB_CLIENT_X509_CERT_URL%/${PUBSUB_CLIENT_X509_CERT_URL}/g" kubernetes/production/configmap-pelaporan-api.yaml'
