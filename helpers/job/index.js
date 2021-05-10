@@ -19,23 +19,22 @@ const emailOptions = (resultJob) => {
   }]
 }
 
-const createJobQueue = async (nameQueue, query, user, method, message, time) => {
+const createJobQueue = async (nameQueue, method, message, time) => {
   try {
     const jobQueue = new Queue(nameQueue, options)
     jobQueue.process(async (job, done) => {
       setTimeout(() => {
         console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
       }, 1500)
-
       const timer = setInterval( async () => {
-        updateLogJob(job.id, { job_progress: 55 }) // notify job progress and save
-        const resultJob = await method(query, user, job.id)
+        await updateLogJob(job.id, { job_progress: 55 }) // notify job progress and save
+        const resultJob = await method(job.data.query, job.data.user, job.id)
         console.log(`🧾 Success : Waiting for sending email`)
 
         await updateLogJob(job.id, { job_progress: 85 }) // notify job progress and save
         done()
         clearInterval(timer)
-        sendEmailWithAttachment(message, emailOptions(resultJob), query.email, resultJob.path, job.id)
+        sendEmailWithAttachment(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id, job.data)
       }, time * 60 * 1000)
     })
   } catch (error) {

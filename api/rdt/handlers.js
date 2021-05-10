@@ -1,4 +1,4 @@
-const { queryIfSame, funcIfSame, funcNoParam } = require('../../helpers/request')
+const { funcIfSame, funcNoParam } = require('../../helpers/request')
 const {
   replyJson
 } = require('../helpers')
@@ -18,19 +18,6 @@ const CreateRdt = (server) => {
   return (request, reply) => {
     server.methods.services.rdt.create(
       request.query,
-      request.payload,
-      request.auth.credentials.user,
-      request.pre,
-      (err, result) => {
-        replyJson(err, result, reply)
-      }
-    )
-  }
-}
-
-const CreateRdtMultiple = (server) => {
-  return (request, reply) => {
-    server.methods.services.rdt.createMultiple(
       request.payload,
       request.auth.credentials.user,
       request.pre,
@@ -79,7 +66,7 @@ const DeleteRdt = (server) => {
 
 const GetListIdCase = (server) => {
   return (request, reply) => {
-    server.methods.services.rdt.FormSelectIdCase(
+    server.methods.services.rdt_others.FormSelectIdCase(
       request.query,
       request.auth.credentials.user,
       request.pre.data_pendaftaran,
@@ -101,28 +88,20 @@ const GetListIdCaseDetail = (server) => {
   }
 }
 
-const GetListRegisteredUser = (server) => {
-  return async(request, reply) => {
-    await funcCreate(server, "rdt", "getRegisteredUser", request, reply)
-  }
-}
-
 const formLocationTest = (server) => {
   return async(request, reply) => {
-    await funcNoParam(server, "rdt", "getLocationTest", reply)
+    await funcNoParam(server, "rdt_others", "getLocationTest", reply)
   }
 }
 
 module.exports = {
   ListRdt,
   CreateRdt,
-  CreateRdtMultiple,
   GetRdtDetail,
   GetRdtHistories,
   UpdateRdt,
   DeleteRdt,
   GetListIdCase,
   GetListIdCaseDetail,
-  GetListRegisteredUser,
   formLocationTest,
 }

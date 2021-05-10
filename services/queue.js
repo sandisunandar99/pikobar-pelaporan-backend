@@ -13,13 +13,11 @@ const { sendEmailWithAttachment } = require('../helpers/email')
 const select = [
   'email','createdAt', 'job_id', 'job_name', 'job_status', 'job_progress', 'file_name'
 ]
-let searchParam = [{}]
-
+const message = `Data Kasus Dari Aplikasi Pikobar Pelaporan`
 const mapingResult = (result) => {
   const data = {}
   data.jobId = result.id
   data.progress = result.progress
-  data.title = result.data
   data.timestamp = result.options.timestamp
   data.status = result.status
 
@@ -29,14 +27,13 @@ const mapingResult = (result) => {
 const sameCondition = async (query, user, queue, job, method, name, time, callback) => {
   try {
     const batchId = require('uuid').v4()
-    const result = await createQueue(queue, job, batchId)
+    const result = await createQueue(queue, { query, user }, batchId)
     //save user and status job
-    await createLogJob(10, batchId, job, queue, query, user)
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
+    await createLogJob(10, batchId, job, queue, query, user)
     const data = mapingResult(result)
 
-    const message = `Data${name}Kasus Pikobar Pelaporan : ${user.fullname}`
-    await createJobQueue(queue, query, user, method, message, time)
+    await createJobQueue(queue, method, message, time)
 
     callback (null, data)
   } catch (error) {
@@ -58,13 +55,16 @@ const historyExport = async (query, user, callback) => {
 
 const listExport = async (query, user, callback) => {
   try {
+    let searchParam = [{}];
     if(query.search) searchParam = [ { file_name : new RegExp(query.search,"i") }]
     const page = parseInt(query.page) || 1
     const limit = parseInt(query.limit) || 30
-    const result = await LogQueue.find(filterLogQueue(user, query))
+    const where = filterLogQueue(user, query)
+    const result = await LogQueue.find(where)
     .or(searchParam).select(select).sort({ 'createdAt' : -1 })
     .limit(limit).skip((limit * page) - limit).lean()
-    const count = await LogQueue.estimatedDocumentCount()
+    const filterCount = {...where, ...{ $or : searchParam } }
+    const count = await LogQueue.countDocuments(filterCount)
     const countPerPage = Math.ceil(count / limit)
     const dataMapping = { result, page, countPerPage, count, limit }
     callback(null, jsonPagination('history', dataMapping))
@@ -88,7 +88,7 @@ const resendFile = async (params, payload, user, callback) => {
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     }]
     sendEmailWithAttachment(
-      "Data Kasus Pikobar Pelaporan", options, payload.email, '', params.jobid
+      message, options, payload.email, '', params.jobid,  payload.name,
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)

@@ -52,7 +52,6 @@ const register = (server, options, next) => {
   server.register(require('./map'))
   server.register(require('./unit'))
   server.register(require('./case_related'))
-  server.register(require('./close_contact'))
   server.register(require('./case_dashboard'))
   server.register(require('./reports'))
   server.register(require('./inject'))
