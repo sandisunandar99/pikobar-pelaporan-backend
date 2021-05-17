@@ -15,11 +15,7 @@ const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
 
-const queryList = async (query, user, options, params, callback) => {
-  // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
-  if (user.role === ROLE.FASKES && user.unit_id) delete params.author
-
+const queryList = async (query, user, options, params, caseAuthors, callback) => {
   if(query.search){
     let search_params = searchFilter(query.search, ['id_case','name','nik','phone_number'])
     if (query.verified_status !== 'verified') {
@@ -38,8 +34,7 @@ const queryList = async (query, user, options, params, callback) => {
 }
 
 async function listCase (query, user, callback) {
-  // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
-  // kembali ke awal
+  // kembali ke awal let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   let sort = { updatedAt: 'desc' };
   if (query.sort && query.sort.split) {
     let splits = query.sort.split(':')
@@ -50,7 +45,6 @@ async function listCase (query, user, callback) {
   const populate = (['last_history', 'author'])
   const options = optionsLabel(query, sort, populate)
   let params = await Filter.filterCase(user, query)
-
   // only provide when needed
   if(query.start_date && query.end_date){
     params.createdAt = {
@@ -58,11 +52,13 @@ async function listCase (query, user, callback) {
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
   }
-
   params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
-  await queryList(query, user, options, params, callback)
+  // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
+  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
+  if (user.role === ROLE.FASKES && user.unit_id) delete params.author
+  await queryList(query, user, options, params, caseAuthors, callback)
 }
 
 function getCaseById (id, callback) {
