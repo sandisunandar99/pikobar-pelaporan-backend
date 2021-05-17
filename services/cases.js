@@ -33,8 +33,10 @@ const queryList = async (query, user, options, params, caseAuthors, callback) =>
   }).catch(err => callback(err, null))
 }
 
-async function listCase (query, user, callback) {
-  // kembali ke awal let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+const sortCase = (query) => {
+  // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+  // kembali ke awal
+
   let sort = { updatedAt: 'desc' };
   if (query.sort && query.sort.split) {
     let splits = query.sort.split(':')
@@ -42,6 +44,12 @@ async function listCase (query, user, callback) {
     sort[splits[0]] = splits[1];
   }
 
+  return sort
+}
+
+async function listCase (query, user, callback) {
+  // kembali ke awal let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+  const sort = sortCase(query)
   const populate = (['last_history', 'author'])
   const options = optionsLabel(query, sort, populate)
   let params = await Filter.filterCase(user, query)
