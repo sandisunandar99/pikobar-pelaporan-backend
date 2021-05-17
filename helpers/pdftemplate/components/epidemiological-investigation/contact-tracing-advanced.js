@@ -12,10 +12,6 @@ const isFalse = (value) => {
   return !value ? '√' : '  '
 }
 
-const formattedDate = (d) => {
-  return d ? moment(d).format('YYYY/MM/DD') : '-'
-}
-
 const handleEmpty = (v) => {
   return v || '-'
 }
@@ -96,15 +92,18 @@ const compConfirmedContact = data => {
   ]
 }
 
+const generateHeader = (text, colSpan, alignment) => {
+  return { text, colSpan, alignment }
+}
+
 const compIspaGroup = data => {
   const ispaGroup = data.close_contact_heavy_ispa_group
   return [
     [
-      {
-        text: 'Apakah pasien termasuk cluster ISPA berat (demam dan  pneumonia membutuhkan perawatan Rumah Sakit) yang tidak diketahui peyebabnya dimana kasus COVID-19 diperiksa?',
-        colSpan: 2,
-        alignment: 'left'
-      },
+      generateHeader(
+        'Apakah pasien termasuk cluster ISPA berat (demam dan  pneumonia membutuhkan perawatan Rumah Sakit) yang tidak diketahui peyebabnya dimana kasus COVID-19 diperiksa?',
+        2, 'left'
+      ),
       {},
       {
         text: `: [${isTrue(ispaGroup)}] Ya   [${isFalse(ispaGroup)}] Tdk  [  ] Tdk Tahu`,
@@ -124,7 +123,7 @@ const compHealthWorker = data => {
   }
   return [
     [
-      { text: 'Apakah pasien seorang petugas kesehatan?', colSpan: 2, alignment: 'left' }, {},
+      generateHeader('Apakah pasien seorang petugas kesehatan?', 2, 'left'), {},
       { text: `: [${isTrue(officer)}] Ya   [${isFalse(officer)}] Tdk  [  ] Tdk Tahu`, colSpan: 3, alignment: 'left' },{},{}
     ],
     [

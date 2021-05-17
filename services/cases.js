@@ -1,22 +1,19 @@
 const Case = require('../models/Case');
-const Unit =require('../models/Unit')
 const History = require('../models/History')
 const User = require('../models/User')
-const Notification = require('../models/Notification')
 const DistrictCity = require('../models/DistrictCity')
 const Check = require('../helpers/rolecheck')
 const { notify } = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
-const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
 const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
 const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
 const { clientConfig } = require('../config/redis')
 const { resultJson } = require('../helpers/paginate')
 
-async function ListCase (query, user, callback) {
+async function listCase (query, user, callback) {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -127,22 +124,6 @@ async function ListCase (query, user, callback) {
       let res = resultJson('cases', results)
       return callback(null, res)
   }).catch(err => callback(err, null))
-}
-
-const listCaseExport = async (query, user, callback) => {
-  const filter = await Filter.filterCase(user, query)
-  const filterRole = Check.exportByRole({}, user, query)
-  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
-  const { searchExport } = require('../helpers/filter/search')
-  const search = searchExport(query)
-  params.last_history = { $exists: true, $ne: null }
-  const condition = sqlCondition(params, search, query)
-  try {
-    const resultExport = await Case.aggregate(condition).allowDiskUse(true)
-    callback (null, resultExport.map(cases => excellOutput(cases)))
-  } catch (error) {
-    callback(error, null)
-  }
 }
 
 function getCaseById (id, callback) {
@@ -491,7 +472,7 @@ async function thisUnitCaseAuthors (user) {
 module.exports = [
   {
     name: 'services.cases.list',
-    method: ListCase
+    method: listCase
   },
   {
     name: 'services.cases.getById',
@@ -532,10 +513,6 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
-  },
-  {
-    name: 'services.cases.listCaseExport',
-    method: listCaseExport
   },
   {
     name: 'services.cases.getIdCase',
