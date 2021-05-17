@@ -23,11 +23,14 @@ const filterCase = async (user, query) => {
   if (query.verified_status && query.verified_status.split) {
     params.verified_status = { $in: query.verified_status.split(',') }
   }
-  if (query.status) { params.status = query.status }
-  if (query.final_result) { params.final_result = query.final_result }
-  if (query.tool_tester) { params.tool_tester = query.tool_tester }
-  if (query.criteria) { params.status = query.criteria }
-  return params;
+  if (query.stage) params.stage = query.stage
+  if (query.status) params.status = query.status
+  if (query.author) params.author = query.author
+  if(query.is_reported) params.is_reported = query.is_reported
+  if (query.final_result) params.final_result = query.final_result
+  if (query.tool_tester) params.tool_tester = query.tool_tester
+  if (query.criteria) params.status = query.criteria
+  return params
 }
 
 const filterRdt = (user, query) => {

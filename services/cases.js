@@ -12,6 +12,8 @@ const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
 const { clientConfig } = require('../config/redis')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
+const { thisUnitCaseAuthors } = require('../helpers/cases/global')
+const { searchFilter } = require('../helpers/filter/search')
 
 async function listCase (query, user, callback) {
   // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
@@ -23,44 +25,16 @@ async function listCase (query, user, callback) {
     sort[splits[0]] = splits[1];
   }
 
-  const populate = (['last_history', 'author']);
-  const options = optionsLabel(query, sort, populate);
-
-  var params = {}
+  const populate = (['last_history', 'author'])
+  const options = optionsLabel(query, sort, populate)
+  let params = await Filter.filterCase(user, query)
 
   // only provide when needed
-  if (query.author_district_code) {
-    params.author_district_code = query.author_district_code;
-  }
-
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      params.address_district_code = query.address_district_code;
-    }
-  }
-  if(query.address_village_code){
-    params.address_village_code = query.address_village_code;
-  }
-  if(query.address_subdistrict_code){
-    params.address_subdistrict_code = query.address_subdistrict_code;
-  }
   if(query.start_date && query.end_date){
     params.createdAt = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
-  }
-  if(query.stage){
-    params.stage = query.stage;
-  }
-  if(query.status){
-    params.status = query.status;
-  }
-  if(query.final_result){
-    params.final_result = query.final_result;
-  }
-  if(query.author){
-    params.author = query.author;
   }
 
   if (query.verified_status && query.verified_status.split) {
@@ -68,29 +42,17 @@ async function listCase (query, user, callback) {
     params.verified_status = { $in: verified_status }
   }
 
-  if(query.is_reported) {
-    params.is_reported = query.is_reported
-  }
-
+  params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
-  if ([true, false].includes(query.is_west_java)) {
-    params.is_west_java = query.is_west_java
-  }
+  if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
 
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
   if (user.role === ROLE.FASKES && user.unit_id) delete params.author
 
-  params.last_history = { $exists: true, $ne: null }
 
   if(query.search){
-    var search_params = [
-      { id_case : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
-      { nik: new RegExp(query.search, "i") },
-      { phone_number: new RegExp(query.search, "i") },
-    ];
-
+    let search_params = searchFilter(query.search, ['id_case','name','nik','phone_number'])
     if (query.verified_status !== 'verified') {
       let users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
       search_params.push({ author: { $in: users.map(obj => obj._id) } })
@@ -441,15 +403,6 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   const closeContacts = await CloseContact.find({ case: detailCase._id, delete_status: { $ne: 'deleted' } })
   Object.assign(detailCase, { histories: histories, closeContacts: closeContacts })
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
-}
-
-async function thisUnitCaseAuthors (user, condition) {
-  let caseAuthors = []
-  if (user.role === "faskes" && user.unit_id) {
-    caseAuthors = await User.find(condition).select('_id')
-    caseAuthors = caseAuthors.map(obj => obj._id)
-  }
-  return caseAuthors
 }
 
 module.exports = [
