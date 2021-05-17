@@ -15,6 +15,28 @@ const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
 
+const queryList = async (query, user, options, params, callback) => {
+  // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
+  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
+  if (user.role === ROLE.FASKES && user.unit_id) delete params.author
+
+  if(query.search){
+    let search_params = searchFilter(query.search, ['id_case','name','nik','phone_number'])
+    if (query.verified_status !== 'verified') {
+      let users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
+      search_params.push({ author: { $in: users.map(obj => obj._id) } })
+    }
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseAuthors)
+  } else {
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
+  }
+
+  Case.paginate(result_search, options).then(function(results){
+    let res = resultJson('cases', results)
+    return callback(null, res)
+  }).catch(err => callback(err, null))
+}
+
 async function listCase (query, user, callback) {
   // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   // kembali ke awal
@@ -37,36 +59,10 @@ async function listCase (query, user, callback) {
     }
   }
 
-  if (query.verified_status && query.verified_status.split) {
-    const verified_status = query.verified_status.split(',')
-    params.verified_status = { $in: verified_status }
-  }
-
   params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
-
-  // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
-  if (user.role === ROLE.FASKES && user.unit_id) delete params.author
-
-
-  if(query.search){
-    let search_params = searchFilter(query.search, ['id_case','name','nik','phone_number'])
-    if (query.verified_status !== 'verified') {
-      let users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
-      search_params.push({ author: { $in: users.map(obj => obj._id) } })
-    }
-
-    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseAuthors)
-  } else {
-    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
-  }
-
-  Case.paginate(result_search, options).then(function(results){
-      let res = resultJson('cases', results)
-      return callback(null, res)
-  }).catch(err => callback(err, null))
+  await queryList(query, user, options, params, callback)
 }
 
 function getCaseById (id, callback) {
