@@ -123,7 +123,7 @@ const compHealthWorker = data => {
   }
   return [
     [
-      generateHeader('Apakah pasien seorang petugas kesehatan?', 2, 'left'), {},
+      { text:'Apakah pasien seorang petugas kesehatan?', colSpan:2, alignment:'left' }, {},
       { text: `: [${isTrue(officer)}] Ya   [${isFalse(officer)}] Tdk  [  ] Tdk Tahu`, colSpan: 3, alignment: 'left' },{},{}
     ],
     [

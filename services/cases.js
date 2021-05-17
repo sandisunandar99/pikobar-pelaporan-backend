@@ -7,22 +7,13 @@ const { notify } = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
-const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
+const { CRITERIA, WHERE_GLOBAL, ROLE } = require('../helpers/constant')
 const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
 const { clientConfig } = require('../config/redis')
-const { resultJson } = require('../helpers/paginate')
+const { resultJson, optionsLabel } = require('../helpers/paginate')
 
 async function listCase (query, user, callback) {
-
-  const myCustomLabels = {
-    totalDocs: 'itemCount',
-    docs: 'itemsList',
-    limit: 'perPage',
-    page: 'currentPage',
-    meta: '_meta'
-  };
-
   // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   // kembali ke awal
   let sort = { updatedAt: 'desc' };
@@ -32,14 +23,8 @@ async function listCase (query, user, callback) {
     sort[splits[0]] = splits[1];
   }
 
-  const options = {
-    page: query.page,
-    limit: query.limit,
-    populate: (['last_history','author']),
-    sort: sort,
-    leanWithId: true,
-    customLabels: myCustomLabels
-  };
+  const populate = (['last_history', 'author']);
+  const options = optionsLabel(query, sort, populate);
 
   var params = {}
 
@@ -93,12 +78,8 @@ async function listCase (query, user, callback) {
   }
 
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = []
-  if (user.role === "faskes" && user.unit_id) {
-    delete params.author
-    caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
-    caseAuthors = caseAuthors.map(obj => obj._id)
-  }
+  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
+  if (user.role === ROLE.FASKES && user.unit_id) delete params.author
 
   params.last_history = { $exists: true, $ne: null }
 
@@ -162,9 +143,10 @@ function getIdCase (query,callback) {
 }
 
 async function getCaseSummary(query, user, callback) {
+  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
   try {
     clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
-      const caseAuthors = await thisUnitCaseAuthors(user)
+      const caseAuthors = await thisUnitCaseAuthors(user, condition)
       const scope = Check.countByRole(user, caseAuthors)
       const filter = await Filter.filterCase(user, query)
       const searching = Object.assign(scope, filter)
@@ -200,7 +182,8 @@ async function getCaseSummary(query, user, callback) {
 
 async function getCaseSummaryVerification (query, user, callback) {
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  const caseAuthors = await thisUnitCaseAuthors(user)
+  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  const caseAuthors = await thisUnitCaseAuthors(user, condition)
   const searchByRole = Check.countByRole(user,caseAuthors);
   const filterSearch = await Filter.filterCase(user, query)
   const searching = {...searchByRole, ...filterSearch}
@@ -460,10 +443,10 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 
-async function thisUnitCaseAuthors (user) {
+async function thisUnitCaseAuthors (user, condition) {
   let caseAuthors = []
   if (user.role === "faskes" && user.unit_id) {
-    caseAuthors = await User.find({unit_id: user.unit_id._id, role: 'faskes'}).select('_id')
+    caseAuthors = await User.find(condition).select('_id')
     caseAuthors = caseAuthors.map(obj => obj._id)
   }
   return caseAuthors
