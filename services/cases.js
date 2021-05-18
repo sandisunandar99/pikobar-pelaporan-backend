@@ -104,6 +104,24 @@ function getIdCase (query,callback) {
   .catch(err => callback(err, null));
 }
 
+const caseSummaryCondition = (searching, sumFuncNoMatch) => {
+  const conditions = [
+    { $match: {
+      $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+    }},
+    {
+      $group: {
+        _id: 'status',
+        confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
+        probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
+        suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
+        closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
+      },
+    },{ $project: { _id : 0 } },
+  ]
+
+  return conditions
+}
 async function getCaseSummary(query, user, callback) {
   const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
   try {
@@ -117,21 +135,7 @@ async function getCaseSummary(query, user, callback) {
         const resultJSON = JSON.parse(result)
         callback(null, resultJSON)
       }else{
-        const conditions = [
-          { $match: {
-            $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
-          }},
-          {
-            $group: {
-              _id: 'status',
-              confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
-              probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
-              suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
-              closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
-            },
-          },{ $project: { _id : 0 } },
-        ]
-        const result = await Case.aggregate(conditions)
+        const result = await Case.aggregate(caseSummaryCondition(searching, sumFuncNoMatch))
         const shiftResult = result.shift()
         clientConfig.setex(`summary-cases-list-${user.username}`, 15 * 60 * 1000, JSON.stringify(shiftResult)) // set redis key
         callback(null, shiftResult)

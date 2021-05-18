@@ -96,9 +96,8 @@ const createUser = async (payload, callback) => {
   }
 }
 
-const updateUser = (user, payload, callback) => {
-  let passwords = user.setPassword(payload.password)
-  let users = {
+const payloadUpdate = (payload, user, passwords) => {
+  return {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
     password: passwords,
@@ -114,6 +113,11 @@ const updateUser = (user, payload, callback) => {
     address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name,
     unit_id: payload.unit_id ? payload.unit_id : user.unit_id
   }
+}
+
+const updateUser = (user, payload, callback) => {
+  let passwords = user.setPassword(payload.password)
+  let users = { ...payloadUpdate(payload, user, passwords) }
 
   user = Object.assign(user, users);
   user.save((err, user) => {
