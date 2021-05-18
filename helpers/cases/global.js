@@ -36,6 +36,17 @@ const summaryCondition = (item, condition, result, param) => {
   }
 }
 
+const thisUnitCaseAuthors = async (user, condition) => {
+  const User = require('../../models/User')
+  const { ROLE } = require('../constant')
+  let caseAuthors = []
+  if (user.role === ROLE.FASKES && user.unit_id) {
+    caseAuthors = await User.find(condition).select('_id')
+    caseAuthors = caseAuthors.map(obj => obj._id)
+  }
+  return caseAuthors
+}
+
 module.exports = {
-  getCountBasedOnDistrict, summaryCondition
+  getCountBasedOnDistrict, summaryCondition, thisUnitCaseAuthors
 }

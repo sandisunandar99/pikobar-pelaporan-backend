@@ -1,33 +1,42 @@
 const Case = require('../models/Case');
-const Unit =require('../models/Unit')
 const History = require('../models/History')
 const User = require('../models/User')
-const Notification = require('../models/Notification')
 const DistrictCity = require('../models/DistrictCity')
 const Check = require('../helpers/rolecheck')
 const { notify } = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
-const { sqlCondition, excellOutput } = require('../helpers/filter/exportfilter')
-const { CRITERIA, WHERE_GLOBAL } = require('../helpers/constant')
+const { CRITERIA, WHERE_GLOBAL, ROLE } = require('../helpers/constant')
 const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
 const { clientConfig } = require('../config/redis')
-const { resultJson } = require('../helpers/paginate')
+const { resultJson, optionsLabel } = require('../helpers/paginate')
+const { thisUnitCaseAuthors } = require('../helpers/cases/global')
+const { searchFilter } = require('../helpers/filter/search')
 
-async function ListCase (query, user, callback) {
+const queryList = async (query, user, options, params, caseAuthors, callback) => {
+  if(query.search){
+    let search_params = searchFilter(query.search, ['id_case','name','nik','phone_number'])
+    if (query.verified_status !== 'verified') {
+      let users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
+      search_params.push({ author: { $in: users.map(obj => obj._id) } })
+    }
+    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseAuthors)
+  } else {
+    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
+  }
 
-  const myCustomLabels = {
-    totalDocs: 'itemCount',
-    docs: 'itemsList',
-    limit: 'perPage',
-    page: 'currentPage',
-    meta: '_meta'
-  };
+  Case.paginate(result_search, options).then(function(results){
+    let res = resultJson('cases', results)
+    return callback(null, res)
+  }).catch(err => callback(err, null))
+}
 
+const sortCase = (query) => {
   // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   // kembali ke awal
+
   let sort = { updatedAt: 'desc' };
   if (query.sort && query.sort.split) {
     let splits = query.sort.split(':')
@@ -35,114 +44,29 @@ async function ListCase (query, user, callback) {
     sort[splits[0]] = splits[1];
   }
 
-  const options = {
-    page: query.page,
-    limit: query.limit,
-    populate: (['last_history','author']),
-    sort: sort,
-    leanWithId: true,
-    customLabels: myCustomLabels
-  };
+  return sort
+}
 
-  var params = {}
-
+async function listCase (query, user, callback) {
+  // kembali ke awal let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+  const sort = sortCase(query)
+  const populate = (['last_history', 'author'])
+  const options = optionsLabel(query, sort, populate)
+  let params = await Filter.filterCase(user, query)
   // only provide when needed
-  if (query.author_district_code) {
-    params.author_district_code = query.author_district_code;
-  }
-
-  if(user.role == "dinkesprov" || user.role == "superadmin"){
-    if(query.address_district_code){
-      params.address_district_code = query.address_district_code;
-    }
-  }
-  if(query.address_village_code){
-    params.address_village_code = query.address_village_code;
-  }
-  if(query.address_subdistrict_code){
-    params.address_subdistrict_code = query.address_subdistrict_code;
-  }
   if(query.start_date && query.end_date){
     params.createdAt = {
       "$gte": new Date(new Date(query.start_date)).setHours(00, 00, 00),
       "$lt": new Date(new Date(query.end_date)).setHours(23, 59, 59)
     }
   }
-  if(query.stage){
-    params.stage = query.stage;
-  }
-  if(query.status){
-    params.status = query.status;
-  }
-  if(query.final_result){
-    params.final_result = query.final_result;
-  }
-  if(query.author){
-    params.author = query.author;
-  }
-
-  if (query.verified_status && query.verified_status.split) {
-    const verified_status = query.verified_status.split(',')
-    params.verified_status = { $in: verified_status }
-  }
-
-  if(query.is_reported) {
-    params.is_reported = query.is_reported
-  }
-
+  params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
-  if ([true, false].includes(query.is_west_java)) {
-    params.is_west_java = query.is_west_java
-  }
-
+  if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = []
-  if (user.role === "faskes" && user.unit_id) {
-    delete params.author
-    caseAuthors = await User.find({unit_id: user.unit_id._id}).select('_id')
-    caseAuthors = caseAuthors.map(obj => obj._id)
-  }
-
-  params.last_history = { $exists: true, $ne: null }
-
-  if(query.search){
-    var search_params = [
-      { id_case : new RegExp(query.search,"i") },
-      { name: new RegExp(query.search, "i") },
-      { nik: new RegExp(query.search, "i") },
-      { phone_number: new RegExp(query.search, "i") },
-    ];
-
-    if (query.verified_status !== 'verified') {
-      let users = await User.find({username: new RegExp(query.search,"i"), code_district_city: user.code_district_city}).select('_id')
-      search_params.push({ author: { $in: users.map(obj => obj._id) } })
-    }
-
-    var result_search = Check.listByRole(user, params, search_params,Case, "delete_status", caseAuthors)
-  } else {
-    var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
-  }
-
-  Case.paginate(result_search, options).then(function(results){
-      let res = resultJson('cases', results)
-      return callback(null, res)
-  }).catch(err => callback(err, null))
-}
-
-const listCaseExport = async (query, user, callback) => {
-  const filter = await Filter.filterCase(user, query)
-  const filterRole = Check.exportByRole({}, user, query)
-  const params = { ...filter, ...filterRole, ...WHERE_GLOBAL }
-  const { searchExport } = require('../helpers/filter/search')
-  const search = searchExport(query)
-  params.last_history = { $exists: true, $ne: null }
-  const condition = sqlCondition(params, search, query)
-  try {
-    const resultExport = await Case.aggregate(condition).allowDiskUse(true)
-    callback (null, resultExport.map(cases => excellOutput(cases)))
-  } catch (error) {
-    callback(error, null)
-  }
+  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
+  if (user.role === ROLE.FASKES && user.unit_id) delete params.author
+  await queryList(query, user, options, params, caseAuthors, callback)
 }
 
 function getCaseById (id, callback) {
@@ -181,9 +105,10 @@ function getIdCase (query,callback) {
 }
 
 async function getCaseSummary(query, user, callback) {
+  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
   try {
     clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
-      const caseAuthors = await thisUnitCaseAuthors(user)
+      const caseAuthors = await thisUnitCaseAuthors(user, condition)
       const scope = Check.countByRole(user, caseAuthors)
       const filter = await Filter.filterCase(user, query)
       const searching = Object.assign(scope, filter)
@@ -219,7 +144,8 @@ async function getCaseSummary(query, user, callback) {
 
 async function getCaseSummaryVerification (query, user, callback) {
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  const caseAuthors = await thisUnitCaseAuthors(user)
+  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  const caseAuthors = await thisUnitCaseAuthors(user, condition)
   const searchByRole = Check.countByRole(user,caseAuthors);
   const filterSearch = await Filter.filterCase(user, query)
   const searching = {...searchByRole, ...filterSearch}
@@ -479,19 +405,10 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 
-async function thisUnitCaseAuthors (user) {
-  let caseAuthors = []
-  if (user.role === "faskes" && user.unit_id) {
-    caseAuthors = await User.find({unit_id: user.unit_id._id, role: 'faskes'}).select('_id')
-    caseAuthors = caseAuthors.map(obj => obj._id)
-  }
-  return caseAuthors
-}
-
 module.exports = [
   {
     name: 'services.cases.list',
-    method: ListCase
+    method: listCase
   },
   {
     name: 'services.cases.getById',
@@ -532,10 +449,6 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
-  },
-  {
-    name: 'services.cases.listCaseExport',
-    method: listCaseExport
   },
   {
     name: 'services.cases.getIdCase',
