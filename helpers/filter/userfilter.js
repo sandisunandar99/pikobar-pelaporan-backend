@@ -1,12 +1,20 @@
 'use strict'
-const check = require('../rolecheck')
+const { userByRole } = require('../rolecheck')
 const { ROLE } = require('../constant')
-const filterUser = (query, user) => {
-  let params = check.userByRole({}, user)
-  if (query.role) params.role = query.role
+
+const filterRole = (query, user, name) => {
+  const params = {}
   if (user.role == ROLE.PROVINCE || user.role == ROLE.ADMIN) {
-    if (query.code_district_city) params.code_district_city = query.code_district_city
+    if (query[name]) params[name] = query[name]
   }
+
+  return params
+}
+
+const filterUser = (query, user) => {
+  const byRole = userByRole({}, user)
+  const params = {...byRole, ...filterRole(query, user, 'code_district_city')}
+  if (query.role) params.role = query.role
   if (query.address_village_code) params.address_village_code = query.address_village_code
   if (query.address_subdistrict_code) {
     params.address_subdistrict_code = query.address_subdistrict_code
@@ -32,5 +40,5 @@ const searchUser = (query) => {
 }
 
 module.exports = {
-  filterUser, searchUser
+  filterUser, searchUser, filterRole
 }
