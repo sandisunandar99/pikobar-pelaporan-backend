@@ -4,7 +4,7 @@ const { ROLE } = require('../constant')
 
 const filterRole = (query, user, name) => {
   const params = {}
-  if (user.role == ROLE.PROVINCE || user.role == ROLE.ADMIN) {
+  if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
     if (query[name]) params[name] = query[name]
   }
 

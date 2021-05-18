@@ -14,6 +14,7 @@ const { clientConfig } = require('../config/redis')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
+const { deletedSave } = require('../helpers/custom')
 
 const queryList = async (query, user, options, params, caseAuthors, callback) => {
   if(query.search){
@@ -372,20 +373,15 @@ async function getCountPendingByDistrict(code, callback) {
   }
 }
 
-function softDeleteCase(cases,deletedBy, payload, callback) {
-   let date = new Date()
-   let dates = {
-     delete_status: 'deleted',
-     deletedAt: date.toISOString()
-   }
-   let param = Object.assign({deletedBy}, dates)
-
-   cases = Object.assign(cases, param)
-   cases.save((err, item) => {
-     if (err) return callback(err, null)
-     return callback(null, item)
-   })
-
+async function softDeleteCase(idCase, author, callback) {
+  try {
+    const payload = deletedSave({}, author)
+    const result = await Case.findByIdAndUpdate(idCase,
+      { $set: payload }, { runValidators: true, context: 'query', new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
 async function healthCheck(payload, callback) {
