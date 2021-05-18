@@ -97,7 +97,7 @@ const createUser = async (payload, callback) => {
 }
 
 const payloadUpdate = (payload, user, passwords) => {
-  return {
+  const sectionInfo = {
     fullname: payload.fullname ? payload.fullname : user.fullname,
     username: payload.username ? payload.username : user.username,
     password: passwords,
@@ -105,6 +105,8 @@ const payloadUpdate = (payload, user, passwords) => {
     role: payload.role ? payload.role : user.role,
     code_district_city: payload.code_district_city ? payload.code_district_city : user.code_district_city,
     name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city,
+  }
+  const sectionAddress = {
     phone_number: payload.phone_number ? payload.phone_number : user.phone_number,
     address_street: payload.address_street ? payload.address_street : user.address_street,
     address_subdistrict_code: payload.address_subdistrict_code ? payload.address_subdistrict_code : user.address_subdistrict_code,
@@ -112,6 +114,10 @@ const payloadUpdate = (payload, user, passwords) => {
     address_village_code: payload.address_village_code ? payload.address_village_code : user.address_village_code,
     address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name,
     unit_id: payload.unit_id ? payload.unit_id : user.unit_id
+  }
+  return {
+    ...sectionInfo,
+    ...sectionAddress
   }
 }
 
