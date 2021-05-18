@@ -97,18 +97,20 @@ const createUser = async (payload, callback) => {
 }
 
 const checkPayload = (name) => {
-  return payload[name] ? payload[name] : user[name]
+  return {
+    [name]: payload[name] ? payload[name] : user[name]
+  }
 }
 
 const payloadUpdate = (payload, user, passwords) => {
   const sectionInfo = {
-    fullname: checkPayload('fullname'),
-    username: checkPayload('username'),
+    ...checkPayload('fullname'),
+    ...checkPayload('username'),
+    ...checkPayload('email'),
+    ...checkPayload('role'),
+    ...checkPayload('code_district_city'),
+    ...checkPayload('name_district_city'),
     password: passwords,
-    email: payload.email ? payload.email : user.email,
-    role: payload.role ? payload.role : user.role,
-    code_district_city: payload.code_district_city ? payload.code_district_city : user.code_district_city,
-    name_district_city: payload.name_district_city ? payload.name_district_city : user.name_district_city,
   }
   const sectionAddress = {
     phone_number: payload.phone_number ? payload.phone_number : user.phone_number,
