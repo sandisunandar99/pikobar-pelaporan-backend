@@ -96,48 +96,6 @@ const createUser = async (payload, callback) => {
   }
 }
 
-const checkPayload = (name) => {
-  return {
-    [name]: payload[name] ? payload[name] : user[name]
-  }
-}
-
-const payloadUpdate = (payload, user, passwords) => {
-  const sectionInfo = {
-    ...checkPayload('fullname'),
-    ...checkPayload('username'),
-    ...checkPayload('email'),
-    ...checkPayload('role'),
-    ...checkPayload('code_district_city'),
-    ...checkPayload('name_district_city'),
-    password: passwords,
-  }
-  const sectionAddress = {
-    phone_number: payload.phone_number ? payload.phone_number : user.phone_number,
-    address_street: payload.address_street ? payload.address_street : user.address_street,
-    address_subdistrict_code: payload.address_subdistrict_code ? payload.address_subdistrict_code : user.address_subdistrict_code,
-    address_subdistrict_name: payload.address_subdistrict_name ? payload.address_subdistrict_name : user.address_subdistrict_name,
-    address_village_code: payload.address_village_code ? payload.address_village_code : user.address_village_code,
-    address_village_name: payload.address_village_name ? payload.address_village_name : user.address_village_name,
-    unit_id: payload.unit_id ? payload.unit_id : user.unit_id
-  }
-  return {
-    ...sectionInfo,
-    ...sectionAddress
-  }
-}
-
-const updateUser = (user, payload, callback) => {
-  let passwords = user.setPassword(payload.password)
-  let users = { ...payloadUpdate(payload, user, passwords) }
-
-  user = Object.assign(user, users);
-  user.save((err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
-}
-
 const updateUsers = async (id, pay, category, author, callback) => {
   try {
     const payloads = {};
@@ -232,10 +190,6 @@ module.exports = [
   {
     name: "services.users.create",
     method: createUser,
-  },
-  {
-    name: "services.users.update",
-    method: updateUser,
   },
   {
     name: "services.users.updateUsers",
