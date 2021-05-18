@@ -96,10 +96,14 @@ const createUser = async (payload, callback) => {
   }
 }
 
+const checkPayload = (name) => {
+  return payload[name] ? payload[name] : user[name]
+}
+
 const payloadUpdate = (payload, user, passwords) => {
   const sectionInfo = {
-    fullname: payload.fullname ? payload.fullname : user.fullname,
-    username: payload.username ? payload.username : user.username,
+    fullname: checkPayload('fullname'),
+    username: checkPayload('username'),
     password: passwords,
     email: payload.email ? payload.email : user.email,
     role: payload.role ? payload.role : user.role,
