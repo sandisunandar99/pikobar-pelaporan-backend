@@ -124,7 +124,12 @@ const caseSummaryCondition = (searching, sumFuncNoMatch) => {
   return conditions
 }
 async function getCaseSummary(query, user, callback) {
-  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  } else {
+    condition = { role: ROLE.FASKES }
+  }
   try {
     clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
       const caseAuthors = await thisUnitCaseAuthors(user, condition)
