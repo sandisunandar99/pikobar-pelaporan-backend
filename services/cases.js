@@ -123,6 +123,7 @@ const caseSummaryCondition = (searching, sumFuncNoMatch) => {
 
   return conditions
 }
+
 async function getCaseSummary(query, user, callback) {
   let condition
   if (user.unit_id) {
@@ -138,8 +139,7 @@ async function getCaseSummary(query, user, callback) {
       const searching = Object.assign(scope, filter)
       const { sumFuncNoMatch } = require('../helpers/aggregate/func')
       if(result){
-        const resultJSON = JSON.parse(result)
-        callback(null, resultJSON)
+        callback(null, JSON.parse(result))
       }else{
         const result = await Case.aggregate(caseSummaryCondition(searching, sumFuncNoMatch))
         const shiftResult = result.shift()
