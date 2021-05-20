@@ -64,8 +64,14 @@ async function listCase (query, user, callback) {
   params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id}
+  } else {
+    condition = {  }
+  }
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
+  let caseAuthors = await thisUnitCaseAuthors(user, condition)
   if (user.role === ROLE.FASKES && user.unit_id) delete params.author
   await queryList(query, user, options, params, caseAuthors, callback)
 }
@@ -154,7 +160,12 @@ async function getCaseSummary(query, user, callback) {
 
 async function getCaseSummaryVerification (query, user, callback) {
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES}
+  } else {
+    condition = { unit_id: user.unit_id._id }
+  }
   const caseAuthors = await thisUnitCaseAuthors(user, condition)
   const searchByRole = Check.countByRole(user,caseAuthors);
   const filterSearch = await Filter.filterCase(user, query)
