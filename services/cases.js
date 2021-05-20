@@ -14,6 +14,7 @@ const { clientConfig } = require('../config/redis')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
+const { deletedSave } = require('../helpers/custom')
 
 const queryList = async (query, user, options, params, caseAuthors, callback) => {
   if(query.search){
@@ -47,6 +48,17 @@ const sortCase = (query) => {
   return sort
 }
 
+const checkUnit = (user) => {
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id}
+  } else {
+    condition = {  }
+  }
+
+  return condition
+}
+
 async function listCase (query, user, callback) {
   // kembali ke awal let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   const sort = sortCase(query)
@@ -63,6 +75,7 @@ async function listCase (query, user, callback) {
   params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
+  const where = checkUnit(user)
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
   let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id })
   if (user.role === ROLE.FASKES && user.unit_id) delete params.author
@@ -104,8 +117,32 @@ function getIdCase (query,callback) {
   .catch(err => callback(err, null));
 }
 
+const caseSummaryCondition = (searching, sumFuncNoMatch) => {
+  const conditions = [
+    { $match: {
+      $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+    }},
+    {
+      $group: {
+        _id: 'status',
+        confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
+        probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
+        suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
+        closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
+      },
+    },{ $project: { _id : 0 } },
+  ]
+
+  return conditions
+}
+
 async function getCaseSummary(query, user, callback) {
-  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  } else {
+    condition = { role: ROLE.FASKES }
+  }
   try {
     clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
       const caseAuthors = await thisUnitCaseAuthors(user, condition)
@@ -114,24 +151,9 @@ async function getCaseSummary(query, user, callback) {
       const searching = Object.assign(scope, filter)
       const { sumFuncNoMatch } = require('../helpers/aggregate/func')
       if(result){
-        const resultJSON = JSON.parse(result)
-        callback(null, resultJSON)
+        callback(null, JSON.parse(result))
       }else{
-        const conditions = [
-          { $match: {
-            $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
-          }},
-          {
-            $group: {
-              _id: 'status',
-              confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
-              probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
-              suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
-              closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
-            },
-          },{ $project: { _id : 0 } },
-        ]
-        const result = await Case.aggregate(conditions)
+        const result = await Case.aggregate(caseSummaryCondition(searching, sumFuncNoMatch))
         const shiftResult = result.shift()
         clientConfig.setex(`summary-cases-list-${user.username}`, 15 * 60 * 1000, JSON.stringify(shiftResult)) // set redis key
         callback(null, shiftResult)
@@ -144,7 +166,12 @@ async function getCaseSummary(query, user, callback) {
 
 async function getCaseSummaryVerification (query, user, callback) {
   // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  const condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES}
+  } else {
+    condition = { unit_id: user.unit_id._id }
+  }
   const caseAuthors = await thisUnitCaseAuthors(user, condition)
   const searchByRole = Check.countByRole(user,caseAuthors);
   const filterSearch = await Filter.filterCase(user, query)
@@ -368,20 +395,15 @@ async function getCountPendingByDistrict(code, callback) {
   }
 }
 
-function softDeleteCase(cases,deletedBy, payload, callback) {
-   let date = new Date()
-   let dates = {
-     delete_status: 'deleted',
-     deletedAt: date.toISOString()
-   }
-   let param = Object.assign({deletedBy}, dates)
-
-   cases = Object.assign(cases, param)
-   cases.save((err, item) => {
-     if (err) return callback(err, null)
-     return callback(null, item)
-   })
-
+async function softDeleteCase(idCase, author, callback) {
+  try {
+    const payload = deletedSave({}, author)
+    const result = await Case.findByIdAndUpdate(idCase,
+      { $set: payload }, { runValidators: true, context: 'query', new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
 async function healthCheck(payload, callback) {

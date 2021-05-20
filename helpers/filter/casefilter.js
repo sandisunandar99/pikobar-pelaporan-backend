@@ -1,15 +1,8 @@
 const { setDate } = require('../filter/date')
-const { ROLE } = require('../constant')
+const { filterRole } = require('../filter/userfilter')
 
-const sameRoleFilter = (user, query) => {
-  const params = {}
-  if (user.role === ROLE.PROVINCE || user.role === ROLE.ADMIN) {
-    if (query.address_district_code) params.address_district_code = query.address_district_code;
-  }
-  return params
-}
 const filterCase = async (user, query) => {
-  const params = sameRoleFilter(user, query)
+  const params = filterRole(query, user, 'address_district_code')
   // only provide when needed
   if (query.author_district_code) {
     params.author_district_code = query.author_district_code;

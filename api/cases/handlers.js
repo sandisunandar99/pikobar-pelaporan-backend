@@ -103,9 +103,8 @@ module.exports = (server) => {
      */
     async DeleteCase(request, reply) {
       server.methods.services.cases.softDeleteCase(
-        request.pre.cases,
-        request.auth.credentials.user,
-        request.payload,
+        request.params.id,
+        request.auth.credentials.user._id,
         (err, item) => replyJson(err, item, reply)
       )
     },
