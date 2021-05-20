@@ -48,6 +48,17 @@ const sortCase = (query) => {
   return sort
 }
 
+const checkUnit = (user) => {
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id}
+  } else {
+    condition = {  }
+  }
+
+  return condition
+}
+
 async function listCase (query, user, callback) {
   // kembali ke awal let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
   const sort = sortCase(query)
@@ -64,14 +75,9 @@ async function listCase (query, user, callback) {
   params.last_history = { $exists: true, $ne: null }
   params.is_west_java = { $ne: false }
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
-  let condition
-  if (user.unit_id) {
-    condition = { unit_id: user.unit_id._id}
-  } else {
-    condition = {  }
-  }
+  const where = checkUnit(user)
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = await thisUnitCaseAuthors(user, condition)
+  let caseAuthors = await thisUnitCaseAuthors(user, where)
   if (user.role === ROLE.FASKES && user.unit_id) delete params.author
   await queryList(query, user, options, params, caseAuthors, callback)
 }
