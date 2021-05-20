@@ -64,7 +64,7 @@ async function listCase (query, user, callback) {
   params.is_west_java = { $ne: false }
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id._id })
+  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id })
   if (user.role === ROLE.FASKES && user.unit_id) delete params.author
   await queryList(query, user, options, params, caseAuthors, callback)
 }
