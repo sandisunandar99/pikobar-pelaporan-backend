@@ -1,10 +1,7 @@
 const register = (server, options, next) => {
     require('./lapor_mandiri')(server)
-    /**
-     * TODO: karena fungsinya sudah dibuat dan tinggal notifikasi yang belum
-     * maka module integrasi labkes di tutup dlu supaya yang lapor mandiri bisa naik duluan
-     */
-    // require('./labkes_pelaporan')(server)
+    // TODO: WIP features notification for fasyankes
+    require('./labkes_pelaporan')(server)
   return next()
 }
 
