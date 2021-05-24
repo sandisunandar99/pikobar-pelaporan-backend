@@ -205,7 +205,7 @@ const payloadInspectionSupport = (data) =>{
     specimens_type: SPECIMEN_TYPES.SWAB_NASO_OROF,
     inspection_date: data.inspection_date,
     inspection_location: "LAB JABAR",
-    is_other_location: false,
+    is_other_location: true,
     other_inspection_location: "lainnya",
     get_specimens_to: data.get_specimens_to,
     inspection_result: data.inspection_result
