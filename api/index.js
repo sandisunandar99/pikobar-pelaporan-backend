@@ -6,7 +6,7 @@ const register = (server, options, next) => {
     let response = request.response
     if (response.isBoom) {
 
-      if (response.output.statusCode === 404 || response.output.statusCode === 500) {
+      if (response.output.statusCode === 500) {
         Sentry.captureException(response)
       }
 
