@@ -28,10 +28,8 @@ const queryList = async (query, user, options, params, caseAuthors, callback) =>
     var result_search = Check.listByRole(user, params, null,Case, "delete_status", caseAuthors)
   }
 
-  Case.paginate(result_search, options).then(function(results){
-    let res = resultJson('cases', results)
-    return callback(null, res)
-  }).catch(err => callback(err, null))
+  const paginateResult = await Case.paginate(result_search, options);
+  callback(null, resultJson('cases', paginateResult));
 }
 
 const sortCase = (query) => {
@@ -77,7 +75,7 @@ async function listCase (query, user, callback) {
   if ([true, false].includes(query.is_west_java)) params.is_west_java = query.is_west_java
   const where = checkUnit(user)
   // temporarily for fecth all case to all authors in same unit, shouldly use aggregate
-  let caseAuthors = await thisUnitCaseAuthors(user, { unit_id: user.unit_id })
+  let caseAuthors = await thisUnitCaseAuthors(user, where)
   if (user.role === ROLE.FASKES && user.unit_id) delete params.author
   await queryList(query, user, options, params, caseAuthors, callback)
 }
