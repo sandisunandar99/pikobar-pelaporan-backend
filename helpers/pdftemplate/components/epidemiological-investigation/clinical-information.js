@@ -9,18 +9,19 @@ const components = {
   diagnosis: require('./diagnosis'),
 }
 
+const formattedDate = (d) => {
+  return d ? moment(d).format('YYYY/MM/DD') : '-'
+}
+
+const isLocationTrue = (data, value) => {
+  return  data.last_history.current_location_type === value ? '√' : '  '
+}
+
+const isLocationFalse = (data, value) => {
+  return  data.last_history.current_location_type !== value ? '√' : '  '
+}
+
 const render = (data) => {
-  const isLocationTrue = (value) => {
-    return  data.last_history.current_location_type === value ? '√' : '  '
-  }
-
-  const isLocationFalse = (value) => {
-    return  data.last_history.current_location_type !== value ? '√' : '  '
-  }
-
-  const formattedDate = (d) => {
-    return d ? moment(d).format('YYYY/MM/DD') : '-'
-  }
 
   return [
     {
@@ -76,7 +77,7 @@ const render = (data) => {
           components.diagnosis.render(data),
           [
             {
-              text: 'Apakah pasien dirawat di rumah sakit' + `: [${isLocationTrue('RS')}] Ya   [${isLocationFalse('RS')}] Tdk`,
+              text: 'Apakah pasien dirawat di rumah sakit' + `: [${isLocationTrue(data, 'RS')}] Ya   [${isLocationFalse(data, 'RS')}] Tdk`,
               colSpan: 4,
               alignment: 'left'
             },{},{},{}
