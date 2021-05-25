@@ -76,10 +76,13 @@ const listExport = async (query, user, callback) => {
 const resendFile = async (params, payload, user, callback) => {
   try {
     let bucketName
+    let nameQueue
     if(payload.name === JOB.CASE){
       bucketName = process.env.CASE_BUCKET_NAME
+      nameQueue = QUEUE.CASE
     } else {
       bucketName = process.env.HISTORY_BUCKET_NAME
+      nameQueue = queue.HISTORY
     }
     const getFile = await readFileFromBucket(bucketName, payload.file_name)
     const options = [{
@@ -88,7 +91,7 @@ const resendFile = async (params, payload, user, callback) => {
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     }]
     sendEmailWithAttachment(
-      message, options, payload.email, '', params.jobid,  payload.name,
+      message, options, payload.email, '', params.jobid,  nameQueue,
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)
