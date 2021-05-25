@@ -27,9 +27,9 @@ const mapingResult = (result) => {
 const sameCondition = async (query, user, queue, job, method, name, time, callback) => {
   try {
     const batchId = require('uuid').v4()
-    const result = await createQueue(queue, { query, user }, batchId)
     //save user and status job
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
+    const result = await createQueue(queue, { query, user }, batchId)
     await createLogJob(10, batchId, job, queue, query, user)
     const data = mapingResult(result)
 
