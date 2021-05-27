@@ -1,7 +1,11 @@
 const Case = require('../models/Case')
 const History = require('../models/History')
 const ObjectId = require('mongodb').ObjectID
-const { HISTORY_DEFAULT_SORT } = require('../helpers/constant')
+const { CRITERIA, WHERE_GLOBAL, HISTORY_DEFAULT_SORT, ROLE } = require('../helpers/constant')
+const { clientConfig } = require('../config/redis')
+const { thisUnitCaseAuthors } = require('../helpers/cases/global')
+const { countByRole } = require('../helpers/rolecheck')
+const { filterCase } = require('../helpers/filter/casefilter')
 
 const conditional = async (result, payload, val) => {
   if (result.length > 0) {
@@ -51,9 +55,60 @@ const multipleUpdate = async (payload, user, callback) => {
   }
 }
 
+const caseSummaryCondition = (searching, sumFuncNoMatch) => {
+  const conditions = [
+    { $match: {
+      $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+    }},
+    {
+      $group: {
+        _id: 'status',
+        confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
+        probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
+        suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
+        closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
+      },
+    },{ $project: { _id : 0 } },
+  ]
+
+  return conditions
+}
+
+async function getCaseSummary(query, user, callback) {
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  } else {
+    condition = { role: ROLE.FASKES }
+  }
+  try {
+    clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
+      const caseAuthors = await thisUnitCaseAuthors(user, condition)
+      const scope = countByRole(user, caseAuthors)
+      const filter = await filterCase(user, query)
+      const searching = Object.assign(scope, filter)
+      const { sumFuncNoMatch } = require('../helpers/aggregate/func')
+      if(result){
+        callback(null, JSON.parse(result))
+      }else{
+        const result = await Case.aggregate(caseSummaryCondition(searching, sumFuncNoMatch))
+        const shiftResult = result.shift()
+        clientConfig.setex(`summary-cases-list-${user.username}`, 15 * 60 * 1000, JSON.stringify(shiftResult)) // set redis key
+        callback(null, shiftResult)
+      }
+    })
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.cases_other.multipleUpdate',
     method: multipleUpdate
-  }
+  },
+  {
+    name: 'services.cases_other.getSummary',
+    method: getCaseSummary
+  },
 ]

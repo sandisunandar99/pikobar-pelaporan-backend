@@ -62,7 +62,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseSummary(request, reply) {
-      await requestIfSame(server, 'cases', 'getSummary', request, reply)
+      await requestIfSame(server, 'cases_other', 'getSummary', request, reply)
     },
     /**
      * GET /api/cases/summary-by-district

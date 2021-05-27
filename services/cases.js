@@ -7,10 +7,9 @@ const { notify } = require('../helpers/notification')
 const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
-const { CRITERIA, WHERE_GLOBAL, ROLE } = require('../helpers/constant')
+const { ROLE } = require('../helpers/constant')
 const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
-const { clientConfig } = require('../config/redis')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
@@ -113,53 +112,6 @@ function getIdCase (query,callback) {
   .where('delete_status').ne('deleted').limit(100)
   .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
   .catch(err => callback(err, null));
-}
-
-const caseSummaryCondition = (searching, sumFuncNoMatch) => {
-  const conditions = [
-    { $match: {
-      $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
-    }},
-    {
-      $group: {
-        _id: 'status',
-        confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
-        probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
-        suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
-        closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
-      },
-    },{ $project: { _id : 0 } },
-  ]
-
-  return conditions
-}
-
-async function getCaseSummary(query, user, callback) {
-  let condition
-  if (user.unit_id) {
-    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
-  } else {
-    condition = { role: ROLE.FASKES }
-  }
-  try {
-    clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
-      const caseAuthors = await thisUnitCaseAuthors(user, condition)
-      const scope = Check.countByRole(user, caseAuthors)
-      const filter = await Filter.filterCase(user, query)
-      const searching = Object.assign(scope, filter)
-      const { sumFuncNoMatch } = require('../helpers/aggregate/func')
-      if(result){
-        callback(null, JSON.parse(result))
-      }else{
-        const result = await Case.aggregate(caseSummaryCondition(searching, sumFuncNoMatch))
-        const shiftResult = result.shift()
-        clientConfig.setex(`summary-cases-list-${user.username}`, 15 * 60 * 1000, JSON.stringify(shiftResult)) // set redis key
-        callback(null, shiftResult)
-      }
-    })
-  } catch (e) {
-    callback(e, null)
-  }
 }
 
 async function getCaseSummaryVerification (query, user, callback) {
@@ -437,10 +389,6 @@ module.exports = [
   {
     name: 'services.cases.getByNik',
     method: getCaseByNik
-  },
-  {
-    name: 'services.cases.getSummary',
-    method: getCaseSummary
   },
   {
     name: 'services.cases.getSummaryVerification',
