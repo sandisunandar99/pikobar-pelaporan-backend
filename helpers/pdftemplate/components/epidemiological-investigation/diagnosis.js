@@ -1,3 +1,10 @@
+const generateSame = (textHeader, textValue) => {
+  return [
+    { text: textHeader, border: [] },
+    { text: textValue, border: [] },
+  ]
+}
+
 const render = (data) => {
 
   const history = data.last_history
@@ -11,14 +18,14 @@ const render = (data) => {
       table: {
         widths: [250, 250],
         body: [
-          [
-            { text: 'Pneumonia (Klinis atau Radiologi)', border: [] },
-            { text: `: [${isTrue('diagnosis_pneumonia', 1)}] Ya   [${isTrue('diagnosis_pneumonia', 2)}] Tdk  [${isTrue('diagnosis_pneumonia', 3)}] Tdk tahu `, border: [] },
-          ],
-          [
-            { text: 'ARDS (Acute Respiratory Distress Syndrome)', border: [] },
-            { text: `: [${isTrue('diagnosis_ards', 1)}] Ya   [${isTrue('diagnosis_ards', 2)}] Tdk  [${isTrue('diagnosis_ards', 3)}] Tdk tahu `, border: [] },
-          ],
+          generateSame(
+            'Pneumonia (Klinis atau Radiologi)',
+            `: [${isTrue('diagnosis_pneumonia', 1)}] Ya   [${isTrue('diagnosis_pneumonia', 2)}] Tdk  [${isTrue('diagnosis_pneumonia', 3)}] Tdk tahu `
+          ),
+          generateSame(
+            'ARDS (Acute Respiratory Distress Syndrome)',
+            `: [${isTrue('diagnosis_ards', 1)}] Ya   [${isTrue('diagnosis_ards', 2)}] Tdk  [${isTrue('diagnosis_ards', 3)}] Tdk tahu `
+          ),
           [
             { text: `Diagnosis lainnya, Sebutkan!`, margin: [0, 0, 0, 5], border: [] },
             { text: `: ${history.other_diagnosis || '-' } `, margin: [0, 0, 0, 5], border: [] },

@@ -27,9 +27,9 @@ const mapingResult = (result) => {
 const sameCondition = async (query, user, queue, job, method, name, time, callback) => {
   try {
     const batchId = require('uuid').v4()
-    const result = await createQueue(queue, { query, user }, batchId)
     //save user and status job
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
+    const result = await createQueue(queue, { query, user }, batchId)
     await createLogJob(10, batchId, job, queue, query, user)
     const data = mapingResult(result)
 
@@ -76,10 +76,13 @@ const listExport = async (query, user, callback) => {
 const resendFile = async (params, payload, user, callback) => {
   try {
     let bucketName
+    let nameQueue
     if(payload.name === JOB.CASE){
       bucketName = process.env.CASE_BUCKET_NAME
+      nameQueue = QUEUE.CASE
     } else {
       bucketName = process.env.HISTORY_BUCKET_NAME
+      nameQueue = queue.HISTORY
     }
     const getFile = await readFileFromBucket(bucketName, payload.file_name)
     const options = [{
@@ -88,7 +91,7 @@ const resendFile = async (params, payload, user, callback) => {
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     }]
     sendEmailWithAttachment(
-      message, options, payload.email, '', params.jobid,  payload.name,
+      message, options, payload.email, '', params.jobid,  nameQueue,
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)

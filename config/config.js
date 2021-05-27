@@ -1,8 +1,8 @@
-const conf = {};
-
-const SECRET_KEY = process.env.SECRET_KEY;
-const ENCODING = process.env.ENCODING;
-
+const conf = {}
+const Sentry = require("@sentry/node")
+const Tracing = require("@sentry/tracing")
+const SECRET_KEY = process.env.SECRET_KEY
+const ENCODING = process.env.ENCODING
 
 conf.auth = {
   secret: Buffer.from(SECRET_KEY, ENCODING),
@@ -23,12 +23,16 @@ conf.database = {
     useCreateIndex: true
   }
 };
-
 conf.sentry = {
   dsn: process.env.SENTRY_DSN,
   attachStacktrace: true,
   debug: true,
-  environment: process.env.NODE_ENV || 'local'
+  environment: process.env.NODE_ENV || 'local',
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Mongo
+  ],
+  tracesSampleRate: process.env.SENTRY_TRACE_RATE,
 }
 
 conf.firebase = {

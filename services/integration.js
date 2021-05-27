@@ -107,6 +107,7 @@ const resultIntegration = (err, res, str) =>{
       break;
     case "LABKES_CREATE":
       console.log(`LABKES SUCCESS CREATED ID : ${res._id}`);
+      notify('CreateCaseIntegrationLabkes', res, author)
       break;
     case "LABKES_UPDATE":
       console.log(`LABKES SUCCESS UPDATED ID : ${res}`);
