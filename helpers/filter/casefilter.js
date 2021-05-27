@@ -27,7 +27,7 @@ const filterCase = async (user, query) => {
 }
 
 const filterRdt = (user, query) => {
-  const params = sameRoleFilter(user, query)
+  const params = filterRole(query, user, 'address_district_code')
   if (query.address_village_code) params.address_village_code = query.address_village_code
   if (query.address_subdistrict_code) params.address_subdistrict_code = query.address_subdistrict_code
   if(query.category) params.category = query.category
