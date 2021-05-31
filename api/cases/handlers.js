@@ -70,7 +70,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseSummaryByDistrict(request, reply) {
-      server.methods.services.cases.getSummaryByDistrict(
+      server.methods.services.cases_other.getSummaryByDistrict(
         (err, item) => replyJson(err, item, reply)
       )
     },
@@ -147,7 +147,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async HealthCheck(request, reply) {
-      await queryIfSame(server, 'cases', 'healthcheck', request, reply)
+      await queryIfSame(server, 'cases_other', 'healthcheck', request, reply)
     },
     /**
      * GET /api/cases/{id}/verifications
@@ -180,7 +180,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseSummaryVerification(request, reply) {
-      await requestIfSame(server, 'cases', 'getSummaryVerification', request, reply)
+      await requestIfSame(server, 'cases_other', 'getSummaryVerification', request, reply)
     }
   }
 }

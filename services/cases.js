@@ -8,7 +8,6 @@ const Filter = require('../helpers/filter/casefilter')
 const CloseContact = require('../models/CloseContact')
 const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
 const { ROLE } = require('../helpers/constant')
-const { summaryCondition } = require('../helpers/cases/global')
 const moment = require('moment')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
@@ -112,36 +111,6 @@ function getIdCase (query,callback) {
   .where('delete_status').ne('deleted').limit(100)
   .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
   .catch(err => callback(err, null));
-}
-
-async function getCaseSummaryVerification (query, user, callback) {
-  // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
-  let condition
-  if (user.unit_id) {
-    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES}
-  } else {
-    condition = { unit_id: user.unit_id._id }
-  }
-  const caseAuthors = await thisUnitCaseAuthors(user, condition)
-  const searchByRole = Check.countByRole(user,caseAuthors);
-  const filterSearch = await Filter.filterCase(user, query)
-  const searching = {...searchByRole, ...filterSearch}
-  var aggStatus = [{ $match: {
-      $and: [  searching, { delete_status: { $ne: 'deleted' } } ]
-    }},
-    { $group: { _id: "$verified_status", total: { $sum: 1 }} }
-  ];
-
-  let result =  { 'PENDING': 0, 'DECLINED': 0, 'VERIFIED': 0 }
-  Case.aggregate(aggStatus).exec().then(async item => {
-      item.forEach(function(item){
-        summaryCondition(item, 'pending', result, 'PENDING')
-        summaryCondition(item, 'declined', result, 'DECLINED')
-        summaryCondition(item, 'verified', result, 'VERIFIED')
-      })
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
 }
 
 function createCase (raw_payload, author, pre, callback) {
@@ -254,43 +223,6 @@ async function updateCase (id, pre, author, payload, callback) {
   })
 }
 
-function getCountCaseByDistrict(callback) {
-  /*
-  var summary = {};
-  DistrictCity.find().then(district_city => {
-    Case.find({ address_district_code: district_city.kemendagri_kabupaten_kode }).then( res => {
-      summary[district_city.name] = res.length();
-    })
-    .catch(err => callback(err, null));
-  })
-  .catch(err => callback(err, null));
-
-  return callback(null, summary);
-
-  var res = DistrictCity.collection.aggregate([
-    {"$group": { _id: "$address_district_code", count: {$sum:1}}}
-  ])
-  return callback(null, res.toArray());
-  */
-  var aggStatus = [
-    { $match: { delete_status: { $ne: 'deleted' }} },
-    {$group: {
-      _id: "$address_district_name",
-      total: {$sum: 1}
-    }}
-  ];
-
-  let result =  {}
-
-  Case.aggregate(aggStatus).exec().then(item => {
-      item.forEach(function(item){
-        result[item['_id']] = item['total']
-      });
-      return callback(null, result)
-    })
-    .catch(err => callback(err, null))
-}
-
 async function getCountByDistrict(code, callback) {
   /* Get last number of current district id case order */
   try {
@@ -356,19 +288,6 @@ async function softDeleteCase(idCase, author, callback) {
   }
 }
 
-async function healthCheck(payload, callback) {
-  try {
-    let case_no_last_history = await Case.find({ last_history: {"$exists": false}})
-    .or({ last_history:null })
-    let result = {
-      'case_no_last_history' : case_no_last_history,
-    }
-    return callback(null, result);
-  } catch (error) {
-    return callback(error, null)
-  }
-}
-
 async function epidemiologicalInvestigationForm (detailCase, callback) {
   const pdfmaker = require('../helpers/pdfmaker')
   const histories = await History.find({ case: detailCase._id })
@@ -389,14 +308,6 @@ module.exports = [
   {
     name: 'services.cases.getByNik',
     method: getCaseByNik
-  },
-  {
-    name: 'services.cases.getSummaryVerification',
-    method: getCaseSummaryVerification
-  },
-  {
-    name: 'services.cases.getSummaryByDistrict',
-    method: getCountCaseByDistrict
   },
   {
     name: 'services.cases.create',
@@ -421,10 +332,6 @@ module.exports = [
   {
     name: 'services.cases.getIdCase',
     method: getIdCase
-  },
-  {
-    name: 'services.cases.healthcheck',
-    method: healthCheck,
   },
   {
     name: 'services.cases.epidemiologicalInvestigationForm',
