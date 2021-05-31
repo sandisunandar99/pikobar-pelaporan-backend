@@ -96,23 +96,6 @@ function getCaseByNik (nik, callback) {
     .catch(err => callback(err, null));
 }
 
-function getIdCase (query,callback) {
-  const params = {}
-  if(query.name_case_related){
-    params.name = new RegExp(query.name_case_related, "i");
-  }
-  if(query.status){
-    params.status = query.status;
-  }
-  if(query.address_district_code){
-    params.address_district_code = query.address_district_code;
-  }
-  Case.find(params).select('id_case name')
-  .where('delete_status').ne('deleted').limit(100)
-  .then(cases => callback (null, cases.map(cases => cases.JSONFormIdCase())))
-  .catch(err => callback(err, null));
-}
-
 function createCase (raw_payload, author, pre, callback) {
 
   let verified  = {
@@ -328,10 +311,6 @@ module.exports = [
   {
     name: 'services.cases.softDeleteCase',
     method: softDeleteCase
-  },
-  {
-    name: 'services.cases.getIdCase',
-    method: getIdCase
   },
   {
     name: 'services.cases.epidemiologicalInvestigationForm',

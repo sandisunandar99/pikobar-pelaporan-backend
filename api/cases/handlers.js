@@ -131,7 +131,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetIdCase(request, reply) {
-      await queryIfSame(server, 'cases', 'getIdCase', request, reply)
+      await queryIfSame(server, 'cases_other', 'getIdCase', request, reply)
     },
     /**
      * GET /api/cases-by-nik/{nik}

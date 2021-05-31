@@ -169,6 +169,22 @@ function getCountCaseByDistrict(callback) {
     .catch(err => callback(err, null))
 }
 
+async function getIdCase (query,callback) {
+  const params = {}
+  if(query.name_case_related) params.name = new RegExp(query.name_case_related, "i");
+  if(query.status) params.status = query.status;
+  if(query.address_district_code) {
+    params.address_district_code = query.address_district_code;
+  }
+  try {
+    const result = await Case.find(params).select('id_case name')
+    .where('delete_status').ne('deleted').limit(100)
+    callback (null, result.map(result => result.JSONFormIdCase()))
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
 module.exports = [
   {
     name: 'services.cases_other.multipleUpdate',
@@ -185,5 +201,8 @@ module.exports = [
   }, {
     name: 'services.cases_other.getSummaryByDistrict',
     method: getCountCaseByDistrict
+  }, {
+    name: 'services.cases_other.getIdCase',
+    method: getIdCase
   },
 ]
