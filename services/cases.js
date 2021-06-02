@@ -279,7 +279,7 @@ async function epidemiologicalInvestigationForm (detailCase, callback) {
   return callback(null, pdfmaker.epidemiologicalInvestigationsForm(detailCase))
 }
 
-module.exports = [
+const caseFunction = [
   {
     name: 'services.cases.list',
     method: listCase
@@ -318,3 +318,4 @@ module.exports = [
   }
 ];
 
+module.exports = caseFunction
