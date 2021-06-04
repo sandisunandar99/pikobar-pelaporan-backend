@@ -78,7 +78,7 @@ const getCasebyId = server => {
     return {
         method: (request, reply) => {
              let id = request.params.id
-             server.methods.services.cases.getById(id, (err, item) => {
+             server.methods.services.cases_other.getById(id, (err, item) => {
                  if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
 
                  if (!item) {
