@@ -12,6 +12,7 @@ const { filterCase } = require('../helpers/filter/casefilter')
 const { summaryCondition } = require('../helpers/cases/global')
 const { deletedSave } = require('../helpers/custom')
 
+const services = 'services.cases_other'
 const conditional = async (result, payload, val) => {
   if (result.length > 0) {
     result.map(async res => {
@@ -214,34 +215,14 @@ function getCaseById (id, callback) {
     .then(cases => callback (null, cases))
     .catch(err => callback(err, null));
 }
-
 module.exports = [
-  {
-    name: 'services.cases_other.multipleUpdate',
-    method: multipleUpdate
-  },{
-    name: 'services.cases_other.getSummary',
-    method: getCaseSummary
-  }, {
-    name: 'services.cases_other.getSummaryVerification',
-    method: getCaseSummaryVerification
-  }, {
-    name: 'services.cases_other.healthcheck',
-    method: healthCheck,
-  }, {
-    name: 'services.cases_other.getSummaryByDistrict',
-    method: getCountCaseByDistrict
-  }, {
-    name: 'services.cases_other.getIdCase',
-    method: getIdCase
-  }, {
-    name: 'services.cases_other.softDeleteCase',
-    method: softDeleteCase
-  }, {
-    name: 'services.cases_other.getByNik',
-    method: getCaseByNik
-  }, {
-    name: 'services.cases_other.getById',
-    method: getCaseById
-  },
+  { name: `${services}.multipleUpdate`, method: multipleUpdate },
+  { name: `${services}.getSummary`, method: getCaseSummary },
+  { name: `${services}.getSummaryVerification`, method: getCaseSummaryVerification },
+  { name: `${services}.healthcheck`, method: healthCheck },
+  { name: `${services}.getSummaryByDistrict`, method: getCountCaseByDistrict },
+  { name: `${services}.getIdCase`, method: getIdCase },
+  { name: `${services}.softDeleteCase`, method: softDeleteCase },
+  { name: `${services}.getByNik`, method: getCaseByNik },
+  { name: `${services}.getById`, method: getCaseById },
 ]
