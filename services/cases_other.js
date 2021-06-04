@@ -206,6 +206,15 @@ function getCaseByNik (nik, callback) {
     .catch(err => callback(err, null));
 }
 
+function getCaseById (id, callback) {
+  Case.findOne({_id: id})
+    .populate('author')
+    .populate('last_history')
+    .exec()
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
 module.exports = [
   {
     name: 'services.cases_other.multipleUpdate',
@@ -231,5 +240,8 @@ module.exports = [
   }, {
     name: 'services.cases_other.getByNik',
     method: getCaseByNik
+  }, {
+    name: 'services.cases_other.getById',
+    method: getCaseById
   },
 ]

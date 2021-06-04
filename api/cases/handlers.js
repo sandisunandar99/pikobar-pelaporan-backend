@@ -38,7 +38,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseDetail(request, reply) {
-      await funcIfSame(server, 'cases', 'getById', request, 'id', reply)
+      await funcIfSame(server, 'cases_other', 'getById', request, 'id', reply)
     },
     /**
      * GET /api/cases/{id}/history

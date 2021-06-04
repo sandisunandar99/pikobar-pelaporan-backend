@@ -77,15 +77,6 @@ async function listCase (query, user, callback) {
   await queryList(query, user, options, params, caseAuthors, callback)
 }
 
-function getCaseById (id, callback) {
-  Case.findOne({_id: id})
-    .populate('author')
-    .populate('last_history')
-    .exec()
-    .then(cases => callback (null, cases))
-    .catch(err => callback(err, null));
-}
-
 function createCase (raw_payload, author, pre, callback) {
 
   let verified  = {
@@ -262,10 +253,6 @@ const caseFunction = [
   {
     name: 'services.cases.list',
     method: listCase
-  },
-  {
-    name: 'services.cases.getById',
-    method: getCaseById
   },
   {
     name: 'services.cases.create',
