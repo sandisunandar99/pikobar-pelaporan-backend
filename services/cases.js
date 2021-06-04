@@ -12,7 +12,6 @@ const moment = require('moment')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
-const { deletedSave } = require('../helpers/custom')
 
 const queryList = async (query, user, options, params, caseAuthors, callback) => {
   if(query.search){
@@ -260,17 +259,6 @@ async function getCountPendingByDistrict(code, callback) {
   }
 }
 
-async function softDeleteCase(idCase, author, callback) {
-  try {
-    const payload = deletedSave({}, author)
-    const result = await Case.findByIdAndUpdate(idCase,
-      { $set: payload }, { runValidators: true, context: 'query', new: true });
-    callback(null, result);
-  } catch (error) {
-    callback(error, null);
-  }
-}
-
 async function epidemiologicalInvestigationForm (detailCase, callback) {
   const pdfmaker = require('../helpers/pdfmaker')
   const histories = await History.find({ case: detailCase._id })
@@ -307,10 +295,6 @@ const caseFunction = [
   {
     name: 'services.cases.getCountPendingByDistrict',
     method: getCountPendingByDistrict
-  },
-  {
-    name: 'services.cases.softDeleteCase',
-    method: softDeleteCase
   },
   {
     name: 'services.cases.epidemiologicalInvestigationForm',

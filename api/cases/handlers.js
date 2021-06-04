@@ -102,7 +102,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async DeleteCase(request, reply) {
-      server.methods.services.cases.softDeleteCase(
+      server.methods.services.cases_other.softDeleteCase(
         request.params.id,
         request.auth.credentials.user._id,
         (err, item) => replyJson(err, item, reply)

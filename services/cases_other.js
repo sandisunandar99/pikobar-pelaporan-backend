@@ -10,6 +10,7 @@ const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { countByRole } = require('../helpers/rolecheck')
 const { filterCase } = require('../helpers/filter/casefilter')
 const { summaryCondition } = require('../helpers/cases/global')
+const { deletedSave } = require('../helpers/custom')
 
 const conditional = async (result, payload, val) => {
   if (result.length > 0) {
@@ -185,6 +186,17 @@ async function getIdCase (query,callback) {
   }
 }
 
+async function softDeleteCase(idCase, author, callback) {
+  try {
+    const payload = deletedSave({}, author)
+    const result = await Case.findByIdAndUpdate(idCase,
+      { $set: payload }, { runValidators: true, context: 'query', new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
 module.exports = [
   {
     name: 'services.cases_other.multipleUpdate',
@@ -204,5 +216,8 @@ module.exports = [
   }, {
     name: 'services.cases_other.getIdCase',
     method: getIdCase
+  }, {
+    name: 'services.cases_other.softDeleteCase',
+    method: softDeleteCase
   },
 ]
