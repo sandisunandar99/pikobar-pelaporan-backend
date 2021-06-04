@@ -38,7 +38,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseDetail(request, reply) {
-      await funcIfSame(server, 'cases', 'getById', request, 'id', reply)
+      await funcIfSame(server, 'cases_other', 'getById', request, 'id', reply)
     },
     /**
      * GET /api/cases/{id}/history
@@ -62,7 +62,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseSummary(request, reply) {
-      await requestIfSame(server, 'cases', 'getSummary', request, reply)
+      await requestIfSame(server, 'cases_other', 'getSummary', request, reply)
     },
     /**
      * GET /api/cases/summary-by-district
@@ -70,7 +70,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseSummaryByDistrict(request, reply) {
-      server.methods.services.cases.getSummaryByDistrict(
+      server.methods.services.cases_other.getSummaryByDistrict(
         (err, item) => replyJson(err, item, reply)
       )
     },
@@ -102,7 +102,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async DeleteCase(request, reply) {
-      server.methods.services.cases.softDeleteCase(
+      server.methods.services.cases_other.softDeleteCase(
         request.params.id,
         request.auth.credentials.user._id,
         (err, item) => replyJson(err, item, reply)
@@ -131,7 +131,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetIdCase(request, reply) {
-      await queryIfSame(server, 'cases', 'getIdCase', request, reply)
+      await queryIfSame(server, 'cases_other', 'getIdCase', request, reply)
     },
     /**
      * GET /api/cases-by-nik/{nik}
@@ -139,7 +139,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseDetailByNik(request, reply) {
-      await funcIfSame(server, 'cases', 'getByNik', request, 'nik', reply)
+      await funcIfSame(server, 'cases_other', 'getByNik', request, 'nik', reply)
     },
     /**
      * GET /api/cases-healthcheck
@@ -147,7 +147,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async HealthCheck(request, reply) {
-      await queryIfSame(server, 'cases', 'healthcheck', request, reply)
+      await queryIfSame(server, 'cases_other', 'healthcheck', request, reply)
     },
     /**
      * GET /api/cases/{id}/verifications
@@ -180,7 +180,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseSummaryVerification(request, reply) {
-      await requestIfSame(server, 'cases', 'getSummaryVerification', request, reply)
+      await requestIfSame(server, 'cases_other', 'getSummaryVerification', request, reply)
     }
   }
 }
