@@ -139,7 +139,7 @@ module.exports = (server) => {
      * @param {*} reply
      */
     async GetCaseDetailByNik(request, reply) {
-      await funcIfSame(server, 'cases', 'getByNik', request, 'nik', reply)
+      await funcIfSame(server, 'cases_other', 'getByNik', request, 'nik', reply)
     },
     /**
      * GET /api/cases-healthcheck

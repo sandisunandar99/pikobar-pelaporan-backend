@@ -197,6 +197,15 @@ async function softDeleteCase(idCase, author, callback) {
   }
 }
 
+function getCaseByNik (nik, callback) {
+  Case.findOne({nik: nik})
+    .where('delete_status').ne('deleted')
+    .populate('author')
+    .populate('last_history')
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
 module.exports = [
   {
     name: 'services.cases_other.multipleUpdate',
@@ -219,5 +228,8 @@ module.exports = [
   }, {
     name: 'services.cases_other.softDeleteCase',
     method: softDeleteCase
+  }, {
+    name: 'services.cases_other.getByNik',
+    method: getCaseByNik
   },
 ]

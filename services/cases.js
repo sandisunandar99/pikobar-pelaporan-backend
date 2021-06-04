@@ -86,15 +86,6 @@ function getCaseById (id, callback) {
     .catch(err => callback(err, null));
 }
 
-function getCaseByNik (nik, callback) {
-  Case.findOne({nik: nik})
-    .where('delete_status').ne('deleted')
-    .populate('author')
-    .populate('last_history')
-    .then(cases => callback (null, cases))
-    .catch(err => callback(err, null));
-}
-
 function createCase (raw_payload, author, pre, callback) {
 
   let verified  = {
@@ -275,10 +266,6 @@ const caseFunction = [
   {
     name: 'services.cases.getById',
     method: getCaseById
-  },
-  {
-    name: 'services.cases.getByNik',
-    method: getCaseByNik
   },
   {
     name: 'services.cases.create',
