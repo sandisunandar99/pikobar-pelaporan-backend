@@ -34,7 +34,7 @@ const checkCaseIsExists = server => {
             let skip = false
             const nik = request.payload.nik
             if(!nik) return reply()
-            server.methods.services.cases.getByNik(nik, (err, result) => {
+            server.methods.services.cases_other.getByNik(nik, (err, result) => {
                 if (request.route.method === 'put') {
                   const thisCase = request.preResponses.cases.source
                   if (nik === thisCase.nik || !result) { skip = true }
