@@ -47,8 +47,9 @@ const getDistrictCity = async (request, callback) => {
   if (request.kemendagri_provinsi_nama) {
     params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
   }
-  const key = `district-city`
-  const expireTime = 1440 * 60 // 24 hours expire
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 24 hours expire
+  const { key, expireTime } = keyDashboard(params, user, 1440, 'district-city')
   const sort = { kemendagri_kabupaten_nama: 'asc' }
   const defineKey = { key, expireTime, sort }
   cacheList(defineKey, Districtcity, params, callback)
