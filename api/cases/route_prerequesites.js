@@ -134,7 +134,7 @@ const getDetailCase = server => {
   return {
     method: (request, reply) => {
       const id = request.params.id
-      server.methods.services.cases.getById(id, async (err, result) => {
+      server.methods.services.cases_other.getById(id, async (err, result) => {
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422).takeover()
         if (result.verified_status === 'verified') {
           return reply({
