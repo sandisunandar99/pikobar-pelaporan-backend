@@ -39,7 +39,7 @@ const cacheList = (data, schema, params, callback, jsonFor=true) => {
   }
 }
 
-const getDistrictCity = async (request, callback) => {
+const getDistrictCity = async (request, user, callback) => {
   let params = new Object()
   if (request.kota_kode) params.kemendagri_kabupaten_kode = request.kota_kode
   if (request.provice_code) params.kemendagri_provinsi_kode = request.provice_code
