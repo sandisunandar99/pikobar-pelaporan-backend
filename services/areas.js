@@ -60,7 +60,7 @@ const getSubDistrict = async (cityCode, request, callback) => {
   params.kemendagri_kabupaten_kode = cityCode
   if (request.kecamatan_kode) params.kemendagri_kecamatan_kode = request.kecamatan_kode
   const key = `sub-district-${cityCode}`
-  const expireTime = 1440 * 60 // 24 hours expire
+  const expireTime = 120 // 15 minute
   const sort = { kemendagri_kecamatan_nama: 'asc' }
   const defineKey = { key, expireTime, sort }
   cacheList(defineKey, SubDistrict, params, callback)
@@ -84,7 +84,7 @@ const getVillage = async (kecamatan_code, request, callback) => {
     params.kemendagri_desa_kode = request.desa_kode
   }
   const key = `village-${kecamatan_code}`
-  const expireTime = 1440 * 60 // 24 hours expire
+  const expireTime = 120 // 15 minute
   const sort = { kemendagri_desa_nama: 'asc' }
   const defineKey = { key, expireTime, sort }
   cacheList(defineKey, Village, params, callback)
