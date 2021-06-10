@@ -60,7 +60,7 @@ const createOrUpdateCase = async (payload, services, callback) => {
     const findUserData = await findUserCases(checkUser)
     let result = {}
     if(findUserData){
-      result = await integrationLabkesUpdateCase(services,...findUserData, data)
+      result = await integrationLabkesUpdateCase(services,...findUserData, data, author)
     }else{
       result = await integrationLabkesCreateCase(services, transformData, author)
     }
@@ -76,20 +76,20 @@ const integrationLabkesCreateCase = async (services, payload, author) => {
     await services.v2.cases.create(
       pre, payload, author,
       (err, res) => {
-        return resultIntegration(err, res, "LABKES_CREATE");
+        return resultIntegration(err, res, "LABKES_CREATE", author);
     })
   } catch (error) {
     return error
   }
 }
 
-const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
+const integrationLabkesUpdateCase = async(services, payload, payloadLabkes, author) => {
   try {
     const inspectionSupportPayload = await payloadInspectionSupport(payloadLabkes)
     const id_case = payload._id
     await services.inspection_support.create(inspectionSupportPayload, id_case,
       (err, res)=> {
-        return resultIntegration(err, res, "LABKES_UPDATE");
+        return resultIntegration(err, res, "LABKES_UPDATE", author);
     })
   } catch (error) {
     return error
@@ -99,7 +99,7 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes) => {
 
 //TODO: tambhakan notif disni
 // notify('CreateCaseIntegrationLabkes', res, author)
-const resultIntegration = (err, res, str) =>{
+const resultIntegration = (err, res, str, author) =>{
   if (err) throw new Error
 
   switch (str) {
@@ -107,6 +107,7 @@ const resultIntegration = (err, res, str) =>{
       console.log(`PIKOBAR SUCCESS UPDATED ID : ${res.case}`);
       break;
     case "LABKES_CREATE":
+      notify('CreateCaseIntegrationLabkes', res, author)
       console.log(`LABKES SUCCESS CREATED ID : ${res._id}`);
       notify('CreateCaseIntegrationLabkes', res, author)
       break;
