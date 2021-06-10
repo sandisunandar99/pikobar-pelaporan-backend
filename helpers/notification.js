@@ -47,7 +47,7 @@ const getMessagePayload = (event, data, author) => {
 
   switch (event) {
     case eventName(FASKES, EVT_INTEGRATION_LABKES):
-      message = `Kasus DRAFT baru hasil uji lab atas nama ${data.name}`
+      message = `Hasil swab dari Labkesda Jabar untuk pasien atas nama ${data.name} dinyatakan positif. Segera lakukan tracing dan lengkapi laporan kasus.`
       payload = MessageNotification(integration_labkes_created, message, EVT_INTEGRATION_LABKES, ACT_CASES_VERIFICATION_LIST, ['none'], [data.author])
     case eventName(FASKES, EVT_CASE_CREATED, FASKES, ):
       payload = getCaseCreatedPayload(author, data); break;
