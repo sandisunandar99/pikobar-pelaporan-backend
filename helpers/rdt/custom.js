@@ -8,7 +8,7 @@ const getLastRdtNumber = (number, res, substr) => {
   return number
 }
 
-const generateTool = () => {
+const generateTool = (payload) => {
 
   let code_tool_tester
   let pcr_count = 0
@@ -16,7 +16,7 @@ const generateTool = () => {
   if (payload.tool_tester === "PCR") {
     pcr_count += 1
     code_tool_tester = "PCR-"
-  }else{
+  } else {
     rdt_count += 1
     code_tool_tester = "RDT-"
   }
@@ -24,6 +24,16 @@ const generateTool = () => {
   return { code_tool_tester, pcr_count, rdt_count }
 }
 
-module.exports ={
-  getLastRdtNumber, generateTool
+const loopFilter = (i) => {
+  const { CRITERIA } = require('../helpers/constant')
+  if (i.target === CRITERIA.CLOSE) i.target = CRITERIA.CLOSE_ID
+  if (i.target === CRITERIA.SUS) i.target = CRITERIA.SUS_ID
+  if (i.target === CRITERIA.PROB) i.target = CRITERIA.PROB_ID
+  if (i.target === CRITERIA.CONF) i.target = CRITERIA.CONF_ID
+
+  return i
+}
+
+module.exports = {
+  getLastRdtNumber, generateTool, loopFilter
 }
