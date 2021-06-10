@@ -6,6 +6,7 @@ const { listByRole, thisUnitCaseAuthors } = require('../helpers/rolecheck')
 const https = require('https')
 const { optionsLabel, resultJson } = require('../helpers/paginate')
 const { filterRdt } = require('../helpers/filter/casefilter')
+const { generateTool } = require('../helpers/rdt/custom')
 
 async function ListRdt (query, user, callback) {
   try {
@@ -90,16 +91,7 @@ async function createRdt(query, payload, author, pre, callback) {
     code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
     code_test += pre.count_rdt.count
 
-    let code_tool_tester
-    let pcr_count = 0
-    let rdt_count = 0
-    if (payload.tool_tester === "PCR") {
-      pcr_count += 1
-      code_tool_tester = "PCR-"
-    } else {
-      rdt_count += 1
-      code_tool_tester = "RDT-"
-    }
+    let { code_tool_tester, pcr_count, rdt_count }  = generateTool
     code_tool_tester += pre.code_dinkes.code
     code_tool_tester += date.substr(2, 2)
     code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
