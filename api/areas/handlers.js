@@ -1,11 +1,11 @@
-const { funcIfSame, queryIfSame, queryParamSame } = require('../../helpers/request')
+const { funcIfSame, queryIfSame, queryParamSame, requestIfSame } = require('../../helpers/request')
 
 /**
  * GET /api/areas/district-city
  */
 const DistrictCity = (server) => {
   return async (request, reply) => {
-    await queryIfSame(
+    await requestIfSame(
       server, "areas", "getDistrictCity",
       request, reply
     )

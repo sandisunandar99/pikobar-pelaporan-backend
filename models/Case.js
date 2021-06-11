@@ -204,35 +204,35 @@ CaseSchema.methods.JSONFormIdCase = function () {
   }
 }
 
-CaseSchema.methods.JSONSeacrhOutput = function () {
-  return {
-    id: this._id,
-    id_case: this.id_case,
-    target: this.target,
-    nik: this.nik,
-    name: this.name,
-    birth_date: this.birth_date,
-    age: this.age,
-    gender: this.gender,
-    address_detail: this.address_street,
-    address_district_code: this.address_district_code,
-    address_district_name: this.address_district_name,
-    address_subdistrict_code: this.address_subdistrict_code,
-    address_subdistrict_name: this.address_subdistrict_name,
-    address_village_code: this.address_village_code,
-    address_village_name: this.address_village_name,
-    phone_number: this.phone_number,
-    category: this.category,
-    mechanism: null,
-    nationality: this.nationality,
-    nationality_name: this.nationality_name,
-    final_result: this.final_result,
-    test_location_type: null,
-    test_location: null,
-    status: this.status,
-    source_data: "internal"
-  }
-}
+// CaseSchema.methods.JSONSeacrhOutput = function () {
+//   return {
+//     id: this._id,
+//     id_case: this.id_case,
+//     target: this.target,
+//     nik: this.nik,
+//     name: this.name,
+//     birth_date: this.birth_date,
+//     age: this.age,
+//     gender: this.gender,
+//     address_detail: this.address_street,
+//     address_district_code: this.address_district_code,
+//     address_district_name: this.address_district_name,
+//     address_subdistrict_code: this.address_subdistrict_code,
+//     address_subdistrict_name: this.address_subdistrict_name,
+//     address_village_code: this.address_village_code,
+//     address_village_name: this.address_village_name,
+//     phone_number: this.phone_number,
+//     category: this.category,
+//     mechanism: null,
+//     nationality: this.nationality,
+//     nationality_name: this.nationality_name,
+//     final_result: this.final_result,
+//     test_location_type: null,
+//     test_location: null,
+//     status: this.status,
+//     source_data: "internal"
+//   }
+// }
 
 /*
  * If case deleted,

@@ -49,8 +49,9 @@ const createOrUpdateCase = async (payload, services, callback) => {
     const splitCode = await splitCodeAddr(data)
     const splitName = await splitNameAddr(splitCode)
     const checkAuthor = await checkOwnerData(splitCode)
-    const alternativeAuthor = await alternativeOwnerData(splitCode)
-    const author = checkAuthor ? checkAuthor : alternativeAuthor
+    // const alternativeAuthor = await alternativeOwnerData(splitCode)
+    // const author = checkAuthor ? checkAuthor : alternativeAuthor
+    const author = checkAuthor
     const transformData= await transformDataCase(splitName)
     const checkUser = {user: {
       nik : transformData.nik,

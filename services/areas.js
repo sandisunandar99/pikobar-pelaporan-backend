@@ -39,7 +39,7 @@ const cacheList = (data, schema, params, callback, jsonFor=true) => {
   }
 }
 
-const getDistrictCity = async (request, callback) => {
+const getDistrictCity = async (request, user, callback) => {
   let params = new Object()
   if (request.kota_kode) params.kemendagri_kabupaten_kode = request.kota_kode
   if (request.provice_code) params.kemendagri_provinsi_kode = request.provice_code
@@ -47,8 +47,9 @@ const getDistrictCity = async (request, callback) => {
   if (request.kemendagri_provinsi_nama) {
     params.kemendagri_provinsi_nama = request.kemendagri_provinsi_nama.toUpperCase()
   }
-  const key = `district-city`
-  const expireTime = 1440 * 60 // 24 hours expire
+  const { keyDashboard } = require('../helpers/filter/redis')
+  // 15 minute expire
+  const { key, expireTime } = keyDashboard(params, user, 120, 'district-city')
   const sort = { kemendagri_kabupaten_nama: 'asc' }
   const defineKey = { key, expireTime, sort }
   cacheList(defineKey, Districtcity, params, callback)
@@ -59,7 +60,7 @@ const getSubDistrict = async (cityCode, request, callback) => {
   params.kemendagri_kabupaten_kode = cityCode
   if (request.kecamatan_kode) params.kemendagri_kecamatan_kode = request.kecamatan_kode
   const key = `sub-district-${cityCode}`
-  const expireTime = 1440 * 60 // 24 hours expire
+  const expireTime = 120 // 15 minute
   const sort = { kemendagri_kecamatan_nama: 'asc' }
   const defineKey = { key, expireTime, sort }
   cacheList(defineKey, SubDistrict, params, callback)
@@ -83,7 +84,7 @@ const getVillage = async (kecamatan_code, request, callback) => {
     params.kemendagri_desa_kode = request.desa_kode
   }
   const key = `village-${kecamatan_code}`
-  const expireTime = 1440 * 60 // 24 hours expire
+  const expireTime = 120 // 15 minute
   const sort = { kemendagri_desa_nama: 'asc' }
   const defineKey = { key, expireTime, sort }
   cacheList(defineKey, Village, params, callback)

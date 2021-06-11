@@ -87,7 +87,6 @@ const filtering = (caseAuthors, query, user) => {
 const topAggregate = async (query, user) => {
   const caseAuthors = await thisUnitCaseAuthors(user)
   const filter = filtering(caseAuthors, query, user)
-
   const conditions = [
     {
       $match: {

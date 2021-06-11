@@ -1,8 +1,18 @@
 const Case = require('../models/Case')
 const History = require('../models/History')
 const ObjectId = require('mongodb').ObjectID
-const { HISTORY_DEFAULT_SORT } = require('../helpers/constant')
+const {
+  CRITERIA, WHERE_GLOBAL,
+  HISTORY_DEFAULT_SORT, ROLE
+} = require('../helpers/constant')
+const { clientConfig } = require('../config/redis')
+const { thisUnitCaseAuthors } = require('../helpers/cases/global')
+const { countByRole } = require('../helpers/rolecheck')
+const { filterCase } = require('../helpers/filter/casefilter')
+const { summaryCondition } = require('../helpers/cases/global')
+const { deletedSave } = require('../helpers/custom')
 
+const services = 'services.cases_other'
 const conditional = async (result, payload, val) => {
   if (result.length > 0) {
     result.map(async res => {
@@ -51,9 +61,168 @@ const multipleUpdate = async (payload, user, callback) => {
   }
 }
 
-module.exports = [
-  {
-    name: 'services.cases_other.multipleUpdate',
-    method: multipleUpdate
+const caseSummaryCondition = (searching, sumFuncNoMatch) => {
+  const conditions = [
+    { $match: {
+      $and: [  searching, { ...WHERE_GLOBAL, last_history: { $exists: true, $ne: null } } ]
+    }},
+    {
+      $group: {
+        _id: 'status',
+        confirmed: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CONF] }]),
+        probable: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.PROB] }]),
+        suspect: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.SUS] }]),
+        closeContact: sumFuncNoMatch([{ $eq: ['$status', CRITERIA.CLOSE] }]),
+      },
+    },{ $project: { _id : 0 } },
+  ]
+
+  return conditions
+}
+
+async function getCaseSummary(query, user, callback) {
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES }
+  } else {
+    condition = { role: ROLE.FASKES }
   }
+  try {
+    clientConfig.get(`summary-cases-list-${user.username}`, async (err, result) => {
+      const caseAuthors = await thisUnitCaseAuthors(user, condition)
+      const scope = countByRole(user, caseAuthors)
+      const filter = await filterCase(user, query)
+      const searching = Object.assign(scope, filter)
+      const { sumFuncNoMatch } = require('../helpers/aggregate/func')
+      if(result){
+        callback(null, JSON.parse(result))
+      }else{
+        const result = await Case.aggregate(caseSummaryCondition(searching, sumFuncNoMatch))
+        const shiftResult = result.shift()
+        clientConfig.setex(`summary-cases-list-${user.username}`, 15 * 60 * 1000, JSON.stringify(shiftResult)) // set redis key
+        callback(null, shiftResult)
+      }
+    })
+  } catch (e) {
+    callback(e, null)
+  }
+}
+
+async function healthCheck(payload, callback) {
+  try {
+    let case_no_last_history = await Case.find({ last_history: {"$exists": false}})
+    .or({ last_history:null })
+    let result = {
+      'case_no_last_history' : case_no_last_history,
+    }
+    return callback(null, result);
+  } catch (error) {
+    return callback(error, null)
+  }
+}
+
+async function getCaseSummaryVerification (query, user, callback) {
+  // Temporary calculation method for faskes as long as the user unit has not been mapped, todo: using lookup
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id, role: ROLE.FASKES}
+  } else {
+    condition = { unit_id: user.unit_id._id }
+  }
+  const caseAuthors = await thisUnitCaseAuthors(user, condition)
+  const searchByRole = countByRole(user,caseAuthors);
+  const filterSearch = await filterCase(user, query)
+  const searching = {...searchByRole, ...filterSearch}
+  var aggStatus = [{ $match: {
+      $and: [  searching, { delete_status: { $ne: 'deleted' } } ]
+    }},
+    { $group: { _id: "$verified_status", total: { $sum: 1 }} }
+  ];
+
+  let result =  { 'PENDING': 0, 'DECLINED': 0, 'VERIFIED': 0 }
+  Case.aggregate(aggStatus).exec().then(async item => {
+      item.forEach(function(item){
+        summaryCondition(item, 'pending', result, 'PENDING')
+        summaryCondition(item, 'declined', result, 'DECLINED')
+        summaryCondition(item, 'verified', result, 'VERIFIED')
+      })
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
+function getCountCaseByDistrict(callback) {
+  const aggStatus = [
+    { $match: { delete_status: { $ne: 'deleted' }} },
+    {$group: {
+      _id: "$address_district_name",
+      total: {$sum: 1}
+    }}
+  ];
+
+  const result =  {}
+
+  Case.aggregate(aggStatus).exec().then(item => {
+      item.forEach(function(item){
+        result[item['_id']] = item['total']
+      });
+      return callback(null, result)
+    })
+    .catch(err => callback(err, null))
+}
+
+async function getIdCase (query,callback) {
+  const params = {}
+  if(query.name_case_related) params.name = new RegExp(query.name_case_related, "i");
+  if(query.status) params.status = query.status;
+  if(query.address_district_code) {
+    params.address_district_code = query.address_district_code;
+  }
+  try {
+    const result = await Case.find(params).select('id_case name')
+    .where('delete_status').ne('deleted').limit(100)
+    callback (null, result.map(result => result.JSONFormIdCase()))
+  } catch (error) {
+    callback(error, null)
+  }
+}
+
+async function softDeleteCase(idCase, author, callback) {
+  try {
+    const payload = deletedSave({}, author)
+    const result = await Case.findByIdAndUpdate(idCase,
+      { $set: payload }, { runValidators: true, context: 'query', new: true });
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
+function getCaseByNik (nik, callback) {
+  Case.findOne({nik: nik})
+    .where('delete_status').ne('deleted')
+    .populate('author')
+    .populate('last_history')
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+
+function getCaseById (id, callback) {
+  Case.findOne({_id: id})
+    .populate('author')
+    .populate('last_history')
+    .exec()
+    .then(cases => callback (null, cases))
+    .catch(err => callback(err, null));
+}
+module.exports = [
+  { name: `${services}.multipleUpdate`, method: multipleUpdate },
+  { name: `${services}.getSummary`, method: getCaseSummary },
+  { name: `${services}.getSummaryVerification`, method: getCaseSummaryVerification },
+  { name: `${services}.healthcheck`, method: healthCheck },
+  { name: `${services}.getSummaryByDistrict`, method: getCountCaseByDistrict },
+  { name: `${services}.getIdCase`, method: getIdCase },
+  { name: `${services}.softDeleteCase`, method: softDeleteCase },
+  { name: `${services}.getByNik`, method: getCaseByNik },
+  { name: `${services}.getById`, method: getCaseById },
 ]
