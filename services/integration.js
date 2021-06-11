@@ -96,7 +96,7 @@ const integrationLabkesUpdateCase = async(services, payload, payloadLabkes, auth
 
 }
 
-//TODO: tambhakan notif disni
+
 // notify('CreateCaseIntegrationLabkes', res, author)
 const resultIntegration = (err, res, str, author) =>{
   if (err) throw new Error
@@ -106,7 +106,6 @@ const resultIntegration = (err, res, str, author) =>{
       console.log(`PIKOBAR SUCCESS UPDATED ID : ${res.case}`);
       break;
     case "LABKES_CREATE":
-      notify('CreateCaseIntegrationLabkes', res, author)
       console.log(`LABKES SUCCESS CREATED ID : ${res._id}`);
       notify('CreateCaseIntegrationLabkes', res, author)
       break;
