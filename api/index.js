@@ -3,23 +3,22 @@ const good = require('good')
 const goodconsole = require('good-console')
 const goodsqueeze = require('good-squeeze')
 
+const formatResponse = (response) => {
+  const reformated = {}
+  reformated.status = response.output.statusCode
+  reformated.message = response.output.payload.message
+  reformated.data = null
+
+  return reformated
+}
 const register = (server, options, next) => {
 
   const preResponse = (request, reply) => {
     let response = request.response
     if (response.isBoom) {
-
-      console.log(response);
-
-      if (response.output.statusCode == 404 || response.output.statusCode == 500) {
-        Sentry.captureException(response)
-      }
+      if (response.output.statusCode == 500) Sentry.captureException(response)
       Sentry.Handlers.errorHandler()
-
-      const reformated = {}
-      reformated.status = response.output.statusCode
-      reformated.message = response.output.payload.message
-      reformated.data = null
+      const reformated = formatResponse(response)
       return reply(reformated).code(response.output.statusCode)
     }
     return reply.continue()

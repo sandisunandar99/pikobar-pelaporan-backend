@@ -1,7 +1,7 @@
 const Rdt = require('../models/Rdt')
 const DistrictCity = require('../models/DistrictCity')
 const Case = require('../models/Case')
-const { getLastRdtNumber } = require('../helpers/rdt/custom')
+const { getLastNumber } = require('../helpers/rdt/custom')
 const { searchFilter } = require('../helpers/filter/search')
 const LocationTest = require('../models/LocationTest')
 
@@ -13,7 +13,7 @@ function getCountRdtCode(code, callback) {
         .sort({ code_test: -1 })
         .exec()
         .then(res => {
-          let count = getLastRdtNumber(1, res, 10);
+          let count = getLastNumber(1, res, 10, 'code_test');
           let result = {
             prov_city_code: code,
             dinkes_code: dinkes.dinkes_kota_kode,

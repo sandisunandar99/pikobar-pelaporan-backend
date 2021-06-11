@@ -1,7 +1,7 @@
-const getLastRdtNumber = (number, res, substr) => {
+const getLastNumber = (number, res, substr, name) => {
   if (res.length > 0) {
-    // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt
-    let str = res[0].code_test
+    // ambil 5 karakter terakhir yg merupakan nomor urut dari id_rdt or cases
+    let str = res[0][name]
     number = (Number(str.substring(substr)) + 1)
   }
 
@@ -35,5 +35,5 @@ const loopFilter = (i) => {
 }
 
 module.exports = {
-  getLastRdtNumber, generateTool, loopFilter
+  getLastNumber, generateTool, loopFilter
 }

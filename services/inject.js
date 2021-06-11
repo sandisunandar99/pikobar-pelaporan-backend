@@ -31,29 +31,29 @@ const lastHistory = async (query, callback) => {
   }
 }
 
-const returnPayload = x => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(x)
-      resultForResnpose.push(x)
-    }, 100)
-  })
-}
+// const returnPayload = x => {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//       resolve(x)
+//       resultForResnpose.push(x)
+//     }, 100)
+//   })
+// }
 
-const getCountRdt = async (code) => {
-  try {
-    const checkDistrictDinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code }).lean()
-    const checkCodeTest = await Rdt.find({ address_district_code: code }).sort({ code_test: -1 }).lean()
-    let count = getLastRdtNumber(1, checkCodeTest, 10);
-    return {
-      prov_city_code: code,
-      dinkes_code: checkDistrictDinkes.dinkes_kota_kode,
-      count: count
-    }
-  } catch (error) {
-    return error.toString()
-  }
-}
+// const getCountRdt = async (code) => {
+//   try {
+//     const checkDistrictDinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code }).lean()
+//     const checkCodeTest = await Rdt.find({ address_district_code: code }).sort({ code_test: -1 }).lean()
+//     let count = getLastRdtNumber(1, checkCodeTest, 10, 'code_test');
+//     return {
+//       prov_city_code: code,
+//       dinkes_code: checkDistrictDinkes.dinkes_kota_kode,
+//       count: count
+//     }
+//   } catch (error) {
+//     return error.toString()
+//   }
+// }
 
 // const injectRdt = async (request, callback) => {
 //   let payload = request.payload

@@ -12,6 +12,7 @@ const moment = require('moment')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
 const { thisUnitCaseAuthors } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
+const { getLastNumber } = require('../helpers/rdt/custom')
 
 const queryList = async (query, user, options, params, caseAuthors, callback) => {
   if(query.search){
@@ -196,11 +197,7 @@ async function getCountByDistrict(code, callback) {
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
     const res = await Case.find(params).sort({id_case: -1}).limit(1);
-    let count = 1;
-    // find array data is not null
-    if (res.length > 0){
-      count = (Number(res[0].id_case.substring(12)) + 1);
-    }
+    const count = getLastNumber(1, res, 12, 'id_case');
     let result = {
       prov_city_code: code,
       dinkes_code: dinkes.dinkes_kota_kode,
@@ -225,11 +222,7 @@ async function getCountPendingByDistrict(code, callback) {
     }
     const dinkes = await DistrictCity.findOne({ kemendagri_kabupaten_kode: code});
     const res = await Case.find(params).sort({id_case: -1}).limit(1);
-    let count = 1;
-    // find array data is not null
-    if (res.length > 0){
-      count = (Number(res[0].id_case.substring(15)) + 1);
-    }
+    const count = getLastNumber(1, res, 15, 'id_case');
     let result = {
       prov_city_code: code,
       dinkes_code: dinkes.dinkes_kota_kode,
