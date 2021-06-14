@@ -24,12 +24,15 @@ const checkOwnerData = async(data) => {
   let filter = {}
   if(data.id_fasyankes_pelaporan){
     filter = {unit_id: new ObjectId(data.id_fasyankes_pelaporan)}
-  }else{
-    // filter = filterOwnerData(data)
-    filter
+    const users = await queryOwnerData(filter);
+    return users[0]
   }
-  const users = await queryOwnerData(filter)
-  return users[0]
+  return null
+  // else{
+  //   filter = filterOwnerData(data)
+  // }
+  // const users = await queryOwnerData(filter);
+  // return users[0]
 }
 
 const alternativeOwnerData = async(data) => {
