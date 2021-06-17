@@ -1,8 +1,25 @@
 'use strict'
 const { GENDER, CRITERIA } = require('../constant')
 
-const statusLabel = (this_) => {
-  let status // logic status label
+const result = (this_, image) => {
+  const replaceString = this_.id_case.replace("covid-", "")
+
+  return {
+    _id: this_._id,
+    id: this_.id_case,
+    label: replaceString,
+    shape: 'image',
+    image: image,
+    size: this_.status === CRITERIA.CONF ? 50 : ''
+  }
+
+}
+
+const filterEdges = (this_) => {
+  const gender = (this_.gender === 'L' ? GENDER.M : GENDER.F)
+  let image
+  let status
+  // logic status label
   if ([CRITERIA.SUS, CRITERIA.PROB, CRITERIA.CLOSE].includes(this_.status)) {
     status = 'normal'
   } else if (this_.status === CRITERIA.CONF && (!this_.final_result || this_.final_result === '0')) {
@@ -12,14 +29,6 @@ const statusLabel = (this_) => {
   } else if (this_.status === CRITERIA.CONF && this_.final_result === "2") {
     status = 'positive_dead'
   }
-
-  return status
-}
-const filterEdges = (this_) => {
-  const replaceString = this_.id_case.replace("covid-", "")
-  const gender = (this_.gender === 'L' ? GENDER.M : GENDER.F)
-  let image
-  const status = statusLabel(this_)
   // logic image label by age
   this_.age = Math.floor(this_.age)
   if (this_.age >= 0 && this_.age <= 1) {
@@ -33,15 +42,9 @@ const filterEdges = (this_) => {
   } else if (this_.age >= 60) {
     image = `avatar/elderly-${gender}-${status}.svg`
   }
-  return {
-    _id: this_._id,
-    id: this_.id_case,
-    label: replaceString,
-    shape: 'image',
-    image: image,
-    size: this_.status === CRITERIA.CONF ? 50 : ''
-  }
+  return result(this_, image)
 }
+
 const filterNodes = (this_) => {
   const nodes = []
 
