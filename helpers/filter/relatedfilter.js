@@ -2,8 +2,7 @@
 const { GENDER, CRITERIA } = require('../constant')
 
 const statusLabel = (this_) => {
-  let status
-  // logic status label
+  let status // logic status label
   if ([CRITERIA.SUS, CRITERIA.PROB, CRITERIA.CLOSE].includes(this_.status)) {
     status = 'normal'
   } else if (this_.status === CRITERIA.CONF && (!this_.final_result || this_.final_result === '0')) {
