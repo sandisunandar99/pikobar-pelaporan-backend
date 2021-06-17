@@ -87,8 +87,7 @@ const filtering = (caseAuthors, query, user) => {
 const topAggregate = async (query, user) => {
   const caseAuthors = await thisUnitCaseAuthors(user)
   const filter = filtering(caseAuthors, query, user)
-  const conditions = [
-    {
+  const conditions = [{
       $match: {
         $and: [filter, { delete_status: { $ne: 'deleted' }, verified_status: 'verified' }]
       }

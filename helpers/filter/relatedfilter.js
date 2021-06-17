@@ -1,9 +1,7 @@
 'use strict'
 const { GENDER, CRITERIA } = require('../constant')
-const filterEdges = (this_) => {
-  const replaceString = this_.id_case.replace("covid-", "")
-  const gender = (this_.gender === 'L' ? GENDER.M : GENDER.F)
-  let image
+
+const statusLabel = (this_) => {
   let status
   // logic status label
   if ([CRITERIA.SUS, CRITERIA.PROB, CRITERIA.CLOSE].includes(this_.status)) {
@@ -15,6 +13,14 @@ const filterEdges = (this_) => {
   } else if (this_.status === CRITERIA.CONF && this_.final_result === "2") {
     status = 'positive_dead'
   }
+
+  return status
+}
+const filterEdges = (this_) => {
+  const replaceString = this_.id_case.replace("covid-", "")
+  const gender = (this_.gender === 'L' ? GENDER.M : GENDER.F)
+  let image
+  const status = statusLabel(this_)
   // logic image label by age
   this_.age = Math.floor(this_.age)
   if (this_.age >= 0 && this_.age <= 1) {
