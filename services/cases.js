@@ -156,9 +156,7 @@ async function updateCase (id, pre, author, payload, callback) {
   if (pre.cases.verified_status !== 'verified') options.timestamps = false
 
   Case.findOneAndUpdate({ _id: id}, { $set: payload }, options)
-  .then(result => {
-    return callback(null, result);
-  }).catch(err => {
+  .then(result => { return callback(null, result) }).catch(err => {
     return callback(null, err);
   })
 }
