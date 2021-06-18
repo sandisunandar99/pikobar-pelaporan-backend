@@ -1,7 +1,21 @@
 'use strict'
 const { GENDER, CRITERIA } = require('../constant')
-const filterEdges = (this_) => {
+
+const result = (this_, image) => {
   const replaceString = this_.id_case.replace("covid-", "")
+
+  return {
+    _id: this_._id,
+    id: this_.id_case,
+    label: replaceString,
+    shape: 'image',
+    image: image,
+    size: this_.status === CRITERIA.CONF ? 50 : ''
+  }
+
+}
+
+const filterEdges = (this_) => {
   const gender = (this_.gender === 'L' ? GENDER.M : GENDER.F)
   let image
   let status
@@ -28,15 +42,9 @@ const filterEdges = (this_) => {
   } else if (this_.age >= 60) {
     image = `avatar/elderly-${gender}-${status}.svg`
   }
-  return {
-    _id: this_._id,
-    id: this_.id_case,
-    label: replaceString,
-    shape: 'image',
-    image: image,
-    size: this_.status === CRITERIA.CONF ? 50 : ''
-  }
+  return result(this_, image)
 }
+
 const filterNodes = (this_) => {
   const nodes = []
 

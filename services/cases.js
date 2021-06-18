@@ -10,7 +10,7 @@ const { doUpdateEmbeddedClosecontactDoc } = require('../helpers/cases/setters')
 const { ROLE } = require('../helpers/constant')
 const moment = require('moment')
 const { resultJson, optionsLabel } = require('../helpers/paginate')
-const { thisUnitCaseAuthors } = require('../helpers/cases/global')
+const { thisUnitCaseAuthors, sortCase, checkUnit } = require('../helpers/cases/global')
 const { searchFilter } = require('../helpers/filter/search')
 const { getLastNumber } = require('../helpers/rdt/custom')
 
@@ -28,31 +28,6 @@ const queryList = async (query, user, options, params, caseAuthors, callback) =>
 
   const paginateResult = await Case.paginate(result_search, options);
   callback(null, resultJson('cases', paginateResult));
-}
-
-const sortCase = (query) => {
-  // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
-  // kembali ke awal
-
-  let sort = { updatedAt: 'desc' };
-  if (query.sort && query.sort.split) {
-    let splits = query.sort.split(':')
-    sort.last_date_status_patient = splits[1];
-    sort[splits[0]] = splits[1];
-  }
-
-  return sort
-}
-
-const checkUnit = (user) => {
-  let condition
-  if (user.unit_id) {
-    condition = { unit_id: user.unit_id._id}
-  } else {
-    condition = {  }
-  }
-
-  return condition
 }
 
 async function listCase (query, user, callback) {
@@ -181,9 +156,7 @@ async function updateCase (id, pre, author, payload, callback) {
   if (pre.cases.verified_status !== 'verified') options.timestamps = false
 
   Case.findOneAndUpdate({ _id: id}, { $set: payload }, options)
-  .then(result => {
-    return callback(null, result);
-  }).catch(err => {
+  .then(result => { return callback(null, result) }).catch(err => {
     return callback(null, err);
   })
 }
