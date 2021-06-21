@@ -43,13 +43,13 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
 
 const caseExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 10, callback
+    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 1, callback
   )
 }
 
 const historyExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 10, callback
+    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 1, callback
   )
 }
 
@@ -82,7 +82,7 @@ const resendFile = async (params, payload, user, callback) => {
       nameQueue = QUEUE.CASE
     } else {
       bucketName = process.env.HISTORY_BUCKET_NAME
-      nameQueue = queue.HISTORY
+      nameQueue = QUEUE.HISTORY
     }
     const getFile = await readFileFromBucket(bucketName, payload.file_name)
     const options = [{

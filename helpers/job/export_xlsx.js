@@ -26,6 +26,7 @@ const sameCondition = async (query, user, method, allow, mapingData, name, path,
 
     return await generateExcellPath(mapingArray, name, fullName, path, jobId)
   } catch (error) {
+    console.info(error)
     return error
   }
 }
