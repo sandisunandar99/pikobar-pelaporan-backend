@@ -3,6 +3,7 @@ const { sendEmailWithAttachment } = require('../email')
 const { updateLogJob } = require('./log')
 const options = {
   activateDelayedJobs: true,
+  removeOnSuccess: true,
   redis: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
@@ -32,9 +33,9 @@ const createJobQueue = async (nameQueue, method, message, time) => {
         console.log(`🧾 Success : Waiting for sending email`)
 
         await updateLogJob(job.id, { job_progress: 85 }) // notify job progress and save
+        sendEmailWithAttachment(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id, job.queue.name)
         done()
         clearInterval(timer)
-        sendEmailWithAttachment(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id, job.queue.name)
       }, time * 60 * 1000)
     })
   } catch (error) {
