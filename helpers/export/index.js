@@ -15,19 +15,24 @@ const generateExcell = (data, title, fullName, reply) => {
 }
 
 const generateExcellPath = async (data, title, fullName, pathFolder, jobId) => {
-  const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}-${jobId}.xlsx`
-  const path = `./tmp/${pathFolder}/${fileName}`
-  const jsonXls = json2xls(data)
-  let bucketName
-  if(pathFolder === 'cases'){
-    bucketName = process.env.CASE_BUCKET_NAME
-  } else {
-    bucketName = process.env.HISTORY_BUCKET_NAME
+  try {
+    const fileName = `${title}-${fullName}-${moment().format("YYYY-MM-DD-HH-mm")}-${jobId}.xlsx`
+    const path = `./tmp/${pathFolder}/${fileName}`
+    const jsonXls = json2xls(data)
+    let bucketName
+    if(pathFolder === 'cases'){
+      bucketName = process.env.CASE_BUCKET_NAME
+    } else {
+      bucketName = process.env.HISTORY_BUCKET_NAME
+    }
+    fs.writeFileSync(path, jsonXls, 'binary')
+    uploadFileToAwsBucket(fileName, fs.createReadStream(path), bucketName)
+    await updateLogJob(jobId, { file_name: fileName, path:bucketName })
+    return { filename: fileName, path, data: jsonXls }
+  } catch (error) {
+    console.info(error)
+    return error
   }
-  fs.writeFileSync(path, jsonXls, 'binary')
-  uploadFileToAwsBucket(fileName, fs.createReadStream(path), bucketName)
-  await updateLogJob(jobId, { file_name: fileName, path:bucketName })
-  return { filename: fileName, path, data: jsonXls }
 }
 
 module.exports = {

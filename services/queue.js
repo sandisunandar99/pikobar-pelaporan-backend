@@ -82,7 +82,7 @@ const resendFile = async (params, payload, user, callback) => {
       nameQueue = QUEUE.CASE
     } else {
       bucketName = process.env.HISTORY_BUCKET_NAME
-      nameQueue = queue.HISTORY
+      nameQueue = QUEUE.HISTORY
     }
     const getFile = await readFileFromBucket(bucketName, payload.file_name)
     const options = [{
