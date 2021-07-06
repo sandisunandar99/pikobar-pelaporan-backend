@@ -106,8 +106,8 @@ const replyOnly = (err, result, reply) => {
 }
 
 const replyJson = (err, result, reply) => {
-  if (err) return reply(constructErrorResponse(err)).code(422)
-  return reply(
+  if (err) reply(constructErrorResponse(err)).code(422)
+  reply(
     successResponse(result)
   ).code(200)
 }
