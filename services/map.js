@@ -23,8 +23,12 @@ const listMap = async (query, user, callback) => {
         const aggregateWhere = await aggregateCondition(user, query)
         const result = await Case.aggregate(aggregateWhere)
         result.map(res => res.final_result = patientStatus(res.final_result))
-        clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
-        callback(null, result)
+        const response = {
+          map: result,
+          date_version: new Date().toISOString()
+        }
+        clientConfig.setex(key, expireTime, JSON.stringify(response)) // set redis key
+        callback(null, response)
         console.info(`api source ${key}`)
       }
     })
