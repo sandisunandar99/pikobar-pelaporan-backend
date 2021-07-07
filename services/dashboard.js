@@ -12,6 +12,7 @@ const servicesGender = 'services.dashboard.summaryGender'
 const servicesAge = 'services.dashboard.summaryAge'
 const { clientConfig } = require('../config/redis')
 const { keyDashboard } = require('../helpers/filter/redis')
+const { logInfo } = require('../helpers/log')
 
 const keyAndExpireTime = (query, user, name) => {
   const { key, expireTime } = keyDashboard(query, user, 10, name)
@@ -24,15 +25,13 @@ const summaryInputTest = async (query, user, callback) => {
   try {
     clientConfig.get(get.key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${get.key}`)
+        logInfo(callback, 'redis', JSON.parse(result), get.key)
       }else{
         const querySummary = Sql.summaryInputTest(user, query)
         const result = await Rdt.aggregate(querySummary)
         result.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(get.key, get.expireTime, JSON.stringify(result)) // set redis get.key
-        callback(null, result)
-        console.info(`api source ${get.key}`)
+        logInfo(callback, 'api', result, get.key)
       }
     })
   } catch (error) {
@@ -41,19 +40,17 @@ const summaryInputTest = async (query, user, callback) => {
 }
 
 const summaryTestResult = async (query, user, callback) => {
-  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-test-result')
+  const get = keyAndExpireTime(query, user, 'summary-test-result')
   try {
-    clientConfig.get(key, async (err, result) => {
+    clientConfig.get(get.key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        logInfo(callback, 'redis', JSON.parse(result), get.key)
       }else{
         const condition = await conditionSummary(query, user)
         const result = await Rdt.aggregate(condition)
         result.map(r => r.date_version = new Date().toISOString())
-        clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
-        callback(null, result)
-        console.info(`api source ${key}`)
+        clientConfig.setex(get.key, get.expireTime, JSON.stringify(result)) // set redis key
+        logInfo(callback, 'api', JSON.parse(result), get.key)
       }
     })
   } catch (error) {
@@ -82,8 +79,7 @@ const summaryTestResultLocation = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        logInfo(callback, 'redis', JSON.parse(result), key)
       }else{
         const condition = await conditionLocation(query, user)
         const resultCount = await Rdt.aggregate(condition)
@@ -95,8 +91,7 @@ const summaryTestResultLocation = async (query, user, callback) => {
         })
         manipulateData.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(manipulateData)) // set redis key
-        callback(null, manipulateData)
-        console.info(`api source ${key}`)
+        logInfo(callback, 'api', manipulateData, key)
       }
     })
   } catch (error) {
@@ -109,15 +104,14 @@ const summaryGender = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        logInfo(callback, 'redis', JSON.parse(result), key)
       }else{
         const condition = await conditionGender(query, user)
         const result = await Rdt.aggregate(condition)
         result.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
-        callback(null, result)
-        console.info(`api source ${key}`)
+        logInfo(callback, 'api', result, key)
+
       }
     })
   } catch (error) {
@@ -130,15 +124,13 @@ const summaryAge = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        logInfo(callback, 'redis', JSON.parse(result), key)
       }else{
         const condition = await conditionAge(query, user)
         const result = await Rdt.aggregate(condition)
         result.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
-        callback(null, result)
-        console.info(`api source ${key}`)
+        logInfo(callback, 'api', result, key)
       }
     })
   } catch (error) {
