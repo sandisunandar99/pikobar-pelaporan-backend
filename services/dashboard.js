@@ -104,14 +104,14 @@ const summaryGender = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        logInfo(callback, 'redis', JSON.parse(result), key)
+        const parse = JSON.parse(result)
+        logInfo(callback, 'redis', parse, key)
       }else{
         const condition = await conditionGender(query, user)
         const result = await Rdt.aggregate(condition)
         result.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
         logInfo(callback, 'api', result, key)
-
       }
     })
   } catch (error) {
