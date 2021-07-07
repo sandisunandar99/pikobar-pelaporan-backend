@@ -20,6 +20,10 @@ const keyAndExpireTime = (query, user, name) => {
   return { key, expireTime }
 }
 
+const parsingJson = (callback, result, key) => {
+  logs.logInfo(callback, 'redis', JSON.parse(result), key)
+}
+
 const summaryInputTest = async (query, user, callback) => {
   const get = keyAndExpireTime(query, user, 'summary-input-test')
   try {
@@ -104,7 +108,7 @@ const summaryGender = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        logs.logInfo(callback, 'redis', JSON.parse(result), key)
+        parsingJson = (callback, JSON.parse(result), key)
       }else{
         const condition = await conditionGender(query, user)
         const result = await Rdt.aggregate(condition)
