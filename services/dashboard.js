@@ -20,10 +20,6 @@ const keyAndExpireTime = (query, user, name) => {
   return { key, expireTime }
 }
 
-const parsingJson = (callback, result, key) => {
-  logs.logInfo(callback, 'redis', JSON.parse(result), key)
-}
-
 const summaryInputTest = async (query, user, callback) => {
   const get = keyAndExpireTime(query, user, 'summary-input-test')
   try {
@@ -108,9 +104,11 @@ const summaryGender = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        parsingJson(callback, JSON.parse(result), key)
+        logs.logInfo(callback, 'redis', JSON.parse(result), key)
       }else{
-        const condition = await conditionGender(query, user)
+        const queryParam = query
+        const userParam = user
+        const condition = await conditionGender(queryParam, userParam)
         const result = await Rdt.aggregate(condition)
         result.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
