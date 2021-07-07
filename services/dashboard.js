@@ -105,7 +105,7 @@ const summaryTestResultLocation = async (query, user, callback) => {
 }
 
 const summaryGender = async (query, user, callback) => {
-  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-test-result-gender')
+  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-test-result-gender')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
