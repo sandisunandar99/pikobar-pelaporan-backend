@@ -13,8 +13,14 @@ const servicesAge = 'services.dashboard.summaryAge'
 const { clientConfig } = require('../config/redis')
 const { keyDashboard } = require('../helpers/filter/redis')
 
+const keyAndExpireTime = (query, user, name) => {
+  const { key, expireTime } = keyDashboard(query, user, 10, name)
+
+  return { key, expireTime }
+}
+
 const summaryInputTest = async (query, user, callback) => {
-  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-input-test')
+  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-input-test')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
@@ -35,7 +41,7 @@ const summaryInputTest = async (query, user, callback) => {
 }
 
 const summaryTestResult = async (query, user, callback) => {
-  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-test-result')
+  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-test-result')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
