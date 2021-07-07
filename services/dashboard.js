@@ -78,7 +78,7 @@ const loopFilter = (i) => {
 }
 
 const summaryTestResultLocation = async (query, user, callback) => {
-  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-test-result-location')
+  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-test-result-location')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
@@ -105,7 +105,7 @@ const summaryTestResultLocation = async (query, user, callback) => {
 }
 
 const summaryGender = async (query, user, callback) => {
-  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-test-result')
+  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-test-result-gender')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
@@ -126,7 +126,7 @@ const summaryGender = async (query, user, callback) => {
 }
 
 const summaryAge = async (query, user, callback) => {
-  const { key, expireTime } = keyDashboard(query, user, 10, 'summary-test-result-age')
+  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-test-result-age')
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
