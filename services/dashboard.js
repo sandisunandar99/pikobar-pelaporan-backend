@@ -20,19 +20,19 @@ const keyAndExpireTime = (query, user, name) => {
 }
 
 const summaryInputTest = async (query, user, callback) => {
-  const { key, expireTime } = keyAndExpireTime(query, user, 'summary-input-test')
+  const get = keyAndExpireTime(query, user, 'summary-input-test')
   try {
-    clientConfig.get(key, async (err, result) => {
+    clientConfig.get(get.key, async (err, result) => {
       if(result){
         callback(null, JSON.parse(result))
-        console.info(`redis source ${key}`)
+        console.info(`redis source ${get.key}`)
       }else{
         const querySummary = Sql.summaryInputTest(user, query)
         const result = await Rdt.aggregate(querySummary)
         result.map(r => r.date_version = new Date().toISOString())
-        clientConfig.setex(key, expireTime, JSON.stringify(result)) // set redis key
+        clientConfig.setex(get.key, get.expireTime, JSON.stringify(result)) // set redis get.key
         callback(null, result)
-        console.info(`api source ${key}`)
+        console.info(`api source ${get.key}`)
       }
     })
   } catch (error) {
