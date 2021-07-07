@@ -108,7 +108,7 @@ const summaryGender = async (query, user, callback) => {
   try {
     clientConfig.get(key, async (err, result) => {
       if(result){
-        parsingJson = (callback, JSON.parse(result), key)
+        parsingJson(callback, JSON.parse(result), key)
       }else{
         const condition = await conditionGender(query, user)
         const result = await Rdt.aggregate(condition)
