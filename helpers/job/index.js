@@ -28,7 +28,6 @@ const createJobQueue = async (nameQueue, method, message, time) => {
         console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
       }, 1500)
       const timer = setInterval( async () => {
-        console.log(job);
         await updateLogJob(job.id, { job_progress: 55, message: job.status }) // notify job progress and save
         const resultJob = await method(job.data.query, job.data.user, job.id)
         console.log(`🧾 Success : Waiting for sending email`)
