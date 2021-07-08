@@ -15,7 +15,7 @@ const { keyDashboard } = require('../helpers/filter/redis')
 const logs = require('../helpers/log')
 
 const keyAndExpireTime = (query, user, name) => {
-  const { key, expireTime } = keyDashboard(query, user, 2, name)
+  const { key, expireTime } = keyDashboard(query, user, 10, name)
 
   return { key, expireTime }
 }
