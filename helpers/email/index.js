@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 const { SUBJECT_NAME, TEXT_CASE, TEXT_HISTORY, QUEUE } = require('../constant')
-const { updateLogJob } = require('../job/log')
+const { createLogStatus } = require('../job/log')
 const fs = require('fs')
 
 //Initial the SMTP server
@@ -39,28 +39,19 @@ const optionsWithAttachment = (subject, attachments, email, jobName) => {
   }
 }
 
-const condition = async (err, path, jobId) => {
-  const param = {
-    job_status: null, job_progress: 100,
-    type: 'email', message: null
-  }
-  if(err) {
-    console.info(`sending email error : ${err}`)
-    param.job_status = 'Error'
-    param.message = err.toString()
-    await updateLogJob(jobId, param)
-  } else {
-    if(path) fs.unlinkSync(path)
-    console.info(`sending email success`)
-    param.job_status = 'Sent'
-    param.message = 'Email Sent'
-    await updateLogJob(jobId, param)
-  }
-}
-
 const sendEmailWithAttachment = (subject, attachments, email, path, jobId, jobName) => {
   smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email, jobName), async (err, res) => {
-    await condition(err, path, jobId)
+    if(err) {
+      console.info(`sending email error : ${err}`)
+      const set = { 'message.email':err.toString(), 'job_status': 'Error', 'job_progress': 50 }
+      await createLogStatus(jobId, set)
+      sendEmailWithAttachment(subject, attachments, email, path, jobId, jobName)
+    } else {
+      if(path) fs.unlinkSync(path)
+      console.info(`sending email success`)
+      const set = { 'message.email': 'Email Sent', 'job_status': 'Sent', 'job_progress': 100 }
+      await createLogStatus(jobId, set)
+    }
   })
 }
 
