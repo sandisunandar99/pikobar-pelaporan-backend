@@ -5,7 +5,7 @@ const { ROLE } = require('../helpers/constant')
 const { clientConfig } = require('../config/redis')
 
 const listMap = async (query, user, callback) => {
-  const expireTime = 15 * 60 * 1000 // 15 minute expire
+  const expireTime = 10 * 60 // 10 minute expire
   let key
   if([ROLE.ADMIN, ROLE.PROVINCE].includes(user.role)){
     key = `list-map-${user.username}`
