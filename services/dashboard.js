@@ -50,7 +50,7 @@ const summaryTestResult = async (query, user, callback) => {
         const result = await Rdt.aggregate(condition)
         result.map(r => r.date_version = new Date().toISOString())
         clientConfig.setex(get.key, get.expireTime, JSON.stringify(result)) // set redis key
-        logs.logInfo(callback, 'api', JSON.parse(result), get.key)
+        logs.logInfo(callback, 'api', result, get.key)
       }
     })
   } catch (error) {
