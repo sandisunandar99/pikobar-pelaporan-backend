@@ -106,10 +106,13 @@ const replyOnly = (err, result, reply) => {
 }
 
 const replyJson = (err, result, reply) => {
-  if (err) reply(constructErrorResponse(err)).code(422)
-  reply(
-    successResponse(result)
-  ).code(200)
+  if (err) {
+    return reply(constructErrorResponse(err)).code(422)
+  } else {
+    return reply(
+      successResponse(result)
+    ).code(200)
+  }
 }
 
 module.exports = {
