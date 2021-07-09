@@ -39,19 +39,22 @@ const optionsWithAttachment = (subject, attachments, email, jobName) => {
   }
 }
 
+const condition = async (err, path, jobId, res) => {
+  if(err) {
+    console.info(`sending email error : ${err}`)
+    const set = { 'message.email':err.toString(), 'job_status': 'Error', 'job_progress': 50 }
+    await createLogStatus(jobId, set)
+  } else {
+    if(path) fs.unlinkSync(path)
+    console.info(`sending email success`)
+    const set = { 'message.email': `Email Sent ${res.response}`, 'job_status': 'Sent', 'job_progress': 100 }
+    await createLogStatus(jobId, set)
+  }
+}
+
 const sendEmailWithAttachment = (subject, attachments, email, path, jobId, jobName) => {
   smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email, jobName), async (err, res) => {
-    if(err) {
-      console.info(`sending email error : ${err}`)
-      const set = { 'message.email':err.toString(), 'job_status': 'Error', 'job_progress': 50 }
-      await createLogStatus(jobId, set)
-      sendEmailWithAttachment(subject, attachments, email, path, jobId, jobName)
-    } else {
-      if(path) fs.unlinkSync(path)
-      console.info(`sending email success`)
-      const set = { 'message.email': 'Email Sent', 'job_status': 'Sent', 'job_progress': 100 }
-      await createLogStatus(jobId, set)
-    }
+    await condition(err, path, jobId, res)
   })
 }
 
