@@ -42,7 +42,7 @@ const optionsWithAttachment = (subject, attachments, email, jobName) => {
 const condition = async (err, path, jobId, res) => {
   if(err) {
     console.info(`sending email error : ${err}`)
-    const set = { 'message.email':err.toString(), 'job_status': 'Error', 'job_progress': 50 }
+    const set = { 'message.email':err.toString(), 'job_status': 'Error', 'job_progress': 0 }
     await createLogStatus(jobId, set)
   } else {
     if(path) fs.unlinkSync(path)

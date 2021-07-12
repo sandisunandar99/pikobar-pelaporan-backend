@@ -26,7 +26,7 @@ const createJobQueue = async (nameQueue, method, message, time) => {
         console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
       }, 1500)
       const timer = setInterval( async () => {
-        const set = { 'message.job': job.status, 'job_progress': 50 }
+        const set = { 'message.job': job.status, 'job_progress': 0 }
         await createLogStatus(job.id, set) // notify job progress and save
         const resultJob = await method(job.data.query, job.data.user, job.id)
         console.log(`🧾 Success : Waiting for sending email`)
@@ -37,7 +37,7 @@ const createJobQueue = async (nameQueue, method, message, time) => {
       }, time * 60 * 1000)
     })
   } catch (error) {
-    const set = { 'message.job': error.toString(), 'job_progress': 50 }
+    const set = { 'message.job': error.toString(), 'job_progress': 0 }
     await createLogStatus(job.id, set) // save job error
   }
 }
