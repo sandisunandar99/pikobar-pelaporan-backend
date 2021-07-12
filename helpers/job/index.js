@@ -1,9 +1,7 @@
 const Queue = require('bee-queue')
 const { sendEmailWithAttachment } = require('../email')
-const { updateLogJob } = require('./log')
+const { createLogStatus } = require('./log')
 const options = {
-  activateDelayedJobs: true,
-  removeOnSuccess: true,
   redis: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
@@ -28,22 +26,19 @@ const createJobQueue = async (nameQueue, method, message, time) => {
         console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
       }, 1500)
       const timer = setInterval( async () => {
-        await updateLogJob(job.id, { job_progress: 55, message: job.status }) // notify job progress and save
+        const set = { 'message.job': job.status, 'job_progress': 0 }
+        await createLogStatus(job.id, set) // notify job progress and save
         const resultJob = await method(job.data.query, job.data.user, job.id)
         console.log(`🧾 Success : Waiting for sending email`)
 
-        await updateLogJob(job.id, { job_progress: 85, message: job.status }) // notify job progress and save
         sendEmailWithAttachment(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id, job.queue.name)
         done()
         clearInterval(timer)
       }, time * 60 * 1000)
     })
   } catch (error) {
-    const param = {
-      job_status: 'Error', job_progress: 85,
-      type: 'job', message: error.toString()
-    }
-    await updateLogJob(job.id, param) // save job error
+    const set = { 'message.job': error.toString(), 'job_progress': 0 }
+    await createLogStatus(job.id, set) // save job error
   }
 }
 
