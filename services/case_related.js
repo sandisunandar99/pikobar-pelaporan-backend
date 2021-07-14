@@ -161,6 +161,7 @@ const listCaseRelated = async (query, user, callback) => {
         console.info(`redis source ${key}`)
       }else{
         const row = await listQuery(query, user)
+        row.date_version = new Date().toISOString()
         clientConfig.setex(key, expireTime, JSON.stringify(row)) // set redis key
         callback(null, row)
         console.info(`api source ${key}`)
