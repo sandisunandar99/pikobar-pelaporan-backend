@@ -152,7 +152,7 @@ const listQuery = async (query, user) => {
 }
 const listCaseRelated = async (query, user, callback) => {
   const { keyDashboard } = require('../helpers/filter/redis')
-  // 10 minute expire
+  // 10 minute expiredn
   const { key, expireTime } = keyDashboard(query, user, 10, 'related-map')
   try {
     clientConfig.get(key, async (err, result) => {
