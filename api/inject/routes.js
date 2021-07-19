@@ -7,6 +7,6 @@ module.exports = (server) => {
 
   return [
     configRouteComplete('GET', '/inject/last-history', null, [ CheckRoleView ], 'Inject',handlers.injectLastHistory(server)),
-    configRouteComplete('POST', '/inject/rdt', null, [ CheckRoleCreate ],'Inject' ,handlers.injectRdtTest(server))
+    // configRouteComplete('POST', '/inject/rdt', null, [ CheckRoleCreate ],'Inject' ,handlers.injectRdtTest(server))
   ]
 }

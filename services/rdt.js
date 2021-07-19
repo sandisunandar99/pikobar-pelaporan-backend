@@ -6,6 +6,7 @@ const { listByRole, thisUnitCaseAuthors } = require('../helpers/rolecheck')
 const https = require('https')
 const { optionsLabel, resultJson } = require('../helpers/paginate')
 const { filterRdt } = require('../helpers/filter/casefilter')
+const { generateTool, loopFilter } = require('../helpers/rdt/custom')
 
 async function ListRdt (query, user, callback) {
   try {
@@ -34,23 +35,6 @@ async function ListRdt (query, user, callback) {
 
 const urlTestMasif = (search, address_district_code) => {
   return `${process.env.URL_PENDAFTARAN_COVID}&data_source=tesmasif&mode=bykeyword&keyword=${search.toLowerCase()}&address_district_code=${address_district_code}`
-}
-
-const loopFilter = (i) => {
-const { CRITERIA } = require('../helpers/constant')
-  if (i.target === CRITERIA.CLOSE){
-    i.target = CRITERIA.CLOSE_ID
-  }
-  if (i.target === CRITERIA.SUS){
-    i.target = CRITERIA.SUS_ID
-  }
-  if (i.target === CRITERIA.PROB){
-    i.target = CRITERIA.PROB_ID
-  }
-  if (i.target === CRITERIA.CONF){
-    i.target = CRITERIA.CONF_ID
-  }
-  return i
 }
 
 function getRdtById (id, callback) {
@@ -90,16 +74,7 @@ async function createRdt(query, payload, author, pre, callback) {
     code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
     code_test += pre.count_rdt.count
 
-    let code_tool_tester
-    let pcr_count = 0
-    let rdt_count = 0
-    if (payload.tool_tester === "PCR") {
-      pcr_count += 1
-      code_tool_tester = "PCR-"
-    } else {
-      rdt_count += 1
-      code_tool_tester = "RDT-"
-    }
+    let { code_tool_tester, pcr_count, rdt_count }  = generateTool(payload)
     code_tool_tester += pre.code_dinkes.code
     code_tool_tester += date.substr(2, 2)
     code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
@@ -180,16 +155,7 @@ async function createRdt(query, payload, author, pre, callback) {
                 code_test += "0".repeat(5 - pre.count_rdt.count.toString().length)
                 code_test += pre.count_rdt.count
 
-            let code_tool_tester
-            let pcr_count = 0
-            let rdt_count = 0
-            if (payload.tool_tester === "PCR") {
-              pcr_count += 1
-              code_tool_tester = "PCR-"
-            }else{
-              rdt_count += 1
-              code_tool_tester = "RDT-"
-            }
+            let { code_tool_tester, pcr_count, rdt_count }  = generateTool(payload)
             code_tool_tester += pre.code_dinkes.code
             code_tool_tester += date.substr(2, 2)
             code_tool_tester += "0".repeat(5 - pre.count_rdt.count.toString().length)
@@ -289,7 +255,7 @@ function softDeleteRdt(rdt, deletedBy, callback) {
     deletedAt: date.toISOString()
   }
   let param = Object.assign({deletedBy}, dates)
-  rdt = Object.assign(rdt, param)
+  rdt = new Rdt(Object.assign(rdt, param))
 
   rdt.save((err, item) => {
     if (err) return callback(err, null)

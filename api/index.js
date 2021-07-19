@@ -1,19 +1,24 @@
 const Sentry  = require('@sentry/node')
+const good = require('good')
+const goodconsole = require('good-console')
+const goodsqueeze = require('good-squeeze')
 
+const formatResponse = (response) => {
+  const reformated = {}
+  reformated.status = response.output.statusCode
+  reformated.message = response.output.payload.message
+  reformated.data = null
+
+  return reformated
+}
 const register = (server, options, next) => {
 
   const preResponse = (request, reply) => {
     let response = request.response
     if (response.isBoom) {
-
-      if (response.output.statusCode === 500) {
-        Sentry.captureException(response)
-      }
-
-      const reformated = {}
-      reformated.status = response.output.statusCode
-      reformated.message = response.output.payload.message
-      reformated.data = null
+      if (response.output.statusCode == 500) Sentry.captureException(response)
+      Sentry.Handlers.errorHandler()
+      const reformated = formatResponse(response)
       return reply(reformated).code(response.output.statusCode)
     }
     return reply.continue()
@@ -22,7 +27,10 @@ const register = (server, options, next) => {
   const onRequest = (request, reply) =>{
     // check status error jika sudah stack tidak ketemu masalahnya bisa dilihat disini !!
     // console.log('INFO:', request.info);
-    // console.log('HEADERS:', request.headers);
+    // console.log('HEADERS:', request.headers)
+
+    Sentry.Handlers.requestHandler()
+    Sentry.Handlers.tracingHandler()
     return reply.continue()
   }
 

@@ -7,12 +7,12 @@ const injectLastHistory = (server) => {
   }
 }
 
-const injectRdtTest = (server) => {
-  return async (request, reply) => {
-    await funcCreate(server, "inject", "injectRdt", request, reply)
-  }
-}
+// const injectRdtTest = (server) => {
+//   return async (request, reply) => {
+//     await funcCreate(server, "inject", "injectRdt", request, reply)
+//   }
+// }
 
 module.exports = {
-  injectLastHistory,injectRdtTest
+  injectLastHistory 
 }

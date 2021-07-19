@@ -2,6 +2,7 @@ module.exports = (server) => {
   const handlers = require('./handlers')(server)
   const CheckRoleView = require('../users/route_prerequesites').CheckRoleView(server)
   const inputValidations = require('./validations/input')
+  const { routeWithPreOld  } = require('../../helpers/routes')
 
   return [{
     method: 'GET',
@@ -15,16 +16,6 @@ module.exports = (server) => {
     },
     handler: handlers.getUnit
   },
-  {
-    method: 'GET',
-    path: '/unit/{id}',
-    config: {
-      auth: 'jwt',
-      description: 'show unit by id',
-      tags: ['api', 'unit'],
-      pre: [CheckRoleView],
-    },
-    handler: handlers.listUnitById
-  }
+  routeWithPreOld(server, 'GET', '/unit/{id}', 'unit', CheckRoleView, 'listUnitById')
   ]
 }
