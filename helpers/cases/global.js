@@ -47,6 +47,31 @@ const thisUnitCaseAuthors = async (user, condition) => {
   return caseAuthors
 }
 
+const sortCase = (query) => {
+  // let sort = { last_date_status_patient: 'desc', updatedAt: 'desc' };
+  // kembali ke awal
+
+  let sort = { updatedAt: 'desc' };
+  if (query.sort && query.sort.split) {
+    let splits = query.sort.split(':')
+    sort.last_date_status_patient = splits[1];
+    sort[splits[0]] = splits[1];
+  }
+
+  return sort
+}
+
+const checkUnit = (user) => {
+  let condition
+  if (user.unit_id) {
+    condition = { unit_id: user.unit_id._id}
+  } else {
+    condition = {  }
+  }
+
+  return condition
+}
+
 module.exports = {
-  getCountBasedOnDistrict, summaryCondition, thisUnitCaseAuthors
+  getCountBasedOnDistrict, summaryCondition, thisUnitCaseAuthors, sortCase, checkUnit
 }

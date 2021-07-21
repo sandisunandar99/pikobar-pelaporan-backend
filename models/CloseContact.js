@@ -152,9 +152,7 @@ CloseContactSchema.methods.toJSONList = function () {
     return {
         _id: this._id,
         case: this.case ? this.case.JSONFormIdCase() : null,
-        nik : this.nik,
-        name : this.name,
-        phone_number : this.phone_number,
+        nik : this.nik, name : this.name, phone_number : this.phone_number,
         birth_date : this.birth_date,
         age : this.age,
         gender: this.gender,
