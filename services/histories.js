@@ -67,7 +67,6 @@ function createHistoryIfChanged(request, callback) {
 
   // guarded field (cannot be filled)
   const payload = request.payload
-
   Helper.deleteProps(['_id', 'last_changed', 'delete_status', 'createdAt', 'updatedAt'], payload)
 
   Case.findById(payload.case).select("-close_contact_health_worker").exec().then(case_obj => {
