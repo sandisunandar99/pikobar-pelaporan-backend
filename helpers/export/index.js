@@ -35,8 +35,7 @@ const generateExcellPath = async (data, title, fullName, pathFolder, jobId) => {
   } catch (error) {
     console.info(error)
     const set = { 'message.generate':  error.toString(),
-      file_name: fileName, path:bucketName, 'job_progress': 50,
-      job_status: 'Error'
+      file_name: fileName, path:bucketName, 'job_progress': 50, job_status: 'Error'
     }
     await createLogStatus(jobId, set)
     return error
