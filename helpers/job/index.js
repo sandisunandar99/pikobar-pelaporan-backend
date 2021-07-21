@@ -37,7 +37,7 @@ const createJobQueue = async (nameQueue, method, message, time) => {
       }, time * 60 * 1000)
     })
   } catch (error) {
-    const set = { 'message.job': error.toString(), 'job_progress': 0 }
+    const set = { 'message.job': error.toString(), 'job_progress': 0, job_status: 'Error' }
     await createLogStatus(job.id, set) // save job error
   }
 }
