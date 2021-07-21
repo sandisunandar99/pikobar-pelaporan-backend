@@ -41,7 +41,7 @@ const getCaseCreatedPayload = (author, data) => {
   return MessageNotification(faskes_cases_created, message, FASKES, EVT_CASE_CREATED, ACT_CASES_VERIFICATION_LIST, [KOTAKAB], [])
 }
 
-// TODO DIRAPIHAKAN
+// TODO DIRAPIHAKAN : REPLACING
 const getMessagePayload = (event, data, author) => {
   let message, payload = {}
 

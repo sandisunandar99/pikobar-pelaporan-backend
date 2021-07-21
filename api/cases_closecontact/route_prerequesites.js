@@ -4,7 +4,7 @@ const getById = (server, paramKey, errMsg) => {
   return (request, reply) => {
     const id = request.params[paramKey]
     if (!id) { return reply(true) }
-    server.methods.services.cases.getById(id, (err, result) =>
+    server.methods.services.cases_other.getById(id, (err, result) =>
       handlerErrorResult(err, result, errMsg, reply)
     )
   }
