@@ -27,9 +27,8 @@ const generateExcellPath = async (data, title, fullName, pathFolder, jobId) => {
     }
     fs.writeFileSync(path, jsonXls, 'binary')
     uploadFileToAwsBucket(fileName, fs.createReadStream(path), bucketName)
-    const set = { 'message.generate': 'Upload succes',
-      file_name: fileName, path:bucketName, 'job_progress': 50
-    }
+    fs.unlinkSync(path)
+    const set = { 'message.generate': 'Upload succes', file_name: fileName, path:bucketName, 'job_progress': 50 }
     await createLogStatus(jobId, set)
     return { filename: fileName, path, data: jsonXls }
   } catch (error) {

@@ -58,7 +58,7 @@ const optionsWithAttachment = (subject, attachments, email) => {
 
 ```js
 // progress sending email
-const sendEmailWithAttachment = (subject, attachments, email, path, jobId) => {
+const sendEmail = (subject, attachments, email, path, jobId) => {
   smtpTrans.sendMail(optionsWithAttachment(subject, attachments, email), async (err, res) => {
     const param = {
       job_status: null, job_progress: 100,
