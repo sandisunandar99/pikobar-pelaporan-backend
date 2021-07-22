@@ -39,9 +39,7 @@ const getSingedUrl = async (bucketName, fileName) => {
     });
     return url
   } catch (err) {
-    if (err) {
-      console.log(err)
-    }
+    console.log(err)
   }
 }
 
