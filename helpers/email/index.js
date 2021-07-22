@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
 const { SUBJECT_NAME, TEXT_CASE, TEXT_HISTORY, QUEUE } = require('../constant')
 const { createLogStatus } = require('../job/log')
-
+const Sentry  = require('@sentry/node')
 //Initial the SMTP server
 const smtpTrans = nodemailer.createTransport({
 	host: process.env.EMAIL_HOST,
@@ -17,7 +17,7 @@ const smtpTrans = nodemailer.createTransport({
 // verify connection configuration
 smtpTrans.verify(function(error, success) {
   if (error) {
-    console.log(error);
+    Sentry.captureException(error)
   } else {
     console.log(`Server Email is ready to take our messages with status ${success}`);
   }
@@ -55,7 +55,6 @@ const sendEmail = (subject, message, email, jobId, jobName) => {
     await condition(err, jobId, res)
   })
 }
-
 
 module.exports = {
   sendEmail
