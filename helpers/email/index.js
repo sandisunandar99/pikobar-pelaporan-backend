@@ -25,16 +25,16 @@ smtpTrans.verify(function(error, success) {
 
 //Specify what the email will look like
 const optionsEmail = (subject, message, email, jobName) => {
-  let text
+  let html
   if (jobName === QUEUE.CASE) {
-    text = `${TEXT_CASE} ${message}`
+    html = `${TEXT_CASE} </br><button><a href="${message}"> Klik Disini </a></button>`
   } else {
-    text = `${TEXT_HISTORY} ${message}`
+    html = `${TEXT_HISTORY} </br><button><a href="${message}"> Klik Disini </a></button>`
   }
 	return {
     from: process.env.EMAIL_FROM,
 	  to: email,
-	  subject, text
+	  subject, html
   }
 }
 
