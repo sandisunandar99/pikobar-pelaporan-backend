@@ -3,12 +3,7 @@ const { sendEmail } = require('../email')
 const { createLogStatus } = require('./log')
 const { getSingedUrl } = require('../../config/aws')
 const { QUEUE } = require('../constant')
-const options = {
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-  },
-}
+const { beeQueue } = require('../../config/config')
 
 const bucketOptions = async (nameQueue, fileName) => {
   let bucketName
@@ -22,7 +17,7 @@ const bucketOptions = async (nameQueue, fileName) => {
 
 const createJobQueue = async (nameQueue, method, message, time) => {
   try {
-    const jobQueue = new Queue(nameQueue, options)
+    const jobQueue = new Queue(nameQueue, beeQueue)
     jobQueue.process(async (job, done) => {
       setTimeout(() => {
         console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
