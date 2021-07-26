@@ -25,16 +25,29 @@ smtpTrans.verify(function(error, success) {
 
 //Specify what the email will look like
 const optionsEmail = (subject, message, email, jobName) => {
-  let text
+  let html
   if (jobName === QUEUE.CASE) {
-    text = `${TEXT_CASE} ${message}`
+    html = `${TEXT_CASE} <br><button style="background-color: #4CAF50; /* Green */
+    border: none; color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;"><a style="text-decoration: none; color:black;" href="${message}"> Klik Disini </a></button>`
   } else {
-    text = `${TEXT_HISTORY} ${message}`
+    html = `${TEXT_HISTORY} <br><button style="background-color: #4CAF50; /* Green */
+    border: none;color: white;
+    padding: 5px 15px;text-align: center;
+    text-decoration: none; display: inline-block;
+    font-size: 16px; margin: 4px 2px;
+    cursor: pointer;"><a style="text-decoration: none; color:black;"href="${message}"> Klik Disini </a></button>`
   }
 	return {
     from: process.env.EMAIL_FROM,
 	  to: email,
-	  subject, text
+	  subject, html
   }
 }
 
