@@ -4,6 +4,13 @@ const { createLogStatus } = require('./log')
 const { getSingedUrl } = require('../../config/aws')
 const { QUEUE } = require('../constant')
 const options = {
+  isWorker: true,
+  removeOnSuccess: true,
+  activateDelayedJobs: true,
+  removeOnFailure: false,
+  stallInterval: 5000,
+  nearTermWindow: 1200000,
+  delayedDebounce: 6000,
   redis: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
