@@ -27,9 +27,22 @@ smtpTrans.verify(function(error, success) {
 const optionsEmail = (subject, message, email, jobName) => {
   let html
   if (jobName === QUEUE.CASE) {
-    html = `${TEXT_CASE} </br><button><a href="${message}"> Klik Disini </a></button>`
+    html = `${TEXT_CASE} <br><button style="background-color: #4CAF50; /* Green */
+    border: none; color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;"><a style="text-decoration: none; color:black;" href="${message}"> Klik Disini </a></button>`
   } else {
-    html = `${TEXT_HISTORY} </br><button><a href="${message}"> Klik Disini </a></button>`
+    html = `${TEXT_HISTORY} <br><button style="background-color: #4CAF50; /* Green */
+    border: none;color: white;
+    padding: 5px 15px;text-align: center;
+    text-decoration: none; display: inline-block;
+    font-size: 16px; margin: 4px 2px;
+    cursor: pointer;"><a style="text-decoration: none; color:black;"href="${message}"> Klik Disini </a></button>`
   }
 	return {
     from: process.env.EMAIL_FROM,
