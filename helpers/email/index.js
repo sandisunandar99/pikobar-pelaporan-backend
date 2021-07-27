@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer')
-const { SUBJECT_NAME, TEXT_CASE, TEXT_HISTORY, QUEUE } = require('../constant')
+const { SUBJECT_NAME, TEXT_CASE, TEXT_HISTORY, QUEUE, EXPIRED_INFO, REGARDS_INFO } = require('../constant')
 const { createLogStatus } = require('../job/log')
 const Sentry  = require('@sentry/node')
 //Initial the SMTP server
@@ -27,22 +27,21 @@ smtpTrans.verify(function(error, success) {
 const optionsEmail = (subject, message, email, jobName) => {
   let html
   if (jobName === QUEUE.CASE) {
-    html = `${TEXT_CASE} <br><button style="background-color: #4CAF50; /* Green */
-    border: none; color: white;
-    padding: 5px 15px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;"><a style="text-decoration: none; color:black;" href="${message}"> Klik Disini </a></button>`
+    html = `${TEXT_CASE} <br><button style="display: flex; flex-direction: row;
+    align-items: center; text-align:center; padding: 12px 24px;  position: absolute;
+    border: 0px; height: 38px;
+    background-color: #27AE60; border-radius: 8px;">
+    <a style="text-decoration: none; color: white;
+    font-weight: 600;" href="${message}"> Download Data </a></button>
+    ${EXPIRED_INFO}<br> ${REGARDS_INFO}`
   } else {
-    html = `${TEXT_HISTORY} <br><button style="background-color: #4CAF50; /* Green */
-    border: none;color: white;
-    padding: 5px 15px;text-align: center;
-    text-decoration: none; display: inline-block;
-    font-size: 16px; margin: 4px 2px;
-    cursor: pointer;"><a style="text-decoration: none; color:black;"href="${message}"> Klik Disini </a></button>`
+    html = `${TEXT_HISTORY} <br><button style="display: flex; flex-direction: row;
+    align-items: center; text-align:center; padding: 12px 24px;  position: absolute;
+    border: 0px; height: 38px;
+    background-color: #27AE60; border-radius: 8px;">
+    <a style="text-decoration: none; color: white;
+    font-weight: 600;" href="${message}"> Download Data </a></button>
+    ${EXPIRED_INFO}<br> ${REGARDS_INFO}`
   }
 	return {
     from: process.env.EMAIL_FROM,
