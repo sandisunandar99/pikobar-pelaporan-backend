@@ -3,6 +3,9 @@ const Sentry = require("@sentry/node")
 const Tracing = require("@sentry/tracing")
 const SECRET_KEY = process.env.SECRET_KEY
 const ENCODING = process.env.ENCODING
+const Hapi = require('hapi')
+const server = new Hapi.Server()
+
 
 conf.auth = {
   secret: Buffer.from(SECRET_KEY, ENCODING),
@@ -30,9 +33,12 @@ conf.sentry = {
   environment: process.env.NODE_ENV || 'local',
   integrations: [
     new Sentry.Integrations.Http({ tracing: true }),
-    new Tracing.Integrations.Mongo
+    new Tracing.Integrations.Mongo(),
+    new Tracing.Integrations.Express({
+      server
+    })
   ],
-  tracesSampleRate: process.env.SENTRY_TRACE_RATE,
+  tracesSampleRate: parseFloat(process.env.SENTRY_TRACE_RATE)
 }
 
 conf.firebase = {
