@@ -38,7 +38,7 @@ conf.sentry = {
       server
     })
   ],
-  tracesSampleRate: 1.0
+  tracesSampleRate: parseFloat(process.env.SENTRY_TRACE_RATE)
 }
 
 conf.firebase = {
