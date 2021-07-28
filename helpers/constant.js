@@ -206,8 +206,10 @@ module.exports = {
     HISTORY: 'queue-export-histories'
   },
   SUBJECT_NAME:'Aplikasi Pelaporan Kasus Pikobar',
-  TEXT_CASE:'Berikut merupakan Data Pasien Aplikasi Pelaporan Kasus Pikobar. Link berikut hanya dapat diakses selama 2 jam. Silahkan resend email pada halaman History Export ketika link Expired',
-  TEXT_HISTORY:'Berikut merupakan Data Informasi Klinis Aplikasi Pelaporan Kasus Pikobar. Link berikut hanya dapat diakses selama 2 jam. Silahkan resend email pada halaman History Export ketika link Expired',
+  TEXT_CASE:'Berikut merupakan Data Pasien Aplikasi Pelaporan Kasus Pikobar : <br>',
+  TEXT_HISTORY:'Berikut merupakan Data Informasi Klinis Aplikasi Pelaporan Kasus Pikobar : <br>',
+  EXPIRED_INFO:'<p style="color:red;">*Link berikut hanya dapat diakses selama 2 jam. Silahkan resend email pada Halaman Export ketika link expired</p>',
+  REGARDS_INFO:'<p style="color:##a09a9a;">--<br>Regards <br> Jabar Digital Service</p>',
   JOB:{
     CASE: 'job-export-cases',
     HISTORY: 'job-export-histories'
