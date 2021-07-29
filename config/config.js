@@ -71,5 +71,18 @@ conf.pubsub = {
     }
 }
 
+conf.beeQueue = {
+  isWorker: true,
+  removeOnSuccess: true,
+  activateDelayedJobs: true,
+  removeOnFailure: false,
+  stallInterval: 5000,
+  nearTermWindow: 1200000,
+  delayedDebounce: 6000,
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+  }
+}
 
 module.exports = conf;

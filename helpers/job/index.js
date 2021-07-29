@@ -1,26 +1,23 @@
 const Queue = require('bee-queue')
-const { sendEmailWithAttachment } = require('../email')
+const { sendEmail } = require('../email')
 const { createLogStatus } = require('./log')
-const options = {
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-  },
-}
+const { getSingedUrl } = require('../../config/aws')
+const { QUEUE } = require('../constant')
+const { beeQueue } = require('../../config/config')
 
-const emailOptions = (resultJob) => {
-  const fs = require('fs')
-  return [{
-    filename: resultJob.filename,
-    content: fs.createReadStream(resultJob.path),
-    path: resultJob.path,
-    contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  }]
+const bucketOptions = async (nameQueue, fileName) => {
+  let bucketName
+  if(nameQueue === QUEUE.CASE) {
+    bucketName = process.env.CASE_BUCKET_NAME
+  } else {
+    bucketName = process.env.HISTORY_BUCKET_NAME
+  }
+  return await getSingedUrl(bucketName, fileName)
 }
 
 const createJobQueue = async (nameQueue, method, message, time) => {
   try {
-    const jobQueue = new Queue(nameQueue, options)
+    const jobQueue = new Queue(nameQueue, beeQueue)
     jobQueue.process(async (job, done) => {
       setTimeout(() => {
         console.log(`⏱️  Preparing : Queue name ${nameQueue} ${job.id}`)
@@ -30,8 +27,8 @@ const createJobQueue = async (nameQueue, method, message, time) => {
         await createLogStatus(job.id, set) // notify job progress and save
         const resultJob = await method(job.data.query, job.data.user, job.id)
         console.log(`🧾 Success : Waiting for sending email`)
-
-        sendEmailWithAttachment(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id, job.queue.name)
+        const getPublicUrl = await bucketOptions(nameQueue, resultJob.filename)
+        sendEmail(message, getPublicUrl, job.data.query.email, job.id, job.queue.name)
         done()
         clearInterval(timer)
       }, time * 60 * 1000)

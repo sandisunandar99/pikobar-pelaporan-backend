@@ -1,18 +1,8 @@
 const Queue = require('bee-queue')
-const options = {
-  isWorker: false,
-  sendEvents: false,
-  removeOnSuccess: true,
-  activateDelayedJobs: true,
-  removeOnFailure: false,
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-  },
-}
+const { beeQueue } = require('../../config/config')
 
 const createQueue = async (nameQueue, nameJob, batchId) => {
-  const initialQueue = new Queue(nameQueue, options)
+  const initialQueue = new Queue(nameQueue, beeQueue)
 
   const getJob = await initialQueue.createJob(nameJob).backoff('fixed', 1000)
                                    .retries(3).setId(batchId).save()

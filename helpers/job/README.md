@@ -50,7 +50,7 @@ const createJobQueue = async (nameQueue, method, message, time) => {
         await updateLogJob(job.id, { job_progress: 85 }) // notify job progress and save
         done()
         clearInterval(timer)
-        sendEmailWithAttachment(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id)
+        sendEmail(message, emailOptions(resultJob), job.data.query.email, resultJob.path, job.id)
       }, time * 60 * 1000)
     })
   } catch (error) {

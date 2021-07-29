@@ -8,8 +8,8 @@ const User = require('../models/User')
 const LogQueue = require('../models/LogQueue')
 const { filterLogQueue } = require('../helpers/filter/log')
 const { jsonPagination } = require('../utils')
-const { readFileFromBucket } = require('../config/aws')
-const { sendEmailWithAttachment } = require('../helpers/email')
+const { getSingedUrl } = require('../config/aws')
+const { sendEmail } = require('../helpers/email')
 const select = [
   'email','createdAt', 'job_id', 'job_name', 'job_status', 'job_progress', 'file_name'
 ]
@@ -24,7 +24,7 @@ const mapingResult = (result) => {
   return data
 }
 
-const sameCondition = async (query, user, queue, job, method, name, time, callback) => {
+const sameCondition = async (query, user, queue, job, method, time, callback) => {
   try {
     const batchId = require('uuid').v4()
     //save user and status job
@@ -43,13 +43,13 @@ const sameCondition = async (query, user, queue, job, method, name, time, callba
 
 const caseExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, ' ', 10, callback
+    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, 10, callback
   )
 }
 
 const historyExport = async (query, user, callback) => {
   await sameCondition(
-    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, ' Riwayat ', 10, callback
+    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, 10, callback
   )
 }
 
@@ -84,14 +84,9 @@ const resendFile = async (params, payload, user, callback) => {
       bucketName = process.env.HISTORY_BUCKET_NAME
       nameQueue = QUEUE.HISTORY
     }
-    const getFile = await readFileFromBucket(bucketName, payload.file_name)
-    const options = [{
-      filename: payload.file_name,
-      content: getFile.Body,
-      contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    }]
-    sendEmailWithAttachment(
-      message, options, payload.email, '', params.jobid,  nameQueue,
+    const urls = await getSingedUrl(bucketName, payload.file_name)
+    sendEmail(
+      message, urls, payload.email, params.jobid,  nameQueue,
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)

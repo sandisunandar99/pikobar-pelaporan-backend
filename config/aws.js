@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk')
+const Sentry  = require('@sentry/node')
 
 // Initializing S3 Interface
 const awsBucket = new AWS.S3({
@@ -16,6 +17,7 @@ const uploadFileToAwsBucket = (fileName, fileContent, bucketName) => {
   // Uploading files to the bucket
   awsBucket.upload(params, function (err, data) {
     if (err) {
+      Sentry.captureException(err)
       throw err
     }
   });
@@ -25,6 +27,24 @@ const readFileFromBucket = async (bucketName, fileName) => {
   return await awsBucket.getObject({ Bucket: bucketName, Key: fileName }).promise()
 }
 
+const getSingedUrl = async (bucketName, fileName) => {
+  const params = {
+    Bucket: bucketName,
+    Key: fileName,
+    Expires: 7200 // expire in 2 hours
+  };
+  try {
+    const url = await new Promise((resolve, reject) => {
+      awsBucket.getSignedUrl('getObject', params, (err, url) => {
+        err ? reject(err) : resolve(url);
+      });
+    });
+    return url
+  } catch (err) {
+    Sentry.captureException(err)
+  }
+}
+
 module.exports = {
-  uploadFileToAwsBucket, readFileFromBucket
+  uploadFileToAwsBucket, readFileFromBucket, getSingedUrl
 }
