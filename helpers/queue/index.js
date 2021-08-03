@@ -1,4 +1,3 @@
-const { exportCaseQueue, exportHistoriesQueue } = require('../../config/redis')
 const jobOptions = (jobId) => {
   return {
     jobId, removeOnComplete: true,
@@ -6,14 +5,10 @@ const jobOptions = (jobId) => {
     attempts: 3
   };
 }
-const createQueueCases = async (data, jobId) => {
+const createQueue = async (method, data, jobId) => {
   const options = jobOptions(jobId)
-  return await exportCaseQueue.add({ data }, options );
-}
-const createQueueHistories = async (data, jobId) => {
-  const options = jobOptions(jobId)
-  return await exportHistoriesQueue.add({ data }, options );
+  return await method.add({ data }, options );
 }
 module.exports = {
-  createQueueCases, createQueueHistories
+  createQueue,
 }

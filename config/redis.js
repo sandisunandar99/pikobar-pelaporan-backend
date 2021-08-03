@@ -1,6 +1,5 @@
 const redis = require('redis')
 const Bull = require('bull')
-const { QUEUE } = require('../helpers/constant')
 
 const clientConfig = redis.createClient({
   host: process.env.REDIS_HOST,
@@ -15,14 +14,12 @@ clientConfig.on("error", function (err) {
   console.log("Error " + err);
 })
 
-const exportCaseQueue = new Bull(QUEUE.CASE,{
-  redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST }
-})
-
-const exportHistoriesQueue = new Bull(QUEUE.HISTORY, {
-  redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST }
-})
+const connectQueue = (name) => {
+  return new Bull(name,{
+    redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST }
+  })
+}
 
 module.exports = {
-  clientConfig, exportCaseQueue, exportHistoriesQueue
+  clientConfig, connectQueue
 }

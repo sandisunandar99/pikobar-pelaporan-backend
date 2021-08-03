@@ -1,6 +1,7 @@
 const service = 'services.queue'
-const { createQueueCases, createQueueHistories } = require('../helpers/queue')
+const { createQueue } = require('../helpers/queue')
 const { createLogJob, createHistoryEmail } = require('../helpers/job/log')
+const { connectQueue } = require('../config/redis')
 const { QUEUE, JOB } = require('../helpers/constant')
 const User = require('../models/User')
 const LogQueue = require('../models/LogQueue')
@@ -20,9 +21,9 @@ const sameCondition = async (query, user, queue, job, callback) => {
     //save user and status job
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
     if (queue === QUEUE.CASE) {
-      result = await createQueueCases({ query, user }, batchId)
+      result = await createQueue(connectQueue(queue), { query, user }, batchId)
     }else {
-      result = await createQueueHistories({ query, user }, batchId)
+      result = await createQueue(connectQueue(queue), { query, user }, batchId)
     }
     await createLogJob(10, batchId, job, queue, query, user)
     callback (null, result.opts)
