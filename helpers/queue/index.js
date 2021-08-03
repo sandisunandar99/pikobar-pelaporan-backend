@@ -1,30 +1,19 @@
-const Queue = require('bee-queue')
-const { beeQueue } = require('../../config/config')
-
-const createQueue = async (nameQueue, nameJob, batchId) => {
-  const initialQueue = new Queue(nameQueue, beeQueue)
-
-  const getJob = await initialQueue.createJob(nameJob).backoff('fixed', 1000)
-                                   .retries(3).setId(batchId).save()
-
-  getJob.on('retrying', (err) => {
-    console.log(
-      `Job ${getJob.id} failed with error ${err.message} but is being retried!`
-    );
-  });
-
-  return getJob
+const { exportCaseQueue, exportHistoriesQueue } = require('../../config/redis')
+const jobOptions = (jobId) => {
+  return {
+    jobId, removeOnComplete: true,
+    delay: 600000, // 1 = 60000 min in ms
+    attempts: 3
+  };
 }
-
-const cancelQueue = async (nameQueue, jobId) => {
-  const initialQueue = new Queue(nameQueue, options)
-  try {
-    return await initialQueue.removeJob(jobId)
-  } catch (error) {
-    return error
-  }
+const createQueueCases = async (data, jobId) => {
+  const options = jobOptions(jobId)
+  return await exportCaseQueue.add({ data }, options );
 }
-
+const createQueueHistories = async (data, jobId) => {
+  const options = jobOptions(jobId)
+  return await exportHistoriesQueue.add({ data }, options );
+}
 module.exports = {
-  createQueue, cancelQueue
+  createQueueCases, createQueueHistories
 }

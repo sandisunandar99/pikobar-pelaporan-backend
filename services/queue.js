@@ -1,8 +1,6 @@
 const service = 'services.queue'
-const { createQueue, cancelQueue } = require('../helpers/queue')
-const { createJobQueue } = require('../helpers/job')
-const { createLogJob, updateLogJob, createHistoryEmail } = require('../helpers/job/log')
-const { jobCaseExport, jobHistoryExport } = require('../helpers/job/export_xlsx')
+const { createQueueCases, createQueueHistories } = require('../helpers/queue')
+const { createLogJob, createHistoryEmail } = require('../helpers/job/log')
 const { QUEUE, JOB } = require('../helpers/constant')
 const User = require('../models/User')
 const LogQueue = require('../models/LogQueue')
@@ -14,43 +12,31 @@ const select = [
   'email','createdAt', 'job_id', 'job_name', 'job_status', 'job_progress', 'file_name'
 ]
 const message = `Data Kasus Dari Aplikasi Pikobar Pelaporan`
-const mapingResult = (result) => {
-  const data = {}
-  data.jobId = result.id
-  data.progress = result.progress
-  data.timestamp = result.options.timestamp
-  data.status = result.status
 
-  return data
-}
-
-const sameCondition = async (query, user, queue, job, method, time, callback) => {
+const sameCondition = async (query, user, queue, job, callback) => {
   try {
     const batchId = require('uuid').v4()
+    let result
     //save user and status job
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
-    const result = await createQueue(queue, { query, user }, batchId)
+    if (queue === QUEUE.CASE) {
+      result = await createQueueCases({ query, user }, batchId)
+    }else {
+      result = await createQueueHistories({ query, user }, batchId)
+    }
     await createLogJob(10, batchId, job, queue, query, user)
-    const data = mapingResult(result)
-
-    await createJobQueue(queue, method, message, time)
-
-    callback (null, data)
+    callback (null, result.opts)
   } catch (error) {
     callback(error, null)
   }
 }
 
 const caseExport = async (query, user, callback) => {
-  await sameCondition(
-    query, user, QUEUE.CASE, JOB.CASE, jobCaseExport, 10, callback
-  )
+  await sameCondition(query, user, QUEUE.CASE, JOB.CASE, callback)
 }
 
 const historyExport = async (query, user, callback) => {
-  await sameCondition(
-    query, user, QUEUE.HISTORY, JOB.HISTORY, jobHistoryExport, 10, callback
-  )
+  await sameCondition(query, user, QUEUE.HISTORY, JOB.HISTORY, callback)
 }
 
 const listExport = async (query, user, callback) => {
@@ -90,16 +76,6 @@ const resendFile = async (params, payload, user, callback) => {
     )
     await createHistoryEmail(payload, params.jobid)
     callback(null, `data send to ${payload.email}`)
-  } catch (error) {
-    callback(error, null)
-  }
-}
-
-const cancelJob = async (query, payload, callback) => {
-  try {
-    await cancelQueue(payload.name, query.jobid)
-    await updateLogJob(query.jobid, { job_status: 'Canceled' })
-    callback(null, `job id ${query.jobid} canceled`)
   } catch (error) {
     callback(error, null)
   }
