@@ -7,7 +7,7 @@ const jobOptions = (jobId) => {
 }
 const createQueue = async (method, data, jobId) => {
   const options = jobOptions(jobId)
-  return await method.add({ data }, options );
+  return await method.add(data, options );
 }
 module.exports = {
   createQueue,
