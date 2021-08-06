@@ -21,9 +21,9 @@ const sameCondition = async (query, user, queue, job, callback) => {
     //save user and status job
     await User.findByIdAndUpdate(user.id, { $set: { email: query.email } })
     if (queue === QUEUE.CASE) {
-      result = await createQueue(connectQueue(queue), { query, user }, batchId)
+      result = await createQueue(connectQueue(QUEUE.CASE), { query, user }, batchId)
     }else {
-      result = await createQueue(connectQueue(queue), { query, user }, batchId)
+      result = await createQueue(connectQueue(QUEUE.HISTORY), { query, user }, batchId)
     }
     await createLogJob(10, batchId, job, queue, query, user)
     callback (null, result.opts)
