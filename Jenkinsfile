@@ -82,7 +82,7 @@ pipeline {
     environment {
         appName = 'api-pelaporan-production'
         PROJECT_REGISTRY ='pelaporan-pikobar'
-        VERSION = "${BUILD_TAG}"
+        VERSION = "${env.BUILD_ID}"
         URL_REGISTRY = "${URL_REGISTRY_JACLOUD}"
         VAULT_JABAR_CLOUD = "${VAULT_JABAR_CLOUD}"
         CLUSTER_NAME_GKE = "prod-jds-cluster-k8s"  
