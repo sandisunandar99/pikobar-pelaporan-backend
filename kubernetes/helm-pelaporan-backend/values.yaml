@@ -124,8 +124,10 @@ secret:
     email_pass: ""
     email_from: ""
   registry:
+    registry_url: "registry.digitalservice.id"
     username: ""
     password: ""
+    email: "logistik@jds.id"
 
 ## configmap ##
 configmap:
