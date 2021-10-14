@@ -213,7 +213,7 @@ pipeline {
                                 --set secret.email.email_pass=$EMAIL_PASS \
                                 --set secret.email.email_from=$EMAIL_FROM \
                                 --set secret.registry.username=$REGISTRY_USERNAME \
-                                --set secret.registry.password=$REGISTRY_PASSWORD kubernetes/helm-pelaporan-backend --namespace pikobar-logistik
+                                --set secret.registry.password=$REGISTRY_PASSWORD kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan
                             kubectl get pods --namespace pikobar-pelaporan
                         '''
                     }
