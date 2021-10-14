@@ -5,6 +5,10 @@ def secretsProd = [
     [envVar: 'PORT', vaultKey: 'PORT'],
     [envVar: 'ENCODING', vaultKey: 'ENCODING'],
 
+    // tell helm to doesnt delete resource secret and configmap
+    [envVar: 'SECRET_POLICY', vaultKey: 'SECRET_POLICY'],
+    [envVar: 'CONFIGMAP_POLICY', vaultKey: 'CONFIGMAP_POLICY'],
+
     [envVar: 'SECRET_KEY', vaultKey: 'SECRET_KEY'],
 
     [envVar: 'MONGO_DB_URI', vaultKey: 'MONGO_DB_URI'],

@@ -90,7 +90,7 @@ affinity: {}
 
 ## secret ##
 secret:
-  policy:
+  policy: ""
   aws:
     s3:
       access_key: ""
