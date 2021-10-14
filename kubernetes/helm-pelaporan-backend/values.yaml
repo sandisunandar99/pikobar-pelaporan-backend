@@ -129,7 +129,7 @@ secret:
 
 ## configmap ##
 configmap:
-  policy:
+  policy: ""
   app:
     node_env: ""
     host: ""
@@ -142,7 +142,7 @@ configmap:
   sentry_dsn: ""
   app_convert: ""
   mongodb:
-    mongo_db_uri:
+    mongo_db_uri: ""
   redis:
     redis_host: ""
     redis_port: ":6379"
