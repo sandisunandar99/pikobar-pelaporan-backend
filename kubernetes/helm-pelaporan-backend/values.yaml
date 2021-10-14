@@ -7,13 +7,13 @@ replicaCount: 2
 containerPort: 3333
 
 image:
-  repository:
+  repository: registry.digitalservice.id/pelaporan-pikobar/api-pelaporan-production
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "__VERSION__"
 
 imagePullSecrets: []
-nameOverride: ""
+nameOverride: "app-pelaporan-api"
 fullnameOverride: ""
 
 serviceAccount:
