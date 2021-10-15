@@ -207,9 +207,6 @@ pipeline {
                                 --set secret.pubsub.pubsub_token_uri=$PUBSUB_TOKEN_URI \
                                 --set secret.pubsub.pubsub_auth_provider_x509_cert_url=$PUBSUB_AUTH_PROVIDER_X509_CERT_URL \
                                 --set secret.pubsub.pubsub_client_x509_cert_url=$PUBSUB_CLIENT_X509_CERT_URL \
-                                --set secret.email.email_user=$EMAIL_USER \
-                                --set secret.email.email_pass=$EMAIL_PASS \
-                                --set secret.email.email_from=$EMAIL_FROM \
                                 --set secret.registry.username=$REGISTRY_USERNAME \
                                 --set secret.registry.password=$REGISTRY_PASSWORD kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan
                             kubectl get pods --namespace pikobar-pelaporan
