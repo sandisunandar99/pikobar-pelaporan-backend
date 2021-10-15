@@ -99,49 +99,49 @@ pipeline {
 
     stages{
 
-        stage('stage build pelaporan api gke'){
+        // stage('stage build pelaporan api gke'){
 
-            steps {
+        //     steps {
 
-                withVault([configuration: configuration, vaultSecrets: secretsProd]) { 
+        //         withVault([configuration: configuration, vaultSecrets: secretsProd]) { 
                         
-                        sh 'echo $VERSION > version.txt'
-                        sh 'docker build --tag $appName:$VERSION -f Dockerfile.release . --no-cache'
-                    }
-                stash includes: 'version.txt', name: 'version'
-            }
+        //                 sh 'echo $VERSION > version.txt'
+        //                 sh 'docker build --tag $appName:$VERSION -f Dockerfile.release . --no-cache'
+        //             }
+        //         stash includes: 'version.txt', name: 'version'
+        //     }
 
-            post {
-                always {
-                    archiveArtifacts artifacts: 'version.txt', fingerprint: true
-                    cleanWs()
-                }
-            }
-        }
+        //     post {
+        //         always {
+        //             archiveArtifacts artifacts: 'version.txt', fingerprint: true
+        //             cleanWs()
+        //         }
+        //     }
+        // }
 
-        stage('push to registry pelaporan gke'){
+        // stage('push to registry pelaporan gke'){
 
-            steps {
-                script {
-                    withDockerRegistry([credentialsId: 'a9661b24-dad7-4eaf-a9e2-b59f474c81fa', url: "https://${URL_REGISTRY}"]) {
-                    // code block
-                    unstash 'version'
-                    sh 'cat version.txt'
-                    sh 'export REGISTRY_HTTP_RELATIVEURLS=true \
-                        && docker tag $appName:$VERSION $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION \
-                        && docker push $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION \
-                        && docker rmi $appName:$VERSION \
-                        && docker rmi $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION'
-                        }
-                }
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'version.txt', fingerprint: true
-                    cleanWs()
-                }
-            }
-        }
+        //     steps {
+        //         script {
+        //             withDockerRegistry([credentialsId: 'a9661b24-dad7-4eaf-a9e2-b59f474c81fa', url: "https://${URL_REGISTRY}"]) {
+        //             code block
+        //             unstash 'version'
+        //             sh 'cat version.txt'
+        //             sh 'export REGISTRY_HTTP_RELATIVEURLS=true \
+        //                 && docker tag $appName:$VERSION $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION \
+        //                 && docker push $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION \
+        //                 && docker rmi $appName:$VERSION \
+        //                 && docker rmi $URL_REGISTRY/$PROJECT_REGISTRY/$appName:$VERSION'
+        //                 }
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             archiveArtifacts artifacts: 'version.txt', fingerprint: true
+        //             cleanWs()
+        //         }
+        //     }
+        // }
 
          stage ('deploy to kubernetes gke'){
             agent {
@@ -207,7 +207,6 @@ pipeline {
                                 --set secret.pubsub.pubsub_token_uri=$PUBSUB_TOKEN_URI \
                                 --set secret.pubsub.pubsub_auth_provider_x509_cert_url=$PUBSUB_AUTH_PROVIDER_X509_CERT_URL \
                                 --set secret.pubsub.pubsub_client_x509_cert_url=$PUBSUB_CLIENT_X509_CERT_URL \
-                                --set secret.email.email_host=$EMAIL_HOST \
                                 --set secret.email.email_user=$EMAIL_USER \
                                 --set secret.email.email_pass=$EMAIL_PASS \
                                 --set secret.email.email_from=$EMAIL_FROM \
