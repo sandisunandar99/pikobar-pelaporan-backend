@@ -120,9 +120,9 @@ secret:
   email:
     # email_host: ""
     # email_port: ""
-    email_user: ""
-    email_pass: ""
-    email_from: ""
+    # email_user: ""
+    # email_pass: ""
+    # email_from: ""
   registry:
     registry_url: "registry.digitalservice.id"
     username: ""
