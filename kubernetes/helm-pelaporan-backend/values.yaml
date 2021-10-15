@@ -119,7 +119,7 @@ secret:
     pubsub_client_x509_cert_url: ""
   email:
     email_host: ""
-    email_port: ""
+    email_port: 587
     email_user: ""
     email_pass: ""
     email_from: ""
