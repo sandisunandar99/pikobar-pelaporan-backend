@@ -155,7 +155,7 @@ pipeline {
                     // deploy kubernetes cluster production
                     withVault([configuration: configuration, vaultSecrets: secretsProd]) {   
             
-                        //sh 'sed -i "s/__VERSION__/${VERSION}/g" kubernetes/helm-pelaporan-backend/values.yaml'
+                        sh 'sed -i "s/__VERSION__/${VERSION}/g" kubernetes/helm-pelaporan-backend/values.yaml'
                         sh '''
                             set +x
                             echo $SERVICE_ACCOUNT_GKE | base64 -d > gcp-key-file.json

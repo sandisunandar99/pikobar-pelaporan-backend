@@ -10,7 +10,7 @@ image:
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "__VERSION__"
 
 imagePullSecrets: []
 nameOverride: "pod-"
