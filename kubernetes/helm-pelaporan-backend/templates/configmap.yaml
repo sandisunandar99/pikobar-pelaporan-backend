@@ -3,6 +3,8 @@ apiVersion: v1
 metadata:
   name: "{{ .Release.Name }}-{{ .Release.Namespace }}-configmap-general"
   namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/resource-policy": {{ .Values.secret.policy | quote }}
 data:
   NODE_ENV: {{ .Values.configmap.app.node_env | default "nil" | quote }}
   HOST: {{ .Values.configmap.app.host | default "nil" | quote }}

@@ -7,7 +7,7 @@ replicaCount: 2
 containerPort: 3333
 
 image:
-  repository: nginx
+  repository: registry.digitalservice.id/api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -90,6 +90,7 @@ affinity: {}
 ## secret ##
 secret:
   secret_key: ""
+  policy: ""
   email:
     email_host: ""
     email_port: ":587"
@@ -127,6 +128,7 @@ secret:
 
 ## configmap ##
 configmap:
+  policy: ""
   app:
     node_env: ""
     host: ""
