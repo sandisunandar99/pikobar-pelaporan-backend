@@ -165,52 +165,7 @@ pipeline {
                             kubectl version
                             helm version
                             helm install $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --dry-run --debug
-                            helm upgrade $appName kubernetes/helm-pelaporan-backend \
-                                --set secret.policy=$SECRET_POLICY \
-                                --set configmap.policy=$CONFIGMAP_POLICY \
-                                --set configmap.app.node_env=$NODE_ENV \
-                                --set configmap.app.host=$HOST \
-                                --set configmap.app.port=$PORT \
-                                --set configmap.app.encoding=$ENCODING \
-                                --set configmap.url_pendaftaran_covid=$URL_PENDAFTARAN_COVID \
-                                --set configmap.url_user_pendaftaran_covid=$URL_USER_PENDAFTARAN_COVID \
-                                --set configmap.sms_url_server=$SMS_URL_SERVER \
-                                --set configmap.wa_url=$WA_URL \
-                                --set configmap.sentry_dsn=$SENTRY_DSN \
-                                --set configmap.app_convert=$APP_CONVERT \
-                                --set configmap.mongodb.mongo_db_uri=$MONGO_DB_URI \
-                                --set configmap.redis.redis_host=$REDIS_HOST \
-                                --set configmap.redis.redis_port=$REDIS_PORT \
-                                --set configmap.pubsub.topic_name_lapormandiri=$TOPIC_NAME_LAPORMANDIRI \
-                                --set configmap.pubsub.subscription_name_lapormandiri=$SUBSCRIPTION_NAME_LAPORMANDIRI \
-                                --set configmap.pubsub.topic_name_labkespelaporan=$TOPIC_NAME_LABKESPELAPORAN \
-                                --set configmap.pubsub.subscription_name_labkespelaporan=$SUBSCRIPTION_NAME_LABKESPELAPORAN \
-                                --set secret.aws_s3.access_key=$AWS_BUCKET_ID \
-                                --set secret.aws_s3.secret_key=$AWS_SECRET_KEY \
-                                --set secret.aws_s3.case_bucket_name=$CASE_BUCKET_NAME \
-                                --set secret.aws_s3.history_bucket_name=$HISTORY_BUCKET_NAME \
-                                --set secret.aws_s3.signed_url_method=$SIGNED_URL_METHOD \
-                                --set secret.firebase_debug=$FIREBASE_DEBUG \
-                                --set secret.firebase_project_id=$FIREBASE_PROJECT_ID \
-                                --set secret.firebase_client_email=$FIREBASE_CLIENT_EMAIL \
-                                --set secret.firebase_client_id=$FIREBASE_CLIENT_ID \
-                                --set secret.firebase_private_key=$FIREBASE_PRIVATE_KEY \
-                                --set secret.firebase_client_x509_cert_url=$FIREBASE_CLIENT_X509_CERT_URL \
-                                --set secret.firebase_database_url=$FIREBASE_DATABASE_URL \
-                                --set secret.firebase_private_key_id=$FIREBASE_PRIVATE_KEY_ID \
-                                --set secret.pubsub_project_id=$PUBSUB_PROJECT_ID \
-                                --set secret.pubsub_private_key_id=$PUBSUB_PRIVATE_KEY_ID \
-                                --set secret.pubsub_private_key=$PUBSUB_PRIVATE_KEY \
-                                --set secret.pubsub_client_email=$PUBSUB_CLIENT_EMAIL \
-                                --set secret.pubsub_client_id=$PUBSUB_CLIENT_ID \
-                                --set secret.pubsub_auth_uri=$PUBSUB_AUTH_URI \
-                                --set secret.pubsub_token_uri=$PUBSUB_TOKEN_URI \
-                                --set secret.pubsub_auth_provider_x509_cert_url=$PUBSUB_AUTH_PROVIDER_X509_CERT_URL \
-                                --set secret.pubsub_client_x509_cert_url=$PUBSUB_CLIENT_X509_CERT_URL \
-                                --set secret.email.email_host=$EMAIL_HOST \
-                                --set secret.email.email_port=$EMAIL_PORT \
-                                --set secret.registry.username=$REGISTRY_USERNAME \
-                                --set secret.registry.password=$REGISTRY_PASSWORD --namespace pikobar-pelaporan
+                            helm upgrade $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan
                             kubectl get pods --namespace pikobar-pelaporan
                         '''
                     }
