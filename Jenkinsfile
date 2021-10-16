@@ -171,8 +171,8 @@ pipeline {
                             --set configmap.app.host=$HOST \
                             --set configmap.app.port=$PORT \
                             --set configmap.app.encoding=$ENCODING \
-                            --set configmap.url_pendaftaran_covid=$URL_PENDAFTARAN_COVID \
-                            --set configmap.url_user_pendaftaran_covid=$URL_USER_PENDAFTARAN_COVID \
+                            --set configmap.url_pendaftaran_covid="$URL_PENDAFTARAN_COVID" \
+                            --set configmap.url_user_pendaftaran_covid="$URL_USER_PENDAFTARAN_COVID" \
                             --set configmap.sms_url_server=$SMS_URL_SERVER \
                             --set configmap.wa_url=$WA_URL \
                             --set configmap.sentry_dsn=$SENTRY_DSN \
@@ -208,6 +208,7 @@ pipeline {
                             --set secret.pubsub_auth_provider_x509_cert_url=$PUBSUB_AUTH_PROVIDER_X509_CERT_URL \
                             --set secret.pubsub_client_x509_cert_url=$PUBSUB_CLIENT_X509_CERT_URL \
                             --set secret.email.email_host=$EMAIL_HOST \
+                            --set secret.email.email_port="$EMAIL_PORT" \
                             --set secret.registry.username=$REGISTRY_USERNAME \
                             --set secret.registry.password=$REGISTRY_PASSWORD \
                             kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan
