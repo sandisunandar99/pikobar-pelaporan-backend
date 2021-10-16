@@ -4,37 +4,25 @@ metadata:
   name: "{{ .Release.Name }}-{{ .Release.Namespace }}-configmap-general"
   namespace: {{ .Release.Namespace }}
   annotations:
-    "helm.sh/resource-policy": {{ .Values.configmap.policy | quote }}
+    "helm.sh/resource-policy": {{ .Values.configmap.policy }}
 data:
   NODE_ENV: {{ .Values.configmap.app.node_env | default "nil" | quote }}
   HOST: {{ .Values.configmap.app.host | default "nil" | quote }}
   PORT: {{ .Values.configmap.app.port | default "nil" | quote }}
   ENCODING: {{ .Values.configmap.app.encoding | default "nil" | quote }}
   MONGO_DB_URI: {{ .Values.configmap.mongodb.mongo_db_uri | default "nil" | quote }}
-
   URL_PENDAFTARAN_COVID: {{ .Values.configmap.app_name | default "nil" | quote }}
-
   URL_USER_PENDAFTARAN_COVID: {{ .Values.configmap.app_name | default "nil" | quote }}
-
   SMS_URL_SERVER: {{ .Values.configmap.app_name | default "nil" | quote }}
-  
-
   WA_URL: {{ .Values.configmap.app_name | default "nil" | quote }}
-
-
   SENTRY_DSN: {{ .Values.configmap.app_name | default "nil" | quote }}
-
   APP_CONVERT: {{ .Values.configmap.app_name | default "nil" | quote }}
-
   # redis #
   REDIS_HOST: {{ .Values.configmap.redis.redis_host | default "nil" | quote }}
   REDIS_PORT: {{ .Values.configmap.redis.redis_port | default "nil" | quote }}
-
-
   # pubsub topik #
   TOPIC_NAME_LAPORMANDIRI: {{ .Values.configmap.pubsub.topic_name_lapormandiri | default "nil" | quote }}
   SUBSCRIPTION_NAME_LAPORMANDIRI: {{ .Values.configmap.pubsub.subscription_name_lapormandiri | default "nil" | quote }}
-
   TOPIC_NAME_LABKESPELAPORAN: {{ .Values.configmap.pubsub.topic_name_labkespelaporan | default "nil" | quote }}
   SUBSCRIPTION_NAME_LABKESPELAPORAN: {{ .Values.configmap.pubsub.subscription_name_labkespelaporan | default "nil" | quote }}
 

@@ -63,17 +63,16 @@ ingress:
   #      - chart-example.local
 
 resources:
-  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -90,39 +89,37 @@ affinity: {}
 
 ## secret ##
 secret:
-  policy: ""
-  aws:
-    s3:
-      access_key: ""
-      secret_key: ""
-      case_bucket_name: ""
-      history_bucket_name: ""
-      signed_url_method: ""
-  firebase:
-    firebase_debug: ""
-    firebase_project_id: ""
-    firebase_client_email: ""
-    firebase_client_id: ""
-    firebase_private_key: ""
-    firebase_client_x509_cert_url: ""
-    firebase_database_url: ""
-    firebase_private_key_id: ""
-  pubsub:
-    pubsub_project_id: ""
-    pubsub_private_key_id: ""
-    pubsub_private_key: ""
-    pubsub_client_email: ""
-    pubsub_client_id: ""
-    pubsub_auth_uri: ""
-    pubsub_token_uri: ""
-    pubsub_auth_provider_x509_cert_url: ""
-    pubsub_client_x509_cert_url: ""
+  secret_key: ""
+  policy: "keep"
   email:
-    # email_host: ""
-    # email_port: ""
-    # email_user: ""
-    # email_pass: ""
-    # email_from: ""
+    email_host: ""
+    email_port: ":587"
+    email_user: ""
+    email_pass: ""
+    email_from: ""
+  aws_s3:
+    access_key: ""
+    secret_key: ""
+    case_bucket_name: ""
+    history_bucket_name: ""
+    signed_url_method: ""
+  firebase_debug: ""
+  firebase_project_id: ""
+  firebase_client_email: ""
+  firebase_client_id: ""
+  firebase_private_key: ""
+  firebase_client_x509_cert_url: ""
+  firebase_database_url: ""
+  firebase_private_key_id: ""
+  pubsub_project_id: ""
+  pubsub_private_key_id: ""
+  pubsub_private_key: ""
+  pubsub_client_email: ""
+  pubsub_client_id: ""
+  pubsub_auth_uri: ""
+  pubsub_token_uri: ""
+  pubsub_auth_provider_x509_cert_url: ""
+  pubsub_client_x509_cert_url: ""
   registry:
     registry_url: "registry.digitalservice.id"
     username: ""
@@ -131,7 +128,7 @@ secret:
 
 ## configmap ##
 configmap:
-  policy: ""
+  policy: "keep"
   app:
     node_env: ""
     host: ""
