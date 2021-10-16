@@ -10,10 +10,10 @@ image:
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "__VERSION__"
+  tag: ""
 
 imagePullSecrets: []
-nameOverride: "pod-"
+nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:

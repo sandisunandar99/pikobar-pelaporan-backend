@@ -155,7 +155,7 @@ pipeline {
                     // deploy kubernetes cluster production
                     withVault([configuration: configuration, vaultSecrets: secretsProd]) {   
             
-                        sh 'sed -i "s/__VERSION__/${VERSION}/g" kubernetes/helm-pelaporan-backend/values.yaml'
+                        //sh 'sed -i "s/__VERSION__/${VERSION}/g" kubernetes/helm-pelaporan-backend/values.yaml'
                         sh '''
                             set +x
                             echo $SERVICE_ACCOUNT_GKE | base64 -d > gcp-key-file.json
@@ -166,7 +166,7 @@ pipeline {
                             helm version
                             kubectl get pods --namespace pikobar-pelaporan
                             helm install $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --dry-run --debug
-                            helm upgrade $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --force
+                            helm upgrade $appName --set image.tag=${VERSION} kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan
                             kubectl get pods --namespace pikobar-pelaporan
                         '''
                     }
