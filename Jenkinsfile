@@ -165,7 +165,7 @@ pipeline {
                             kubectl version
                             helm version
                             helm install $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --dry-run --debug
-                            helm upgrade $appName \
+                            helm upgrade $appName kubernetes/helm-pelaporan-backend \
                                 --set secret.policy=$SECRET_POLICY \
                                 --set configmap.policy=$CONFIGMAP_POLICY \
                                 --set configmap.app.node_env=$NODE_ENV \
@@ -210,7 +210,7 @@ pipeline {
                                 --set secret.email.email_host=$EMAIL_HOST \
                                 --set secret.email.email_port=$EMAIL_PORT \
                                 --set secret.registry.username=$REGISTRY_USERNAME \
-                                --set secret.registry.password=$REGISTRY_PASSWORD kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan
+                                --set secret.registry.password=$REGISTRY_PASSWORD --namespace pikobar-pelaporan
                             kubectl get pods --namespace pikobar-pelaporan
                         '''
                     }
