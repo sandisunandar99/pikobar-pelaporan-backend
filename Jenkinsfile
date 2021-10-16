@@ -166,9 +166,7 @@ pipeline {
                             helm version
                             kubectl get pods --namespace pikobar-pelaporan
                             helm install $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --dry-run --debug
-                            helm upgrade --install $appName \
-                            --set image.tag=$VERSION \ 
-                            --set configmap.policy=$CONFIGMAP_POLICY \
+                            helm upgrade --install $appName --set image.tag=$VERSION --set configmap.policy=$CONFIGMAP_POLICY \
                             --set configmap.app.node_env=$NODE_ENV \
                             --set configmap.app.host=$HOST \
                             --set configmap.app.port=$PORT \
