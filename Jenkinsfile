@@ -164,8 +164,9 @@ pipeline {
                             set -x
                             kubectl version
                             helm version
+                            kubectl get pods --namespace pikobar-pelaporan
                             helm install $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --dry-run --debug
-                            helm upgrade $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml
+                            helm upgrade $appName kubernetes/helm-pelaporan-backend --namespace pikobar-pelaporan --values kubernetes/helm-pelaporan-backend/values.yaml --force
                             kubectl get pods --namespace pikobar-pelaporan
                         '''
                     }
