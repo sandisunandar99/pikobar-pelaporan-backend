@@ -124,7 +124,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'a9661b24-dad7-4eaf-a9e2-b59f474c81fa', url: "https://${URL_REGISTRY}"]) {
-                    code block
+
                     unstash 'version'
                     sh 'cat version.txt'
                     sh 'export REGISTRY_HTTP_RELATIVEURLS=true \
