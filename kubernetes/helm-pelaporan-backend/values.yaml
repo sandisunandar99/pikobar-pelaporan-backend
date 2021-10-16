@@ -90,7 +90,6 @@ affinity: {}
 ## secret ##
 secret:
   secret_key: ""
-  policy: "keep"
   email:
     email_host: ""
     email_port: ":587"
@@ -128,7 +127,6 @@ secret:
 
 ## configmap ##
 configmap:
-  policy: "keep"
   app:
     node_env: ""
     host: ""
