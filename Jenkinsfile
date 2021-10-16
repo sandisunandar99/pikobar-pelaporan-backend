@@ -171,8 +171,8 @@ pipeline {
                             --set configmap.app.host=$HOST \
                             --set configmap.app.port=$PORT \
                             --set configmap.app.encoding=$ENCODING \
-                            --set configmap.url_pendaftaran_covid="$URL_PENDAFTARAN_COVID" \
-                            --set configmap.url_user_pendaftaran_covid="$URL_USER_PENDAFTARAN_COVID" \
+                            --set configmap.url_pendaftaran_covid=$URL_PENDAFTARAN_COVID \
+                            --set configmap.url_user_pendaftaran_covid=$URL_USER_PENDAFTARAN_COVID \
                             --set configmap.sms_url_server=$SMS_URL_SERVER \
                             --set configmap.wa_url=$WA_URL \
                             --set configmap.sentry_dsn=$SENTRY_DSN \

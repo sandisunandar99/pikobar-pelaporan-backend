@@ -11,12 +11,12 @@ data:
   PORT: {{ .Values.configmap.app.port | default "nil" | quote }}
   ENCODING: {{ .Values.configmap.app.encoding | default "nil" | quote }}
   MONGO_DB_URI: {{ .Values.configmap.mongodb.mongo_db_uri | default "nil" | quote }}
-  URL_PENDAFTARAN_COVID: {{ .Values.configmap.app_name | default "nil" | quote }}
-  URL_USER_PENDAFTARAN_COVID: {{ .Values.configmap.app_name | default "nil" | quote }}
-  SMS_URL_SERVER: {{ .Values.configmap.app_name | default "nil" | quote }}
-  WA_URL: {{ .Values.configmap.app_name | default "nil" | quote }}
-  SENTRY_DSN: {{ .Values.configmap.app_name | default "nil" | quote }}
-  APP_CONVERT: {{ .Values.configmap.app_name | default "nil" | quote }}
+  URL_PENDAFTARAN_COVID: {{ .Values.configmap.url_pendaftaran_covid | default "nil" | quote }}
+  URL_USER_PENDAFTARAN_COVID: {{ .Values.configmap.url_user_pendaftaran_covid | default "nil" | quote }}
+  SMS_URL_SERVER: {{ .Values.configmap.sms_url_server | default "nil" | quote }}
+  WA_URL: {{ .Values.configmap.wa_url | default "nil" | quote }}
+  SENTRY_DSN: {{ .Values.configmap.sentry_dsn | default "nil" | quote }}
+  APP_CONVERT: {{ .Values.configmap.app_convert | default "nil" | quote }}
   # redis #
   REDIS_HOST: {{ .Values.configmap.redis.redis_host | default "nil" | quote }}
   REDIS_PORT: {{ .Values.configmap.redis.redis_port | default "nil" | quote }}
