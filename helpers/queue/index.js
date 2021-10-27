@@ -2,7 +2,7 @@ const jobOptions = (jobId) => {
   return {
     jobId, removeOnComplete: true,
     delay: 600000, // 1 = 60000 min in ms
-    attempts: 3
+    attempts: 3,  backoff: { type: 'fixed', delay: 100 }
   };
 }
 const createQueue = async (method, data, jobId) => {
