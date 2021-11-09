@@ -2,6 +2,7 @@ const Sentry  = require('@sentry/node')
 const good = require('good')
 const goodconsole = require('good-console')
 const goodsqueeze = require('good-squeeze')
+let transaction
 
 const formatResponse = (response) => {
   const reformated = {}
@@ -16,17 +17,6 @@ const register = (server, options, next) => {
   const preResponse = (request, reply) => {
 
     let response = request.response
-
-    const transaction = Sentry.startTransaction({
-      op : "transaction",
-      name : response.request.path
-    })
-
-    Sentry.configureScope(scope => {
-      scope.setSpan(transaction)
-    })
-
-
     if (response.isBoom) {
       if (response.output.statusCode == 500) Sentry.captureException(response)
       Sentry.Handlers.errorHandler()
@@ -37,9 +27,21 @@ const register = (server, options, next) => {
     transaction.finish()
 
     return reply.continue()
+
   }
 
   const onRequest = (request, reply) =>{
+
+    transaction = Sentry.startTransaction({
+      op : "transaction",
+      name : request.path
+    })
+
+    Sentry.configureScope(scope => {
+      scope.setSpan(transaction)
+    })
+
+
     // check status error jika sudah stack tidak ketemu masalahnya bisa dilihat disini !!
     // console.log('INFO:', request.info);
     // console.log('HEADERS:', request.headers)
