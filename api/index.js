@@ -1,7 +1,4 @@
 const Sentry  = require('@sentry/node')
-const good = require('good')
-const goodconsole = require('good-console')
-const goodsqueeze = require('good-squeeze')
 let transaction
 
 const formatResponse = (response) => {
